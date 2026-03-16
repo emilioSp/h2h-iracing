@@ -8,13 +8,6 @@ type WsClient = {
 
 const wsClients = new Set<WsClient>();
 
-/*
-const interval = setInterval(() => {
-  console.log('websocket broadcast state');
-  broadcastState();
-}, config.POLL_INTERVAL_MS);
-*/
-
 export const wsHandler = () => ({
   onOpen(_event: Event, ws: WsClient) {
     wsClients.add(ws);
