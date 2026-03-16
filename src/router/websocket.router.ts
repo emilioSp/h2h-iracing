@@ -1,3 +1,4 @@
+import config from '#config';
 import { computeBattleState } from '#service/battle.service.ts';
 
 type WsClient = {
@@ -6,6 +7,13 @@ type WsClient = {
 };
 
 const wsClients = new Set<WsClient>();
+
+/*
+const interval = setInterval(() => {
+  console.log('websocket broadcast state');
+  broadcastState();
+}, config.POLL_INTERVAL_MS);
+*/
 
 export const wsHandler = () => ({
   onOpen(_event: Event, ws: WsClient) {
@@ -35,3 +43,10 @@ export const closeAllClients = () => {
     ws.close();
   }
 };
+
+const broadcast = async () => {
+  broadcastState();
+  setTimeout(() => broadcast(), config.POLL_INTERVAL_MS);
+};
+
+await broadcast();
