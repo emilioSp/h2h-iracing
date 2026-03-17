@@ -1,7 +1,4 @@
-import {
-  getBestLap,
-  updateReferenceLaps,
-} from '../repository/reference-lap.repository.ts';
+import { getBestLap } from '../repository/reference-lap.repository.ts';
 import {
   getLapDistPct,
   getOnPitRoad,
@@ -38,8 +35,6 @@ const referenceDelta = (
 
 export const getGap = (carIdxA: number, carIdxB: number): number => {
   if (carIdxA === carIdxB) return 0;
-
-  updateReferenceLaps(); // TODO: I don't like this here
 
   const lapDistPct = getLapDistPct();
   const pctA = lapDistPct[carIdxA] ?? -1;

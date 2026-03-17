@@ -4,6 +4,7 @@ import type { BattleState, CarState } from '#schema/battle.schema.ts';
 import { computeBattleState } from '#service/battle.service.ts';
 import { getGap } from '#service/gap.service.ts';
 import { tick } from '#service/telemetry.service.ts';
+import { updateReferenceLaps } from './repository/reference-lap.repository.ts';
 
 const W = 64;
 const LINE = '═'.repeat(W);
@@ -84,8 +85,14 @@ export const printBattle = (
   printCar(state.player);
   row('Gap ahead : ', formatGap(gapAhead));
   row('Gap behind: ', formatGap(gapBehind));
-  row('vs ahead  : ', `${formatDelta(state.deltaAhead)} ${deltaLabel(state.deltaAhead)}`);
-  row('vs behind : ', `${formatDelta(state.deltaBehind)} ${deltaLabel(state.deltaBehind)}`);
+  row(
+    'vs ahead  : ',
+    `${formatDelta(state.deltaAhead)} ${deltaLabel(state.deltaAhead)}`,
+  );
+  row(
+    'vs behind : ',
+    `${formatDelta(state.deltaBehind)} ${deltaLabel(state.deltaBehind)}`,
+  );
   console.log(`╠${LINE}╣`);
 
   console.log(`║  ${pad('BEHIND', W)}║`);
@@ -95,6 +102,8 @@ export const printBattle = (
 
 while (true) {
   tick();
+
+  updateReferenceLaps(); // TODO: I don't like this here
 
   const state = computeBattleState();
 
