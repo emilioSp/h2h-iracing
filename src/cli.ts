@@ -1,6 +1,9 @@
+import { setTimeout } from 'node:timers/promises';
 import config from '#config';
 import type { BattleState, CarState } from '#schema/battle.schema.ts';
 import { computeBattleState } from '#service/battle.service.ts';
+import { getGap } from '#service/gap.service.ts';
+import { tick } from '#service/telemetry.service.ts';
 
 const W = 64;
 const LINE = '═'.repeat(W);
@@ -35,41 +38,33 @@ export const formatDelta = (d: number): string => {
   return `${sign}${sec}.${String(ms).padStart(3, '0')}s`;
 };
 
-export const printCar = (
-  label: string,
-  car: CarState | null,
-  gap?: number,
-  delta?: number,
-) => {
+const deltaLabel = (d: number): string => {
+  if (!Number.isFinite(d)) return '';
+  return d >= 0 ? '(lost)' : '(gained)';
+};
+
+const row = (label: string, value: string) =>
+  console.log(`║    ${pad(`${label}${value}`, W - 2)}║`);
+
+export const printCar = (car: CarState | null): void => {
   if (!car) {
-    console.log(`║  ${pad(`${label}: none`, W)}║`);
+    console.log(`║    ${pad('none', W - 2)}║`);
     return;
   }
 
-  console.log(`║  ${pad(`${label} (P${car.position})`, W)}║`);
-  console.log(`║    ${pad(`Driver  : ${car.driver.name}`, W - 2)}║`);
-  console.log(
-    `║    ${pad(`Car     : ${car.driver.car} #${car.driver.carNumber}`, W - 2)}║`,
-  );
-  console.log(
-    `║    ${pad(`iRating : ${car.driver.iRating}  SR: ${car.driver.license}`, W - 2)}║`,
-  );
-  console.log(
-    `║    ${pad(`Best    : ${formatTime(car.bestLapTime)}`, W - 2)}║`,
-  );
-  console.log(
-    `║    ${pad(`Last    : ${formatTime(car.lastLapTime)}`, W - 2)}║`,
-  );
-
-  if (gap !== undefined) {
-    console.log(`║    ${pad(`Gap     : ${formatGap(gap)}`, W - 2)}║`);
-  }
-  if (delta !== undefined) {
-    console.log(`║    ${pad(`Delta   : ${formatDelta(delta)}`, W - 2)}║`);
-  }
+  const carLine = `P${String(car.position).padStart(2)}  ${car.driver.name.padEnd(32)} ${car.driver.car}`;
+  console.log(`║    ${pad(carLine, W - 2)}║`);
+  row('iRating: ', String(car.driver.iRating));
+  row('License: ', car.driver.license);
+  row('Last   : ', formatTime(car.lastLapTime));
+  row('Best   : ', formatTime(car.bestLapTime));
 };
 
-export const printBattle = (state: BattleState | null): void => {
+export const printBattle = (
+  state: BattleState | null,
+  gapAhead: number,
+  gapBehind: number,
+): void => {
   console.clear();
 
   if (!state) {
@@ -77,35 +72,46 @@ export const printBattle = (state: BattleState | null): void => {
     return;
   }
 
-  const m = Math.floor(state.sessionTime / 60);
-  const s = Math.floor(state.sessionTime % 60);
-  const sessionStr = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-
   console.log(`╔${LINE}╗`);
   console.log(`║  ${pad('H2H iRACING BATTLE MONITOR', W)}║`);
-  console.log(
-    `║  ${pad(`Session: ${sessionStr}  |  Player: P${state.player.position}`, W)}║`,
-  );
   console.log(`╠${LINE}╣`);
 
-  printCar('Ahead', state.ahead, state.gapAhead, state.deltaAhead);
-
+  console.log(`║  ${pad('AHEAD', W)}║`);
+  printCar(state.ahead);
   console.log(`╠${LINE}╣`);
 
-  printCar('Player', state.player);
-
+  console.log(`║  ${pad('PLAYER', W)}║`);
+  printCar(state.player);
+  row('Gap ahead : ', formatGap(gapAhead));
+  row('Gap behind: ', formatGap(gapBehind));
+  row('vs ahead  : ', `${formatDelta(state.deltaAhead)} ${deltaLabel(state.deltaAhead)}`);
+  row('vs behind : ', `${formatDelta(state.deltaBehind)} ${deltaLabel(state.deltaBehind)}`);
   console.log(`╠${LINE}╣`);
 
-  printCar('Behind', state.behind, state.gapBehind, state.deltaBehind);
-
+  console.log(`║  ${pad('BEHIND', W)}║`);
+  printCar(state.behind);
   console.log(`╚${LINE}╝`);
 };
 
-const interval = setInterval(() => {
-  const state = computeBattleState();
-  printBattle(state);
-}, config.POLL_INTERVAL_MS);
+while (true) {
+  tick();
 
-process.on('SIGINT', () => {
-  clearInterval(interval);
-});
+  const state = computeBattleState();
+
+  if (!state) {
+    printBattle(null, NaN, NaN);
+    continue;
+  }
+
+  const playerIdx = state.player.driver.carIdx;
+  const aheadIdx = state.ahead?.driver.carIdx;
+  const behindIdx = state.behind?.driver.carIdx;
+
+  const gapAhead = aheadIdx !== undefined ? getGap(playerIdx, aheadIdx) : NaN;
+  const gapBehind =
+    behindIdx !== undefined ? getGap(playerIdx, behindIdx) : NaN;
+
+  printBattle(state, gapAhead, gapBehind);
+
+  await setTimeout(config.POLL_INTERVAL_MS);
+}

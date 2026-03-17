@@ -21,15 +21,6 @@ describe('battle.service', () => {
     expect(bestLap > 0 || Number.isNaN(bestLap)).toBe(true);
   });
 
-  it('gaps are finite or NaN', () => {
-    const state = computeBattleState();
-    const gapAhead = state?.gapAhead ?? NaN;
-    const gapBehind = state?.gapBehind ?? NaN;
-
-    expect(Number.isFinite(gapAhead) || Number.isNaN(gapAhead)).toBe(true);
-    expect(Number.isFinite(gapBehind) || Number.isNaN(gapBehind)).toBe(true);
-  });
-
   it('deltas are finite or NaN', () => {
     const state = computeBattleState();
     const deltaAhead = state?.deltaAhead ?? NaN;

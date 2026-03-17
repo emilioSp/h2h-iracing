@@ -22,8 +22,6 @@ export const battleStateSchema = z.object({
   player: carStateSchema,
   ahead: carStateSchema.nullable(),
   behind: carStateSchema.nullable(),
-  gapAhead: z.number(),
-  gapBehind: z.number(),
   deltaAhead: z.number(),
   deltaBehind: z.number(),
 });

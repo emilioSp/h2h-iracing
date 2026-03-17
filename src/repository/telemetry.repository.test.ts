@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 import {
   getBestLapTimes,
   getDriverInfo,
-  getF2Times,
   getLaps,
   getLastLapTimes,
   getPlayerCarIdx,
@@ -19,10 +18,6 @@ describe('telemetry.repository', () => {
 
   it('reads positions array', () => {
     expect(getPositions().length).toBeGreaterThan(0);
-  });
-
-  it('reads F2 times', () => {
-    expect(getF2Times().length).toBeGreaterThan(0);
   });
 
   it('reads last and best lap times', () => {

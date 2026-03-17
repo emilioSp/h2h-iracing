@@ -3,6 +3,7 @@ import type { DriverInfo } from '#schema/battle.schema.ts';
 import { ir } from './irsdk.ts';
 
 let driverMap = new Map<number, DriverInfo>();
+let classEstLapTimeMap = new Map<number, number>();
 let lastSessionTick = -1;
 
 export const refreshTelemetry = () => {
@@ -12,6 +13,7 @@ export const refreshTelemetry = () => {
 
   const driverInfo = ir.getSessionInfo(SESSION_DATA_KEYS.DRIVER_INFO);
   driverMap = new Map<number, DriverInfo>();
+  classEstLapTimeMap = new Map<number, number>();
 
   for (const driver of driverInfo.Drivers) {
     if (driver.CarIdx !== undefined) {
@@ -23,6 +25,16 @@ export const refreshTelemetry = () => {
         iRating: Number(driver.IRating ?? 0),
         license: String(driver.LicString ?? ''),
       });
+    }
+
+    if (
+      driver.CarClassID !== undefined &&
+      !classEstLapTimeMap.has(driver.CarClassID)
+    ) {
+      classEstLapTimeMap.set(
+        driver.CarClassID,
+        driver.CarClassEstLapTime ?? 90,
+      );
     }
   }
 
@@ -36,9 +48,12 @@ export const getLastLapTimes = (): number[] =>
   ir.get(VARS.CAR_IDX_LAST_LAP_TIME) ?? [];
 export const getBestLapTimes = (): number[] =>
   ir.get(VARS.CAR_IDX_BEST_LAP_TIME) ?? [];
-export const getF2Times = (): number[] => ir.get(VARS.CAR_IDX_F2_TIME) ?? [];
 export const getLaps = (): number[] => ir.get(VARS.CAR_IDX_LAP) ?? [];
 export const getSessionTime = (): number => ir.get(VARS.SESSION_TIME)[0] ?? 0;
+export const getLapDistPct = (): number[] =>
+  ir.get(VARS.CAR_IDX_LAP_DIST_PCT) ?? [];
+export const getOnPitRoad = (): number[] =>
+  ir.get(VARS.CAR_IDX_ON_PIT_ROAD) ?? [];
 export const getDriverInfo = (carIdx: number): DriverInfo | null =>
   driverMap.get(carIdx) ?? null;
 
