@@ -3,16 +3,22 @@ import config from '#config';
 import type { Driver } from '#schema/battle.schema.ts';
 import { ir } from './irsdk.ts';
 
-let driverMap = new Map<number, Driver>();
-let lastSessionTick = -1;
+// TODO: questo modulo deve essere splittato in 2
+/*
+1. i metodi che interagiscono con IRSDK, devono essere spostati in irsdk.repository.ts
+2. i metodi che gestiscono le driverInfo devono essere spostati in driver.service.ts
+ */
 
+let currentTick = -1;
 export const refreshTelemetry = () => {
-  const tick: number = ir.get(VARS.SESSION_TICK)[0] ?? 0;
-  if (tick === lastSessionTick && driverMap.size > 0) return;
-  lastSessionTick = tick;
+  const tick = ir.get(VARS.SESSION_TICK)[0] as number;
+  if (tick === currentTick) return;
+
+  currentTick = tick;
   ir.refreshSharedMemory();
 };
 
+let driverMap = new Map<number, Driver>();
 export const refreshDriverInfo = () => {
   const driverInfo = ir.getSessionInfo(SESSION_DATA_KEYS.DRIVER_INFO);
   driverMap = new Map<number, Driver>();
