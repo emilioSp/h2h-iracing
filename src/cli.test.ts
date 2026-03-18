@@ -1,8 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { CarState } from '#schema/battle.schema.ts';
-import { formatDelta, formatGap, formatTime, printBattle, printCar } from './cli.ts';
+import type { Car } from '#schema/battle.schema.ts';
+import {
+  formatDelta,
+  formatGap,
+  formatTime,
+  printBattle,
+  printCar,
+} from './cli.ts';
 
-const makeCar = (position: number): CarState => ({
+const makeCar = (position: number): Car => ({
   driver: {
     carIdx: 1,
     name: 'John Doe',
@@ -107,7 +113,6 @@ describe('printCar', () => {
     expect(lines.some((l) => l.includes('2500'))).toBe(true);
     expect(lines.some((l) => l.includes('01:34.123'))).toBe(true);
   });
-
 });
 
 describe('printBattle', () => {
@@ -123,9 +128,14 @@ describe('printBattle', () => {
   });
 
   it('prints waiting message when state is null', () => {
-    printBattle(null, NaN, NaN);
+    printBattle(null, NaN, NaN, NaN, NaN);
     expect(console.clear).toHaveBeenCalledOnce();
-    expect(vi.mocked(console.log).mock.calls.flat().some((l) => l.includes('Waiting'))).toBe(true);
+    expect(
+      vi
+        .mocked(console.log)
+        .mock.calls.flat()
+        .some((l) => l.includes('Waiting')),
+    ).toBe(true);
   });
 
   it('prints player position and gap/delta stats', () => {
@@ -135,17 +145,25 @@ describe('printBattle', () => {
         player: makeCar(3),
         ahead: null,
         behind: null,
-        deltaAhead: 0.5,
-        deltaBehind: -0.3,
       },
+      0.5,
+      -0.3,
       1.5,
       0.8,
     );
     const lines = vi.mocked(console.log).mock.calls.flat();
     expect(lines.some((l) => l.includes('P 3'))).toBe(true);
-    expect(lines.some((l) => l.includes('Gap ahead') && l.includes('+1.500s'))).toBe(true);
-    expect(lines.some((l) => l.includes('Gap behind') && l.includes('+0.800s'))).toBe(true);
-    expect(lines.some((l) => l.includes('vs ahead') && l.includes('lost'))).toBe(true);
-    expect(lines.some((l) => l.includes('vs behind') && l.includes('gained'))).toBe(true);
+    expect(
+      lines.some((l) => l.includes('Gap ahead') && l.includes('+1.500s')),
+    ).toBe(true);
+    expect(
+      lines.some((l) => l.includes('Gap behind') && l.includes('+0.800s')),
+    ).toBe(true);
+    expect(
+      lines.some((l) => l.includes('vs ahead') && l.includes('lost')),
+    ).toBe(true);
+    expect(
+      lines.some((l) => l.includes('vs behind') && l.includes('gained')),
+    ).toBe(true);
   });
 });

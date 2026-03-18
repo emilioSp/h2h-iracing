@@ -1,10 +1,8 @@
 import { setTimeout } from 'node:timers/promises';
 import config from '#config';
-import type { BattleState, CarState } from '#schema/battle.schema.ts';
-import { computeBattleState } from '#service/battle.service.ts';
+import type { Car, Head2Head } from '#schema/battle.schema.ts';
 import { getGap } from '#service/gap.service.ts';
-import { tick } from '#service/telemetry.service.ts';
-import { updateReferenceLaps } from './repository/reference-lap.repository.ts';
+import { computeHead2Head } from '#service/head2head.service.ts';
 
 const W = 64;
 const LINE = '═'.repeat(W);
@@ -47,7 +45,7 @@ const deltaLabel = (d: number): string => {
 const row = (label: string, value: string) =>
   console.log(`║    ${pad(`${label}${value}`, W - 2)}║`);
 
-export const printCar = (car: CarState | null): void => {
+export const printCar = (car: Car | null): void => {
   if (!car) {
     console.log(`║    ${pad('none', W - 2)}║`);
     return;
@@ -62,13 +60,15 @@ export const printCar = (car: CarState | null): void => {
 };
 
 export const printBattle = (
-  state: BattleState | null,
+  head2Head: Head2Head | null,
+  deltaAhead: number,
+  deltaBehind: number,
   gapAhead: number,
   gapBehind: number,
 ): void => {
   console.clear();
 
-  if (!state) {
+  if (!head2Head) {
     console.log('Waiting for race session…');
     return;
   }
@@ -78,49 +78,47 @@ export const printBattle = (
   console.log(`╠${LINE}╣`);
 
   console.log(`║  ${pad('AHEAD', W)}║`);
-  printCar(state.ahead);
+  printCar(head2Head.ahead);
   console.log(`╠${LINE}╣`);
 
   console.log(`║  ${pad('PLAYER', W)}║`);
-  printCar(state.player);
+  printCar(head2Head.player);
   row('Gap ahead : ', formatGap(gapAhead));
   row('Gap behind: ', formatGap(gapBehind));
-  row(
-    'vs ahead  : ',
-    `${formatDelta(state.deltaAhead)} ${deltaLabel(state.deltaAhead)}`,
-  );
-  row(
-    'vs behind : ',
-    `${formatDelta(state.deltaBehind)} ${deltaLabel(state.deltaBehind)}`,
-  );
+  row('vs ahead  : ', `${formatDelta(deltaAhead)} ${deltaLabel(deltaAhead)}`);
+  row('vs behind : ', `${formatDelta(deltaBehind)} ${deltaLabel(deltaBehind)}`);
   console.log(`╠${LINE}╣`);
 
   console.log(`║  ${pad('BEHIND', W)}║`);
-  printCar(state.behind);
+  printCar(head2Head.behind);
   console.log(`╚${LINE}╝`);
 };
 
 while (true) {
-  tick();
+  const head2Head = computeHead2Head();
 
-  updateReferenceLaps(); // TODO: I don't like this here
-
-  const state = computeBattleState();
-
-  if (!state) {
-    printBattle(null, NaN, NaN);
+  if (!head2Head) {
+    printBattle(null, NaN, NaN, NaN, NaN);
     continue;
   }
 
-  const playerIdx = state.player.driver.carIdx;
-  const aheadIdx = state.ahead?.driver.carIdx;
-  const behindIdx = state.behind?.driver.carIdx;
+  const playerIdx = head2Head.player.driver.carIdx;
+  const aheadIdx = head2Head.ahead?.driver.carIdx ?? null;
+  const behindIdx = head2Head.behind?.driver.carIdx ?? null;
 
-  const gapAhead = aheadIdx !== undefined ? getGap(playerIdx, aheadIdx) : NaN;
-  const gapBehind =
-    behindIdx !== undefined ? getGap(playerIdx, behindIdx) : NaN;
+  const gapAhead = aheadIdx !== null ? getGap(playerIdx, aheadIdx) : NaN;
+  const gapBehind = behindIdx !== null ? getGap(playerIdx, behindIdx) : NaN;
 
-  printBattle(state, gapAhead, gapBehind);
+  const playerLap = head2Head.player.lastLapTime;
+  const aheadLap = head2Head.ahead?.lastLapTime ?? NaN;
+  const behindLap = head2Head.behind?.lastLapTime ?? NaN;
 
+  const deltaAhead = playerLap > 1 && aheadLap > 1 ? playerLap - aheadLap : NaN;
+  const deltaBehind =
+    playerLap > 1 && behindLap > 1 ? playerLap - behindLap : NaN;
+
+  printBattle(head2Head, deltaAhead, deltaBehind, gapAhead, gapBehind);
+
+  if (config.DATA_MODE === 'mock') break;
   await setTimeout(config.POLL_INTERVAL_MS);
 }

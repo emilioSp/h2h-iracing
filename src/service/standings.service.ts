@@ -1,5 +1,5 @@
 import {
-  getDriverInfo,
+  getCarIdxs,
   getLapDistPct,
   getLaps,
 } from '../repository/telemetry.repository.ts';
@@ -7,16 +7,11 @@ import {
 export type Standing = { pos: number; carIdx: number };
 
 export const getStandings = (): Standing[] => {
+  const carIdxs = getCarIdxs();
   const lapDistPct = getLapDistPct();
   const laps = getLaps();
 
-  const standings: Standing[] = [];
-  for (let i = 0; i < lapDistPct.length; i++) {
-    if ((lapDistPct[i] ?? -1) < 0) continue;
-    const driver = getDriverInfo(i);
-    if (!driver || driver.name.toLowerCase() === 'pace car') continue;
-    standings.push({ pos: 0, carIdx: i });
-  }
+  const standings: Standing[] = carIdxs.map((carIdx) => ({ pos: 0, carIdx }));
 
   standings.sort((a, b) => {
     const distA = (laps[a.carIdx] ?? 0) + (lapDistPct[a.carIdx] ?? 0);

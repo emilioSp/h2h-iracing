@@ -1,6 +1,6 @@
 import { VARS } from '@emiliosp/node-iracing-sdk';
-import { normalizeKey, precomputePCHIPTangents } from '../utils/pchip.ts';
 import type { ReferenceLap } from '../utils/pchip.ts';
+import { normalizeKey, precomputePCHIPTangents } from '../utils/pchip.ts';
 import { ir } from './irsdk.ts';
 
 export type { ReferenceLap, ReferencePoint } from '../utils/pchip.ts';
@@ -79,7 +79,7 @@ const collectLapData = (
     });
     refLap.lastTrackedPct = trackPct;
   }
-}
+};
 
 export const updateReferenceLaps = (): void => {
   const lapDistPct: number[] = ir.get(VARS.CAR_IDX_LAP_DIST_PCT) ?? [];
@@ -106,6 +106,3 @@ export const resetReferenceLaps = (): void => {
   activeLaps.clear();
   bestLaps.clear();
 };
-
-
-

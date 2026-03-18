@@ -37,8 +37,7 @@ const computePCHIPTangents = (
 
   const deltaBeforeFirst =
     (y[0] - (y[n - 1] - lapTime)) / (x[0] - (x[n - 1] - 1));
-  const deltaAfterLast =
-    (y[0] + lapTime - y[n - 1]) / (x[0] + 1 - x[n - 1]);
+  const deltaAfterLast = (y[0] + lapTime - y[n - 1]) / (x[0] + 1 - x[n - 1]);
 
   const d0 = deltaBeforeFirst;
   const d1 = deltas[0];

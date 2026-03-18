@@ -1,8 +1,8 @@
 import type { Context } from 'hono';
-import { computeBattleState } from '#service/battle.service.ts';
+import { computeHead2Head } from '#service/head2head.service.ts';
 
 export const battleStateRouter = (c: Context) => {
-  const state = computeBattleState();
+  const state = computeHead2Head();
 
   if (!state) {
     return c.json(

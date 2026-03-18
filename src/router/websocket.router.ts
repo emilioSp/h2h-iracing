@@ -1,5 +1,5 @@
 import config from '#config';
-import { computeBattleState } from '#service/battle.service.ts';
+import { computeHead2Head } from '#service/head2head.service.ts';
 
 type WsClient = {
   send: (data: string) => void;
@@ -20,7 +20,7 @@ export const wsHandler = () => ({
 export const broadcastState = () => {
   if (wsClients.size === 0) return;
 
-  const state = computeBattleState();
+  const state = computeHead2Head();
   if (!state) {
     return;
   }

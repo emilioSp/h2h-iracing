@@ -8,7 +8,7 @@
   "main": "index.js",
   "scripts": {
     "server:dev:mock": "DATA_MODE=mock node --env-file=.env --watch src/server.ts",
-    "cli:dev:mock": "DATA_MODE=mock node --env-file=.env --watch src/cli.ts",
+    "cli:dev:mock": "DATA_MODE=mock node --env-file=.env src/cli.ts",
     "server:start": "node --env-file=.env src/server.ts",
     "cli:start": "node --env-file=.env src/cli.ts",
     "test": "vitest run --coverage",

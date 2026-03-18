@@ -12,10 +12,12 @@ export type RelativeEntry = {
   delta: number;
 };
 
-const relativeTrackPct = (pctA: number, pctB: number): number => {
+const getRelativeDistanceInPerc = (pctA: number, pctB: number): number => {
   let rel = pctB - pctA;
+  // manage wrap up (one car crossed finish line)
   if (rel > 0.5) rel -= 1.0;
   else if (rel < -0.5) rel += 1.0;
+
   return rel;
 };
 
@@ -41,7 +43,7 @@ export const getGap = (carIdxA: number, carIdxB: number): number => {
   const pctB = lapDistPct[carIdxB] ?? -1;
   if (pctA < 0 || pctB < 0) return NaN;
 
-  const relPct = relativeTrackPct(pctA, pctB);
+  const relPct = getRelativeDistanceInPerc(pctA, pctB);
   const isBAhead = relPct > 0;
   const aheadIdx = isBAhead ? carIdxB : carIdxA;
   const behindIdx = isBAhead ? carIdxA : carIdxB;
@@ -57,6 +59,8 @@ export const getGap = (carIdxA: number, carIdxB: number): number => {
   }
 
   // we still don't have a refLap. Instead of displaying wrong data, I prefer to return NaN. In this context it means N/A
+  // TODO: add a repository for driverInfo
+  // TODO: fetch classReference lap from driverInfo
   return NaN;
 };
 
@@ -75,7 +79,7 @@ export const getRelatives = (
     if (activeCarIdxs && !activeCarIdxs.has(i)) continue;
     entries.push({
       carIdx: i,
-      relativePct: relativeTrackPct(focusPct, lapDistPct[i]),
+      relativePct: getRelativeDistanceInPerc(focusPct, lapDistPct[i]),
     });
   }
 

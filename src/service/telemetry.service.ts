@@ -1,5 +1,6 @@
 import {
   isConnected,
+  refreshDriverInfo,
   refreshTelemetry,
 } from '../repository/telemetry.repository.ts';
 
@@ -8,4 +9,5 @@ export const tick = (): void => {
     throw new Error('Not connected to iRacing');
   }
   refreshTelemetry();
+  refreshDriverInfo();
 };
