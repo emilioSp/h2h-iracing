@@ -1,12 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { getGap, getRelatives } from './gap.service.ts';
 
-vi.mock('../repository/irsdk.repository.ts', () => ({
+vi.mock('#repository/irsdk.repository.ts', () => ({
   getLapDistPct: vi.fn(),
   getOnPitRoad: vi.fn(),
 }));
 
-vi.mock('../repository/reference-lap.repository.ts', () => ({
+vi.mock('#repository/reference-lap.repository.ts', () => ({
   getBestLap: vi.fn(),
 }));
 

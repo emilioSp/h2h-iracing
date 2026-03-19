@@ -1,4 +1,4 @@
-import { getLapDistPct, getLaps } from '../repository/irsdk.repository.ts';
+import { getLapDistPct, getLaps } from '#repository/irsdk.repository.ts';
 import { getCarIdxs } from './driver.service.ts';
 
 export type Standing = { pos: number; carIdx: number };

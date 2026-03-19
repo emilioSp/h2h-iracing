@@ -1,4 +1,3 @@
-import type { Car, Driver, Head2Head } from '#schema/battle.schema.ts';
 import {
   getBestLapTimes,
   getLaps,
@@ -7,7 +6,8 @@ import {
   getSessionTime,
   isConnected,
   refreshTelemetry,
-} from '../repository/irsdk.repository.ts';
+} from '#repository/irsdk.repository.ts';
+import type { Car, Driver, Head2Head } from '#schema/battle.schema.ts';
 import { getDriverInfo, refreshDriverInfo } from './driver.service.ts';
 import { updateReferenceLaps } from './reference-lap.service.ts';
 import { getStandings, type Standing } from './standings.service.ts';

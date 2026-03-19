@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { computeHead2Head } from './head2head.service.ts';
+import { computeHead2Head } from '#service/head2head.service.ts';
 
 describe('head2head.service', () => {
   it('returns a valid Head2Head from dump', () => {

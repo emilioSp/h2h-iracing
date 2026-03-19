@@ -1,5 +1,5 @@
+import { getRawDrivers } from '#repository/irsdk.repository.ts';
 import type { Driver } from '#schema/battle.schema.ts';
-import { getRawDrivers } from '../repository/irsdk.repository.ts';
 
 let driverMap = new Map<number, Driver>();
 

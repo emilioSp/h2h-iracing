@@ -17,10 +17,12 @@
   },
   "imports": {
     "#service/*": "./src/service/*",
+    "#repository/*": "./src/repository/*",
     "#schema/*": "./src/schema/*",
     "#error/*": "./src/error/*",
     "#config": "./src/config.ts",
-    "#router/*": "./src/router/*"
+    "#router/*": "./src/router/*",
+    "#utils/*": "./src/utils/*"
   },
   "dependencies": {
     "@emiliosp/node-iracing-sdk": "1.0.9",

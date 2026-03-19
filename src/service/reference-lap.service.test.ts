@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('../repository/irsdk.repository.ts', () => ({
+vi.mock('#repository/irsdk.repository.ts', () => ({
   getLapDistPct: vi.fn(),
   getSessionTime: vi.fn(),
   getTrackSurfaces: vi.fn(),
@@ -17,7 +17,7 @@ import {
   getOnPitRoad,
   getSessionTime,
   getTrackSurfaces,
-} from '../repository/irsdk.repository.ts';
+} from '#repository/irsdk.repository.ts';
 import {
   getActiveLap,
   getBestLap,
@@ -26,7 +26,7 @@ import {
   resetReferenceLaps,
   setActiveLap,
   setBestLap,
-} from '../repository/reference-lap.repository.ts';
+} from '#repository/reference-lap.repository.ts';
 import { precomputePCHIPTangents, REFERENCE_INTERVAL } from '../utils/pchip.ts';
 import { updateReferenceLaps } from './reference-lap.service.ts';
 
@@ -122,7 +122,10 @@ describe('updateReferenceLaps', () => {
     const currentPct = 0.5;
     const nextPct = 0.6;
     const fewPoints = 5;
-    seedActiveLap(0, fewPoints, { lastTrackedPct: currentPct, isCleanLap: true });
+    seedActiveLap(0, fewPoints, {
+      lastTrackedPct: currentPct,
+      isCleanLap: true,
+    });
     mockGetLapDistPct.mockReturnValue([nextPct]);
     mockGetOnPitRoad.mockReturnValue([1]);
 
@@ -135,7 +138,10 @@ describe('updateReferenceLaps', () => {
     const currentPct = 0.5;
     const nextPct = 0.9;
     const fewPoints = 5;
-    seedActiveLap(0, fewPoints, { lastTrackedPct: currentPct, isCleanLap: false });
+    seedActiveLap(0, fewPoints, {
+      lastTrackedPct: currentPct,
+      isCleanLap: false,
+    });
     const sizeBefore = getActiveLap(0)?.refPoints.size ?? 0;
 
     mockGetLapDistPct.mockReturnValue([nextPct]);

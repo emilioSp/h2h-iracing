@@ -3,13 +3,13 @@ import {
   getOnPitRoad,
   getSessionTime,
   getTrackSurfaces,
-} from '../repository/irsdk.repository.ts';
+} from '#repository/irsdk.repository.ts';
 import {
   getActiveLap,
   getBestLap,
   setActiveLap,
   setBestLap,
-} from '../repository/reference-lap.repository.ts';
+} from '#repository/reference-lap.repository.ts';
 import { normalizeKey, precomputePCHIPTangents } from '../utils/pchip.ts';
 
 const TRACK_SURFACE_ON_TRACK = 3;
