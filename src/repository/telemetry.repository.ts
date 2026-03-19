@@ -9,14 +9,7 @@ import { ir } from './irsdk.ts';
 2. i metodi che gestiscono le driverInfo devono essere spostati in driver.service.ts
  */
 
-let currentTick = -1;
-export const refreshTelemetry = () => {
-  const tick = ir.get(VARS.SESSION_TICK)[0] as number;
-  if (tick === currentTick) return;
-
-  currentTick = tick;
-  ir.refreshSharedMemory();
-};
+export const refreshTelemetry = () => ir.refreshSharedMemory();
 
 let driverMap = new Map<number, Driver>();
 export const refreshDriverInfo = () => {
