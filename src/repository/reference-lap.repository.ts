@@ -1,6 +1,6 @@
-import type { ReferenceLap } from '../utils/pchip.ts';
+import type { ReferenceLap } from '#utils/pchip.ts';
 
-export type { ReferenceLap, ReferencePoint } from '../utils/pchip.ts';
+export type { ReferenceLap, ReferencePoint } from '#utils/pchip.ts';
 
 const activeLaps = new Map<number, ReferenceLap>();
 const bestLaps = new Map<number, ReferenceLap>();

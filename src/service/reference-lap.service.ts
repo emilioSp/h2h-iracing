@@ -10,7 +10,7 @@ import {
   setActiveLap,
   setBestLap,
 } from '#repository/reference-lap.repository.ts';
-import { normalizeKey, precomputePCHIPTangents } from '../utils/pchip.ts';
+import { normalizeKey, precomputePCHIPTangents } from '#utils/pchip.ts';
 
 const TRACK_SURFACE_ON_TRACK = 3;
 const MIN_POINTS_FOR_VALID_LAP = 400;

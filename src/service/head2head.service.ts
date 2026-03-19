@@ -8,9 +8,9 @@ import {
   refreshTelemetry,
 } from '#repository/irsdk.repository.ts';
 import type { Car, Driver, Head2Head } from '#schema/battle.schema.ts';
-import { getDriverInfo, refreshDriverInfo } from './driver.service.ts';
-import { updateReferenceLaps } from './reference-lap.service.ts';
-import { getStandings, type Standing } from './standings.service.ts';
+import { getDriverInfo, refreshDriverInfo } from '#service/driver.service.ts';
+import { updateReferenceLaps } from '#service/reference-lap.service.ts';
+import { getStandings, type Standing } from '#service/standings.service.ts';
 
 const tick = (): void => {
   if (!isConnected()) {

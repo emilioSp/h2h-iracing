@@ -7,8 +7,8 @@ vi.mock('#repository/irsdk.repository.ts', () => ({
   getOnPitRoad: vi.fn(),
 }));
 
-vi.mock('../utils/pchip.ts', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('../utils/pchip.ts')>();
+vi.mock('#utils/pchip.ts', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('#utils/pchip.ts')>();
   return { ...actual, precomputePCHIPTangents: vi.fn() };
 });
 
@@ -27,8 +27,8 @@ import {
   setActiveLap,
   setBestLap,
 } from '#repository/reference-lap.repository.ts';
-import { precomputePCHIPTangents, REFERENCE_INTERVAL } from '../utils/pchip.ts';
-import { updateReferenceLaps } from './reference-lap.service.ts';
+import { precomputePCHIPTangents, REFERENCE_INTERVAL } from '#utils/pchip.ts';
+import { updateReferenceLaps } from '#service/reference-lap.service.ts';
 
 const mockGetLapDistPct = vi.mocked(getLapDistPct);
 const mockGetSessionTime = vi.mocked(getSessionTime);

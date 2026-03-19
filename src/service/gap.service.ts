@@ -1,7 +1,7 @@
 import { getLapDistPct, getOnPitRoad } from '#repository/irsdk.repository.ts';
 import { getBestLap } from '#repository/reference-lap.repository.ts';
-import type { ReferenceLap } from '../utils/pchip.ts';
-import { interpolateAtPoint } from '../utils/pchip.ts';
+import type { ReferenceLap } from '#utils/pchip.ts';
+import { interpolateAtPoint } from '#utils/pchip.ts';
 
 export type RelativeEntry = {
   carIdx: number;

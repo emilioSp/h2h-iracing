@@ -19,7 +19,6 @@
     "#service/*": "./src/service/*",
     "#repository/*": "./src/repository/*",
     "#schema/*": "./src/schema/*",
-    "#error/*": "./src/error/*",
     "#config": "./src/config.ts",
     "#router/*": "./src/router/*",
     "#utils/*": "./src/utils/*"

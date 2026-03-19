@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { getGap, getRelatives } from './gap.service.ts';
+import { getGap, getRelatives } from '#service/gap.service.ts';
 
 vi.mock('#repository/irsdk.repository.ts', () => ({
   getLapDistPct: vi.fn(),
@@ -10,13 +10,13 @@ vi.mock('#repository/reference-lap.repository.ts', () => ({
   getBestLap: vi.fn(),
 }));
 
-vi.mock('../utils/pchip.ts', () => ({
+vi.mock('#utils/pchip.ts', () => ({
   interpolateAtPoint: vi.fn(),
 }));
 
-import { getLapDistPct, getOnPitRoad } from '../repository/irsdk.repository.ts';
-import { getBestLap } from '../repository/reference-lap.repository.ts';
-import { interpolateAtPoint } from '../utils/pchip.ts';
+import { getLapDistPct, getOnPitRoad } from '#repository/irsdk.repository.ts';
+import { getBestLap } from '#repository/reference-lap.repository.ts';
+import { interpolateAtPoint } from '#utils/pchip.ts';
 
 const mockGetLapDistancePercentage = vi.mocked(getLapDistPct);
 const mockGetOnPitRoad = vi.mocked(getOnPitRoad);

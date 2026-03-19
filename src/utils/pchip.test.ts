@@ -4,8 +4,8 @@ import {
   interpolateAtPoint,
   normalizeKey,
   precomputePCHIPTangents,
-} from './pchip.ts';
-import type { ReferenceLap, ReferencePoint } from './pchip.ts';
+} from '#utils/pchip.ts';
+import type { ReferenceLap, ReferencePoint } from '#utils/pchip.ts';
 
 const makePoint = (trackPct: number, time: number): ReferencePoint => ({
   trackPct,
