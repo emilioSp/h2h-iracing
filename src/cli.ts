@@ -39,7 +39,7 @@ export const formatDelta = (d: number): string => {
 
 const deltaLabel = (d: number): string => {
   if (!Number.isFinite(d)) return '';
-  return d >= 0 ? '(lost)' : '(gained)';
+  return d >= 0 ? 'slower' : 'faster';
 };
 
 const row = (label: string, value: string) =>
@@ -78,7 +78,11 @@ export const printBattle = (
   console.log(`╠${LINE}╣`);
 
   console.log(`║  ${pad('AHEAD', W)}║`);
-  printCar(head2Head.ahead);
+  if (!head2Head.ahead) {
+    console.log(`║    ${pad('You are the leader', W - 2)}║`);
+  } else {
+    printCar(head2Head.ahead);
+  }
   console.log(`╠${LINE}╣`);
 
   console.log(`║  ${pad('PLAYER', W)}║`);
@@ -90,7 +94,11 @@ export const printBattle = (
   console.log(`╠${LINE}╣`);
 
   console.log(`║  ${pad('BEHIND', W)}║`);
-  printCar(head2Head.behind);
+  if (!head2Head.behind) {
+    console.log(`║    ${pad('You are the last', W - 2)}║`);
+  } else {
+    printCar(head2Head.behind);
+  }
   console.log(`╚${LINE}╝`);
 };
 

@@ -160,10 +160,12 @@ describe('printBattle', () => {
       lines.some((l) => l.includes('Gap behind') && l.includes('+0.800s')),
     ).toBe(true);
     expect(
-      lines.some((l) => l.includes('vs ahead') && l.includes('lost')),
+      lines.some((l) => l.includes('vs ahead') && l.includes('slower')),
     ).toBe(true);
     expect(
-      lines.some((l) => l.includes('vs behind') && l.includes('gained')),
+      lines.some((l) => l.includes('vs behind') && l.includes('faster')),
     ).toBe(true);
+    expect(lines.some((l) => l.includes('You are the leader'))).toBe(true);
+    expect(lines.some((l) => l.includes('You are the last'))).toBe(true);
   });
 });
