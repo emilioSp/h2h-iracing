@@ -1,7 +1,7 @@
 import { VARS } from '@emiliosp/node-iracing-sdk';
 import type { ReferenceLap } from '../utils/pchip.ts';
 import { normalizeKey, precomputePCHIPTangents } from '../utils/pchip.ts';
-import { ir } from './irsdk.ts';
+import { ir } from './irsdk.repository.ts';
 
 export type { ReferenceLap, ReferencePoint } from '../utils/pchip.ts';
 

@@ -1,14 +1,14 @@
 import type { Car, Driver, Head2Head } from '#schema/battle.schema.ts';
 import { tick } from '#service/telemetry.service.ts';
-import { updateReferenceLaps } from '../repository/reference-lap.repository.ts';
 import {
   getBestLapTimes,
-  getDriverInfo,
   getLaps,
   getLastLapTimes,
   getPlayerCarIdx,
   getSessionTime,
-} from '../repository/telemetry.repository.ts';
+} from '../repository/irsdk.repository.ts';
+import { updateReferenceLaps } from '../repository/reference-lap.repository.ts';
+import { getDriverInfo } from './driver.service.ts';
 import { getStandings, type Standing } from './standings.service.ts';
 
 export const computeCar = (

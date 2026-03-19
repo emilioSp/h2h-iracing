@@ -1,8 +1,8 @@
 import {
   isConnected,
-  refreshDriverInfo,
   refreshTelemetry,
-} from '../repository/telemetry.repository.ts';
+} from '../repository/irsdk.repository.ts';
+import { refreshDriverInfo } from './driver.service.ts';
 
 export const tick = (): void => {
   if (!isConnected()) {
