@@ -8,8 +8,8 @@ import {
   isConnected,
   refreshTelemetry,
 } from '../repository/irsdk.repository.ts';
-import { updateReferenceLaps } from '../repository/reference-lap.repository.ts';
 import { getDriverInfo, refreshDriverInfo } from './driver.service.ts';
+import { updateReferenceLaps } from './reference-lap.service.ts';
 import { getStandings, type Standing } from './standings.service.ts';
 
 const tick = (): void => {

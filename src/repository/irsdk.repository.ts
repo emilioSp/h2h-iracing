@@ -28,5 +28,7 @@ export const getLapDistPct = (): number[] =>
   ir.get(VARS.CAR_IDX_LAP_DIST_PCT) ?? [];
 export const getOnPitRoad = (): number[] =>
   ir.get(VARS.CAR_IDX_ON_PIT_ROAD) ?? [];
+export const getTrackSurfaces = (): number[] =>
+  ir.get(VARS.CAR_IDX_TRACK_SURFACE) ?? [];
 export const getRawDrivers = () =>
   ir.getSessionInfo(SESSION_DATA_KEYS.DRIVER_INFO).Drivers;
