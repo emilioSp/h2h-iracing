@@ -1,15 +1,25 @@
 import type { Car, Driver, Head2Head } from '#schema/battle.schema.ts';
-import { tick } from '#service/telemetry.service.ts';
 import {
   getBestLapTimes,
   getLaps,
   getLastLapTimes,
   getPlayerCarIdx,
   getSessionTime,
+  isConnected,
+  refreshTelemetry,
 } from '../repository/irsdk.repository.ts';
 import { updateReferenceLaps } from '../repository/reference-lap.repository.ts';
-import { getDriverInfo } from './driver.service.ts';
+import { getDriverInfo, refreshDriverInfo } from './driver.service.ts';
 import { getStandings, type Standing } from './standings.service.ts';
+
+const tick = (): void => {
+  if (!isConnected()) {
+    throw new Error('Not connected to iRacing');
+  }
+  refreshTelemetry();
+  refreshDriverInfo();
+  updateReferenceLaps();
+};
 
 export const computeCar = (
   carIdx: number,
@@ -38,7 +48,6 @@ export const computeCar = (
 
 export const computeHead2Head = (): Head2Head | null => {
   tick();
-  updateReferenceLaps();
 
   const playerIdx = getPlayerCarIdx();
   if (playerIdx < 0) return null;
