@@ -1,6 +1,8 @@
+import { setTimeout } from 'node:timers/promises';
 import config from '#config';
-import type { BattleState, CarState } from '#schema/battle.schema.ts';
-import { computeBattleState } from '#service/battle.service.ts';
+import type { Car, Head2Head } from '#schema/battle.schema.ts';
+import { getGap } from '#service/gap.service.ts';
+import { computeHead2Head } from '#service/head2head.service.ts';
 
 const W = 64;
 const LINE = '═'.repeat(W);
@@ -35,77 +37,96 @@ export const formatDelta = (d: number): string => {
   return `${sign}${sec}.${String(ms).padStart(3, '0')}s`;
 };
 
-export const printCar = (
-  label: string,
-  car: CarState | null,
-  gap?: number,
-  delta?: number,
-) => {
+const deltaLabel = (d: number): string => {
+  if (!Number.isFinite(d)) return '';
+  return d >= 0 ? 'slower' : 'faster';
+};
+
+const row = (label: string, value: string) =>
+  console.log(`║    ${pad(`${label}${value}`, W - 2)}║`);
+
+export const printCar = (car: Car | null): void => {
   if (!car) {
-    console.log(`║  ${pad(`${label}: none`, W)}║`);
+    console.log(`║    ${pad('none', W - 2)}║`);
     return;
   }
 
-  console.log(`║  ${pad(`${label} (P${car.position})`, W)}║`);
-  console.log(`║    ${pad(`Driver  : ${car.driver.name}`, W - 2)}║`);
-  console.log(
-    `║    ${pad(`Car     : ${car.driver.car} #${car.driver.carNumber}`, W - 2)}║`,
-  );
-  console.log(
-    `║    ${pad(`iRating : ${car.driver.iRating}  SR: ${car.driver.license}`, W - 2)}║`,
-  );
-  console.log(
-    `║    ${pad(`Best    : ${formatTime(car.bestLapTime)}`, W - 2)}║`,
-  );
-  console.log(
-    `║    ${pad(`Last    : ${formatTime(car.lastLapTime)}`, W - 2)}║`,
-  );
-
-  if (gap !== undefined) {
-    console.log(`║    ${pad(`Gap     : ${formatGap(gap)}`, W - 2)}║`);
-  }
-  if (delta !== undefined) {
-    console.log(`║    ${pad(`Delta   : ${formatDelta(delta)}`, W - 2)}║`);
-  }
+  const carLine = `P${String(car.position).padStart(2)}  ${car.driver.name.padEnd(32)} ${car.driver.car}`;
+  console.log(`║    ${pad(carLine, W - 2)}║`);
+  row('iRating: ', String(car.driver.iRating));
+  row('License: ', car.driver.license);
+  row('Last   : ', formatTime(car.lastLapTime));
+  row('Best   : ', formatTime(car.bestLapTime));
 };
 
-export const printBattle = (state: BattleState | null): void => {
+export const printBattle = (
+  head2Head: Head2Head | null,
+  deltaAhead: number,
+  deltaBehind: number,
+  gapAhead: number,
+  gapBehind: number,
+): void => {
   console.clear();
 
-  if (!state) {
+  if (!head2Head) {
     console.log('Waiting for race session…');
     return;
   }
 
-  const m = Math.floor(state.sessionTime / 60);
-  const s = Math.floor(state.sessionTime % 60);
-  const sessionStr = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-
   console.log(`╔${LINE}╗`);
   console.log(`║  ${pad('H2H iRACING BATTLE MONITOR', W)}║`);
-  console.log(
-    `║  ${pad(`Session: ${sessionStr}  |  Player: P${state.player.position}`, W)}║`,
-  );
   console.log(`╠${LINE}╣`);
 
-  printCar('Ahead', state.ahead, state.gapAhead, state.deltaAhead);
-
+  console.log(`║  ${pad('AHEAD', W)}║`);
+  if (!head2Head.ahead) {
+    console.log(`║    ${pad('You are the leader', W - 2)}║`);
+  } else {
+    printCar(head2Head.ahead);
+  }
   console.log(`╠${LINE}╣`);
 
-  printCar('Player', state.player);
-
+  console.log(`║  ${pad('PLAYER', W)}║`);
+  printCar(head2Head.player);
+  row('Gap ahead : ', formatGap(gapAhead));
+  row('Gap behind: ', formatGap(gapBehind));
+  row('vs ahead  : ', `${formatDelta(deltaAhead)} ${deltaLabel(deltaAhead)}`);
+  row('vs behind : ', `${formatDelta(deltaBehind)} ${deltaLabel(deltaBehind)}`);
   console.log(`╠${LINE}╣`);
 
-  printCar('Behind', state.behind, state.gapBehind, state.deltaBehind);
-
+  console.log(`║  ${pad('BEHIND', W)}║`);
+  if (!head2Head.behind) {
+    console.log(`║    ${pad('You are the last', W - 2)}║`);
+  } else {
+    printCar(head2Head.behind);
+  }
   console.log(`╚${LINE}╝`);
 };
 
-const interval = setInterval(() => {
-  const state = computeBattleState();
-  printBattle(state);
-}, config.POLL_INTERVAL_MS);
+while (true) {
+  const head2Head = computeHead2Head();
 
-process.on('SIGINT', () => {
-  clearInterval(interval);
-});
+  if (!head2Head) {
+    printBattle(null, NaN, NaN, NaN, NaN);
+    continue;
+  }
+
+  const playerIdx = head2Head.player.driver.carIdx;
+  const aheadIdx = head2Head.ahead?.driver.carIdx ?? null;
+  const behindIdx = head2Head.behind?.driver.carIdx ?? null;
+
+  const gapAhead = aheadIdx !== null ? getGap(playerIdx, aheadIdx) : NaN;
+  const gapBehind = behindIdx !== null ? getGap(playerIdx, behindIdx) : NaN;
+
+  const playerLap = head2Head.player.lastLapTime;
+  const aheadLap = head2Head.ahead?.lastLapTime ?? NaN;
+  const behindLap = head2Head.behind?.lastLapTime ?? NaN;
+
+  const deltaAhead = playerLap > 1 && aheadLap > 1 ? playerLap - aheadLap : NaN;
+  const deltaBehind =
+    playerLap > 1 && behindLap > 1 ? playerLap - behindLap : NaN;
+
+  printBattle(head2Head, deltaAhead, deltaBehind, gapAhead, gapBehind);
+
+  if (config.DATA_MODE === 'mock') break;
+  await setTimeout(config.POLL_INTERVAL_MS);
+}

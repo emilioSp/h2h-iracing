@@ -1,8 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { CarState } from '#schema/battle.schema.ts';
-import { formatDelta, formatGap, formatTime, printBattle, printCar } from './cli.ts';
+import type { Car } from '#schema/battle.schema.ts';
+import {
+  formatDelta,
+  formatGap,
+  formatTime,
+  printBattle,
+  printCar,
+} from './cli.ts';
 
-const makeCar = (position: number): CarState => ({
+const makeCar = (position: number): Car => ({
   driver: {
     carIdx: 1,
     name: 'John Doe',
@@ -93,37 +99,19 @@ describe('printCar', () => {
   });
 
   it('prints "none" when car is null', () => {
-    printCar('Player', null);
+    printCar(null);
     const lines = vi.mocked(console.log).mock.calls.flat();
-    expect(lines.some((l) => l.includes('Player: none'))).toBe(true);
+    expect(lines.some((l) => l.includes('none'))).toBe(true);
   });
 
-  it('prints driver name, car, iRating, and lap times', () => {
-    printCar('Player', makeCar(3));
+  it('prints position, driver name, car, iRating, and lap times', () => {
+    printCar(makeCar(3));
     const lines = vi.mocked(console.log).mock.calls.flat();
+    expect(lines.some((l) => l.includes('P 3'))).toBe(true);
     expect(lines.some((l) => l.includes('John Doe'))).toBe(true);
     expect(lines.some((l) => l.includes('Mazda MX-5'))).toBe(true);
     expect(lines.some((l) => l.includes('2500'))).toBe(true);
     expect(lines.some((l) => l.includes('01:34.123'))).toBe(true);
-  });
-
-  it('prints gap when provided', () => {
-    printCar('Ahead', makeCar(2), -1.5);
-    const lines = vi.mocked(console.log).mock.calls.flat();
-    expect(lines.some((l) => l.includes('Gap') && l.includes('-1.500s'))).toBe(true);
-  });
-
-  it('prints delta when provided', () => {
-    printCar('Ahead', makeCar(2), -1.5, -0.3);
-    const lines = vi.mocked(console.log).mock.calls.flat();
-    expect(lines.some((l) => l.includes('Delta') && l.includes('-0.300s'))).toBe(true);
-  });
-
-  it('omits gap and delta when not provided', () => {
-    printCar('Player', makeCar(3));
-    const lines = vi.mocked(console.log).mock.calls.flat();
-    expect(lines.some((l) => l.includes('Gap'))).toBe(false);
-    expect(lines.some((l) => l.includes('Delta'))).toBe(false);
   });
 });
 
@@ -140,23 +128,44 @@ describe('printBattle', () => {
   });
 
   it('prints waiting message when state is null', () => {
-    printBattle(null);
+    printBattle(null, NaN, NaN, NaN, NaN);
     expect(console.clear).toHaveBeenCalledOnce();
-    expect(vi.mocked(console.log).mock.calls.flat().some((l) => l.includes('Waiting'))).toBe(true);
+    expect(
+      vi
+        .mocked(console.log)
+        .mock.calls.flat()
+        .some((l) => l.includes('Waiting')),
+    ).toBe(true);
   });
 
-  it('prints session time and player position', () => {
-    printBattle({
-      sessionTime: 1234,
-      player: makeCar(3),
-      ahead: null,
-      behind: null,
-      gapAhead: 0,
-      gapBehind: 0,
-      deltaAhead: 0,
-      deltaBehind: 0,
-    });
+  it('prints player position and gap/delta stats', () => {
+    printBattle(
+      {
+        sessionTime: 1234,
+        player: makeCar(3),
+        ahead: null,
+        behind: null,
+      },
+      0.5,
+      -0.3,
+      1.5,
+      0.8,
+    );
     const lines = vi.mocked(console.log).mock.calls.flat();
-    expect(lines.some((l) => l.includes('20:34') && l.includes('P3'))).toBe(true);
+    expect(lines.some((l) => l.includes('P 3'))).toBe(true);
+    expect(
+      lines.some((l) => l.includes('Gap ahead') && l.includes('+1.500s')),
+    ).toBe(true);
+    expect(
+      lines.some((l) => l.includes('Gap behind') && l.includes('+0.800s')),
+    ).toBe(true);
+    expect(
+      lines.some((l) => l.includes('vs ahead') && l.includes('slower')),
+    ).toBe(true);
+    expect(
+      lines.some((l) => l.includes('vs behind') && l.includes('faster')),
+    ).toBe(true);
+    expect(lines.some((l) => l.includes('You are the leader'))).toBe(true);
+    expect(lines.some((l) => l.includes('You are the last'))).toBe(true);
   });
 });
