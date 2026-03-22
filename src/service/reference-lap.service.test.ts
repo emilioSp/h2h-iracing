@@ -19,16 +19,16 @@ import {
   getTrackSurfaces,
 } from '#repository/irsdk.repository.ts';
 import {
-  getActiveLap,
-  getBestLap,
+  getActiveRefLap,
+  getBestRefLap,
   type ReferenceLap,
   type ReferencePoint,
   resetReferenceLaps,
-  setActiveLap,
-  setBestLap,
+  setActiveRefLap,
+  setBestRefLap,
 } from '#repository/reference-lap.repository.ts';
 import { precomputePCHIPTangents, REFERENCE_INTERVAL } from '#utils/pchip.ts';
-import { updateReferenceLaps } from '#service/reference-lap.service.ts';
+import { getBestRefLapTime, updateReferenceLaps } from '#service/reference-lap.service.ts';
 
 const mockGetLapDistPct = vi.mocked(getLapDistPct);
 const mockGetSessionTime = vi.mocked(getSessionTime);
@@ -56,7 +56,7 @@ const seedActiveLap = (
       tangent: undefined,
     });
   }
-  setActiveLap(carIdx, {
+  setActiveRefLap(carIdx, {
     startTime: 0,
     finishTime: -1,
     refPoints,
@@ -75,13 +75,30 @@ beforeEach(() => {
   mockGetOnPitRoad.mockReturnValue([0]);
 });
 
+describe('getBestRefLapTime', () => {
+  it('returns NaN when no best lap exists', () => {
+    expect(getBestRefLapTime(0)).toBeNaN();
+  });
+
+  it('returns the lap time of the best lap', () => {
+    setBestRefLap(0, {
+      startTime: 100,
+      finishTime: 180,
+      refPoints: new Map(),
+      lastTrackedPct: 0.99,
+      isCleanLap: true,
+    });
+    expect(getBestRefLapTime(0)).toBe(80);
+  });
+});
+
 describe('updateReferenceLaps', () => {
   it('skips cars with lapDistPct < 0', () => {
     mockGetLapDistPct.mockReturnValue([-1]);
 
     updateReferenceLaps();
 
-    expect(getActiveLap(0)).toBeNull();
+    expect(getActiveRefLap(0)).toBeNull();
   });
 
   it('initialises a new active lap on first data point', () => {
@@ -91,7 +108,7 @@ describe('updateReferenceLaps', () => {
 
     updateReferenceLaps();
 
-    const lap = getActiveLap(0);
+    const lap = getActiveRefLap(0);
     expect(lap).not.toBeNull();
     expect(lap?.startTime).toBe(sessionStart);
     expect(lap?.refPoints.size).toBe(1);
@@ -106,7 +123,7 @@ describe('updateReferenceLaps', () => {
     mockGetLapDistPct.mockReturnValue([secondPct]);
     updateReferenceLaps();
 
-    expect(getActiveLap(0)?.refPoints.size).toBe(2);
+    expect(getActiveRefLap(0)?.refPoints.size).toBe(2);
   });
 
   it('does not add a duplicate refPoint for the same normalised key', () => {
@@ -115,7 +132,7 @@ describe('updateReferenceLaps', () => {
     updateReferenceLaps();
     updateReferenceLaps();
 
-    expect(getActiveLap(0)?.refPoints.size).toBe(1);
+    expect(getActiveRefLap(0)?.refPoints.size).toBe(1);
   });
 
   it('marks a clean lap dirty when the car enters pit road', () => {
@@ -131,7 +148,7 @@ describe('updateReferenceLaps', () => {
 
     updateReferenceLaps();
 
-    expect(getActiveLap(0)?.isCleanLap).toBe(false);
+    expect(getActiveRefLap(0)?.isCleanLap).toBe(false);
   });
 
   it('does not add refPoints on a dirty lap', () => {
@@ -142,12 +159,12 @@ describe('updateReferenceLaps', () => {
       lastTrackedPct: currentPct,
       isCleanLap: false,
     });
-    const sizeBefore = getActiveLap(0)?.refPoints.size ?? 0;
+    const sizeBefore = getActiveRefLap(0)?.refPoints.size ?? 0;
 
     mockGetLapDistPct.mockReturnValue([nextPct]);
     updateReferenceLaps();
 
-    expect(getActiveLap(0)?.refPoints.size).toBe(sizeBefore);
+    expect(getActiveRefLap(0)?.refPoints.size).toBe(sizeBefore);
   });
 });
 
@@ -161,7 +178,7 @@ describe('lap completion', () => {
 
     updateReferenceLaps();
 
-    const newLap = getActiveLap(0);
+    const newLap = getActiveRefLap(0);
     expect(newLap?.startTime).toBe(lapTime);
     expect(newLap?.refPoints.size).toBe(1);
   });
@@ -174,7 +191,7 @@ describe('lap completion', () => {
 
     updateReferenceLaps();
 
-    expect(getBestLap(0)).not.toBeNull();
+    expect(getBestRefLap(0)).not.toBeNull();
     expect(mockPrecomputePCHIPTangents).toHaveBeenCalledOnce();
   });
 
@@ -186,7 +203,7 @@ describe('lap completion', () => {
 
     updateReferenceLaps();
 
-    expect(getBestLap(0)).toBeNull();
+    expect(getBestRefLap(0)).toBeNull();
     expect(mockPrecomputePCHIPTangents).not.toHaveBeenCalled();
   });
 
@@ -198,7 +215,7 @@ describe('lap completion', () => {
 
     updateReferenceLaps();
 
-    expect(getBestLap(0)).toBeNull();
+    expect(getBestRefLap(0)).toBeNull();
   });
 
   it('replaces best lap when new lap is faster', () => {
@@ -211,7 +228,7 @@ describe('lap completion', () => {
       lastTrackedPct: 0.99,
       isCleanLap: true,
     };
-    setBestLap(0, existingBest);
+    setBestRefLap(0, existingBest);
 
     seedActiveLap(0, MIN_VALID_POINTS);
     mockGetLapDistPct.mockReturnValue([PAST_FINISH_LINE_PCT]);
@@ -219,7 +236,7 @@ describe('lap completion', () => {
 
     updateReferenceLaps();
 
-    const best = getBestLap(0);
+    const best = getBestRefLap(0);
     expect(best?.finishTime).toBe(newLapTime);
     expect(best?.startTime).toBe(0);
   });
@@ -234,7 +251,7 @@ describe('lap completion', () => {
       lastTrackedPct: 0.99,
       isCleanLap: true,
     };
-    setBestLap(0, existingBest);
+    setBestRefLap(0, existingBest);
 
     seedActiveLap(0, MIN_VALID_POINTS);
     mockGetLapDistPct.mockReturnValue([PAST_FINISH_LINE_PCT]);
@@ -242,7 +259,7 @@ describe('lap completion', () => {
 
     updateReferenceLaps();
 
-    expect(getBestLap(0)).toBe(existingBest);
+    expect(getBestRefLap(0)).toBe(existingBest);
   });
 
   it('does not replace best lap when new lap is equal (not strictly faster)', () => {
@@ -254,7 +271,7 @@ describe('lap completion', () => {
       lastTrackedPct: 0.99,
       isCleanLap: true,
     };
-    setBestLap(0, existingBest);
+    setBestRefLap(0, existingBest);
 
     seedActiveLap(0, MIN_VALID_POINTS);
     mockGetLapDistPct.mockReturnValue([PAST_FINISH_LINE_PCT]);
@@ -262,6 +279,6 @@ describe('lap completion', () => {
 
     updateReferenceLaps();
 
-    expect(getBestLap(0)).toBe(existingBest);
+    expect(getBestRefLap(0)).toBe(existingBest);
   });
 });

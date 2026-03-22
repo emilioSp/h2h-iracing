@@ -128,7 +128,7 @@ describe('printBattle', () => {
   });
 
   it('prints waiting message when state is null', () => {
-    printBattle(null, NaN, NaN, NaN, NaN);
+    printBattle(null, NaN, NaN, NaN, NaN, NaN);
     expect(console.clear).toHaveBeenCalledOnce();
     expect(
       vi
@@ -150,6 +150,7 @@ describe('printBattle', () => {
       -0.3,
       1.5,
       0.8,
+      NaN,
     );
     const lines = vi.mocked(console.log).mock.calls.flat();
     expect(lines.some((l) => l.includes('P 3'))).toBe(true);
@@ -167,5 +168,45 @@ describe('printBattle', () => {
     ).toBe(true);
     expect(lines.some((l) => l.includes('You are the leader'))).toBe(true);
     expect(lines.some((l) => l.includes('You are the last'))).toBe(true);
+  });
+
+  it('prints bestRefLapTime when available', () => {
+    printBattle(
+      {
+        sessionTime: 1234,
+        player: makeCar(3),
+        ahead: null,
+        behind: null,
+      },
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      94.567,
+    );
+    const lines = vi.mocked(console.log).mock.calls.flat();
+    expect(
+      lines.some((l) => l.includes('Best ref') && l.includes('01:34.567')),
+    ).toBe(true);
+  });
+
+  it('prints --:--.--- for bestRefLapTime when not available', () => {
+    printBattle(
+      {
+        sessionTime: 1234,
+        player: makeCar(3),
+        ahead: null,
+        behind: null,
+      },
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+      NaN,
+    );
+    const lines = vi.mocked(console.log).mock.calls.flat();
+    expect(
+      lines.some((l) => l.includes('Best ref') && l.includes('--:--.---')),
+    ).toBe(true);
   });
 });

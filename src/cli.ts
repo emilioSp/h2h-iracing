@@ -3,6 +3,7 @@ import config from '#config';
 import type { Car, Head2Head } from '#schema/battle.schema.ts';
 import { getGap } from '#service/gap.service.ts';
 import { computeHead2Head } from '#service/head2head.service.ts';
+import { getBestRefLapTime } from '#service/reference-lap.service.ts';
 
 const W = 64;
 const LINE = '═'.repeat(W);
@@ -65,6 +66,7 @@ export const printBattle = (
   deltaBehind: number,
   gapAhead: number,
   gapBehind: number,
+  bestRefLapTime: number,
 ): void => {
   console.clear();
 
@@ -87,6 +89,7 @@ export const printBattle = (
 
   console.log(`║  ${pad('PLAYER', W)}║`);
   printCar(head2Head.player);
+  row('Best ref  : ', formatTime(bestRefLapTime));
   row('Gap ahead : ', formatGap(gapAhead));
   row('Gap behind: ', formatGap(gapBehind));
   row('vs ahead  : ', `${formatDelta(deltaAhead)} ${deltaLabel(deltaAhead)}`);
@@ -106,7 +109,7 @@ while (true) {
   const head2Head = computeHead2Head();
 
   if (!head2Head) {
-    printBattle(null, NaN, NaN, NaN, NaN);
+    printBattle(null, NaN, NaN, NaN, NaN, NaN);
     continue;
   }
 
@@ -125,7 +128,9 @@ while (true) {
   const deltaBehind =
     playerLap > 1 && behindLap > 1 ? playerLap - behindLap : NaN;
 
-  printBattle(head2Head, deltaAhead, deltaBehind, gapAhead, gapBehind);
+  const bestRefLapTime = getBestRefLapTime(playerIdx);
+
+  printBattle(head2Head, deltaAhead, deltaBehind, gapAhead, gapBehind, bestRefLapTime);
 
   if (config.DATA_MODE === 'mock') break;
   await setTimeout(config.POLL_INTERVAL_MS);

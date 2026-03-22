@@ -5,10 +5,10 @@ import {
   getTrackSurfaces,
 } from '#repository/irsdk.repository.ts';
 import {
-  getActiveLap,
-  getBestLap,
-  setActiveLap,
-  setBestLap,
+  getActiveRefLap,
+  getBestRefLap,
+  setActiveRefLap,
+  setBestRefLap,
 } from '#repository/reference-lap.repository.ts';
 import { normalizeKey, precomputePCHIPTangents } from '#utils/pchip.ts';
 
@@ -26,10 +26,10 @@ const collectLapData = (
   isOnPitRoad: boolean,
 ): void => {
   const key = normalizeKey(trackPct);
-  const refLap = getActiveLap(carIdx);
+  const refLap = getActiveRefLap(carIdx);
 
   if (!refLap) {
-    setActiveLap(carIdx, {
+    setActiveRefLap(carIdx, {
       startTime: sessionTime,
       finishTime: -1,
       refPoints: new Map([
@@ -48,18 +48,18 @@ const collectLapData = (
     const lapTime = refLap.finishTime - refLap.startTime;
 
     if (refLap.refPoints.size >= MIN_POINTS_FOR_VALID_LAP && lapTime > 0) {
-      const best = getBestLap(carIdx);
+      const best = getBestRefLap(carIdx);
       const isNewBest = best
         ? lapTime < best.finishTime - best.startTime
         : true;
 
       if (isNewBest && refLap.isCleanLap) {
         precomputePCHIPTangents(refLap);
-        setBestLap(carIdx, refLap);
+        setBestRefLap(carIdx, refLap);
       }
     }
 
-    setActiveLap(carIdx, {
+    setActiveRefLap(carIdx, {
       startTime: sessionTime,
       finishTime: -1,
       refPoints: new Map([
@@ -83,6 +83,12 @@ const collectLapData = (
     });
     refLap.lastTrackedPct = trackPct;
   }
+};
+
+export const getBestRefLapTime = (carIdx: number): number => {
+  const best = getBestRefLap(carIdx);
+  if (!best) return NaN;
+  return best.finishTime - best.startTime;
 };
 
 export const updateReferenceLaps = (): void => {

@@ -7,7 +7,7 @@ vi.mock('#repository/irsdk.repository.ts', () => ({
 }));
 
 vi.mock('#repository/reference-lap.repository.ts', () => ({
-  getBestLap: vi.fn(),
+  getBestRefLap: vi.fn(),
 }));
 
 vi.mock('#utils/pchip.ts', () => ({
@@ -15,12 +15,12 @@ vi.mock('#utils/pchip.ts', () => ({
 }));
 
 import { getLapDistPct, getOnPitRoad } from '#repository/irsdk.repository.ts';
-import { getBestLap } from '#repository/reference-lap.repository.ts';
+import { getBestRefLap } from '#repository/reference-lap.repository.ts';
 import { interpolateAtPoint } from '#utils/pchip.ts';
 
 const mockGetLapDistancePercentage = vi.mocked(getLapDistPct);
 const mockGetOnPitRoad = vi.mocked(getOnPitRoad);
-const mockGetBestLap = vi.mocked(getBestLap);
+const mockGetBestRefLap = vi.mocked(getBestRefLap);
 const mockInterpolateAtPoint = vi.mocked(interpolateAtPoint);
 
 const makeReferenceLap = (startTime = 0, finishTime = 90) => ({
@@ -34,7 +34,7 @@ const makeReferenceLap = (startTime = 0, finishTime = 90) => ({
 beforeEach(() => {
   vi.clearAllMocks();
   mockGetOnPitRoad.mockReturnValue([0, 0, 0, 0, 0]);
-  mockGetBestLap.mockReturnValue(null);
+  mockGetBestRefLap.mockReturnValue(null);
   mockInterpolateAtPoint.mockReturnValue(0);
 });
 
@@ -55,7 +55,7 @@ describe('getGap', () => {
 
   it('returns NaN when no reference lap is available', () => {
     mockGetLapDistancePercentage.mockReturnValue([0.3, 0.5]);
-    mockGetBestLap.mockReturnValue(null);
+    mockGetBestRefLap.mockReturnValue(null);
 
     expect(getGap(0, 1)).toBeNaN();
   });
@@ -63,7 +63,7 @@ describe('getGap', () => {
   it('returns NaN when one of the cars is on pit road', () => {
     mockGetLapDistancePercentage.mockReturnValue([0.3, 0.5]);
     mockGetOnPitRoad.mockReturnValue([0, 1]);
-    mockGetBestLap.mockReturnValue(makeReferenceLap());
+    mockGetBestRefLap.mockReturnValue(makeReferenceLap());
 
     expect(getGap(0, 1)).toBeNaN();
   });
@@ -74,7 +74,7 @@ describe('getGap', () => {
     const lapFinishTime = 90;
     mockGetLapDistancePercentage.mockReturnValue([0.3, 0.5]);
     mockGetOnPitRoad.mockReturnValue([0, 0]);
-    mockGetBestLap.mockReturnValue(
+    mockGetBestRefLap.mockReturnValue(
       makeReferenceLap(lapStartTime, lapFinishTime),
     );
 
@@ -92,7 +92,7 @@ describe('getGap', () => {
     const lapTime = 90;
     mockGetLapDistancePercentage.mockReturnValue([0.3, 0.5]);
     mockGetOnPitRoad.mockReturnValue([0, 0]);
-    mockGetBestLap.mockReturnValue(makeReferenceLap(0, lapTime));
+    mockGetBestRefLap.mockReturnValue(makeReferenceLap(0, lapTime));
     mockInterpolateAtPoint.mockImplementation((_, percentage) =>
       percentage === 0.3 ? 0 : 80,
     );
@@ -107,7 +107,7 @@ describe('getGap', () => {
     const lapTime = 90;
     mockGetLapDistancePercentage.mockReturnValue([0.02, 0.98]);
     mockGetOnPitRoad.mockReturnValue([0, 0]);
-    mockGetBestLap.mockReturnValue(makeReferenceLap(0, lapTime));
+    mockGetBestRefLap.mockReturnValue(makeReferenceLap(0, lapTime));
 
     const timeAtCar0Position = 1.8;
     const timeAtCar1Position = 88.2;
@@ -128,7 +128,7 @@ describe('getRelatives', () => {
 
   it('returns entries sorted from furthest ahead to furthest behind', () => {
     mockGetLapDistancePercentage.mockReturnValue([0.5, 0.6, 0.3]);
-    mockGetBestLap.mockReturnValue(null);
+    mockGetBestRefLap.mockReturnValue(null);
 
     const result = getRelatives(0);
     const relativePercentages = result.map((entry) => entry.relativePct);
@@ -140,7 +140,7 @@ describe('getRelatives', () => {
 
   it('includes the focus car with a relative percentage of 0', () => {
     mockGetLapDistancePercentage.mockReturnValue([0.5, 0.6]);
-    mockGetBestLap.mockReturnValue(null);
+    mockGetBestRefLap.mockReturnValue(null);
 
     const result = getRelatives(0);
     const focusCarEntry = result.find((entry) => entry.carIdx === 0);
@@ -151,7 +151,7 @@ describe('getRelatives', () => {
 
   it('excludes cars not in the activeCarIdxs set', () => {
     mockGetLapDistancePercentage.mockReturnValue([0.5, 0.6, 0.3]);
-    mockGetBestLap.mockReturnValue(null);
+    mockGetBestRefLap.mockReturnValue(null);
 
     const result = getRelatives(0, 5, new Set([0, 2]));
     const carIndexes = result.map((entry) => entry.carIdx);
@@ -165,7 +165,7 @@ describe('getRelatives', () => {
     mockGetLapDistancePercentage.mockReturnValue([
       0.1, 0.2, 0.3, 0.5, 0.6, 0.7, 0.8,
     ]);
-    mockGetBestLap.mockReturnValue(null);
+    mockGetBestRefLap.mockReturnValue(null);
 
     const result = getRelatives(3, 1);
 

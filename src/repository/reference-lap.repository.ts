@@ -5,17 +5,17 @@ export type { ReferenceLap, ReferencePoint } from '#utils/pchip.ts';
 const activeLaps = new Map<number, ReferenceLap>();
 const bestLaps = new Map<number, ReferenceLap>();
 
-export const getActiveLap = (carIdx: number): ReferenceLap | null =>
+export const getActiveRefLap = (carIdx: number): ReferenceLap | null =>
   activeLaps.get(carIdx) ?? null;
 
-export const setActiveLap = (carIdx: number, lap: ReferenceLap): void => {
+export const setActiveRefLap = (carIdx: number, lap: ReferenceLap): void => {
   activeLaps.set(carIdx, lap);
 };
 
-export const getBestLap = (carIdx: number): ReferenceLap | null =>
+export const getBestRefLap = (carIdx: number): ReferenceLap | null =>
   bestLaps.get(carIdx) ?? null;
 
-export const setBestLap = (carIdx: number, lap: ReferenceLap): void => {
+export const setBestRefLap = (carIdx: number, lap: ReferenceLap): void => {
   bestLaps.set(carIdx, lap);
 };
 
