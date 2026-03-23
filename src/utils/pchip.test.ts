@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
+import type { ReferenceLap, ReferencePoint } from '#utils/pchip.ts';
 import {
-  REFERENCE_INTERVAL,
   interpolateAtPoint,
   normalizeKey,
   precomputePCHIPTangents,
+  REFERENCE_INTERVAL,
 } from '#utils/pchip.ts';
-import type { ReferenceLap, ReferencePoint } from '#utils/pchip.ts';
 
 const makePoint = (trackPct: number, time: number): ReferencePoint => ({
   trackPct,
@@ -134,7 +134,10 @@ describe('interpolateAtPoint', () => {
     precomputePCHIPTangents(lap);
 
     const storedPct = 200 * REFERENCE_INTERVAL; // pct=0.5, time=50
-    expect(interpolateAtPoint(lap, storedPct)).toBeCloseTo(storedPct * lapTime, 5);
+    expect(interpolateAtPoint(lap, storedPct)).toBeCloseTo(
+      storedPct * lapTime,
+      5,
+    );
   });
 
   it('wraps time correctly when interpolating across the finish line', () => {
@@ -142,9 +145,24 @@ describe('interpolateAtPoint', () => {
     // Tangents are set manually to match a linear lap (slope = lapTime).
     const lapTime = 100;
     const slope = lapTime;
-    const p0: ReferencePoint = { trackPct: 0.9975, timeElapsedSinceStart: 99.75, tangent: slope };
-    const p1: ReferencePoint = { trackPct: 0, timeElapsedSinceStart: 0, tangent: slope };
-    const lap = makeLap([[0.9975, p0], [0, p1]], 0, lapTime);
+    const p0: ReferencePoint = {
+      trackPct: 0.9975,
+      timeElapsedSinceStart: 99.75,
+      tangent: slope,
+    };
+    const p1: ReferencePoint = {
+      trackPct: 0,
+      timeElapsedSinceStart: 0,
+      tangent: slope,
+    };
+    const lap = makeLap(
+      [
+        [0.9975, p0],
+        [0, p1],
+      ],
+      0,
+      lapTime,
+    );
 
     const targetPct = 0.9975 + REFERENCE_INTERVAL / 2; // 0.99875, midway through the wrap segment
     const expected = 99.875;

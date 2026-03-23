@@ -2,9 +2,9 @@ import { serve } from '@hono/node-server';
 import { createNodeWebSocket } from '@hono/node-ws';
 import { Hono } from 'hono';
 import config from '#config';
+import { shutdown } from '#repository/irsdk.repository.ts';
 import { battleStateRouter } from '#router/battle.router.ts';
 import { closeAllClients, wsHandler } from '#router/websocket.router.ts';
-import { shutdown } from '#repository/irsdk.repository.ts';
 
 const app = new Hono();
 const { injectWebSocket, upgradeWebSocket } = createNodeWebSocket({ app });

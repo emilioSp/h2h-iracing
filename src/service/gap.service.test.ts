@@ -4,6 +4,8 @@ import { getGap, getRelatives } from '#service/gap.service.ts';
 vi.mock('#repository/irsdk.repository.ts', () => ({
   getLapDistPct: vi.fn(),
   getOnPitRoad: vi.fn(),
+  getLaps: vi.fn(),
+  getEstTime: vi.fn(),
 }));
 
 vi.mock('#repository/reference-lap.repository.ts', () => ({
@@ -14,14 +16,27 @@ vi.mock('#utils/pchip.ts', () => ({
   interpolateAtPoint: vi.fn(),
 }));
 
-import { getLapDistPct, getOnPitRoad } from '#repository/irsdk.repository.ts';
+vi.mock('#service/driver.service.ts', () => ({
+  getClassEstLapTime: vi.fn(),
+}));
+
+import {
+  getEstTime,
+  getLapDistPct,
+  getLaps,
+  getOnPitRoad,
+} from '#repository/irsdk.repository.ts';
 import { getBestRefLap } from '#repository/reference-lap.repository.ts';
+import { getClassEstLapTime } from '#service/driver.service.ts';
 import { interpolateAtPoint } from '#utils/pchip.ts';
 
 const mockGetLapDistancePercentage = vi.mocked(getLapDistPct);
 const mockGetOnPitRoad = vi.mocked(getOnPitRoad);
+const mockGetLaps = vi.mocked(getLaps);
+const mockGetEstTime = vi.mocked(getEstTime);
 const mockGetBestRefLap = vi.mocked(getBestRefLap);
 const mockInterpolateAtPoint = vi.mocked(interpolateAtPoint);
+const mockGetClassEstLapTime = vi.mocked(getClassEstLapTime);
 
 const makeReferenceLap = (startTime = 0, finishTime = 90) => ({
   startTime,
@@ -36,6 +51,9 @@ beforeEach(() => {
   mockGetOnPitRoad.mockReturnValue([0, 0, 0, 0, 0]);
   mockGetBestRefLap.mockReturnValue(null);
   mockInterpolateAtPoint.mockReturnValue(0);
+  mockGetLaps.mockReturnValue([2, 2, 2, 2, 2]);
+  mockGetEstTime.mockReturnValue([0, 0, 0, 0, 0]);
+  mockGetClassEstLapTime.mockReturnValue(0);
 });
 
 describe('getGap', () => {
@@ -43,29 +61,23 @@ describe('getGap', () => {
     expect(getGap(2, 2)).toBe(0);
   });
 
-  it('returns NaN when the first car has no lap distance data', () => {
-    mockGetLapDistancePercentage.mockReturnValue([0.5]);
-    expect(getGap(0, 5)).toBeNaN();
-  });
-
-  it('returns NaN when the second car has no lap distance data', () => {
-    mockGetLapDistancePercentage.mockReturnValue([0.5]);
-    expect(getGap(5, 0)).toBeNaN();
-  });
-
-  it('returns NaN when no reference lap is available', () => {
+  it('returns 0 when no reference lap and no class est lap time', () => {
     mockGetLapDistancePercentage.mockReturnValue([0.3, 0.5]);
     mockGetBestRefLap.mockReturnValue(null);
+    mockGetClassEstLapTime.mockReturnValue(0);
+    mockGetEstTime.mockReturnValue([0, 0]);
 
-    expect(getGap(0, 1)).toBeNaN();
+    expect(getGap(0, 1)).toBe(0);
   });
 
-  it('returns NaN when one of the cars is on pit road', () => {
+  it('uses estimated delta when one of the cars is on pit road', () => {
     mockGetLapDistancePercentage.mockReturnValue([0.3, 0.5]);
     mockGetOnPitRoad.mockReturnValue([0, 1]);
     mockGetBestRefLap.mockReturnValue(makeReferenceLap());
+    mockGetClassEstLapTime.mockReturnValue(90);
+    mockGetEstTime.mockReturnValue([27, 45]);
 
-    expect(getGap(0, 1)).toBeNaN();
+    expect(getGap(0, 1)).toBe(45 - 27);
   });
 
   it('returns the time delta using the reference lap when both cars are on track', () => {
@@ -87,17 +99,60 @@ describe('getGap', () => {
     expect(getGap(0, 1)).toBe(timeAtCar1Position - timeAtCar0Position);
   });
 
-  it('subtracts the lap time when the raw delta exceeds half the lap duration', () => {
-    // delta of 80s on a 90s lap → exceeds the 45s half-lap threshold → corrected to 80 - 90 = -10
-    const lapTime = 90;
+  it('corrects gap when raw delta exceeds half the lap duration', () => {
+    // car 1 ahead (50%), car 0 behind (30%) → timeAhead=80, timeBehind=0
+    // raw delta=80 > lapTime/2=45 → corrected to |80-90|=10s
     mockGetLapDistancePercentage.mockReturnValue([0.3, 0.5]);
     mockGetOnPitRoad.mockReturnValue([0, 0]);
-    mockGetBestRefLap.mockReturnValue(makeReferenceLap(0, lapTime));
-    mockInterpolateAtPoint.mockImplementation((_, percentage) =>
-      percentage === 0.3 ? 0 : 80,
+    mockGetBestRefLap.mockReturnValue(makeReferenceLap(0, 90));
+    mockInterpolateAtPoint.mockImplementation((_, pct) =>
+      pct === 0.5 ? 80 : 0,
     );
 
-    expect(getGap(0, 1)).toBe(80 - lapTime);
+    expect(getGap(0, 1)).toBe(10);
+  });
+
+  it('uses estimated delta when behind car has completed fewer than 2 laps', () => {
+    // car 0 at 30%, car 1 at 50% → car 0 is behind with only 1 lap completed
+    mockGetLapDistancePercentage.mockReturnValue([0.3, 0.5]);
+    mockGetLaps.mockReturnValue([1, 2]);
+    mockGetBestRefLap.mockReturnValue(makeReferenceLap());
+    mockGetClassEstLapTime.mockReturnValue(90);
+    mockGetEstTime.mockReturnValue([27, 45]);
+
+    expect(getGap(0, 1)).toBe(45 - 27);
+  });
+
+  it('uses estimated delta when behind car has 2+ laps but no ref lap', () => {
+    mockGetLapDistancePercentage.mockReturnValue([0.3, 0.5]);
+    mockGetLaps.mockReturnValue([3, 3]);
+    mockGetBestRefLap.mockReturnValue(null);
+    mockGetClassEstLapTime.mockReturnValue(90);
+    mockGetEstTime.mockReturnValue([27, 45]);
+
+    expect(getGap(0, 1)).toBe(45 - 27);
+  });
+
+  it('uses reference delta when behind car has 2+ laps and ref lap exists', () => {
+    mockGetLapDistancePercentage.mockReturnValue([0.3, 0.5]);
+    mockGetLaps.mockReturnValue([2, 2]);
+    mockGetBestRefLap.mockReturnValue(makeReferenceLap(0, 90));
+    mockInterpolateAtPoint.mockImplementation((_, pct) =>
+      pct === 0.3 ? 27 : 45,
+    );
+
+    expect(getGap(0, 1)).toBe(45 - 27);
+  });
+
+  it('handles wrap-around with estimated delta', () => {
+    // car 0 at 2% (just crossed finish), car 1 at 98% → car 0 is ahead, car 1 is behind
+    // estTime[ahead=0]=1.8, estTime[behind=1]=88.2 → delta = 1.8 - 88.2 = -86.4 → +90 → 3.6s
+    mockGetLapDistancePercentage.mockReturnValue([0.02, 0.98]);
+    mockGetLaps.mockReturnValue([0, 0]);
+    mockGetClassEstLapTime.mockReturnValue(90);
+    mockGetEstTime.mockReturnValue([1.8, 88.2]);
+
+    expect(getGap(0, 1)).toBeCloseTo(3.6);
   });
 
   it('handles wrap-around when one car just crossed the finish line', () => {
@@ -115,8 +170,9 @@ describe('getGap', () => {
       percentage === 0.02 ? timeAtCar0Position : timeAtCar1Position,
     );
 
-    const rawDelta = timeAtCar1Position - timeAtCar0Position; // 86.4 → exceeds half lap (45s)
-    expect(getGap(0, 1)).toBe(rawDelta - lapTime); // -3.6
+    // referenceDelta(aheadPct=0.02, behindPct=0.98): timeAhead=1.8, timeBehind=88.2
+    // delta = 1.8 - 88.2 = -86.4 → +90 → 3.6s gap
+    expect(getGap(0, 1)).toBeCloseTo(3.6);
   });
 });
 

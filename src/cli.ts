@@ -20,11 +20,9 @@ export const formatTime = (s: number): string => {
 
 export const formatGap = (s: number): string => {
   if (!Number.isFinite(s)) return 'N/A';
-  const sign = s >= 0 ? '+' : '-';
-  const abs = Math.abs(s);
-  const sec = Math.floor(abs);
-  const ms = Math.round((abs % 1) * 1000);
-  return `${sign}${sec}.${String(ms).padStart(3, '0')}s`;
+  const sec = Math.floor(s);
+  const ms = Math.round((s % 1) * 1000);
+  return `${sec}.${String(ms).padStart(3, '0')}s`;
 };
 
 export const formatDelta = (d: number): string => {
@@ -130,7 +128,14 @@ while (true) {
 
   const bestRefLapTime = getBestRefLapTime(playerIdx);
 
-  printBattle(head2Head, deltaAhead, deltaBehind, gapAhead, gapBehind, bestRefLapTime);
+  printBattle(
+    head2Head,
+    deltaAhead,
+    deltaBehind,
+    gapAhead,
+    gapBehind,
+    bestRefLapTime,
+  );
 
   if (config.DATA_MODE === 'mock') break;
   await setTimeout(config.POLL_INTERVAL_MS);

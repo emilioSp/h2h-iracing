@@ -15,6 +15,7 @@ export const refreshDriverInfo = () => {
         car: String(driver.CarScreenName ?? ''),
         iRating: Number(driver.IRating ?? 0),
         license: String(driver.LicString ?? ''),
+        classEstLapTime: driver.CarClassEstLapTime,
       });
     }
   }
@@ -24,6 +25,9 @@ export const refreshDriverInfo = () => {
 
 export const getDriverInfo = (carIdx: number): Driver | null =>
   driverMap.get(carIdx) ?? null;
+
+export const getClassEstLapTime = (carIdx: number): number =>
+  driverMap.get(carIdx)?.classEstLapTime ?? 0;
 
 export const getCarIdxs = (): number[] =>
   getRawDrivers()

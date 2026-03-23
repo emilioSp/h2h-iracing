@@ -7,6 +7,7 @@ const driverSchema = z.object({
   car: z.string(),
   iRating: z.number(),
   license: z.string(),
+  classEstLapTime: z.number(),
 });
 
 const carSchema = z.object({

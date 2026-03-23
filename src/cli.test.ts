@@ -16,6 +16,7 @@ const makeCar = (position: number): Car => ({
     car: 'Mazda MX-5',
     iRating: 2500,
     license: 'A 4.00',
+    classEstLapTime: 90,
   },
   position,
   lastLapTime: 95.5,
@@ -46,16 +47,12 @@ describe('formatTime', () => {
 });
 
 describe('formatGap', () => {
-  it('formats a positive gap with + sign', () => {
-    expect(formatGap(2.567)).toBe('+2.567s');
+  it('formats a gap in seconds', () => {
+    expect(formatGap(2.567)).toBe('2.567s');
   });
 
-  it('formats a negative gap with - sign', () => {
-    expect(formatGap(-1.234)).toBe('-1.234s');
-  });
-
-  it('formats zero as +0.000s', () => {
-    expect(formatGap(0)).toBe('+0.000s');
+  it('formats zero as 0.000s', () => {
+    expect(formatGap(0)).toBe('0.000s');
   });
 
   it('formats Infinity as N/A', () => {
@@ -155,10 +152,10 @@ describe('printBattle', () => {
     const lines = vi.mocked(console.log).mock.calls.flat();
     expect(lines.some((l) => l.includes('P 3'))).toBe(true);
     expect(
-      lines.some((l) => l.includes('Gap ahead') && l.includes('+1.500s')),
+      lines.some((l) => l.includes('Gap ahead') && l.includes('1.500s')),
     ).toBe(true);
     expect(
-      lines.some((l) => l.includes('Gap behind') && l.includes('+0.800s')),
+      lines.some((l) => l.includes('Gap behind') && l.includes('0.800s')),
     ).toBe(true);
     expect(
       lines.some((l) => l.includes('vs ahead') && l.includes('slower')),

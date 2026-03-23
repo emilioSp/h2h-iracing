@@ -1,5 +1,11 @@
-import { getLapDistPct, getOnPitRoad } from '#repository/irsdk.repository.ts';
+import {
+  getEstTime,
+  getLapDistPct,
+  getLaps,
+  getOnPitRoad,
+} from '#repository/irsdk.repository.ts';
 import { getBestRefLap } from '#repository/reference-lap.repository.ts';
+import { getClassEstLapTime } from '#service/driver.service.ts';
 import type { ReferenceLap } from '#utils/pchip.ts';
 import { interpolateAtPoint } from '#utils/pchip.ts';
 
@@ -18,47 +24,62 @@ const getRelativeDistanceInPerc = (pctA: number, pctB: number): number => {
   return rel;
 };
 
+const estimatedDelta = (
+  estTime: number[],
+  classLapTime: number,
+  aheadIdx: number,
+  behindIdx: number,
+): number => {
+  let delta = (estTime[aheadIdx] ?? 0) - (estTime[behindIdx] ?? 0);
+  if (delta <= -classLapTime / 2) delta += classLapTime;
+  else if (delta > classLapTime / 2) delta -= classLapTime;
+  return Math.abs(delta);
+};
+
 const referenceDelta = (
   refLap: ReferenceLap,
-  opponentPct: number,
-  playerPct: number,
+  aheadPct: number,
+  behindPct: number,
 ): number => {
-  const timePlayer = interpolateAtPoint(refLap, playerPct) ?? 0;
-  const timeOpponent = interpolateAtPoint(refLap, opponentPct) ?? 0;
-  let delta = timeOpponent - timePlayer;
+  const timeAhead = interpolateAtPoint(refLap, aheadPct) ?? 0;
+  const timeBehind = interpolateAtPoint(refLap, behindPct) ?? 0;
+  let delta = timeAhead - timeBehind;
   const lapTime = refLap.finishTime - refLap.startTime;
   if (delta <= -lapTime / 2) delta += lapTime;
   else if (delta >= lapTime / 2) delta -= lapTime;
-  return delta;
+  return Math.abs(delta);
 };
 
 export const getGap = (carIdxA: number, carIdxB: number): number => {
   if (carIdxA === carIdxB) return 0;
 
   const lapDistPct = getLapDistPct();
-  const pctA = lapDistPct[carIdxA] ?? -1;
-  const pctB = lapDistPct[carIdxB] ?? -1;
-  if (pctA < 0 || pctB < 0) return NaN;
+  const pctA = lapDistPct[carIdxA];
+  const pctB = lapDistPct[carIdxB];
 
   const relPct = getRelativeDistanceInPerc(pctA, pctB);
   const isBAhead = relPct > 0;
   const aheadIdx = isBAhead ? carIdxB : carIdxA;
   const behindIdx = isBAhead ? carIdxA : carIdxB;
+  const aheadPct = isBAhead ? pctB : pctA;
+  const behindPct = isBAhead ? pctA : pctB;
+
+  const laps = getLaps();
+  const classLapTime = getClassEstLapTime(behindIdx);
+  if ((laps[behindIdx] ?? 0) < 2) {
+    return estimatedDelta(getEstTime(), classLapTime, aheadIdx, behindIdx);
+  }
 
   const onPitRoad = getOnPitRoad();
   const anyOnPit = onPitRoad[aheadIdx] === 1 || onPitRoad[behindIdx] === 1;
-
   const refLap = getBestRefLap(behindIdx);
   const hasRefData = refLap !== null && refLap.finishTime > 0;
 
   if (!anyOnPit && hasRefData) {
-    return referenceDelta(refLap, pctB, pctA);
+    return referenceDelta(refLap, aheadPct, behindPct);
   }
 
-  // we still don't have a refLap. Instead of displaying wrong data, I prefer to return NaN. In this context it means N/A
-  // TODO: add a repository for driverInfo
-  // TODO: fetch classReference lap from driverInfo
-  return NaN;
+  return estimatedDelta(getEstTime(), classLapTime, aheadIdx, behindIdx);
 };
 
 export const getRelatives = (

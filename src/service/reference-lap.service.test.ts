@@ -27,8 +27,11 @@ import {
   setActiveRefLap,
   setBestRefLap,
 } from '#repository/reference-lap.repository.ts';
+import {
+  getBestRefLapTime,
+  updateReferenceLaps,
+} from '#service/reference-lap.service.ts';
 import { precomputePCHIPTangents, REFERENCE_INTERVAL } from '#utils/pchip.ts';
-import { getBestRefLapTime, updateReferenceLaps } from '#service/reference-lap.service.ts';
 
 const mockGetLapDistPct = vi.mocked(getLapDistPct);
 const mockGetSessionTime = vi.mocked(getSessionTime);
