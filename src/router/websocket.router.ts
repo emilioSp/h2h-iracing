@@ -17,7 +17,7 @@ export const wsHandler = () => ({
   },
 });
 
-export const broadcastState = () => {
+export const broadcastHead2Head = () => {
   if (wsClients.size === 0) return;
 
   const h2h = computeHead2Head();
@@ -38,7 +38,7 @@ export const closeAllClients = () => {
 };
 
 const broadcast = async () => {
-  broadcastState();
+  broadcastHead2Head();
   setTimeout(() => broadcast(), config.POLL_INTERVAL_MS);
 };
 
