@@ -42,7 +42,7 @@ npm run cli:start
 
 ## API
 
-### `GET /api/battle`
+### `GET /api/h2h`
 
 Returns the current battle state.
 

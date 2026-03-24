@@ -9,7 +9,8 @@ import {
 } from '#repository/irsdk.repository.ts';
 import type { Car, Driver, Head2Head } from '#schema/battle.schema.ts';
 import { getDriverInfo, refreshDriverInfo } from '#service/driver.service.ts';
-import { updateReferenceLaps } from '#service/reference-lap.service.ts';
+import { getGap } from '#service/gap.service.ts';
+import { getBestRefLapTime, updateReferenceLaps } from '#service/reference-lap.service.ts';
 import { getStandings, type Standing } from '#service/standings.service.ts';
 
 const tick = (): void => {
@@ -72,10 +73,27 @@ export const computeHead2Head = (): Head2Head | null => {
     behind = computeCar(behindIdx, standings);
   }
 
+  const gapAhead = aheadIdx > 0 ? getGap(playerIdx, aheadIdx) : NaN;
+  const gapBehind = behindIdx > 0 ? getGap(playerIdx, behindIdx) : NaN;
+
+  const playerLap = player.lastLapTime;
+  const aheadLap = ahead?.lastLapTime ?? NaN;
+  const behindLap = behind?.lastLapTime ?? NaN;
+
+  const deltaAhead = playerLap > 1 && aheadLap > 1 ? playerLap - aheadLap : NaN;
+  const deltaBehind = playerLap > 1 && behindLap > 1 ? playerLap - behindLap : NaN;
+
+  const bestRefLapTime = getBestRefLapTime(playerIdx);
+
   return {
     sessionTime,
     player,
     ahead,
     behind,
+    gapAhead,
+    gapBehind,
+    deltaAhead,
+    deltaBehind,
+    bestRefLapTime,
   };
 };

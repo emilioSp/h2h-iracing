@@ -1,9 +1,7 @@
 import { setTimeout } from 'node:timers/promises';
 import config from '#config';
 import type { Car, Head2Head } from '#schema/battle.schema.ts';
-import { getGap } from '#service/gap.service.ts';
 import { computeHead2Head } from '#service/head2head.service.ts';
-import { getBestRefLapTime } from '#service/reference-lap.service.ts';
 
 const W = 64;
 const LINE = '═'.repeat(W);
@@ -58,20 +56,15 @@ export const printCar = (car: Car | null): void => {
   row('Best   : ', formatTime(car.bestLapTime));
 };
 
-export const printBattle = (
-  head2Head: Head2Head | null,
-  deltaAhead: number,
-  deltaBehind: number,
-  gapAhead: number,
-  gapBehind: number,
-  bestRefLapTime: number,
-): void => {
+export const printBattle = (head2Head: Head2Head | null): void => {
   console.clear();
 
   if (!head2Head) {
     console.log('Waiting for race session…');
     return;
   }
+
+  const { gapAhead, gapBehind, deltaAhead, deltaBehind, bestRefLapTime } = head2Head;
 
   console.log(`╔${LINE}╗`);
   console.log(`║  ${pad('H2H iRACING BATTLE MONITOR', W)}║`);
@@ -106,36 +99,7 @@ export const printBattle = (
 while (true) {
   const head2Head = computeHead2Head();
 
-  if (!head2Head) {
-    printBattle(null, NaN, NaN, NaN, NaN, NaN);
-    continue;
-  }
-
-  const playerIdx = head2Head.player.driver.carIdx;
-  const aheadIdx = head2Head.ahead?.driver.carIdx ?? null;
-  const behindIdx = head2Head.behind?.driver.carIdx ?? null;
-
-  const gapAhead = aheadIdx !== null ? getGap(playerIdx, aheadIdx) : NaN;
-  const gapBehind = behindIdx !== null ? getGap(playerIdx, behindIdx) : NaN;
-
-  const playerLap = head2Head.player.lastLapTime;
-  const aheadLap = head2Head.ahead?.lastLapTime ?? NaN;
-  const behindLap = head2Head.behind?.lastLapTime ?? NaN;
-
-  const deltaAhead = playerLap > 1 && aheadLap > 1 ? playerLap - aheadLap : NaN;
-  const deltaBehind =
-    playerLap > 1 && behindLap > 1 ? playerLap - behindLap : NaN;
-
-  const bestRefLapTime = getBestRefLapTime(playerIdx);
-
-  printBattle(
-    head2Head,
-    deltaAhead,
-    deltaBehind,
-    gapAhead,
-    gapBehind,
-    bestRefLapTime,
-  );
+  printBattle(head2Head);
 
   if (config.DATA_MODE === 'mock') break;
   await setTimeout(config.POLL_INTERVAL_MS);

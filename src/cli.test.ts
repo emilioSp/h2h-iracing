@@ -125,7 +125,7 @@ describe('printBattle', () => {
   });
 
   it('prints waiting message when state is null', () => {
-    printBattle(null, NaN, NaN, NaN, NaN, NaN);
+    printBattle(null);
     expect(console.clear).toHaveBeenCalledOnce();
     expect(
       vi
@@ -136,19 +136,17 @@ describe('printBattle', () => {
   });
 
   it('prints player position and gap/delta stats', () => {
-    printBattle(
-      {
-        sessionTime: 1234,
-        player: makeCar(3),
-        ahead: null,
-        behind: null,
-      },
-      0.5,
-      -0.3,
-      1.5,
-      0.8,
-      NaN,
-    );
+    printBattle({
+      sessionTime: 1234,
+      player: makeCar(3),
+      ahead: null,
+      behind: null,
+      gapAhead: 1.5,
+      gapBehind: 0.8,
+      deltaAhead: 0.5,
+      deltaBehind: -0.3,
+      bestRefLapTime: NaN,
+    });
     const lines = vi.mocked(console.log).mock.calls.flat();
     expect(lines.some((l) => l.includes('P 3'))).toBe(true);
     expect(
@@ -168,19 +166,17 @@ describe('printBattle', () => {
   });
 
   it('prints bestRefLapTime when available', () => {
-    printBattle(
-      {
-        sessionTime: 1234,
-        player: makeCar(3),
-        ahead: null,
-        behind: null,
-      },
-      NaN,
-      NaN,
-      NaN,
-      NaN,
-      94.567,
-    );
+    printBattle({
+      sessionTime: 1234,
+      player: makeCar(3),
+      ahead: null,
+      behind: null,
+      gapAhead: NaN,
+      gapBehind: NaN,
+      deltaAhead: NaN,
+      deltaBehind: NaN,
+      bestRefLapTime: 94.567,
+    });
     const lines = vi.mocked(console.log).mock.calls.flat();
     expect(
       lines.some((l) => l.includes('Best ref') && l.includes('01:34.567')),
@@ -188,19 +184,17 @@ describe('printBattle', () => {
   });
 
   it('prints --:--.--- for bestRefLapTime when not available', () => {
-    printBattle(
-      {
-        sessionTime: 1234,
-        player: makeCar(3),
-        ahead: null,
-        behind: null,
-      },
-      NaN,
-      NaN,
-      NaN,
-      NaN,
-      NaN,
-    );
+    printBattle({
+      sessionTime: 1234,
+      player: makeCar(3),
+      ahead: null,
+      behind: null,
+      gapAhead: NaN,
+      gapBehind: NaN,
+      deltaAhead: NaN,
+      deltaBehind: NaN,
+      bestRefLapTime: NaN,
+    });
     const lines = vi.mocked(console.log).mock.calls.flat();
     expect(
       lines.some((l) => l.includes('Best ref') && l.includes('--:--.---')),

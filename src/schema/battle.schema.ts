@@ -23,6 +23,11 @@ export const head2HeadSchema = z.object({
   player: carSchema,
   ahead: carSchema.nullable(),
   behind: carSchema.nullable(),
+  gapAhead: z.number(),
+  gapBehind: z.number(),
+  deltaAhead: z.number(),
+  deltaBehind: z.number(),
+  bestRefLapTime: z.number(),
 });
 
 export type Driver = z.infer<typeof driverSchema>;
