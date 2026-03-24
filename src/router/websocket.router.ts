@@ -20,12 +20,12 @@ export const wsHandler = () => ({
 export const broadcastState = () => {
   if (wsClients.size === 0) return;
 
-  const state = computeHead2Head();
-  if (!state) {
+  const h2h = computeHead2Head();
+  if (!h2h) {
     return;
   }
 
-  const json = JSON.stringify({ data: state });
+  const json = JSON.stringify({ data: h2h });
   for (const ws of wsClients) {
     ws.send(json);
   }
