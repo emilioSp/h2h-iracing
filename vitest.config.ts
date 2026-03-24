@@ -7,5 +7,9 @@ export default defineConfig({
       ...loadEnv('', process.cwd(), ''),
       DATA_MODE: 'mock',
     },
+    coverage: {
+      include: ['src/**/*.ts'],
+      exclude: ['src/**/*.test.ts'],
+    },
   },
 });

@@ -1,6 +1,7 @@
 import { setTimeout } from 'node:timers/promises';
 import config from '#config';
-import type { Car, Head2Head } from '#schema/battle.schema.ts';
+import type { Car } from '#schema/car.schema.ts';
+import type { Head2Head } from '#schema/head2head.schema.ts';
 import { computeHead2Head } from '#service/head2head.service.ts';
 
 const W = 64;

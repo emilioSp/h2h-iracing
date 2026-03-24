@@ -7,10 +7,15 @@ import {
   isConnected,
   refreshTelemetry,
 } from '#repository/irsdk.repository.ts';
-import type { Car, Driver, Head2Head } from '#schema/battle.schema.ts';
+import type { Car } from '#schema/car.schema.ts';
+import type { Driver } from '#schema/driver.schema.ts';
+import type { Head2Head } from '#schema/head2head.schema.ts';
 import { getDriverInfo, refreshDriverInfo } from '#service/driver.service.ts';
 import { getGap } from '#service/gap.service.ts';
-import { getBestRefLapTime, updateReferenceLaps } from '#service/reference-lap.service.ts';
+import {
+  getBestRefLapTime,
+  updateReferenceLaps,
+} from '#service/reference-lap.service.ts';
 import { getStandings, type Standing } from '#service/standings.service.ts';
 
 const tick = (): void => {
@@ -81,7 +86,8 @@ export const computeHead2Head = (): Head2Head | null => {
   const behindLap = behind?.lastLapTime ?? NaN;
 
   const deltaAhead = playerLap > 1 && aheadLap > 1 ? playerLap - aheadLap : NaN;
-  const deltaBehind = playerLap > 1 && behindLap > 1 ? playerLap - behindLap : NaN;
+  const deltaBehind =
+    playerLap > 1 && behindLap > 1 ? playerLap - behindLap : NaN;
 
   const bestRefLapTime = getBestRefLapTime(playerIdx);
 
