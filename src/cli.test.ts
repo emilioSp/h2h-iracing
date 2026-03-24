@@ -4,8 +4,8 @@ import {
   formatDelta,
   formatGap,
   formatTime,
-  printBattle,
   printCar,
+  printHead2Head,
 } from './cli.ts';
 
 const makeCar = (position: number): Car => ({
@@ -125,7 +125,7 @@ describe('printBattle', () => {
   });
 
   it('prints waiting message when state is null', () => {
-    printBattle(null);
+    printHead2Head(null);
     expect(console.clear).toHaveBeenCalledOnce();
     expect(
       vi
@@ -136,7 +136,7 @@ describe('printBattle', () => {
   });
 
   it('prints player position and gap/delta stats', () => {
-    printBattle({
+    printHead2Head({
       sessionTime: 1234,
       player: makeCar(3),
       ahead: null,
@@ -166,7 +166,7 @@ describe('printBattle', () => {
   });
 
   it('prints bestRefLapTime when available', () => {
-    printBattle({
+    printHead2Head({
       sessionTime: 1234,
       player: makeCar(3),
       ahead: null,
@@ -184,7 +184,7 @@ describe('printBattle', () => {
   });
 
   it('prints --:--.--- for bestRefLapTime when not available', () => {
-    printBattle({
+    printHead2Head({
       sessionTime: 1234,
       player: makeCar(3),
       ahead: null,

@@ -56,7 +56,7 @@ export const printCar = (car: Car | null): void => {
   row('Best   : ', formatTime(car.bestLapTime));
 };
 
-export const printBattle = (head2Head: Head2Head | null): void => {
+export const printHead2Head = (head2Head: Head2Head | null): void => {
   console.clear();
 
   if (!head2Head) {
@@ -64,7 +64,8 @@ export const printBattle = (head2Head: Head2Head | null): void => {
     return;
   }
 
-  const { gapAhead, gapBehind, deltaAhead, deltaBehind, bestRefLapTime } = head2Head;
+  const { gapAhead, gapBehind, deltaAhead, deltaBehind, bestRefLapTime } =
+    head2Head;
 
   console.log(`╔${LINE}╗`);
   console.log(`║  ${pad('H2H iRACING BATTLE MONITOR', W)}║`);
@@ -99,7 +100,7 @@ export const printBattle = (head2Head: Head2Head | null): void => {
 while (true) {
   const head2Head = computeHead2Head();
 
-  printBattle(head2Head);
+  printHead2Head(head2Head);
 
   if (config.DATA_MODE === 'mock') break;
   await setTimeout(config.POLL_INTERVAL_MS);
