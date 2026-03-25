@@ -36,7 +36,7 @@ const collectLapData = (
         [key, { trackPct, timeElapsedSinceStart: 0, tangent: undefined }],
       ]),
       lastTrackedPct: trackPct,
-      isCleanLap: isLapClean(trackSurface, isOnPitRoad),
+      isCleanLap: isLapClean(trackSurface, isOnPitRoad), // TODO: this is not working as intended. It depends on the sampling rate and the car speed. We need to check if a lap is clean or not
     });
     return;
   }
