@@ -1,19 +1,21 @@
 import type { Context } from 'hono';
-import { streamSSE, type SSEStreamingApi } from 'hono/streaming';
+import { type SSEStreamingApi, streamSSE } from 'hono/streaming';
 import config from '#config';
 import { computeHead2Head } from '#service/head2head.service.ts';
 
 const sseClients = new Set<SSEStreamingApi>();
 
 export const sseHandler = (c: Context) =>
-  streamSSE(c, (stream) =>
-    new Promise<void>((resolve) => {
-      sseClients.add(stream);
-      stream.onAbort(() => {
-        sseClients.delete(stream);
-        resolve();
-      });
-    }),
+  streamSSE(
+    c,
+    (stream) =>
+      new Promise<void>((resolve) => {
+        sseClients.add(stream);
+        stream.onAbort(() => {
+          sseClients.delete(stream);
+          resolve();
+        });
+      }),
   );
 
 export const broadcastHead2Head = async () => {

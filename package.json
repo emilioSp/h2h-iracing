@@ -7,35 +7,44 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "server:dev:mock": "DATA_MODE=mock node --env-file=.env --watch src/server.ts",
+    "server:dev:mock": "DATA_MODE=mock node --env-file=.env --watch src/server/server.ts",
     "cli:dev:mock": "DATA_MODE=mock node --env-file=.env examples/cli.ts",
-    "server:start": "node --env-file=.env src/server.ts",
+    "server:start": "node --env-file=.env src/server/server.ts",
     "cli:start": "node --env-file=.env examples/cli.ts",
     "test": "vitest run --coverage",
     "lint": "biome check --write .",
-    "build": "tsc"
+    "build": "tsc",
+    "ui:dev": "vite --config src/ui/vite.config.ts"
   },
   "imports": {
-    "#service/*": "./src/service/*",
-    "#repository/*": "./src/repository/*",
-    "#schema/*": "./src/schema/*",
-    "#config": "./src/config.ts",
-    "#router/*": "./src/router/*",
-    "#utils/*": "./src/utils/*"
+    "#service/*": "./src/server/service/*",
+    "#repository/*": "./src/server/repository/*",
+    "#schema/*": "./src/server/schema/*",
+    "#config": "./src/server/config.ts",
+    "#router/*": "./src/server/router/*",
+    "#utils/*": "./src/server/utils/*"
   },
   "dependencies": {
     "@emiliosp/node-iracing-sdk": "1.0.9",
     "@hono/node-server": "1.19.10",
+    "@tailwindcss/vite": "^4.2.2",
     "hono": "4.12.7",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "tailwindcss": "^4.2.2",
     "zod": "4.3.6"
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.5",
     "@types/node": "24.11.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.0.0",
     "@vitest/coverage-v8": "^4.0.18",
     "eventsource": "4.1.0",
     "tsx": "4.21.0",
     "typescript": "5.9.3",
+    "vite": "7.3.1",
     "vitest": "4.0.18"
   }
 }
