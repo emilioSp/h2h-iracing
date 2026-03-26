@@ -11,20 +11,20 @@ type Props = { gap: number; delta: number };
 export const BattleRow = ({ gap, delta }: Props) => (
   <div className="grid grid-cols-2 h-full">
     <div className="grid place-content-center justify-items-center border-r border-[#2a2a2a]">
-      <span className="font-mono text-5xl font-bold text-white leading-none">
+      <span className="font-mono text-3xl font-bold text-white leading-none">
         {formatGap(gap)}
       </span>
-      <span className="text-[10px] text-[#555] uppercase tracking-widest mt-1">
+      <span className="text-[12px] text-[#555] uppercase tracking-widest mt-1">
         Gap
       </span>
     </div>
     <div className="grid place-content-center justify-items-center">
       <span
-        className={`font-mono text-5xl font-bold leading-none ${deltaColors[deltaClass(delta)]}`}
+        className={`font-mono text-3xl font-bold leading-none ${deltaColors[deltaClass(delta)]}`}
       >
         {formatDelta(delta)}
       </span>
-      <span className="text-[10px] text-[#555] uppercase tracking-widest mt-1">
+      <span className="text-[12px] text-[#555] uppercase tracking-widest mt-1">
         Delta
       </span>
     </div>
