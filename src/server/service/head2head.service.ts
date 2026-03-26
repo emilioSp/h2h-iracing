@@ -30,16 +30,14 @@ const tick = (): void => {
 export const computeCar = (
   carIdx: number,
   standings: Standing[],
-): (Car & { driver: Driver }) | null => {
-  let car: (Car & { driver: Driver }) | null = null;
-
+): Car & { driver: Driver } => {
   const carStanding = standings.find((s) => s.carIdx === carIdx)!;
 
   const driver = getDriverInfo(carIdx)!;
 
   const laps = getLaps();
 
-  car = {
+  const car = {
     driver,
     position: carStanding.pos,
     lastLapTime: getLastLapTime(carIdx),

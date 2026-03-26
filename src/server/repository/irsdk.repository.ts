@@ -19,9 +19,13 @@ export const shutdown = (): void => ir.shutdown();
 export const getPlayerCarIdx = (): number =>
   ir.get(VARS.PLAYER_CAR_IDX)[0] ?? -1;
 export const getLastLapTime = (carIdx: number): number =>
-  ir.get(VARS.CAR_IDX_LAST_LAP_TIME)[carIdx] ?? NaN;
+  ir.get(VARS.CAR_IDX_LAST_LAP_TIME)[carIdx] > 0
+    ? ir.get(VARS.CAR_IDX_LAST_LAP_TIME)[carIdx]
+    : NaN;
 export const getBestLapTime = (carIdx: number): number =>
-  ir.get(VARS.CAR_IDX_BEST_LAP_TIME)[carIdx] ?? NaN;
+  ir.get(VARS.CAR_IDX_BEST_LAP_TIME)[carIdx] > 0
+    ? ir.get(VARS.CAR_IDX_BEST_LAP_TIME)[carIdx]
+    : NaN;
 export const getLaps = (): number[] => ir.get(VARS.CAR_IDX_LAP) ?? [];
 export const getSessionTime = (): number => ir.get(VARS.SESSION_TIME)[0] ?? 0;
 export const getLapDistPct = (): number[] =>
