@@ -3,6 +3,8 @@
     "allowImportingTsExtensions": true,
     "target": "esnext",
     "module": "nodenext",
+    "jsx": "react-jsx",
+    "lib": ["dom", "dom.iterable", "esnext"],
     "strict": true,
     "verbatimModuleSyntax": true,
     "erasableSyntaxOnly": true,
@@ -10,5 +12,6 @@
     "skipLibCheck": true,
     "types": ["node"]
   },
-  "exclude": ["node_modules"]
+  "include": ["src"],
+  "exclude": ["./node_modules"]
 }

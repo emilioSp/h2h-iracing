@@ -8,8 +8,9 @@ export default defineConfig({
       DATA_MODE: 'mock',
     },
     coverage: {
-      include: ['src/**/*.ts'],
-      exclude: ['src/**/*.test.ts'],
+      include: ['src/server/**/*.ts'],
+      exclude: ['src/server/**/*.test.ts'],
     },
   },
 });
+

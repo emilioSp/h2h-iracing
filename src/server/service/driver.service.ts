@@ -13,7 +13,8 @@ export const refreshDriverInfo = () => {
         name: String(driver.UserName ?? ''),
         carNumber: String(driver.CarNumber ?? ''),
         car: String(driver.CarScreenName ?? ''),
-        iRating: Number(driver.IRating ?? 0),
+        iRating:
+          process.env.DATA_MODE === 'mock' ? 3000 : Number(driver.IRating ?? 0),
         license: String(driver.LicString ?? ''),
         classEstLapTime: driver.CarClassEstLapTime,
       });

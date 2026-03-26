@@ -1,7 +1,7 @@
 import {
-  getBestLapTimes,
+  getBestLapTime,
   getLaps,
-  getLastLapTimes,
+  getLastLapTime,
   getPlayerCarIdx,
   getSessionTime,
   isConnected,
@@ -37,15 +37,13 @@ export const computeCar = (
 
   const driver = getDriverInfo(carIdx)!;
 
-  const lastLapTimes = getLastLapTimes();
-  const bestLapTimes = getBestLapTimes();
   const laps = getLaps();
 
   car = {
     driver,
     position: carStanding.pos,
-    lastLapTime: (lastLapTimes[carIdx] ?? 0) > 0 ? lastLapTimes[carIdx] : NaN,
-    bestLapTime: (bestLapTimes[carIdx] ?? 0) > 0 ? bestLapTimes[carIdx] : NaN,
+    lastLapTime: getLastLapTime(carIdx),
+    bestLapTime: getBestLapTime(carIdx),
     lap: laps[carIdx] ?? 0,
   };
 
@@ -55,7 +53,7 @@ export const computeCar = (
 export const computeHead2Head = (): Head2Head | null => {
   tick();
 
-  const playerIdx = getPlayerCarIdx();
+  const playerIdx = process.env.DATA_MODE === 'mock' ? 4 : getPlayerCarIdx();
   if (playerIdx < 0) return null;
 
   const standings = getStandings();
