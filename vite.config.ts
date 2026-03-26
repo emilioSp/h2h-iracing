@@ -1,20 +1,9 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
-import { loadEnv } from 'vite';
-import { defineConfig } from 'vitest/config';
+import { defineConfig } from 'vite';
 
 export default defineConfig({
-  test: {
-    env: {
-      ...loadEnv('', process.cwd(), ''),
-      DATA_MODE: 'mock',
-    },
-    coverage: {
-      include: ['src/**/*.ts'],
-      exclude: ['src/**/*.test.ts'],
-    },
-  },
-  root: 'src',
+  root: 'src/ui',
   plugins: [react(), tailwindcss()],
   server: {
     proxy: {

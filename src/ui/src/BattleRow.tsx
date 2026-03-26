@@ -9,8 +9,8 @@ const deltaColors: Record<string, string> = {
 type Props = { gap: number; delta: number };
 
 export const BattleRow = ({ gap, delta }: Props) => (
-  <div className="flex h-full">
-    <div className="flex flex-col items-center justify-center flex-1 border-r border-[#2a2a2a]">
+  <div className="grid grid-cols-2 h-full">
+    <div className="grid place-content-center justify-items-center border-r border-[#2a2a2a]">
       <span className="font-mono text-5xl font-bold text-white leading-none">
         {formatGap(gap)}
       </span>
@@ -18,7 +18,7 @@ export const BattleRow = ({ gap, delta }: Props) => (
         Gap
       </span>
     </div>
-    <div className="flex flex-col items-center justify-center flex-1">
+    <div className="grid place-content-center justify-items-center">
       <span
         className={`font-mono text-5xl font-bold leading-none ${deltaColors[deltaClass(delta)]}`}
       >

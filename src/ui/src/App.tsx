@@ -18,45 +18,45 @@ export const App = () => {
 
   if (!h2h) {
     return (
-      <div className="flex items-center justify-center w-[800px] h-[480px] bg-black font-mono text-lg text-[#444] uppercase tracking-[4px]">
+      <div className="grid place-items-center w-[800px] h-[480px] bg-black font-mono text-lg text-[#444] uppercase tracking-[4px]">
         Waiting for session…
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col w-[800px] h-[480px] bg-black text-white">
+    <div className="grid grid-rows-[150px_180px_150px] w-[800px] h-[480px] bg-black text-white">
       {/* Ahead: car (60px) + battle (90px) = 150px */}
-      <div className="flex flex-col flex-[0_0_150px] border-b border-[#333]">
-        <div className="flex-[0_0_60px] border-b border-[#2a2a2a]">
+      <div className="grid grid-rows-[60px_1fr] border-b border-[#333]">
+        <div className="border-b border-[#2a2a2a]">
           {h2h.ahead ? (
             <CarCard car={h2h.ahead} />
           ) : (
-            <div className="flex items-center justify-center h-full font-mono text-sm text-[#444] uppercase tracking-[4px]">
+            <div className="grid place-items-center h-full font-mono text-sm text-[#444] uppercase tracking-[4px]">
               Race leader
             </div>
           )}
         </div>
-        <div className="flex-1">
+        <div>
           <BattleRow gap={h2h.gapAhead} delta={h2h.deltaAhead} />
         </div>
       </div>
 
       {/* Player: 180px */}
-      <div className="flex-[0_0_180px] bg-[#060612] border-b border-[#1e3a6e]">
+      <div className="bg-[#060612] border-b border-[#1e3a6e]">
         <CarCard car={h2h.player} variant="player" />
       </div>
 
       {/* Behind: battle (90px) + car (60px) = 150px */}
-      <div className="flex flex-col flex-[0_0_150px]">
-        <div className="flex-1 border-b border-[#2a2a2a]">
+      <div className="grid grid-rows-[1fr_60px]">
+        <div className="border-b border-[#2a2a2a]">
           <BattleRow gap={h2h.gapBehind} delta={h2h.deltaBehind} />
         </div>
-        <div className="flex-[0_0_60px]">
+        <div>
           {h2h.behind ? (
             <CarCard car={h2h.behind} />
           ) : (
-            <div className="flex items-center justify-center h-full font-mono text-sm text-[#444] uppercase tracking-[4px]">
+            <div className="grid place-items-center h-full font-mono text-sm text-[#444] uppercase tracking-[4px]">
               Last place
             </div>
           )}
