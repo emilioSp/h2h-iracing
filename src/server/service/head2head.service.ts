@@ -4,7 +4,7 @@ import {
   getLastLapTime,
   getPlayerCarIdx,
   getSessionTime,
-  isConnected,
+  isIRacingConnected,
   refreshTelemetry,
 } from '#repository/irsdk.repository.ts';
 import type { Car } from '#schema/car.schema.ts';
@@ -18,13 +18,12 @@ import {
 } from '#service/reference-lap.service.ts';
 import { getStandings, type Standing } from '#service/standings.service.ts';
 
-const tick = (): void => {
-  if (!isConnected()) {
-    throw new Error('Not connected to iRacing');
-  }
+const tick = (): boolean => {
+  if (!isIRacingConnected()) return false;
   refreshTelemetry();
   refreshDriverInfo();
   updateReferenceLaps();
+  return true;
 };
 
 export const computeCar = (
@@ -49,7 +48,7 @@ export const computeCar = (
 };
 
 export const computeHead2Head = (): Head2Head | null => {
-  tick();
+  if (!tick()) return null;
 
   const playerIdx = process.env.DATA_MODE === 'mock' ? 4 : getPlayerCarIdx();
   if (playerIdx < 0) return null;

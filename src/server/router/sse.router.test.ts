@@ -1,125 +1,83 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import * as iracingRepository from '#repository/irsdk.repository.ts';
 import * as head2headService from '#service/head2head.service.ts';
-import {
-  broadcastHead2Head,
-  closeAllClients,
-  sseHandler,
-} from './sse.router.ts';
+import { sseRouter } from './sse.router.ts';
 
-const makeStream = () => {
-  let abortCb: (() => void) | undefined;
-  return {
-    writeSSE: vi.fn().mockResolvedValue(undefined),
-    abort: vi.fn(),
-    onAbort: vi.fn((cb: () => void) => {
-      abortCb = cb;
-    }),
-    simulateDisconnect: () => abortCb?.(),
-  };
-};
+vi.mock('hono/streaming');
 
 afterEach(() => {
-  closeAllClients();
   vi.restoreAllMocks();
   vi.clearAllMocks();
 });
 
-describe('sseHandler', () => {
-  it('registers client on connect and removes on disconnect', async () => {
-    const stream = makeStream();
+const makeStream = () => ({
+  writeSSE: vi.fn().mockResolvedValue(undefined),
+  sleep: vi.fn().mockResolvedValue(undefined),
+});
 
-    // Spy on broadcastHead2Head to verify client is registered
-    vi.spyOn(head2headService, 'computeHead2Head').mockReturnValue({
-      sessionTime: 1,
-    } as never);
+const setupStreamSSE = async () => {
+  const { streamSSE } = await import('hono/streaming');
+  const stream = makeStream();
+  let run: () => Promise<void>;
 
-    // Simulate what streamSSE does: call the callback with the stream
-    const { streamSSE } = await import('hono/streaming');
-    vi.mocked(streamSSE).mockImplementation((_c, cb) => {
-      cb(stream as never);
-      return new Response();
+  vi.mocked(streamSSE).mockImplementationOnce((_c, cb, onErr) => {
+    run = async () => {
+      try {
+        await cb(stream as never);
+      } catch (err) {
+        await onErr!(err as Error, stream as never);
+      }
+    };
+    return new Response();
+  });
+
+  return { stream, run: () => run() };
+};
+
+describe('sseRouter', () => {
+  it('writes error event when iRacing is not connected', async () => {
+    const { stream, run } = await setupStreamSSE();
+    vi.spyOn(iracingRepository, 'isIRacingConnected').mockReturnValue(false);
+
+    sseRouter({} as never);
+    await run();
+
+    expect(stream.writeSSE).toHaveBeenCalledWith({
+      event: 'error',
+      data: 'iRacing is not available',
     });
-    vi.mock('hono/streaming');
-
-    sseHandler({} as never);
-    await broadcastHead2Head();
-    expect(stream.writeSSE).toHaveBeenCalledOnce();
-
-    stream.simulateDisconnect();
-    await broadcastHead2Head();
-    expect(stream.writeSSE).toHaveBeenCalledOnce(); // still once — removed
-  });
-});
-
-describe('broadcastHead2Head', () => {
-  it('does nothing when no clients connected', async () => {
-    const spy = vi.spyOn(head2headService, 'computeHead2Head');
-    await broadcastHead2Head();
-    expect(spy).not.toHaveBeenCalled();
   });
 
-  it('does nothing when computeHead2Head returns null', async () => {
-    // Add a client directly by calling sseHandler
-    // Use a simpler approach: test broadcastHead2Head in isolation
+  it('writes error event when no active session', async () => {
+    const { stream, run } = await setupStreamSSE();
+    vi.spyOn(iracingRepository, 'isIRacingConnected').mockReturnValue(true);
     vi.spyOn(head2headService, 'computeHead2Head').mockReturnValue(null);
-    // No clients, so writeSSE would never be called regardless
-    await broadcastHead2Head();
-    // If there were clients, writeSSE wouldn't be called because h2h is null
-    expect(head2headService.computeHead2Head).not.toHaveBeenCalled(); // no clients → early return
+
+    sseRouter({} as never);
+    await run();
+
+    expect(stream.writeSSE).toHaveBeenCalledWith({
+      event: 'error',
+      data: 'No session is available',
+    });
   });
 
-  it('sends JSON with real data to all connected clients', async () => {
-    const stream1 = makeStream();
-    const stream2 = makeStream();
+  it('streams h2h data then writes disconnect error', async () => {
+    const { stream, run } = await setupStreamSSE();
+    vi.spyOn(iracingRepository, 'isIRacingConnected')
+      .mockReturnValueOnce(true) // while check
+      .mockReturnValueOnce(true) // inside computeHead2Head/tick
+      .mockReturnValueOnce(false); // while check after sleep
 
-    const { streamSSE } = await import('hono/streaming');
-    vi.mocked(streamSSE)
-      .mockImplementationOnce((_c, cb) => {
-        cb(stream1 as never);
-        return new Response();
-      })
-      .mockImplementationOnce((_c, cb) => {
-        cb(stream2 as never);
-        return new Response();
-      });
-    vi.mock('hono/streaming');
+    sseRouter({} as never);
+    await run();
 
-    sseHandler({} as never);
-    sseHandler({} as never);
-
-    await broadcastHead2Head();
-
-    expect(stream1.writeSSE).toHaveBeenCalledOnce();
-    expect(stream2.writeSSE).toHaveBeenCalledOnce();
-    const payload = JSON.parse(stream1.writeSSE.mock.calls[0][0].data);
-    expect(payload.data.sessionTime).toBeGreaterThan(0);
-    expect(payload.data.player.position).toBeGreaterThan(0);
-  });
-});
-
-describe('closeAllClients', () => {
-  it('calls abort on all connected clients', async () => {
-    const stream1 = makeStream();
-    const stream2 = makeStream();
-
-    const { streamSSE } = await import('hono/streaming');
-    vi.mocked(streamSSE)
-      .mockImplementationOnce((_c, cb) => {
-        cb(stream1 as never);
-        return new Response();
-      })
-      .mockImplementationOnce((_c, cb) => {
-        cb(stream2 as never);
-        return new Response();
-      });
-    vi.mock('hono/streaming');
-
-    sseHandler({} as never);
-    sseHandler({} as never);
-
-    closeAllClients();
-
-    expect(stream1.abort).toHaveBeenCalledOnce();
-    expect(stream2.abort).toHaveBeenCalledOnce();
+    expect(stream.writeSSE).toHaveBeenCalledTimes(2);
+    const dataPayload = JSON.parse(stream.writeSSE.mock.calls[0][0].data);
+    expect(dataPayload.data.sessionTime).toBeGreaterThan(0);
+    expect(stream.writeSSE).toHaveBeenLastCalledWith({
+      event: 'error',
+      data: 'iRacing is not available',
+    });
   });
 });

@@ -20,18 +20,19 @@ const makeRawDriver = (
     LicString: string;
     CarClassEstLapTime: number;
   }> = {},
-) => ({
-  CarIdx: 1,
-  CarClassID: 100,
-  CarIsPaceCar: 0,
-  UserName: 'Driver One',
-  CarNumber: '1',
-  CarScreenNameShort: 'GT3 Car',
-  IRating: '2000',
-  LicString: 'A 4.00',
-  CarClassEstLapTime: 90.0,
-  ...overrides,
-}) as unknown as ReturnType<typeof irsdkRepo.getRawDrivers>[number];
+) =>
+  ({
+    CarIdx: 1,
+    CarClassID: 100,
+    CarIsPaceCar: 0,
+    UserName: 'Driver One',
+    CarNumber: '1',
+    CarScreenNameShort: 'GT3 Car',
+    IRating: '2000',
+    LicString: 'A 4.00',
+    CarClassEstLapTime: 90.0,
+    ...overrides,
+  }) as unknown as ReturnType<typeof irsdkRepo.getRawDrivers>[number];
 
 describe('driver.service', () => {
   describe('getFilteredRawDrivers', () => {
@@ -72,7 +73,12 @@ describe('driver.service', () => {
       vi.spyOn(irsdkRepo, 'getPlayerCarIdx').mockReturnValue(1);
       vi.spyOn(irsdkRepo, 'getRawDrivers').mockReturnValue([
         makeRawDriver({ CarIdx: 1, CarClassID: 100 }), // player
-        makeRawDriver({ CarIdx: 2, CarClassID: 100, CarIsPaceCar: 1, UserName: 'Pace Car' }),
+        makeRawDriver({
+          CarIdx: 2,
+          CarClassID: 100,
+          CarIsPaceCar: 1,
+          UserName: 'Pace Car',
+        }),
         makeRawDriver({ CarIdx: 3, CarClassID: 100, UserName: 'Racer' }),
       ]);
 
@@ -86,7 +92,11 @@ describe('driver.service', () => {
       vi.spyOn(irsdkRepo, 'getPlayerCarIdx').mockReturnValue(1);
       vi.spyOn(irsdkRepo, 'getRawDrivers').mockReturnValue([
         makeRawDriver({ CarIdx: 1, CarClassID: 100, UserName: 'Player' }),
-        makeRawDriver({ CarIdx: 2, CarClassID: 200, UserName: 'Prototype Driver' }),
+        makeRawDriver({
+          CarIdx: 2,
+          CarClassID: 200,
+          UserName: 'Prototype Driver',
+        }),
       ]);
 
       const result = getFilteredRawDrivers();

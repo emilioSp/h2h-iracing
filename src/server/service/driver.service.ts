@@ -10,12 +10,12 @@ export const getFilteredRawDrivers = () => {
   const playerCarIdx = getPlayerCarIdx();
 
   const rawDrivers = getRawDrivers();
-  const playerCarClassID = rawDrivers.find(
-    (d) => d.CarIdx === playerCarIdx,
-  )!.CarClassID;
+  const player = rawDrivers.find((d) => d.CarIdx === playerCarIdx);
+  if (!player) return [];
 
   return rawDrivers.filter(
-    (d) => d.CarIdx > 0 && d.CarClassID === playerCarClassID && !d.CarIsPaceCar,
+    (d) =>
+      d.CarIdx > 0 && d.CarClassID === player.CarClassID && !d.CarIsPaceCar,
   );
 };
 

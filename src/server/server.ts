@@ -3,12 +3,12 @@ import { Hono } from 'hono';
 import config from '#config';
 import { shutdown } from '#repository/irsdk.repository.ts';
 import { h2hRouter } from '#router/h2h.router.ts';
-import { closeAllClients, sseHandler } from '#router/sse.router.ts';
+import { sseRouter } from '#router/sse.router.ts';
 
 const app = new Hono();
 
 app.get('/api/h2h', h2hRouter);
-app.get('/sse', sseHandler);
+app.get('/sse', sseRouter);
 
 const server = serve({ fetch: app.fetch, port: config.PORT }, (info) => {
   console.log(`Server running on http://localhost:${info.port}`);
@@ -16,7 +16,6 @@ const server = serve({ fetch: app.fetch, port: config.PORT }, (info) => {
 });
 
 process.on('SIGINT', () => {
-  closeAllClients();
   shutdown();
   server.close();
   console.log('\nShutdown complete');

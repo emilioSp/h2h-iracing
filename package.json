@@ -13,7 +13,7 @@
     "cli:start": "node --env-file=.env examples/cli.ts",
     "ui:start:dev": "vite --config vite.config.ts",
     "ui:serve": "vite build --config vite.config.ts & vite preview --config vite.config.ts",
-    "h2h:start:dev": "npm run server:dev:mock & npm run ui:serve",
+    "h2h:start:dev": "npm run server:start:dev & npm run ui:serve",
     "h2h:start": "npm run server:start & npm run ui:serve",
     "test": "vitest run --coverage --config vitest.config.ts",
     "lint": "biome check --write .",

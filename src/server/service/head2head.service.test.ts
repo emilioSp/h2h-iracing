@@ -14,11 +14,11 @@ describe('head2head.service', () => {
 
   it('player lap times are positive or NaN', () => {
     const head2Head = computeHead2Head();
-    const lastLap = head2Head?.player.lastLapTime ?? NaN;
+    const lastLap = head2Head?.player.lastLapTime;
     const bestLap = head2Head?.player.bestLapTime ?? NaN;
 
-    expect(lastLap > 0 || Number.isNaN(lastLap)).toBe(true);
-    expect(bestLap > 0 || Number.isNaN(bestLap)).toBe(true);
+    expect(lastLap).toBe(134.90179443359375);
+    expect(bestLap).toBe(NaN);
   });
 
   it('ahead and behind neighbors match expected positions', () => {

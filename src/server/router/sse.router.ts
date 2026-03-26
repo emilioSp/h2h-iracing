@@ -1,44 +1,29 @@
 import type { Context } from 'hono';
-import { type SSEStreamingApi, streamSSE } from 'hono/streaming';
+import { streamSSE } from 'hono/streaming';
 import config from '#config';
+import { isIRacingConnected } from '#repository/irsdk.repository.ts';
 import { computeHead2Head } from '#service/head2head.service.ts';
 
-const sseClients = new Set<SSEStreamingApi>();
-
-export const sseHandler = (c: Context) =>
+export const sseRouter = (c: Context) =>
   streamSSE(
     c,
-    (stream) =>
-      new Promise<void>((resolve) => {
-        sseClients.add(stream);
-        stream.onAbort(() => {
-          sseClients.delete(stream);
-          resolve();
-        });
-      }),
+    async (stream) => {
+      while (isIRacingConnected() && !stream.aborted) {
+        const h2h = computeHead2Head();
+        if (!h2h) {
+          throw new Error('No session is available');
+        }
+
+        const json = JSON.stringify({ data: h2h });
+        await stream.writeSSE({ data: json });
+        await stream.sleep(config.POLL_INTERVAL_MS);
+      }
+      throw new Error('iRacing is not available');
+    },
+    async (err, stream) => {
+      await stream.writeSSE({
+        event: 'error',
+        data: err.message,
+      });
+    },
   );
-
-export const broadcastHead2Head = async () => {
-  if (sseClients.size === 0) return;
-
-  const h2h = computeHead2Head();
-  if (!h2h) return;
-
-  const json = JSON.stringify({ data: h2h });
-  for (const stream of sseClients) {
-    await stream.writeSSE({ data: json });
-  }
-};
-
-export const closeAllClients = () => {
-  for (const stream of sseClients) {
-    stream.abort();
-  }
-};
-
-const broadcast = async () => {
-  await broadcastHead2Head();
-  setTimeout(() => broadcast(), config.POLL_INTERVAL_MS);
-};
-
-await broadcast();
