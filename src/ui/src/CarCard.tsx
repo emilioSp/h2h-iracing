@@ -52,19 +52,19 @@ const IdentityRow = ({ car }: { car: Car }) => (
 
 const StatsRow = ({ car, border }: { car: Car; border?: boolean }) => (
   <div
-    className={`grid grid-cols-4 ${border ? 'border-b border-[#2a2a2a]' : ''}`}
+    className={`grid grid-cols-[1fr_1fr_2fr_2fr] ${border ? 'border-b border-[#2a2a2a]' : ''}`}
   >
-    <div className="grid place-content-center justify-items-center border-[#2a2a2a]">
+    <div className="grid items-center justify-items-end border-[#2a2a2a]">
       <span className="font-mono text-3xl font-bold text-white">
         {car.driver.license}
       </span>
     </div>
-    <div className="grid items-center border-[#2a2a2a]">
-      <span className="font-mono items-center text-3xl font-bold text-white">
+    <div className="grid items-center justify-items-end px-4 border-[#2a2a2a]">
+      <span className="font-mono text-3xl font-bold text-white">
         {car.driver.iRating}
       </span>
     </div>
-    <div className="grid place-content-center justify-items-center border-[#2a2a2a]">
+    <div className="grid items-center justify-items-end border-[#2a2a2a]">
       <span className="font-mono text-3xl font-bold text-white">
         {formatTime(car.lastLapTime)}
       </span>
@@ -89,11 +89,11 @@ const GapDeltaRow = ({
   border?: boolean;
 }) => (
   <div
-    className={`grid grid-cols-4 ${border ? 'border-b border-[#2a2a2a]' : ''}`}
+    className={`grid grid-cols-[1fr_1fr_2fr_2fr] ${border ? 'border-b border-[#2a2a2a]' : ''}`}
   >
     <div />
     <div />
-    <div className="grid place-content-center justify-items-center px-4 border-[#2a2a2a]">
+    <div className="grid items-center justify-items-end border-[#2a2a2a]">
       <span
         className={`font-mono text-3xl font-bold ${deltaColors[deltaClass(delta)]}`}
       >
@@ -101,7 +101,7 @@ const GapDeltaRow = ({
       </span>
       <Label>Delta</Label>
     </div>
-    <div className="grid place-content-center justify-items-center px-4">
+    <div className="grid place-content-center justify-items-center">
       <span className="font-mono text-3xl font-bold text-white">
         {formatGap(gap)}
       </span>
