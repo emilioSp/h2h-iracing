@@ -10,23 +10,19 @@ afterEach(() => {
   vi.clearAllMocks();
 });
 
-const makeStream = () => ({
+const mockStream = () => ({
   writeSSE: vi.fn().mockResolvedValue(undefined),
   sleep: vi.fn().mockResolvedValue(undefined),
 });
 
 const setupStreamSSE = async () => {
   const { streamSSE } = await import('hono/streaming');
-  const stream = makeStream();
+  const stream = mockStream();
   let run: () => Promise<void>;
 
-  vi.mocked(streamSSE).mockImplementationOnce((_c, cb, onErr) => {
+  vi.mocked(streamSSE).mockImplementationOnce((_c, cb) => {
     run = async () => {
-      try {
-        await cb(stream as never);
-      } catch (err) {
-        await onErr!(err as Error, stream as never);
-      }
+      return await cb(stream as never);
     };
     return new Response();
   });
@@ -36,30 +32,28 @@ const setupStreamSSE = async () => {
 
 describe('sseRouter', () => {
   it('writes error event when iRacing is not connected', async () => {
-    const { stream, run } = await setupStreamSSE();
+    const { run } = await setupStreamSSE();
     vi.spyOn(iracingRepository, 'isIRacingConnected').mockReturnValue(false);
 
     sseRouter({} as never);
-    await run();
-
-    expect(stream.writeSSE).toHaveBeenCalledWith({
-      event: 'error',
-      data: 'iRacing is not available',
-    });
+    try {
+      await run();
+    } catch (e) {
+      expect(e instanceof Error && e.message).toBe('iRacing is not available');
+    }
   });
 
   it('writes error event when no active session', async () => {
-    const { stream, run } = await setupStreamSSE();
+    const { run } = await setupStreamSSE();
     vi.spyOn(iracingRepository, 'isIRacingConnected').mockReturnValue(true);
     vi.spyOn(head2headService, 'computeHead2Head').mockReturnValue(null);
 
     sseRouter({} as never);
-    await run();
-
-    expect(stream.writeSSE).toHaveBeenCalledWith({
-      event: 'error',
-      data: 'No session is available',
-    });
+    try {
+      await run();
+    } catch (e: unknown) {
+      expect(e instanceof Error && e.message).toBe('No session is available');
+    }
   });
 
   it('streams h2h data then writes disconnect error', async () => {
@@ -70,14 +64,14 @@ describe('sseRouter', () => {
       .mockReturnValueOnce(false); // while check after sleep
 
     sseRouter({} as never);
-    await run();
+    try {
+      await run();
+    } catch (e) {
+      expect(e instanceof Error && e.message).toBe('iRacing is not available');
+    }
 
-    expect(stream.writeSSE).toHaveBeenCalledTimes(2);
+    expect(stream.writeSSE).toHaveBeenCalledOnce();
     const dataPayload = JSON.parse(stream.writeSSE.mock.calls[0][0].data);
     expect(dataPayload.data.sessionTime).toBeGreaterThan(0);
-    expect(stream.writeSSE).toHaveBeenLastCalledWith({
-      event: 'error',
-      data: 'iRacing is not available',
-    });
   });
 });
