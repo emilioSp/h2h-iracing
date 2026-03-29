@@ -30,82 +30,60 @@ const deltaColors: Record<string, string> = {
   neutral: 'text-[#555]',
 };
 
-const IdentityRow = ({ car }: { car: Car }) => (
-  <div className="grid grid-cols-[80px_1fr_1fr] border-b border-[#2a2a2a]">
-    <div className="grid place-items-center border-[#2a2a2a]">
-      <span className="font-mono text-3xl font-bold text-[#aaa]">
-        P{car.position}
-      </span>
-    </div>
-    <div className="grid items-center px-4 border-[#2a2a2a] min-w-0">
+const DriverInfoGrid = ({ car }: { car: Car }) => (
+  <div className="grid grid-cols-[80px_1fr_1fr_2fr_2fr] grid-rows-2 h-full">
+    <div className="col-span-3 grid items-center min-w-0 pl-[22px]">
       <span className="font-mono text-3xl font-semibold text-white truncate">
         {formatName(car.driver.name)}
       </span>
     </div>
-    <div className="grid items-center justify-items-end px-4 min-w-0">
-      <span className="font-mono text-2xl text-[#888] truncate">
-        {car.driver.car}
-      </span>
-    </div>
-  </div>
-);
-
-const StatsRow = ({ car, border }: { car: Car; border?: boolean }) => (
-  <div
-    className={`grid grid-cols-[1fr_1fr_2fr_2fr] ${border ? 'border-b border-[#2a2a2a]' : ''}`}
-  >
-    <div className="grid items-center justify-items-end border-[#2a2a2a]">
-      <span className="font-mono text-3xl font-bold text-white">
-        {car.driver.license}
-      </span>
-    </div>
-    <div className="grid items-center justify-items-end px-4 border-[#2a2a2a]">
-      <span className="font-mono text-3xl font-bold text-white">
-        {car.driver.iRating}
-      </span>
-    </div>
-    <div className="grid items-center justify-items-end border-[#2a2a2a]">
-      <span className="font-mono text-3xl font-bold text-white">
-        {formatTime(car.lastLapTime)}
-      </span>
-      <Label>Last</Label>
-    </div>
-    <div className="grid place-content-center justify-items-center">
-      <span className="font-mono text-3xl font-bold text-[#facc15]">
+    <div className="row-span-2 grid place-content-center justify-items-center">
+      <span className="font-mono text-4xl font-bold text-white">
         {formatTime(car.bestLapTime)}
       </span>
       <Label>Best</Label>
     </div>
+    <div className="row-span-2 grid place-content-center justify-items-center">
+      <span className="font-mono text-4xl font-bold text-white">
+        {formatTime(car.lastLapTime)}
+      </span>
+      <Label>Last</Label>
+    </div>
+    <div className="grid place-items-center">
+      <span className="font-mono text-3xl font-bold text-[#aaa]">
+        P{car.position}
+      </span>
+    </div>
+    <div className="grid place-items-center">
+      <span className="font-mono text-3xl font-bold text-white">
+        {car.driver.license}
+      </span>
+    </div>
+    <div className="grid items-center justify-items-end">
+      <span className="font-mono text-3xl font-bold text-white pr-[5px]">
+        {car.driver.iRating}
+      </span>
+    </div>
   </div>
 );
 
-const GapDeltaRow = ({
-  gap,
-  delta,
-  border,
-}: {
-  gap: number;
-  delta: number;
-  border?: boolean;
-}) => (
-  <div
-    className={`grid grid-cols-[1fr_1fr_2fr_2fr] ${border ? 'border-b border-[#2a2a2a]' : ''}`}
-  >
+const GapDeltaRow = ({ gap, delta }: { gap: number; delta: number }) => (
+  <div className="grid grid-cols-[1fr_1fr_2fr_2fr]">
     <div />
     <div />
-    <div className="grid items-center justify-items-end border-[#2a2a2a]">
+    <div className="grid items-center justify-items-end">
+      <span className="font-mono text-4xl font-bold text-[#facc15]">
+        {formatGap(gap)}
+      </span>
+      <Label>Gap</Label>
+    </div>
+    <div className="grid place-content-center justify-items-center">
       <span
-        className={`font-mono text-3xl font-bold ${deltaColors[deltaClass(delta)]}`}
+        className={`font-mono text-4xl font-bold ${deltaColors[deltaClass(delta)]}`}
       >
         {formatDelta(delta)}
       </span>
       <Label>Delta</Label>
-    </div>
-    <div className="grid place-content-center justify-items-center">
-      <span className="font-mono text-3xl font-bold text-white">
-        {formatGap(gap)}
-      </span>
-      <Label>Gap</Label>
     </div>
   </div>
 );
@@ -116,19 +94,13 @@ export const CarCard = (props: Props) => {
   if (props.variant === 'player') {
     const { gapAhead, deltaAhead, gapBehind, deltaBehind } = props;
     return (
-      <div className="grid grid-rows-4 h-full">
-        <GapDeltaRow gap={gapAhead} delta={deltaAhead} border />
-        <IdentityRow car={car} />
-        <StatsRow car={car} border />
+      <div className="grid grid-rows-[1fr_2fr_1fr] h-full py-2.5">
+        <GapDeltaRow gap={gapAhead} delta={deltaAhead} />
+        <DriverInfoGrid car={car} />
         <GapDeltaRow gap={gapBehind} delta={deltaBehind} />
       </div>
     );
   }
 
-  return (
-    <div className="grid grid-rows-2 h-full">
-      <IdentityRow car={car} />
-      <StatsRow car={car} />
-    </div>
-  );
+  return <DriverInfoGrid car={car} />;
 };
