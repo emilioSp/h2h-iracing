@@ -1,5 +1,6 @@
 import { setTimeout } from 'node:timers/promises';
 import config from '#config';
+import { connectToIRacing } from '#repository/irsdk.repository.ts';
 import type { Car } from '#schema/car.schema.ts';
 import type { Head2Head } from '#schema/head2head.schema.ts';
 import { computeHead2Head } from '#service/head2head.service.ts';
@@ -99,6 +100,9 @@ export const printHead2Head = (head2Head: Head2Head | null): void => {
 };
 
 while (true) {
+  if (!(await connectToIRacing())) {
+    continue;
+  }
   const head2Head = computeHead2Head();
 
   printHead2Head(head2Head);

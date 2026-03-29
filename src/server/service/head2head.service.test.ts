@@ -1,7 +1,12 @@
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { connectToIRacing } from '#repository/irsdk.repository.ts';
 import { computeHead2Head } from '#service/head2head.service.ts';
 
 describe('head2head.service', () => {
+  beforeEach(async () => {
+    await connectToIRacing();
+  });
+
   it('returns a valid Head2Head from dump', () => {
     const head2Head = computeHead2Head();
 
@@ -12,7 +17,7 @@ describe('head2head.service', () => {
     expect(head2Head?.player.driver.iRating).toBeDefined();
   });
 
-  it('player lap times are positive or NaN', () => {
+  it('player lap times are positive or NaN', async () => {
     const head2Head = computeHead2Head();
     const lastLap = head2Head?.player.lastLapTime;
     const bestLap = head2Head?.player.bestLapTime ?? NaN;

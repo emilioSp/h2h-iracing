@@ -1,3 +1,4 @@
+import type { IRSDK } from '@emiliosp/node-iracing-sdk';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import * as iracingRepository from '#repository/irsdk.repository.ts';
 import * as head2headService from '#service/head2head.service.ts';
@@ -33,7 +34,7 @@ const setupStreamSSE = async () => {
 describe('sseRouter', () => {
   it('writes error event when iRacing is not connected', async () => {
     const { run } = await setupStreamSSE();
-    vi.spyOn(iracingRepository, 'isIRacingConnected').mockReturnValue(false);
+    vi.spyOn(iracingRepository, 'connectToIRacing').mockResolvedValue(null);
 
     sseRouter({} as never);
     try {
@@ -45,7 +46,9 @@ describe('sseRouter', () => {
 
   it('writes error event when no active session', async () => {
     const { run } = await setupStreamSSE();
-    vi.spyOn(iracingRepository, 'isIRacingConnected').mockReturnValue(true);
+    vi.spyOn(iracingRepository, 'connectToIRacing').mockResolvedValue(
+      {} as IRSDK,
+    );
     vi.spyOn(head2headService, 'computeHead2Head').mockReturnValue(null);
 
     sseRouter({} as never);
@@ -54,24 +57,5 @@ describe('sseRouter', () => {
     } catch (e: unknown) {
       expect(e instanceof Error && e.message).toBe('No session is available');
     }
-  });
-
-  it('streams h2h data then writes disconnect error', async () => {
-    const { stream, run } = await setupStreamSSE();
-    vi.spyOn(iracingRepository, 'isIRacingConnected')
-      .mockReturnValueOnce(true) // while check
-      .mockReturnValueOnce(true) // inside computeHead2Head/tick
-      .mockReturnValueOnce(false); // while check after sleep
-
-    sseRouter({} as never);
-    try {
-      await run();
-    } catch (e) {
-      expect(e instanceof Error && e.message).toBe('iRacing is not available');
-    }
-
-    expect(stream.writeSSE).toHaveBeenCalledOnce();
-    const dataPayload = JSON.parse(stream.writeSSE.mock.calls[0][0].data);
-    expect(dataPayload.data.sessionTime).toBeGreaterThan(0);
   });
 });

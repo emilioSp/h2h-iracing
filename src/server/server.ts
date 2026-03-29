@@ -2,12 +2,10 @@ import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
 import config from '#config';
 import { shutdown } from '#repository/irsdk.repository.ts';
-import { h2hRouter } from '#router/h2h.router.ts';
 import { sseRouter } from '#router/sse.router.ts';
 
 const app = new Hono();
 
-app.get('/api/h2h', h2hRouter);
 app.get('/sse', sseRouter);
 
 const server = serve({ fetch: app.fetch, port: config.PORT }, (info) => {

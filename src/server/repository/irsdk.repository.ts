@@ -3,7 +3,11 @@ import config from '#config';
 
 let ir: IRSDK | null = null;
 
-const connectToIRacing = async (): Promise<IRSDK | null> => {
+export const connectToIRacing = async (): Promise<IRSDK | null> => {
+  if (ir?.isConnected()) {
+    return ir;
+  }
+
   try {
     ir =
       config.DATA_MODE === 'mock'
@@ -14,14 +18,8 @@ const connectToIRacing = async (): Promise<IRSDK | null> => {
     ir = null;
   }
 
-  if (ir === null) {
-    setTimeout(connectToIRacing, 10_000);
-  }
-
   return ir;
 };
-
-ir = await connectToIRacing();
 
 export const refreshTelemetry = () => ir?.refreshSharedMemory();
 export const isIRacingConnected = (): boolean => ir?.isConnected() ?? false;
