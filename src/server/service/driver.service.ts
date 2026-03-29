@@ -15,7 +15,7 @@ export const getFilteredRawDrivers = () => {
 
   return rawDrivers.filter(
     (d) =>
-      d.CarIdx > 0 && d.CarClassID === player.CarClassID && !d.CarIsPaceCar,
+      d.CarIdx > -1 && d.CarClassID === player.CarClassID && !d.CarIsPaceCar,
   );
 };
 

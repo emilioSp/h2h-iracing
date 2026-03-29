@@ -59,13 +59,13 @@ describe('driver.service', () => {
       vi.spyOn(irsdkRepo, 'getPlayerCarIdx').mockReturnValue(1);
       vi.spyOn(irsdkRepo, 'getRawDrivers').mockReturnValue([
         makeRawDriver({ CarIdx: 1, CarClassID: 100 }), // player
-        makeRawDriver({ CarIdx: 0, CarClassID: 100, UserName: 'Slot Zero' }),
+        makeRawDriver({ CarIdx: -1, CarClassID: 100, UserName: 'Slot Zero' }),
         makeRawDriver({ CarIdx: 2, CarClassID: 100, UserName: 'Valid Driver' }),
       ]);
 
       const result = getFilteredRawDrivers();
 
-      expect(result.every((d) => d.CarIdx > 0)).toBe(true);
+      expect(result.every((d) => d.CarIdx > -1)).toBe(true);
       expect(result.some((d) => d.UserName === 'Slot Zero')).toBe(false);
     });
 
@@ -177,7 +177,7 @@ describe('driver.service', () => {
     it('getFilteredRawDrivers returns only same-class non-pace-car drivers with valid CarIdx', () => {
       const result = getFilteredRawDrivers();
 
-      expect(result.every((d) => d.CarIdx > 0)).toBe(true);
+      expect(result.every((d) => d.CarIdx > -1)).toBe(true);
       expect(result.every((d) => !d.CarIsPaceCar)).toBe(true);
 
       if (result.length > 0) {
