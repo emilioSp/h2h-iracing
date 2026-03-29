@@ -26,10 +26,7 @@ export const formatDelta = (d: number): string => {
 
 export const formatName = (name: string): string => {
   const parts = name.trim().split(' ');
-  if (parts.length < 2) return name;
-  const initial = parts[0].charAt(0).toUpperCase();
-  const surname = parts[parts.length - 1];
-  return `${initial}. ${surname}`;
+  return parts[parts.length - 1];
 };
 
 export const deltaClass = (d: number): string => {

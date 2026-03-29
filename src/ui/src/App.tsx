@@ -3,7 +3,7 @@ import { CarCard } from './CarCard.js';
 import type { Head2Head } from './types.js';
 import './styles.css';
 
-const WelcomePage = ({ connected }: { connected: boolean }) => (
+const WelcomePage = () => (
   <div className="relative grid place-items-center w-200 h-120 bg-bg font-mono overflow-hidden">
     {/* Corner HUD brackets */}
     <div className="absolute top-8 left-8 w-10 h-10 border-t border-l border-border-player" />
@@ -40,11 +40,9 @@ const WelcomePage = ({ connected }: { connected: boolean }) => (
 
       {/* Status */}
       <div className="flex items-center gap-3 mt-6">
-        <div
-          className={`w-3 h-3 rounded-full animate-pulse ${connected ? 'bg-gaining' : 'bg-border-player'}`}
-        />
+        <div className={`w-3 h-3 rounded-full animate-pulse bg-losing`} />
         <span className="text-xl tracking-[4px] text-[#555] uppercase">
-          {connected ? 'Waiting for session' : 'Connecting to iRacing'}
+          Waiting for race session
         </span>
       </div>
     </div>
@@ -53,7 +51,6 @@ const WelcomePage = ({ connected }: { connected: boolean }) => (
 
 export const App = () => {
   const [h2h, setH2h] = useState<Head2Head | null>(null);
-  const [connected, setConnected] = useState(false);
 
   useEffect(() => {
     let es: EventSource;
@@ -61,7 +58,6 @@ export const App = () => {
 
     const connect = () => {
       es = new EventSource('/sse');
-      es.onopen = () => setConnected(true);
       es.onmessage = (e) => {
         const parsed = JSON.parse(e.data) as { data: Head2Head };
         setH2h(parsed.data);
@@ -70,7 +66,6 @@ export const App = () => {
         console.log('error', error);
         console.log('Connection lost, retrying in 10 seconds...');
         es.close();
-        setConnected(false);
         setH2h(null);
         clearTimeout(retryTimeout);
         retryTimeout = setTimeout(connect, 10_000);
@@ -86,7 +81,7 @@ export const App = () => {
   }, []);
 
   if (!h2h) {
-    return <WelcomePage connected={connected} />;
+    return <WelcomePage />;
   }
 
   return (
@@ -103,7 +98,7 @@ export const App = () => {
       </div>
 
       {/* Player */}
-      <div className="border border-border-player">
+      <div className="border-y border-border-player">
         <CarCard
           car={h2h.player}
           variant="player"
