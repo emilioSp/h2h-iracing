@@ -19,10 +19,12 @@ const connectToIRacing = async (): Promise<void> => {
   }
 };
 
-const withConnect = (fn: Function): ((...args: any[]) => Promise<any>) => {
-  return async (...args) => {
+const withConnect = <TArgs extends any[], TReturn>(
+  fn: (...args: TArgs) => TReturn,
+): ((...args: TArgs) => Promise<TReturn>) => {
+  return async (...args: TArgs) => {
     await connectToIRacing();
-    return fn(args);
+    return fn(...args);
   };
 };
 
@@ -63,6 +65,9 @@ export const getTrackSurfaces = withConnect(
 );
 export const getEstTime = withConnect(
   (): number[] => ir?.get(VARS.CAR_IDX_EST_TIME) ?? [],
+);
+export const getSessionNum = withConnect(
+  (): number => ir?.get(VARS.SESSION_NUM)[0] ?? -1,
 );
 export const getRawDrivers = withConnect(
   () => ir?.getSessionInfo(SESSION_DATA_KEYS.DRIVER_INFO).Drivers ?? [],

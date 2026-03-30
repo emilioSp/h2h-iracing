@@ -32,7 +32,7 @@ const makeRawDriver = (
     LicString: 'A 4.00',
     CarClassEstLapTime: 90.0,
     ...overrides,
-  }) as unknown as ReturnType<typeof irsdkRepo.getRawDrivers>[];
+  }) as any;
 
 describe('driver.service', () => {
   describe('getFilteredRawDrivers', () => {
@@ -51,11 +51,8 @@ describe('driver.service', () => {
       const result = await getFilteredRawDrivers();
 
       expect(result).toHaveLength(2);
-      expect(result.map((d: any) => d.UserName)).toEqual([
-        'Player',
-        'Same Class',
-      ]);
-      expect(result.some((d: any) => d.UserName === 'Other Class')).toBe(false);
+      expect(result.map((d) => d.UserName)).toEqual(['Player', 'Same Class']);
+      expect(result.some((d) => d.UserName === 'Other Class')).toBe(false);
     });
 
     it('excludes drivers with CarIdx === 0', async () => {
@@ -68,8 +65,8 @@ describe('driver.service', () => {
 
       const result = await getFilteredRawDrivers();
 
-      expect(result.every((d: any) => d.CarIdx > -1)).toBe(true);
-      expect(result.some((d: any) => d.UserName === 'Slot Zero')).toBe(false);
+      expect(result.every((d) => d.CarIdx > -1)).toBe(true);
+      expect(result.some((d) => d.UserName === 'Slot Zero')).toBe(false);
     });
 
     it('excludes pace cars', async () => {
@@ -87,8 +84,8 @@ describe('driver.service', () => {
 
       const result = await getFilteredRawDrivers();
 
-      expect(result.every((d: any) => !d.CarIsPaceCar)).toBe(true);
-      expect(result.some((d: any) => d.UserName === 'Pace Car')).toBe(false);
+      expect(result.every((d) => !d.CarIsPaceCar)).toBe(true);
+      expect(result.some((d) => d.UserName === 'Pace Car')).toBe(false);
     });
 
     it('returns only the player when no other drivers share the player class', async () => {
@@ -180,12 +177,12 @@ describe('driver.service', () => {
     it('getFilteredRawDrivers returns only same-class non-pace-car drivers with valid CarIdx', async () => {
       const result = await getFilteredRawDrivers();
 
-      expect(result.every((d: any) => d.CarIdx > -1)).toBe(true);
-      expect(result.every((d: any) => !d.CarIsPaceCar)).toBe(true);
+      expect(result.every((d) => d.CarIdx > -1)).toBe(true);
+      expect(result.every((d) => !d.CarIsPaceCar)).toBe(true);
 
       if (result.length > 0) {
         const classId = result[0].CarClassID;
-        expect(result.every((d: any) => d.CarClassID === classId)).toBe(true);
+        expect(result.every((d) => d.CarClassID === classId)).toBe(true);
       }
     });
 
@@ -202,3 +199,4 @@ describe('driver.service', () => {
     });
   });
 });
+

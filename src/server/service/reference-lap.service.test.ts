@@ -19,18 +19,15 @@ import {
   getTrackSurfaces,
 } from '#repository/irsdk.repository.ts';
 import {
+  addRecentLap,
   getActiveRefLap,
-  getBestRefLap,
+  getRefLap,
   type ReferenceLap,
   type ReferencePoint,
   resetReferenceLaps,
   setActiveRefLap,
-  setBestRefLap,
 } from '#repository/reference-lap.repository.ts';
-import {
-  getBestRefLapTime,
-  updateReferenceLaps,
-} from '#service/reference-lap.service.ts';
+import { updateReferenceLaps } from '#service/reference-lap.service.ts';
 import { precomputePCHIPTangents, REFERENCE_INTERVAL } from '#utils/pchip.ts';
 
 const mockGetLapDistPct = vi.mocked(getLapDistPct);
@@ -78,20 +75,17 @@ beforeEach(() => {
   mockGetOnPitRoad.mockResolvedValue([0]);
 });
 
-describe('getBestRefLapTime', () => {
-  it('returns NaN when no best lap exists', () => {
-    expect(getBestRefLapTime(0)).toBeNaN();
+describe('getRefLap', () => {
+  it('returns null when no recent laps exist', () => {
+    expect(getRefLap(0)).toBeNull();
   });
 
-  it('returns the lap time of the best lap', () => {
-    setBestRefLap(0, {
-      startTime: 100,
-      finishTime: 180,
-      refPoints: new Map(),
-      lastTrackedPct: 0.99,
-      isCleanLap: true,
-    });
-    expect(getBestRefLapTime(0)).toBe(80);
+  it('returns the fastest lap in the recent window', () => {
+    const slowLap: ReferenceLap = { startTime: 0, finishTime: 90, refPoints: new Map(), lastTrackedPct: 0.99, isCleanLap: true };
+    const fastLap: ReferenceLap = { startTime: 0, finishTime: 80, refPoints: new Map(), lastTrackedPct: 0.99, isCleanLap: true };
+    addRecentLap(0, slowLap);
+    addRecentLap(0, fastLap);
+    expect(getRefLap(0)).toBe(fastLap);
   });
 });
 
@@ -186,7 +180,7 @@ describe('lap completion', async () => {
     expect(newLap?.refPoints.size).toBe(1);
   });
 
-  it('saves a clean fast lap as best lap', async () => {
+  it('saves a valid clean lap to the recent window', async () => {
     const lapTime = 80;
     seedActiveLap(0, MIN_VALID_POINTS);
     mockGetLapDistPct.mockResolvedValue([PAST_FINISH_LINE_PCT]);
@@ -194,11 +188,11 @@ describe('lap completion', async () => {
 
     await updateReferenceLaps();
 
-    expect(getBestRefLap(0)).not.toBeNull();
+    expect(getRefLap(0)).not.toBeNull();
     expect(mockPrecomputePCHIPTangents).toHaveBeenCalledOnce();
   });
 
-  it('does not save best lap when point count < 400', async () => {
+  it('does not add to recent window when point count < 400', async () => {
     const lapTime = 80;
     seedActiveLap(0, MIN_VALID_POINTS - 1);
     mockGetLapDistPct.mockResolvedValue([PAST_FINISH_LINE_PCT]);
@@ -206,11 +200,11 @@ describe('lap completion', async () => {
 
     await updateReferenceLaps();
 
-    expect(getBestRefLap(0)).toBeNull();
+    expect(getRefLap(0)).toBeNull();
     expect(mockPrecomputePCHIPTangents).not.toHaveBeenCalled();
   });
 
-  it('does not save best lap when lap is dirty', async () => {
+  it('does not add to recent window when lap is dirty', async () => {
     const lapTime = 80;
     seedActiveLap(0, MIN_VALID_POINTS, { isCleanLap: false });
     mockGetLapDistPct.mockResolvedValue([PAST_FINISH_LINE_PCT]);
@@ -218,20 +212,20 @@ describe('lap completion', async () => {
 
     await updateReferenceLaps();
 
-    expect(getBestRefLap(0)).toBeNull();
+    expect(getRefLap(0)).toBeNull();
   });
 
-  it('replaces best lap when new lap is faster', async () => {
-    const existingBestLapTime = 90;
+  it('returns the faster lap when a new faster lap is added to the window', async () => {
+    const existingLapTime = 90;
     const newLapTime = 80;
-    const existingBest: ReferenceLap = {
+    const existingLap: ReferenceLap = {
       startTime: 0,
-      finishTime: existingBestLapTime,
+      finishTime: existingLapTime,
       refPoints: new Map(),
       lastTrackedPct: 0.99,
       isCleanLap: true,
     };
-    setBestRefLap(0, existingBest);
+    addRecentLap(0, existingLap);
 
     seedActiveLap(0, MIN_VALID_POINTS);
     mockGetLapDistPct.mockResolvedValue([PAST_FINISH_LINE_PCT]);
@@ -239,22 +233,22 @@ describe('lap completion', async () => {
 
     await updateReferenceLaps();
 
-    const best = getBestRefLap(0);
-    expect(best?.finishTime).toBe(newLapTime);
-    expect(best?.startTime).toBe(0);
+    const ref = getRefLap(0);
+    expect(ref?.finishTime).toBe(newLapTime);
+    expect(ref?.startTime).toBe(0);
   });
 
-  it('keeps existing best lap when new lap is slower', async () => {
-    const existingBestLapTime = 80;
+  it('returns the faster lap when a new slower lap is added to the window', async () => {
+    const existingLapTime = 80;
     const newLapTime = 90;
-    const existingBest: ReferenceLap = {
+    const existingLap: ReferenceLap = {
       startTime: 0,
-      finishTime: existingBestLapTime,
+      finishTime: existingLapTime,
       refPoints: new Map(),
       lastTrackedPct: 0.99,
       isCleanLap: true,
     };
-    setBestRefLap(0, existingBest);
+    addRecentLap(0, existingLap);
 
     seedActiveLap(0, MIN_VALID_POINTS);
     mockGetLapDistPct.mockResolvedValue([PAST_FINISH_LINE_PCT]);
@@ -262,26 +256,6 @@ describe('lap completion', async () => {
 
     await updateReferenceLaps();
 
-    expect(getBestRefLap(0)).toBe(existingBest);
-  });
-
-  it('does not replace best lap when new lap is equal (not strictly faster)', async () => {
-    const lapTime = 80;
-    const existingBest: ReferenceLap = {
-      startTime: 0,
-      finishTime: lapTime,
-      refPoints: new Map(),
-      lastTrackedPct: 0.99,
-      isCleanLap: true,
-    };
-    setBestRefLap(0, existingBest);
-
-    seedActiveLap(0, MIN_VALID_POINTS);
-    mockGetLapDistPct.mockResolvedValue([PAST_FINISH_LINE_PCT]);
-    mockGetSessionTime.mockResolvedValue(lapTime);
-
-    await updateReferenceLaps();
-
-    expect(getBestRefLap(0)).toBe(existingBest);
+    expect(getRefLap(0)).toBe(existingLap);
   });
 });

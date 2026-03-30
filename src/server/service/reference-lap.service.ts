@@ -5,10 +5,9 @@ import {
   getTrackSurfaces,
 } from '#repository/irsdk.repository.ts';
 import {
+  addRecentLap,
   getActiveRefLap,
-  getBestRefLap,
   setActiveRefLap,
-  setBestRefLap,
 } from '#repository/reference-lap.repository.ts';
 import { normalizeKey, precomputePCHIPTangents } from '#utils/pchip.ts';
 
@@ -47,16 +46,13 @@ const collectLapData = (
     refLap.finishTime = sessionTime;
     const lapTime = refLap.finishTime - refLap.startTime;
 
-    if (refLap.refPoints.size >= MIN_POINTS_FOR_VALID_LAP && lapTime > 0) {
-      const best = getBestRefLap(carIdx);
-      const isNewBest = best
-        ? lapTime < best.finishTime - best.startTime
-        : true;
-
-      if (isNewBest && refLap.isCleanLap) {
-        precomputePCHIPTangents(refLap);
-        setBestRefLap(carIdx, refLap);
-      }
+    if (
+      refLap.refPoints.size >= MIN_POINTS_FOR_VALID_LAP &&
+      lapTime > 0 &&
+      refLap.isCleanLap
+    ) {
+      precomputePCHIPTangents(refLap);
+      addRecentLap(carIdx, refLap);
     }
 
     setActiveRefLap(carIdx, {
@@ -83,12 +79,6 @@ const collectLapData = (
     });
     refLap.lastTrackedPct = trackPct;
   }
-};
-
-export const getBestRefLapTime = (carIdx: number): number => {
-  const best = getBestRefLap(carIdx);
-  if (!best) return NaN;
-  return best.finishTime - best.startTime;
 };
 
 export const updateReferenceLaps = async (): Promise<void> => {

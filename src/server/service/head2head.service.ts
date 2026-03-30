@@ -3,24 +3,36 @@ import {
   getLaps,
   getLastLapTime,
   getPlayerCarIdx,
+  getSessionNum,
   getSessionTime,
   isIRacingConnected,
   refreshTelemetry,
 } from '#repository/irsdk.repository.ts';
+import { resetReferenceLaps } from '#repository/reference-lap.repository.ts';
 import type { Car } from '#schema/car.schema.ts';
 import type { Driver } from '#schema/driver.schema.ts';
 import type { Head2Head } from '#schema/head2head.schema.ts';
 import { getDriverInfo, refreshDriverInfo } from '#service/driver.service.ts';
 import { getGap } from '#service/gap.service.ts';
-import {
-  getBestRefLapTime,
-  updateReferenceLaps,
-} from '#service/reference-lap.service.ts';
+import { updateReferenceLaps } from '#service/reference-lap.service.ts';
 import { getStandings, type Standing } from '#service/standings.service.ts';
 
+let previousSessionNum = -1;
+
 const tick = async (): Promise<boolean> => {
-  if (await !isIRacingConnected()) return false;
+  if (await !isIRacingConnected()) {
+    resetReferenceLaps();
+    return false;
+  }
   await refreshTelemetry();
+
+  // Reset reference laps if session changed (practice, qualify, race)
+  const currentSessionNum = await getSessionNum();
+  if (currentSessionNum !== previousSessionNum) {
+    resetReferenceLaps();
+    previousSessionNum = currentSessionNum;
+  }
+
   await refreshDriverInfo();
   await updateReferenceLaps();
   return true;
@@ -85,8 +97,6 @@ export const computeHead2Head = async (): Promise<Head2Head | null> => {
   const deltaBehind =
     playerLap > 1 && behindLap > 1 ? playerLap - behindLap : NaN;
 
-  const bestRefLapTime = getBestRefLapTime(playerIdx);
-
   return {
     sessionTime,
     player,
@@ -96,6 +106,5 @@ export const computeHead2Head = async (): Promise<Head2Head | null> => {
     gapBehind,
     deltaAhead,
     deltaBehind,
-    bestRefLapTime,
   };
 };
