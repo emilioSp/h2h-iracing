@@ -19,10 +19,12 @@ const connectToIRacing = async (): Promise<void> => {
   }
 };
 
-const withConnect = (fn: Function): ((...args: any[]) => Promise<any>) => {
-  return async (...args) => {
+const withConnect = <TArgs extends any[], TReturn>(
+  fn: (...args: TArgs) => TReturn,
+): ((...args: TArgs) => Promise<TReturn>) => {
+  return async (...args: TArgs) => {
     await connectToIRacing();
-    return fn(args);
+    return fn(...args);
   };
 };
 

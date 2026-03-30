@@ -10,12 +10,11 @@ export const getFilteredRawDrivers = async () => {
   const playerCarIdx = await getPlayerCarIdx();
 
   const rawDrivers = await getRawDrivers();
-  const player = rawDrivers.find((d: any) => d.CarIdx === playerCarIdx);
+  const player = rawDrivers.find((d) => d.CarIdx === playerCarIdx);
   if (!player) return [];
 
-  // TODO: fix any type
   return rawDrivers.filter(
-    (d: any) =>
+    (d) =>
       d.CarIdx > -1 && d.CarClassID === player.CarClassID && !d.CarIsPaceCar,
   );
 };
@@ -46,4 +45,4 @@ export const getClassEstLapTime = (carIdx: number): number =>
   driverMap.get(carIdx)?.classEstLapTime ?? 0;
 
 export const getCarIdxs = async (): Promise<number[]> =>
-  (await getFilteredRawDrivers()).map((d: any) => d.CarIdx);
+  (await getFilteredRawDrivers()).map((d) => d.CarIdx);
