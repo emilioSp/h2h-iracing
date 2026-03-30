@@ -8,6 +8,7 @@ const gapSchema = z.object({
 });
 
 export const head2HeadSchema = z.object({
+  sessionNum: z.number(),
   sessionTime: z.number(),
   player: carSchema,
   ahead: carSchema.nullable(),

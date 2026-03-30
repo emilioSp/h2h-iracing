@@ -85,7 +85,10 @@ export const App = () => {
   }
 
   return (
-    <div className="grid grid-rows-[120px_240px_120px] w-200 h-120 bg-black text-white">
+    <div className="relative grid grid-rows-[120px_240px_120px] w-200 h-120 bg-black text-white">
+      <div className="absolute top-1 right-2 font-mono text-xs text-[#555]">
+        session #{h2h.sessionNum}
+      </div>
       {/* Ahead */}
       <div>
         {h2h.ahead ? (
