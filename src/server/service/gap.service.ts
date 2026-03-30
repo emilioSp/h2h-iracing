@@ -9,6 +9,8 @@ import { getClassEstLapTime } from '#service/driver.service.ts';
 import type { ReferenceLap } from '#utils/pchip.ts';
 import { interpolateAtPoint } from '#utils/pchip.ts';
 
+export type Gap = { value: number; unit: 'seconds' | 'laps' };
+
 const getRelativeDistanceInPerc = (pctA: number, pctB: number): number => {
   let rel = pctB - pctA;
   // manage wrap up (one car crossed finish line)
@@ -47,29 +49,50 @@ const referenceDelta = (
 export const getGap = async (
   carIdxA: number,
   carIdxB: number,
-): Promise<number> => {
-  if (carIdxA === carIdxB) return 0;
+): Promise<Gap> => {
+  if (carIdxA === carIdxB) return { value: 0, unit: 'seconds' };
 
-  const lapDistPct = await getLapDistPct();
-  const pctA = lapDistPct[carIdxA];
-  const pctB = lapDistPct[carIdxB];
+  const [lapDistPct, laps] = await Promise.all([getLapDistPct(), getLaps()]);
+  const pctA = lapDistPct[carIdxA] ?? 0;
+  const pctB = lapDistPct[carIdxB] ?? 0;
 
-  const relPct = getRelativeDistanceInPerc(pctA, pctB);
-  const isBAhead = relPct > 0;
+  const lapsA = laps[carIdxA] ?? 0;
+  const lapsB = laps[carIdxB] ?? 0;
+
+  let isBAhead: boolean;
+  let trueLapDiff: number;
+
+  if (lapsA === lapsB) {
+    const relPct = getRelativeDistanceInPerc(pctA, pctB);
+    isBAhead = relPct > 0;
+    trueLapDiff = Math.abs(relPct);
+  } else {
+    const totalA = lapsA + pctA;
+    const totalB = lapsB + pctB;
+    isBAhead = totalB > totalA;
+    trueLapDiff = Math.abs(totalA - totalB);
+  }
+
+  if (trueLapDiff >= 1.0) {
+    return { value: Math.floor(trueLapDiff), unit: 'laps' };
+  }
+
   const aheadIdx = isBAhead ? carIdxB : carIdxA;
   const behindIdx = isBAhead ? carIdxA : carIdxB;
   const aheadPct = isBAhead ? pctB : pctA;
   const behindPct = isBAhead ? pctA : pctB;
 
-  const laps = await getLaps();
   const classLapTime = getClassEstLapTime(behindIdx);
   if ((laps[behindIdx] ?? 0) < 2) {
-    return estimatedDelta(
-      await getEstTime(),
-      classLapTime,
-      aheadIdx,
-      behindIdx,
-    );
+    return {
+      value: estimatedDelta(
+        await getEstTime(),
+        classLapTime,
+        aheadIdx,
+        behindIdx,
+      ),
+      unit: 'seconds',
+    };
   }
 
   const onPitRoad = await getOnPitRoad();
@@ -78,8 +101,19 @@ export const getGap = async (
   const hasRefData = refLap !== null && refLap.finishTime > 0;
 
   if (!anyOnPit && hasRefData) {
-    return referenceDelta(refLap, aheadPct, behindPct);
+    return {
+      value: referenceDelta(refLap, aheadPct, behindPct),
+      unit: 'seconds',
+    };
   }
 
-  return estimatedDelta(await getEstTime(), classLapTime, aheadIdx, behindIdx);
+  return {
+    value: estimatedDelta(
+      await getEstTime(),
+      classLapTime,
+      aheadIdx,
+      behindIdx,
+    ),
+    unit: 'seconds',
+  };
 };

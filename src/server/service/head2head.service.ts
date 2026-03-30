@@ -74,8 +74,8 @@ export const computeHead2Head = async (): Promise<Head2Head | null> => {
     behind = await computeCar(behindIdx, standings);
   }
 
-  const gapAhead = aheadIdx > 0 ? await getGap(playerIdx, aheadIdx) : NaN;
-  const gapBehind = behindIdx > 0 ? await getGap(playerIdx, behindIdx) : NaN;
+  const gapAhead = aheadIdx > 0 ? await getGap(playerIdx, aheadIdx) : null;
+  const gapBehind = behindIdx > 0 ? await getGap(playerIdx, behindIdx) : null;
 
   const playerLap = player.lastLapTime;
   const aheadLap = ahead?.lastLapTime ?? NaN;

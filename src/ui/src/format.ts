@@ -6,10 +6,12 @@ export const formatTime = (s: number): string => {
   return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}.${String(ms).padStart(3, '0')}`;
 };
 
-export const formatGap = (s: number): string => {
-  if (!Number.isFinite(s)) return 'N/A';
-  const sec = Math.floor(s);
-  const ms = Math.round((s % 1) * 1000);
+export const formatGap = (gap: { value: number; unit: 'seconds' | 'laps' } | null): string => {
+  if (gap === null) return 'N/A';
+  if (gap.unit === 'laps') return `${gap.value}L`;
+  if (!Number.isFinite(gap.value)) return 'N/A';
+  const sec = Math.floor(gap.value);
+  const ms = Math.round((gap.value % 1) * 1000);
   const twoDecimal = `${sec}.${String(ms).padStart(3, '0')}`.slice(0, -1);
   return `${twoDecimal}s`;
 };
