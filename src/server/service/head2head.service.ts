@@ -20,7 +20,10 @@ import { getStandings, type Standing } from '#service/standings.service.ts';
 let previousSessionNum = -1;
 
 const tick = async (): Promise<boolean> => {
-  if (await !isIRacingConnected()) return false;
+  if (await !isIRacingConnected()) {
+    resetReferenceLaps();
+    return false;
+  }
   await refreshTelemetry();
 
   // Reset reference laps if session changed (practice, qualify, race)
