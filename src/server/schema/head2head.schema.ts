@@ -4,11 +4,9 @@ import { carSchema } from '#schema/car.schema.ts';
 const gapSchema = z.object({
   value: z.number(),
   unit: z.enum(['seconds', 'laps']),
-  method: z.enum(['est', 'ref', 'lap']),
 });
 
 export const head2HeadSchema = z.object({
-  sessionNum: z.number(),
   sessionTime: z.number(),
   player: carSchema,
   ahead: carSchema.nullable(),

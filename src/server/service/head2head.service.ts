@@ -68,7 +68,6 @@ export const computeHead2Head = async (): Promise<Head2Head | null> => {
 
   const standings = await getStandings();
   const sessionTime = await getSessionTime();
-  const sessionNum = await getSessionNum();
 
   const player = await computeCar(playerIdx, standings);
   if (!player) return null;
@@ -99,7 +98,6 @@ export const computeHead2Head = async (): Promise<Head2Head | null> => {
     playerLap > 1 && behindLap > 1 ? playerLap - behindLap : NaN;
 
   return {
-    sessionNum,
     sessionTime,
     player,
     ahead,

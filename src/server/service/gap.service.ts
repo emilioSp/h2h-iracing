@@ -12,7 +12,6 @@ import { interpolateAtPoint } from '#utils/pchip.ts';
 export type Gap = {
   value: number;
   unit: 'seconds' | 'laps';
-  method: 'est' | 'ref' | 'lap';
 };
 
 const getRelativeDistanceInPerc = (pctA: number, pctB: number): number => {
@@ -54,7 +53,7 @@ export const getGap = async (
   carIdxA: number,
   carIdxB: number,
 ): Promise<Gap> => {
-  if (carIdxA === carIdxB) return { value: 0, unit: 'seconds', method: 'est' };
+  if (carIdxA === carIdxB) return { value: 0, unit: 'seconds' };
 
   const [lapDistPct, laps] = await Promise.all([getLapDistPct(), getLaps()]);
   const pctA = lapDistPct[carIdxA] ?? 0;
@@ -78,7 +77,7 @@ export const getGap = async (
   }
 
   if (trueLapDiff >= 1.0) {
-    return { value: Math.floor(trueLapDiff), unit: 'laps', method: 'lap' };
+    return { value: Math.floor(trueLapDiff), unit: 'laps' };
   }
 
   const aheadIdx = isBAhead ? carIdxB : carIdxA;
@@ -89,14 +88,8 @@ export const getGap = async (
   const classLapTime = getClassEstLapTime(behindIdx);
   if ((laps[behindIdx] ?? 0) < 2) {
     return {
-      value: estimatedDelta(
-        await getEstTime(),
-        classLapTime,
-        aheadIdx,
-        behindIdx,
-      ),
+      value: estimatedDelta(await getEstTime(), classLapTime, aheadIdx, behindIdx),
       unit: 'seconds',
-      method: 'est',
     };
   }
 
@@ -109,18 +102,11 @@ export const getGap = async (
     return {
       value: referenceDelta(refLap, aheadPct, behindPct),
       unit: 'seconds',
-      method: 'ref',
     };
   }
 
   return {
-    value: estimatedDelta(
-      await getEstTime(),
-      classLapTime,
-      aheadIdx,
-      behindIdx,
-    ),
+    value: estimatedDelta(await getEstTime(), classLapTime, aheadIdx, behindIdx),
     unit: 'seconds',
-    method: 'est',
   };
 };

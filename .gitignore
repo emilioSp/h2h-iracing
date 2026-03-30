@@ -27,3 +27,5 @@ coverage/
 TODO.md
 
 .claude
+
+src/ui/dist
