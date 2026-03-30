@@ -4,12 +4,16 @@ import {
   getLaps,
   getOnPitRoad,
 } from '#repository/irsdk.repository.ts';
-import { getBestRefLap } from '#repository/reference-lap.repository.ts';
+import { getRefLap } from '#repository/reference-lap.repository.ts';
 import { getClassEstLapTime } from '#service/driver.service.ts';
 import type { ReferenceLap } from '#utils/pchip.ts';
 import { interpolateAtPoint } from '#utils/pchip.ts';
 
-export type Gap = { value: number; unit: 'seconds' | 'laps'; method: 'est' | 'ref' | 'lap' };
+export type Gap = {
+  value: number;
+  unit: 'seconds' | 'laps';
+  method: 'est' | 'ref' | 'lap';
+};
 
 const getRelativeDistanceInPerc = (pctA: number, pctB: number): number => {
   let rel = pctB - pctA;
@@ -98,7 +102,7 @@ export const getGap = async (
 
   const onPitRoad = await getOnPitRoad();
   const anyOnPit = onPitRoad[aheadIdx] === 1 || onPitRoad[behindIdx] === 1;
-  const refLap = getBestRefLap(behindIdx);
+  const refLap = getRefLap(behindIdx);
   const hasRefData = refLap !== null && refLap.finishTime > 0;
 
   if (!anyOnPit && hasRefData) {

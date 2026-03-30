@@ -14,10 +14,7 @@ import type { Driver } from '#schema/driver.schema.ts';
 import type { Head2Head } from '#schema/head2head.schema.ts';
 import { getDriverInfo, refreshDriverInfo } from '#service/driver.service.ts';
 import { getGap } from '#service/gap.service.ts';
-import {
-  getBestRefLapTime,
-  updateReferenceLaps,
-} from '#service/reference-lap.service.ts';
+import { updateReferenceLaps } from '#service/reference-lap.service.ts';
 import { getStandings, type Standing } from '#service/standings.service.ts';
 
 let previousSessionNum = -1;
@@ -97,8 +94,6 @@ export const computeHead2Head = async (): Promise<Head2Head | null> => {
   const deltaBehind =
     playerLap > 1 && behindLap > 1 ? playerLap - behindLap : NaN;
 
-  const bestRefLapTime = getBestRefLapTime(playerIdx);
-
   return {
     sessionTime,
     player,
@@ -108,6 +103,5 @@ export const computeHead2Head = async (): Promise<Head2Head | null> => {
     gapBehind,
     deltaAhead,
     deltaBehind,
-    bestRefLapTime,
   };
 };

@@ -16,7 +16,6 @@ export const head2HeadSchema = z.object({
   gapBehind: gapSchema.nullable(),
   deltaAhead: z.number(),
   deltaBehind: z.number(),
-  bestRefLapTime: z.number(),
 });
 
 export type Head2Head = z.infer<typeof head2HeadSchema>;
