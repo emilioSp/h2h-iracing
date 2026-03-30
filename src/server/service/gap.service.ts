@@ -14,24 +14,16 @@ export type Gap = {
   unit: 'seconds' | 'laps';
 };
 
-const getRelativeDistanceInPerc = (pctA: number, pctB: number): number => {
-  let rel = pctB - pctA;
-  // manage wrap up (one car crossed finish line)
-  if (rel > 0.5) rel -= 1.0;
-  else if (rel < -0.5) rel += 1.0;
-
-  return rel;
-};
-
 const estimatedDelta = (
   estTime: number[],
   classLapTime: number,
   aheadIdx: number,
   behindIdx: number,
+  aheadPct: number,
+  behindPct: number,
 ): number => {
   let delta = (estTime[aheadIdx] ?? 0) - (estTime[behindIdx] ?? 0);
-  if (delta <= -classLapTime / 2) delta += classLapTime;
-  else if (delta > classLapTime / 2) delta -= classLapTime;
+  if (aheadPct < behindPct) delta += classLapTime;
   return Math.abs(delta);
 };
 
@@ -44,8 +36,7 @@ const referenceDelta = (
   const timeBehind = interpolateAtPoint(refLap, behindPct) ?? 0;
   let delta = timeAhead - timeBehind;
   const lapTime = refLap.finishTime - refLap.startTime;
-  if (delta <= -lapTime / 2) delta += lapTime;
-  else if (delta >= lapTime / 2) delta -= lapTime;
+  if (aheadPct < behindPct) delta += lapTime;
   return Math.abs(delta);
 };
 
@@ -62,19 +53,10 @@ export const getGap = async (
   const lapsA = laps[carIdxA] ?? 0;
   const lapsB = laps[carIdxB] ?? 0;
 
-  let isBAhead: boolean;
-  let trueLapDiff: number;
-
-  if (lapsA === lapsB) {
-    const relPct = getRelativeDistanceInPerc(pctA, pctB);
-    isBAhead = relPct > 0;
-    trueLapDiff = Math.abs(relPct);
-  } else {
-    const totalA = lapsA + pctA;
-    const totalB = lapsB + pctB;
-    isBAhead = totalB > totalA;
-    trueLapDiff = Math.abs(totalA - totalB);
-  }
+  const totalA = lapsA + pctA;
+  const totalB = lapsB + pctB;
+  const isBAhead = totalB > totalA;
+  const trueLapDiff = Math.abs(totalA - totalB);
 
   if (trueLapDiff >= 1.0) {
     return { value: Math.floor(trueLapDiff), unit: 'laps' };
@@ -88,7 +70,14 @@ export const getGap = async (
   const classLapTime = getClassEstLapTime(behindIdx);
   if ((laps[behindIdx] ?? 0) < 2) {
     return {
-      value: estimatedDelta(await getEstTime(), classLapTime, aheadIdx, behindIdx),
+      value: estimatedDelta(
+        await getEstTime(),
+        classLapTime,
+        aheadIdx,
+        behindIdx,
+        aheadPct,
+        behindPct,
+      ),
       unit: 'seconds',
     };
   }
@@ -106,7 +95,14 @@ export const getGap = async (
   }
 
   return {
-    value: estimatedDelta(await getEstTime(), classLapTime, aheadIdx, behindIdx),
+    value: estimatedDelta(
+      await getEstTime(),
+      classLapTime,
+      aheadIdx,
+      behindIdx,
+      aheadPct,
+      behindPct,
+    ),
     unit: 'seconds',
   };
 };

@@ -6,7 +6,9 @@ export const formatTime = (s: number): string => {
   return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}.${String(ms).padStart(3, '0')}`;
 };
 
-export const formatGap = (gap: { value: number; unit: 'seconds' | 'laps' } | null): string => {
+export const formatGap = (
+  gap: { value: number; unit: 'seconds' | 'laps' } | null,
+): string => {
   if (gap === null) return 'N/A';
   if (gap.unit === 'laps') return `${gap.value}L`;
   if (!Number.isFinite(gap.value)) return 'N/A';
