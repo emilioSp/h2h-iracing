@@ -48,19 +48,19 @@ describe('formatTime', () => {
 
 describe('formatGap', () => {
   it('formats a gap in seconds', () => {
-    expect(formatGap(2.567)).toBe('2.567s');
+    expect(formatGap({ value: 2.567, unit: 'seconds' })).toBe('2.567s');
   });
 
   it('formats zero as 0.000s', () => {
-    expect(formatGap(0)).toBe('0.000s');
+    expect(formatGap({ value: 0, unit: 'seconds' })).toBe('0.000s');
   });
 
-  it('formats Infinity as N/A', () => {
-    expect(formatGap(Infinity)).toBe('N/A');
+  it('formats a lap gap', () => {
+    expect(formatGap({ value: 2, unit: 'laps' })).toBe('2L');
   });
 
-  it('formats NaN as N/A', () => {
-    expect(formatGap(NaN)).toBe('N/A');
+  it('formats null as N/A', () => {
+    expect(formatGap(null)).toBe('N/A');
   });
 });
 
@@ -141,8 +141,8 @@ describe('printBattle', () => {
       player: makeCar(3),
       ahead: null,
       behind: null,
-      gapAhead: 1.5,
-      gapBehind: 0.8,
+      gapAhead: { value: 1.5, unit: 'seconds' },
+      gapBehind: { value: 0.8, unit: 'seconds' },
       deltaAhead: 0.5,
       deltaBehind: -0.3,
       bestRefLapTime: NaN,
@@ -171,8 +171,8 @@ describe('printBattle', () => {
       player: makeCar(3),
       ahead: null,
       behind: null,
-      gapAhead: NaN,
-      gapBehind: NaN,
+      gapAhead: null,
+      gapBehind: null,
       deltaAhead: NaN,
       deltaBehind: NaN,
       bestRefLapTime: 94.567,
@@ -189,8 +189,8 @@ describe('printBattle', () => {
       player: makeCar(3),
       ahead: null,
       behind: null,
-      gapAhead: NaN,
-      gapBehind: NaN,
+      gapAhead: null,
+      gapBehind: null,
       deltaAhead: NaN,
       deltaBehind: NaN,
       bestRefLapTime: NaN,

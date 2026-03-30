@@ -5,16 +5,16 @@ import {
   formatName,
   formatTime,
 } from './format.js';
-import type { Car } from './types.js';
+import type { Car, Gap } from './types.js';
 
 type Props =
   | { car: Car; variant: 'ahead' | 'behind' }
   | {
       car: Car;
       variant: 'player';
-      gapAhead: number;
+      gapAhead: Gap | null;
       deltaAhead: number;
-      gapBehind: number;
+      gapBehind: Gap | null;
       deltaBehind: number;
     };
 
@@ -67,7 +67,7 @@ const DriverInfoGrid = ({ car }: { car: Car }) => (
   </div>
 );
 
-const GapDeltaRow = ({ gap, delta }: { gap: number; delta: number }) => (
+const GapDeltaRow = ({ gap, delta }: { gap: Gap | null; delta: number }) => (
   <div className="grid grid-cols-[1fr_1fr_2fr_2fr]">
     <div />
     <div />
