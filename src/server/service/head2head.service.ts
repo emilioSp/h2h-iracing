@@ -18,45 +18,46 @@ import {
 } from '#service/reference-lap.service.ts';
 import { getStandings, type Standing } from '#service/standings.service.ts';
 
-const tick = (): boolean => {
-  if (!isIRacingConnected()) return false;
-  refreshTelemetry();
-  refreshDriverInfo();
-  updateReferenceLaps();
+const tick = async (): Promise<boolean> => {
+  if (await !isIRacingConnected()) return false;
+  await refreshTelemetry();
+  await refreshDriverInfo();
+  await updateReferenceLaps();
   return true;
 };
 
-export const computeCar = (
+export const computeCar = async (
   carIdx: number,
   standings: Standing[],
-): Car & { driver: Driver } => {
+): Promise<Car & { driver: Driver }> => {
   const carStanding = standings.find((s) => s.carIdx === carIdx)!;
 
   const driver = getDriverInfo(carIdx)!;
 
-  const laps = getLaps();
+  const laps = await getLaps();
 
   const car = {
     driver,
     position: carStanding.pos,
-    lastLapTime: getLastLapTime(carIdx),
-    bestLapTime: getBestLapTime(carIdx),
+    lastLapTime: await getLastLapTime(carIdx),
+    bestLapTime: await getBestLapTime(carIdx),
     lap: laps[carIdx] ?? 0,
   };
 
   return car;
 };
 
-export const computeHead2Head = (): Head2Head | null => {
+export const computeHead2Head = async (): Promise<Head2Head | null> => {
   if (!tick()) return null;
 
-  const playerIdx = process.env.DATA_MODE === 'mock' ? 4 : getPlayerCarIdx();
+  const playerIdx =
+    process.env.DATA_MODE === 'mock' ? 4 : await getPlayerCarIdx();
   if (playerIdx < 0) return null;
 
-  const standings = getStandings();
-  const sessionTime = getSessionTime();
+  const standings = await getStandings();
+  const sessionTime = await getSessionTime();
 
-  const player = computeCar(playerIdx, standings);
+  const player = await computeCar(playerIdx, standings);
   if (!player) return null;
 
   const aheadIdx =
@@ -67,14 +68,14 @@ export const computeHead2Head = (): Head2Head | null => {
   let ahead: (Car & { driver: Driver }) | null = null;
   let behind: (Car & { driver: Driver }) | null = null;
   if (aheadIdx > 0) {
-    ahead = computeCar(aheadIdx, standings);
+    ahead = await computeCar(aheadIdx, standings);
   }
   if (behindIdx > 0) {
-    behind = computeCar(behindIdx, standings);
+    behind = await computeCar(behindIdx, standings);
   }
 
-  const gapAhead = aheadIdx > 0 ? getGap(playerIdx, aheadIdx) : NaN;
-  const gapBehind = behindIdx > 0 ? getGap(playerIdx, behindIdx) : NaN;
+  const gapAhead = aheadIdx > 0 ? await getGap(playerIdx, aheadIdx) : null;
+  const gapBehind = behindIdx > 0 ? await getGap(playerIdx, behindIdx) : null;
 
   const playerLap = player.lastLapTime;
   const aheadLap = ahead?.lastLapTime ?? NaN;

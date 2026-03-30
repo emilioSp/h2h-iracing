@@ -91,11 +91,11 @@ export const getBestRefLapTime = (carIdx: number): number => {
   return best.finishTime - best.startTime;
 };
 
-export const updateReferenceLaps = (): void => {
-  const lapDistPct = getLapDistPct();
-  const sessionTime = getSessionTime();
-  const trackSurfaces = getTrackSurfaces();
-  const onPitRoad = getOnPitRoad();
+export const updateReferenceLaps = async (): Promise<void> => {
+  const lapDistPct = await getLapDistPct();
+  const sessionTime = await getSessionTime();
+  const trackSurfaces = await getTrackSurfaces();
+  const onPitRoad = await getOnPitRoad();
 
   for (let i = 0; i < lapDistPct.length; i++) {
     if ((lapDistPct[i] ?? -1) < 0) continue;

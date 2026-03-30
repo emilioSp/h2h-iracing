@@ -9,11 +9,7 @@ import { getClassEstLapTime } from '#service/driver.service.ts';
 import type { ReferenceLap } from '#utils/pchip.ts';
 import { interpolateAtPoint } from '#utils/pchip.ts';
 
-export type RelativeEntry = {
-  carIdx: number;
-  relativePct: number;
-  delta: number;
-};
+export type Gap = { value: number; unit: 'seconds' | 'laps' };
 
 const getRelativeDistanceInPerc = (pctA: number, pctB: number): number => {
   let rel = pctB - pctA;
@@ -50,68 +46,74 @@ const referenceDelta = (
   return Math.abs(delta);
 };
 
-export const getGap = (carIdxA: number, carIdxB: number): number => {
-  if (carIdxA === carIdxB) return 0;
+export const getGap = async (
+  carIdxA: number,
+  carIdxB: number,
+): Promise<Gap> => {
+  if (carIdxA === carIdxB) return { value: 0, unit: 'seconds' };
 
-  const lapDistPct = getLapDistPct();
-  const pctA = lapDistPct[carIdxA];
-  const pctB = lapDistPct[carIdxB];
+  const [lapDistPct, laps] = await Promise.all([getLapDistPct(), getLaps()]);
+  const pctA = lapDistPct[carIdxA] ?? 0;
+  const pctB = lapDistPct[carIdxB] ?? 0;
 
-  const relPct = getRelativeDistanceInPerc(pctA, pctB);
-  const isBAhead = relPct > 0;
+  const lapsA = laps[carIdxA] ?? 0;
+  const lapsB = laps[carIdxB] ?? 0;
+
+  let isBAhead: boolean;
+  let trueLapDiff: number;
+
+  if (lapsA === lapsB) {
+    const relPct = getRelativeDistanceInPerc(pctA, pctB);
+    isBAhead = relPct > 0;
+    trueLapDiff = Math.abs(relPct);
+  } else {
+    const totalA = lapsA + pctA;
+    const totalB = lapsB + pctB;
+    isBAhead = totalB > totalA;
+    trueLapDiff = Math.abs(totalA - totalB);
+  }
+
+  if (trueLapDiff >= 1.0) {
+    return { value: Math.floor(trueLapDiff), unit: 'laps' };
+  }
+
   const aheadIdx = isBAhead ? carIdxB : carIdxA;
   const behindIdx = isBAhead ? carIdxA : carIdxB;
   const aheadPct = isBAhead ? pctB : pctA;
   const behindPct = isBAhead ? pctA : pctB;
 
-  const laps = getLaps();
   const classLapTime = getClassEstLapTime(behindIdx);
   if ((laps[behindIdx] ?? 0) < 2) {
-    return estimatedDelta(getEstTime(), classLapTime, aheadIdx, behindIdx);
+    return {
+      value: estimatedDelta(
+        await getEstTime(),
+        classLapTime,
+        aheadIdx,
+        behindIdx,
+      ),
+      unit: 'seconds',
+    };
   }
 
-  const onPitRoad = getOnPitRoad();
+  const onPitRoad = await getOnPitRoad();
   const anyOnPit = onPitRoad[aheadIdx] === 1 || onPitRoad[behindIdx] === 1;
   const refLap = getBestRefLap(behindIdx);
   const hasRefData = refLap !== null && refLap.finishTime > 0;
 
   if (!anyOnPit && hasRefData) {
-    return referenceDelta(refLap, aheadPct, behindPct);
+    return {
+      value: referenceDelta(refLap, aheadPct, behindPct),
+      unit: 'seconds',
+    };
   }
 
-  return estimatedDelta(getEstTime(), classLapTime, aheadIdx, behindIdx);
-};
-
-export const getRelatives = (
-  focusCarIdx: number,
-  buffer = 5,
-  activeCarIdxs?: Set<number>,
-): RelativeEntry[] => {
-  const lapDistPct = getLapDistPct();
-  const focusPct = lapDistPct[focusCarIdx] ?? -1;
-  if (focusPct < 0) return [];
-
-  const entries: { carIdx: number; relativePct: number }[] = [];
-  for (let i = 0; i < lapDistPct.length; i++) {
-    if ((lapDistPct[i] ?? -1) < 0) continue;
-    if (activeCarIdxs && !activeCarIdxs.has(i)) continue;
-    entries.push({
-      carIdx: i,
-      relativePct: getRelativeDistanceInPerc(focusPct, lapDistPct[i]),
-    });
-  }
-
-  entries.sort((a, b) => b.relativePct - a.relativePct);
-
-  const focusIdx = entries.findIndex((e) => e.carIdx === focusCarIdx);
-  if (focusIdx === -1) return [];
-
-  const start = Math.max(0, focusIdx - buffer);
-  const end = Math.min(entries.length, focusIdx + 1 + buffer);
-
-  return entries.slice(start, end).map((e) => ({
-    carIdx: e.carIdx,
-    relativePct: e.relativePct,
-    delta: getGap(focusCarIdx, e.carIdx),
-  }));
+  return {
+    value: estimatedDelta(
+      await getEstTime(),
+      classLapTime,
+      aheadIdx,
+      behindIdx,
+    ),
+    unit: 'seconds',
+  };
 };

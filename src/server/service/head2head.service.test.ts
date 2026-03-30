@@ -1,14 +1,9 @@
-import { beforeEach, describe, expect, it } from 'vitest';
-import { connectToIRacing } from '#repository/irsdk.repository.ts';
+import { describe, expect, it } from 'vitest';
 import { computeHead2Head } from '#service/head2head.service.ts';
 
 describe('head2head.service', () => {
-  beforeEach(async () => {
-    await connectToIRacing();
-  });
-
-  it('returns a valid Head2Head from dump', () => {
-    const head2Head = computeHead2Head();
+  it('returns a valid Head2Head from dump', async () => {
+    const head2Head = await computeHead2Head();
 
     expect(head2Head).not.toBeNull();
     expect(head2Head?.sessionTime).toBeGreaterThan(0);
@@ -18,7 +13,7 @@ describe('head2head.service', () => {
   });
 
   it('player lap times are positive or NaN', async () => {
-    const head2Head = computeHead2Head();
+    const head2Head = await computeHead2Head();
     const lastLap = head2Head?.player.lastLapTime;
     const bestLap = head2Head?.player.bestLapTime ?? NaN;
 
@@ -26,8 +21,8 @@ describe('head2head.service', () => {
     expect(bestLap).toBe(NaN);
   });
 
-  it('ahead and behind neighbors match expected positions', () => {
-    const head2Head = computeHead2Head();
+  it('ahead and behind neighbors match expected positions', async () => {
+    const head2Head = await computeHead2Head();
     if (!head2Head) return;
 
     const playerPos = head2Head.player.position;
