@@ -6,23 +6,24 @@ import type { Driver } from '#schema/driver.schema.ts';
 
 let driverMap = new Map<number, Driver>();
 
-export const getFilteredRawDrivers = () => {
-  const playerCarIdx = getPlayerCarIdx();
+export const getFilteredRawDrivers = async () => {
+  const playerCarIdx = await getPlayerCarIdx();
 
-  const rawDrivers = getRawDrivers();
-  const player = rawDrivers.find((d) => d.CarIdx === playerCarIdx);
+  const rawDrivers = await getRawDrivers();
+  const player = rawDrivers.find((d: any) => d.CarIdx === playerCarIdx);
   if (!player) return [];
 
+  // TODO: fix any type
   return rawDrivers.filter(
-    (d) =>
+    (d: any) =>
       d.CarIdx > -1 && d.CarClassID === player.CarClassID && !d.CarIsPaceCar,
   );
 };
 
-export const refreshDriverInfo = () => {
+export const refreshDriverInfo = async () => {
   driverMap = new Map<number, Driver>();
 
-  for (const driver of getFilteredRawDrivers()) {
+  for (const driver of await getFilteredRawDrivers()) {
     driverMap.set(driver.CarIdx, {
       carIdx: driver.CarIdx,
       name: driver.UserName,
@@ -44,5 +45,5 @@ export const getDriverInfo = (carIdx: number): Driver | null =>
 export const getClassEstLapTime = (carIdx: number): number =>
   driverMap.get(carIdx)?.classEstLapTime ?? 0;
 
-export const getCarIdxs = (): number[] =>
-  getFilteredRawDrivers().map((d) => d.CarIdx);
+export const getCarIdxs = async (): Promise<number[]> =>
+  (await getFilteredRawDrivers()).map((d: any) => d.CarIdx);

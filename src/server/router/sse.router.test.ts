@@ -1,4 +1,3 @@
-import type { IRSDK } from '@emiliosp/node-iracing-sdk';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import * as iracingRepository from '#repository/irsdk.repository.ts';
 import * as head2headService from '#service/head2head.service.ts';
@@ -34,7 +33,7 @@ const setupStreamSSE = async () => {
 describe('sseRouter', () => {
   it('writes error event when iRacing is not connected', async () => {
     const { run } = await setupStreamSSE();
-    vi.spyOn(iracingRepository, 'connectToIRacing').mockResolvedValue(null);
+    vi.spyOn(iracingRepository, 'isIRacingConnected').mockResolvedValue(false);
 
     sseRouter({} as never);
     try {
@@ -46,10 +45,8 @@ describe('sseRouter', () => {
 
   it('writes error event when no active session', async () => {
     const { run } = await setupStreamSSE();
-    vi.spyOn(iracingRepository, 'connectToIRacing').mockResolvedValue(
-      {} as IRSDK,
-    );
-    vi.spyOn(head2headService, 'computeHead2Head').mockReturnValue(null);
+    vi.spyOn(iracingRepository, 'isIRacingConnected').mockResolvedValue(true);
+    vi.spyOn(head2headService, 'computeHead2Head').mockResolvedValue(null);
 
     sseRouter({} as never);
     try {

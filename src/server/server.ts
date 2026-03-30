@@ -13,8 +13,8 @@ const server = serve({ fetch: app.fetch, port: config.PORT }, (info) => {
   console.log(`Mode: ${config.DATA_MODE} | Poll: ${config.POLL_INTERVAL_MS}ms`);
 });
 
-process.on('SIGINT', () => {
-  shutdown();
+process.on('SIGINT', async () => {
+  await shutdown();
   server.close();
   console.log('\nShutdown complete');
   process.exit(0);

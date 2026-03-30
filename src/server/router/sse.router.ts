@@ -1,13 +1,13 @@
 import type { Context } from 'hono';
 import { streamSSE } from 'hono/streaming';
 import config from '#config';
-import { connectToIRacing } from '#repository/irsdk.repository.ts';
+import { isIRacingConnected } from '#repository/irsdk.repository.ts';
 import { computeHead2Head } from '#service/head2head.service.ts';
 
 export const sseRouter = (c: Context) =>
   streamSSE(c, async (stream) => {
-    while ((await connectToIRacing()) && !stream.aborted) {
-      const h2h = computeHead2Head();
+    while ((await isIRacingConnected()) && !stream.aborted) {
+      const h2h = await computeHead2Head();
       if (!h2h) {
         throw new Error('No session is available');
       }

@@ -3,10 +3,10 @@ import { getCarIdxs } from '#service/driver.service.ts';
 
 export type Standing = { pos: number; carIdx: number };
 
-export const getStandings = (): Standing[] => {
-  const carIdxs = getCarIdxs();
-  const lapDistPct = getLapDistPct();
-  const laps = getLaps();
+export const getStandings = async (): Promise<Standing[]> => {
+  const carIdxs = await getCarIdxs();
+  const lapDistPct = await getLapDistPct();
+  const laps = await getLaps();
 
   const standings: Standing[] = carIdxs.map((carIdx) => ({ pos: 0, carIdx }));
 

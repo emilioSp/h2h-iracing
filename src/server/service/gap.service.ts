@@ -9,12 +9,6 @@ import { getClassEstLapTime } from '#service/driver.service.ts';
 import type { ReferenceLap } from '#utils/pchip.ts';
 import { interpolateAtPoint } from '#utils/pchip.ts';
 
-export type RelativeEntry = {
-  carIdx: number;
-  relativePct: number;
-  delta: number;
-};
-
 const getRelativeDistanceInPerc = (pctA: number, pctB: number): number => {
   let rel = pctB - pctA;
   // manage wrap up (one car crossed finish line)
@@ -50,10 +44,13 @@ const referenceDelta = (
   return Math.abs(delta);
 };
 
-export const getGap = (carIdxA: number, carIdxB: number): number => {
+export const getGap = async (
+  carIdxA: number,
+  carIdxB: number,
+): Promise<number> => {
   if (carIdxA === carIdxB) return 0;
 
-  const lapDistPct = getLapDistPct();
+  const lapDistPct = await getLapDistPct();
   const pctA = lapDistPct[carIdxA];
   const pctB = lapDistPct[carIdxB];
 
@@ -64,13 +61,18 @@ export const getGap = (carIdxA: number, carIdxB: number): number => {
   const aheadPct = isBAhead ? pctB : pctA;
   const behindPct = isBAhead ? pctA : pctB;
 
-  const laps = getLaps();
+  const laps = await getLaps();
   const classLapTime = getClassEstLapTime(behindIdx);
   if ((laps[behindIdx] ?? 0) < 2) {
-    return estimatedDelta(getEstTime(), classLapTime, aheadIdx, behindIdx);
+    return estimatedDelta(
+      await getEstTime(),
+      classLapTime,
+      aheadIdx,
+      behindIdx,
+    );
   }
 
-  const onPitRoad = getOnPitRoad();
+  const onPitRoad = await getOnPitRoad();
   const anyOnPit = onPitRoad[aheadIdx] === 1 || onPitRoad[behindIdx] === 1;
   const refLap = getBestRefLap(behindIdx);
   const hasRefData = refLap !== null && refLap.finishTime > 0;
@@ -79,39 +81,5 @@ export const getGap = (carIdxA: number, carIdxB: number): number => {
     return referenceDelta(refLap, aheadPct, behindPct);
   }
 
-  return estimatedDelta(getEstTime(), classLapTime, aheadIdx, behindIdx);
-};
-
-export const getRelatives = (
-  focusCarIdx: number,
-  buffer = 5,
-  activeCarIdxs?: Set<number>,
-): RelativeEntry[] => {
-  const lapDistPct = getLapDistPct();
-  const focusPct = lapDistPct[focusCarIdx] ?? -1;
-  if (focusPct < 0) return [];
-
-  const entries: { carIdx: number; relativePct: number }[] = [];
-  for (let i = 0; i < lapDistPct.length; i++) {
-    if ((lapDistPct[i] ?? -1) < 0) continue;
-    if (activeCarIdxs && !activeCarIdxs.has(i)) continue;
-    entries.push({
-      carIdx: i,
-      relativePct: getRelativeDistanceInPerc(focusPct, lapDistPct[i]),
-    });
-  }
-
-  entries.sort((a, b) => b.relativePct - a.relativePct);
-
-  const focusIdx = entries.findIndex((e) => e.carIdx === focusCarIdx);
-  if (focusIdx === -1) return [];
-
-  const start = Math.max(0, focusIdx - buffer);
-  const end = Math.min(entries.length, focusIdx + 1 + buffer);
-
-  return entries.slice(start, end).map((e) => ({
-    carIdx: e.carIdx,
-    relativePct: e.relativePct,
-    delta: getGap(focusCarIdx, e.carIdx),
-  }));
+  return estimatedDelta(await getEstTime(), classLapTime, aheadIdx, behindIdx);
 };
