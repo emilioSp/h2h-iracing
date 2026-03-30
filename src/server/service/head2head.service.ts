@@ -3,10 +3,12 @@ import {
   getLaps,
   getLastLapTime,
   getPlayerCarIdx,
+  getSessionNum,
   getSessionTime,
   isIRacingConnected,
   refreshTelemetry,
 } from '#repository/irsdk.repository.ts';
+import { resetReferenceLaps } from '#repository/reference-lap.repository.ts';
 import type { Car } from '#schema/car.schema.ts';
 import type { Driver } from '#schema/driver.schema.ts';
 import type { Head2Head } from '#schema/head2head.schema.ts';
@@ -18,9 +20,19 @@ import {
 } from '#service/reference-lap.service.ts';
 import { getStandings, type Standing } from '#service/standings.service.ts';
 
+let previousSessionNum = -1;
+
 const tick = async (): Promise<boolean> => {
   if (await !isIRacingConnected()) return false;
   await refreshTelemetry();
+
+  // Reset reference laps if session changed (practice, qualify, race)
+  const currentSessionNum = await getSessionNum();
+  if (currentSessionNum !== previousSessionNum) {
+    resetReferenceLaps();
+    previousSessionNum = currentSessionNum;
+  }
+
   await refreshDriverInfo();
   await updateReferenceLaps();
   return true;
