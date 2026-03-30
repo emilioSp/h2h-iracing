@@ -2,75 +2,100 @@
 
 Real-time head-to-head battle overlay for iRacing. Tracks your position relative to the cars immediately ahead and behind you, showing gaps, deltas, and driver info.
 
-Two modes of operation:
-- **Server** — HTTP + WebSocket server for browser overlays
-- **CLI** — terminal UI for local monitoring
+Three modes of operation:
+
+- **Server + UI** — HTTP server with SSE + React overlay for streaming software (OBS)
+- **Server** — HTTP server with SSE for custom clients
+- **CLI** — terminal UI for local monitoring (manly for development/testing)
+
+## Screenshots
+
+![Welcome page](docs/H2H_welcome_page.jpg)
+
+![Race overlay](docs/H2H_race.jpg)
 
 ## Prerequisites
 
 - Node.js 24+
 - iRacing running on Windows (for live mode)
 
-## Local development setup
+## Local Development
 
-Environment variables:
+Create a `.env` file with the following variables:
 
-| Variable           | Description                                  | Default |
-|--------------------|----------------------------------------------|---------|
-| `DATA_MODE`        | `live` (iRacing SDK) or `mock` (dump file)   | —       |
-| `DUMP_FILE_PATH`   | Path to `.bin` dump file used in mock mode   | —       |
-| `POLL_INTERVAL_MS` | Telemetry polling interval in milliseconds   | —       |
-| `PORT`             | HTTP server port                             | —       |
-| `LOG_LEVEL`        | `debug` / `info` / `warn` / `error`          | —       |
+| Variable           | Description                                | Required |
+| ------------------ | ------------------------------------------ | -------- |
+| `DATA_MODE`        | `live` (iRacing SDK) or `mock` (dump file) | yes      |
+| `DUMP_FILE_PATH`   | Path to `.bin` dump file (mock mode only)  | yes      |
+| `POLL_INTERVAL_MS` | Telemetry polling interval in milliseconds | yes      |
+| `PORT`             | HTTP server port                           | yes      |
+| `LOG_LEVEL`        | `debug` / `info` / `warn` / `error`        | yes      |
 
 Start in mock mode (no iRacing required):
 
 ```bash
-# HTTP + WebSocket server
-npm run server:dev:mock
+# Server + UI overlay
+npm run h2h:start:dev
+
+# Server only
+npm run server:start:dev
 
 # Terminal UI
-npm run cli:dev:mock
+npm run cli:start:dev
 ```
 
 Start in live mode (iRacing must be running):
 
 ```bash
+# Server + UI overlay
+npm run h2h:start
+
+# Server only
 npm run server:start
+
+# Terminal UI
 npm run cli:start
 ```
 
 ## API
 
-### `GET /api/h2h`
+### `GET /sse`
 
-Returns the current battle state.
+Server-Sent Events endpoint. Pushes the head to head state event at every poll interval.
 
-**Response `200`**
+Each SSE message contains:
+
 ```json
 {
   "data": {
     "sessionTime": 1234.5,
-    "player":  { "position": 3, "driver": { "name": "...", ... }, "gapAhead": -1.23, ... },
-    "ahead":   { ... } | null,
-    "behind":  { ... } | null,
-    "gapAhead": -1.234,
-    "gapBehind": 2.567,
+    "player": {
+      "position": 3,
+      "driver": { "name": "...", "iRating": 3000, "license": "A 4.99", "carName": "..." },
+      "lastLapTime": 85.123,
+      "bestLapTime": 84.567,
+      "lap": 12
+    },
+    "ahead": { "..." },
+    "behind": { "..." },
+    "gapAhead": { "value": 1.234, "unit": "seconds" },
+    "gapBehind": { "value": 2.567, "unit": "seconds" },
     "deltaAhead": -0.456,
     "deltaBehind": 0.789
   }
 }
 ```
 
-**Response `503`** — no active race session.
-
-### `GET /ws`
-
-WebSocket endpoint. Pushes the same `{ data: BattleState }` payload at every poll interval.
+`ahead` and `behind` are `null` when there is no car in that position. `gapAhead` and `gapBehind` are `null` accordingly. The `unit` field can be `"seconds"` or `"laps"`.
 
 ## Testing
 
 ```bash
 npm test
 ```
-Tests run against a real telemetry dump file (`DUMP_FILE_PATH`).
+
+Runs Vitest with coverage (85% minimum). Tests use a real telemetry dump file.
+
+## Documentation
+
+- [How the gap is calculated](docs/gap-calculation.md)
