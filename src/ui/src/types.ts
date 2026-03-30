@@ -16,7 +16,7 @@ export type Car = {
   lap: number;
 };
 
-export type Gap = { value: number; unit: 'seconds' | 'laps' };
+export type Gap = { value: number; unit: 'seconds' | 'laps'; method: 'est' | 'ref' | 'lap' };
 
 export type Head2Head = {
   sessionTime: number;
