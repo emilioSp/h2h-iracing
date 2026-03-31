@@ -5,7 +5,6 @@ Real-time head-to-head battle overlay for iRacing. Tracks your position relative
 Three modes of operation:
 
 - **Server + UI** — HTTP server with SSE + React overlay for streaming software (OBS)
-- **Server** — HTTP server with SSE for custom clients
 - **CLI** — terminal UI for local monitoring (manly for development/testing)
 
 ## Screenshots
@@ -35,9 +34,6 @@ Start in mock mode (no iRacing required):
 
 ```bash
 # Server + UI overlay
-npm run h2h:start:dev
-
-# Server only
 npm run server:start:dev
 
 # Terminal UI
@@ -49,9 +45,6 @@ Start in live mode (iRacing must be running):
 ```bash
 # Server + UI overlay
 npm run h2h:start
-
-# Server only
-npm run server:start
 
 # Terminal UI
 npm run cli:start

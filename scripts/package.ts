@@ -27,6 +27,7 @@ console.log('\n=== H2H iRacing Packager ===\n');
 mkdirSync(CACHE_DIR, { recursive: true });
 
 rmSync(NODE_MODULES, { recursive: true, force: true });
+rmSync(join(PROJECT_ROOT, 'dist'), { recursive: true, force: true });
 execSync('npm ci', { cwd: PROJECT_ROOT, stdio: 'inherit' });
 
 if (!existsSync(CACHED_NODE)) {
@@ -65,7 +66,7 @@ cpSync(join(PROJECT_ROOT, 'package.json'), join(DIST_DIR, 'package.json'));
 cpSync(join(PROJECT_ROOT, 'src/server'), join(DIST_DIR, 'src/server'), {
   recursive: true,
 });
-cpSync(join(PROJECT_ROOT, 'src/ui/dist'), join(DIST_DIR, 'dist/ui'), {
+cpSync(join(PROJECT_ROOT, 'dist/ui'), join(DIST_DIR, 'dist/ui'), {
   recursive: true,
 });
 cpSync(join(PROJECT_ROOT, 'fixture'), join(DIST_DIR, 'fixture'), {

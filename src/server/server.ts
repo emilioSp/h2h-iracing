@@ -1,4 +1,5 @@
 import { serve } from '@hono/node-server';
+import { serveStatic } from '@hono/node-server/serve-static';
 import { Hono } from 'hono';
 import config from '#config';
 import { shutdown } from '#repository/irsdk.repository.ts';
@@ -7,6 +8,7 @@ import { sseRouter } from '#router/sse.router.ts';
 const app = new Hono();
 
 app.get('/sse', sseRouter);
+app.use('/*', serveStatic({ root: './dist/ui' }));
 
 const server = serve({ fetch: app.fetch, port: config.PORT }, (info) => {
   console.log(`Server running on http://localhost:${info.port}`);
