@@ -75,7 +75,7 @@ const GapDeltaRow = ({ gap, delta }: { gap: Gap | null; delta: number }) => (
       <span className="font-mono text-4xl font-bold text-[#facc15]">
         {formatGap(gap)}
       </span>
-      <Label>Gap {gap?.method ?? ''}</Label>
+      <Label>Gap</Label>
     </div>
     <div className="grid place-content-center justify-items-center">
       <span

@@ -1,5 +1,6 @@
 import { IRSDK, SESSION_DATA_KEYS, VARS } from '@emiliosp/node-iracing-sdk';
 import config from '#config';
+import { debug } from '../debug.ts';
 
 let ir: IRSDK | null = null;
 
@@ -14,7 +15,7 @@ const connectToIRacing = async (): Promise<void> => {
         ? IRSDK.fromDump(config.DUMP_FILE_PATH)
         : await IRSDK.connect();
   } catch (e) {
-    console.warn('iRacing not available at the moment.', e);
+    debug('iRacing not available at the moment', e);
     ir = null;
   }
 };

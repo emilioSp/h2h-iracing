@@ -5,7 +5,7 @@ const configSchema = z.object({
   DUMP_FILE_PATH: z.string(),
   POLL_INTERVAL_MS: z.coerce.number().int().positive(),
   PORT: z.coerce.number().int().positive(),
-  LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']),
+  LOG_LEVEL: z.enum(['debug', 'info']),
 });
 
 export type Config = z.infer<typeof configSchema>;
