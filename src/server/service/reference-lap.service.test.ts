@@ -81,8 +81,20 @@ describe('getRefLap', () => {
   });
 
   it('returns the fastest lap in the recent window', () => {
-    const slowLap: ReferenceLap = { startTime: 0, finishTime: 90, refPoints: new Map(), lastTrackedPct: 0.99, isCleanLap: true };
-    const fastLap: ReferenceLap = { startTime: 0, finishTime: 80, refPoints: new Map(), lastTrackedPct: 0.99, isCleanLap: true };
+    const slowLap: ReferenceLap = {
+      startTime: 0,
+      finishTime: 90,
+      refPoints: new Map(),
+      lastTrackedPct: 0.99,
+      isCleanLap: true,
+    };
+    const fastLap: ReferenceLap = {
+      startTime: 0,
+      finishTime: 80,
+      refPoints: new Map(),
+      lastTrackedPct: 0.99,
+      isCleanLap: true,
+    };
     addRecentLap(0, slowLap);
     addRecentLap(0, fastLap);
     expect(getRefLap(0)).toBe(fastLap);
