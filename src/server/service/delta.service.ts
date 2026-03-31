@@ -1,5 +1,4 @@
 import type { Car } from '#schema/car.schema.ts';
-import type { Driver } from '#schema/driver.schema.ts';
 
 export type Delta = {
   deltaAhead: number | null;
@@ -7,9 +6,9 @@ export type Delta = {
 };
 
 export const getDeltaLastLap = (
-  player: Car & { driver: Driver },
-  ahead: (Car & { driver: Driver }) | null,
-  behind: (Car & { driver: Driver }) | null,
+  player: Car,
+  ahead: Car | null,
+  behind: Car | null,
 ): Delta => {
   let deltaAhead: number | null = null;
   if (ahead && player.lastLapTime > 1 && ahead.lastLapTime > 1) {
@@ -28,9 +27,9 @@ export const getDeltaLastLap = (
 };
 
 export const getDeltaBestLap = (
-  player: Car & { driver: Driver },
-  ahead: (Car & { driver: Driver }) | null,
-  behind: (Car & { driver: Driver }) | null,
+  player: Car,
+  ahead: Car | null,
+  behind: Car | null,
 ): Delta => {
   let deltaAhead: number | null = null;
   if (ahead && player.bestLapTime > 1 && ahead.bestLapTime > 1) {

@@ -110,5 +110,3 @@ describe('getStandings', () => {
     ]);
   });
 });
-
-

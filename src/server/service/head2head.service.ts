@@ -6,12 +6,10 @@ import {
   getSessionNum,
   getSessionTime,
   getSessionType,
-  isIRacingConnected,
   refreshTelemetry,
 } from '#repository/irsdk.repository.ts';
 import { resetReferenceLaps } from '#repository/reference-lap.repository.ts';
 import type { Car } from '#schema/car.schema.ts';
-import type { Driver } from '#schema/driver.schema.ts';
 import type { Head2Head } from '#schema/head2head.schema.ts';
 import {
   type Delta,
@@ -25,11 +23,11 @@ import { getStandings, type Standing } from '#service/standings.service.ts';
 
 let previousSessionNum = -1;
 
-const tick = async (): Promise<boolean> => {
-  if (await !isIRacingConnected()) {
-    resetReferenceLaps();
-    return false;
-  }
+export const resetSessionNumber = (): void => {
+  previousSessionNum = -1;
+};
+
+const tick = async (): Promise<void> => {
   await refreshTelemetry();
 
   // Reset reference laps if session changed (practice, qualify, race)
@@ -41,25 +39,22 @@ const tick = async (): Promise<boolean> => {
 
   await refreshDriverInfo();
   await updateReferenceLaps();
-  return true;
 };
 
 export const computeCar = async (
   carIdx: number,
   standings: Standing[],
-): Promise<(Car & { driver: Driver }) | null> => {
+): Promise<Car> => {
   const carStanding = standings.find((s) => s.carIdx === carIdx);
-  if (!carStanding) {
-    return null;
-  }
 
+  // biome-ignore lint/style/noNonNullAssertion: we assume the driver info is always available for valid carIdx
   const driver = getDriverInfo(carIdx)!;
 
   const laps = await getLaps();
 
   const car = {
     driver,
-    position: carStanding.pos,
+    position: carStanding?.pos ?? 0,
     lastLapTime: await getLastLapTime(carIdx),
     bestLapTime: await getBestLapTime(carIdx),
     lap: laps[carIdx] ?? 0, // TODO: use lapNumber
@@ -69,7 +64,7 @@ export const computeCar = async (
 };
 
 export const computeHead2Head = async (): Promise<Head2Head | null> => {
-  if (!tick()) return null;
+  await tick();
 
   const playerIdx =
     process.env.DATA_MODE === 'mock' ? 4 : await getPlayerCarIdx();
@@ -81,15 +76,26 @@ export const computeHead2Head = async (): Promise<Head2Head | null> => {
   const sessionTime = await getSessionTime();
 
   const player = await computeCar(playerIdx, standings);
-  if (!player) return null;
+  if (player.position === 0) {
+    return {
+      sessionTime,
+      player,
+      ahead: null,
+      behind: null,
+      gapAhead: null,
+      gapBehind: null,
+      deltaAhead: null,
+      deltaBehind: null,
+    };
+  }
 
   const aheadIdx =
     standings.find((s) => s.pos === player.position - 1)?.carIdx ?? -1;
   const behindIdx =
     standings.find((s) => s.pos === player.position + 1)?.carIdx ?? -1;
 
-  let ahead: (Car & { driver: Driver }) | null = null;
-  let behind: (Car & { driver: Driver }) | null = null;
+  let ahead: Car | null = null;
+  let behind: Car | null = null;
   if (aheadIdx > 0) {
     ahead = await computeCar(aheadIdx, standings);
   }

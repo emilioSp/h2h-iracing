@@ -71,7 +71,9 @@ describe('head2head.service (non-race session)', () => {
       },
     );
     vi.spyOn(iracingRepository, 'getClassPositions').mockResolvedValue(
-      Array(64).fill(0).map((_, i) => i),
+      Array(64)
+        .fill(0)
+        .map((_, i) => i),
     );
 
     const head2Head = await computeHead2Head();
@@ -84,7 +86,9 @@ describe('head2head.service (non-race session)', () => {
     vi.spyOn(iracingRepository, 'getSessionType').mockResolvedValue('Practice');
     vi.spyOn(iracingRepository, 'getBestLapTime').mockResolvedValue(NaN);
     vi.spyOn(iracingRepository, 'getClassPositions').mockResolvedValue(
-      Array(64).fill(0).map((_, i) => i),
+      Array(64)
+        .fill(0)
+        .map((_, i) => i),
     );
 
     const head2Head = await computeHead2Head();

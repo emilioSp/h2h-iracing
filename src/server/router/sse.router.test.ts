@@ -52,7 +52,7 @@ describe('sseRouter', () => {
     try {
       await run();
     } catch (e: unknown) {
-      expect(e instanceof Error && e.message).toBe('Standings not available');
+      expect(e instanceof Error && e.message).toBe('Session not available');
     }
   });
 });

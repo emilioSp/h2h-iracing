@@ -20,7 +20,7 @@ const connectToIRacing = async (): Promise<void> => {
   }
 };
 
-const withConnect = <TArgs extends any[], TReturn>(
+const withConnect = <TArgs extends unknown[], TReturn>(
   fn: (...args: TArgs) => TReturn,
 ): ((...args: TArgs) => Promise<TReturn>) => {
   return async (...args: TArgs) => {
