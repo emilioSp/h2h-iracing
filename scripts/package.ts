@@ -19,7 +19,7 @@ const DIST_DIR = join(BUILD_DIR, 'h2h-iracing');
 const CACHED_NODE = join(CACHE_DIR, 'node.exe');
 
 const today = new Date();
-const VERSION = `${today.getFullYear()}_${today.getMonth() + 1}_${today.getDate()}_${today.getHours()}_${today.getMinutes()}`;
+const VERSION = `${today.getFullYear()}_${today.getMonth() + 1}_${today.getDate()}_${today.getHours()}${today.getMinutes()}`;
 const ZIP_FILE = join(BUILD_DIR, `h2h-iracing_${VERSION}.zip`);
 
 console.log('\n=== H2H iRacing Packager ===\n');

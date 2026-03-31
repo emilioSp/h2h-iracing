@@ -2,6 +2,7 @@ import type { Context } from 'hono';
 import { streamSSE } from 'hono/streaming';
 import config from '#config';
 import { isIRacingConnected } from '#repository/irsdk.repository.ts';
+import { debug } from '#server/debug.ts';
 import { computeHead2Head } from '#service/head2head.service.ts';
 
 export const sseRouter = (c: Context) =>
@@ -16,5 +17,5 @@ export const sseRouter = (c: Context) =>
       await stream.writeSSE({ data: json });
       await stream.sleep(config.POLL_INTERVAL_MS);
     }
-    throw new Error('iRacing is not available');
+    debug('iRacing is not connected, stopping SSE stream');
   });
