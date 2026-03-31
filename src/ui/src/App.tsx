@@ -42,7 +42,7 @@ const WelcomePage = () => (
       <div className="flex items-center gap-3 mt-6">
         <div className={`w-3 h-3 rounded-full animate-pulse bg-losing`} />
         <span className="text-xl tracking-[4px] text-[#555] uppercase">
-          Waiting for race session
+          Waiting for session
         </span>
       </div>
     </div>

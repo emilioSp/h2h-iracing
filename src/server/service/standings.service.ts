@@ -1,4 +1,8 @@
-import { getLapDistPct, getLaps } from '#repository/irsdk.repository.ts';
+import {
+  getClassPositions,
+  getLapDistPct,
+  getLaps,
+} from '#repository/irsdk.repository.ts';
 import { getCarIdxs } from '#service/driver.service.ts';
 
 export type Standing = { pos: number; carIdx: number };
@@ -22,3 +26,16 @@ export const getRaceStandings = async (): Promise<Standing[]> => {
 
   return standings;
 };
+
+export const getSessionStandings = async (): Promise<Standing[]> => {
+  const carIdxs = await getCarIdxs();
+  const classPositions = await getClassPositions();
+
+  return carIdxs
+    .filter((carIdx) => classPositions[carIdx] > 0)
+    .map((carIdx) => ({ pos: classPositions[carIdx], carIdx }))
+    .sort((a, b) => a.pos - b.pos);
+};
+
+export const getStandings = (isRace: boolean): Promise<Standing[]> =>
+  isRace ? getRaceStandings() : getSessionStandings();

@@ -76,14 +76,6 @@ describe('formatDelta', () => {
   it('formats zero without sign', () => {
     expect(formatDelta(0)).toBe('0.000s');
   });
-
-  it('formats Infinity as N/A', () => {
-    expect(formatDelta(Infinity)).toBe('N/A');
-  });
-
-  it('formats NaN as N/A', () => {
-    expect(formatDelta(NaN)).toBe('N/A');
-  });
 });
 
 describe('printCar', () => {
@@ -145,7 +137,6 @@ describe('printBattle', () => {
       gapBehind: { value: 0.8, unit: 'seconds' },
       deltaAhead: 0.5,
       deltaBehind: -0.3,
-      bestRefLapTime: NaN,
     });
     const lines = vi.mocked(console.log).mock.calls.flat();
     expect(lines.some((l) => l.includes('P 3'))).toBe(true);
@@ -163,41 +154,5 @@ describe('printBattle', () => {
     ).toBe(true);
     expect(lines.some((l) => l.includes('You are the leader'))).toBe(true);
     expect(lines.some((l) => l.includes('You are the last'))).toBe(true);
-  });
-
-  it('prints bestRefLapTime when available', () => {
-    printHead2Head({
-      sessionTime: 1234,
-      player: makeCar(3),
-      ahead: null,
-      behind: null,
-      gapAhead: null,
-      gapBehind: null,
-      deltaAhead: NaN,
-      deltaBehind: NaN,
-      bestRefLapTime: 94.567,
-    });
-    const lines = vi.mocked(console.log).mock.calls.flat();
-    expect(
-      lines.some((l) => l.includes('Best ref') && l.includes('01:34.567')),
-    ).toBe(true);
-  });
-
-  it('prints --:--.--- for bestRefLapTime when not available', () => {
-    printHead2Head({
-      sessionTime: 1234,
-      player: makeCar(3),
-      ahead: null,
-      behind: null,
-      gapAhead: null,
-      gapBehind: null,
-      deltaAhead: NaN,
-      deltaBehind: NaN,
-      bestRefLapTime: NaN,
-    });
-    const lines = vi.mocked(console.log).mock.calls.flat();
-    expect(
-      lines.some((l) => l.includes('Best ref') && l.includes('--:--.---')),
-    ).toBe(true);
   });
 });

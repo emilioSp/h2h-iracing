@@ -1,3 +1,4 @@
+import type { Driver as RawDriver } from '@emiliosp/node-iracing-sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import * as irsdkRepo from '#repository/irsdk.repository.ts';
 import {
@@ -32,7 +33,7 @@ const makeRawDriver = (
     LicString: 'A 4.00',
     CarClassEstLapTime: 90.0,
     ...overrides,
-  }) as any;
+  }) as unknown as RawDriver;
 
 describe('driver.service', () => {
   describe('getFilteredRawDrivers', () => {

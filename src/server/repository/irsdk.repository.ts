@@ -20,7 +20,7 @@ const connectToIRacing = async (): Promise<void> => {
   }
 };
 
-const withConnect = <TArgs extends any[], TReturn>(
+const withConnect = <TArgs extends unknown[], TReturn>(
   fn: (...args: TArgs) => TReturn,
 ): ((...args: TArgs) => Promise<TReturn>) => {
   return async (...args: TArgs) => {
@@ -73,3 +73,17 @@ export const getSessionNum = withConnect(
 export const getRawDrivers = withConnect(
   () => ir?.getSessionInfo(SESSION_DATA_KEYS.DRIVER_INFO).Drivers ?? [],
 );
+export const getClassPositions = withConnect(
+  (): number[] => ir?.get(VARS.CAR_IDX_CLASS_POSITION) ?? [],
+);
+export const getSessionType = withConnect((): string => {
+  const sessionNum = ir?.get(VARS.SESSION_NUM)[0] ?? -1;
+  const sessionInfo = ir?.getSessionInfo(SESSION_DATA_KEYS.SESSION_INFO);
+  const session = sessionInfo?.Sessions?.find(
+    (s) => s.SessionNum === sessionNum,
+  );
+  if (!session) {
+    throw new Error(`No session found for SessionNum ${sessionNum}`);
+  }
+  return session.SessionType;
+});

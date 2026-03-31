@@ -28,8 +28,8 @@ export const formatGap = (gap: Gap | null): string => {
   return `${sec}.${String(ms).padStart(3, '0')}s`;
 };
 
-export const formatDelta = (d: number): string => {
-  if (!Number.isFinite(d)) return 'N/A';
+export const formatDelta = (d: number | null): string => {
+  if (d === null) return 'N/A';
   let sign = '';
   if (d > 0) sign = '+';
   else if (d < 0) sign = '-';
@@ -39,8 +39,8 @@ export const formatDelta = (d: number): string => {
   return `${sign}${sec}.${String(ms).padStart(3, '0')}s`;
 };
 
-const deltaLabel = (d: number): string => {
-  if (!Number.isFinite(d)) return '';
+const deltaLabel = (d: number | null): string => {
+  if (d === null) return '';
   return d >= 0 ? 'slower' : 'faster';
 };
 
@@ -65,12 +65,11 @@ export const printHead2Head = (head2Head: Head2Head | null): void => {
   console.clear();
 
   if (!head2Head) {
-    console.log('Waiting for race session…');
+    console.log('Waiting for session…');
     return;
   }
 
-  const { gapAhead, gapBehind, deltaAhead, deltaBehind, bestRefLapTime } =
-    head2Head;
+  const { gapAhead, gapBehind, deltaAhead, deltaBehind } = head2Head;
 
   console.log(`╔${LINE}╗`);
   console.log(`║  ${pad('H2H iRACING BATTLE MONITOR', W)}║`);
@@ -86,7 +85,6 @@ export const printHead2Head = (head2Head: Head2Head | null): void => {
 
   console.log(`║  ${pad('PLAYER', W)}║`);
   printCar(head2Head.player);
-  row('Best ref  : ', formatTime(bestRefLapTime));
   row('Gap ahead : ', formatGap(gapAhead));
   row('Gap behind: ', formatGap(gapBehind));
   row('vs ahead  : ', `${formatDelta(deltaAhead)} ${deltaLabel(deltaAhead)}`);

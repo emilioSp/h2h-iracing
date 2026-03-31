@@ -13,9 +13,9 @@ type Props =
       car: Car;
       variant: 'player';
       gapAhead: Gap | null;
-      deltaAhead: number;
+      deltaAhead: number | null;
       gapBehind: Gap | null;
-      deltaBehind: number;
+      deltaBehind: number | null;
     };
 
 const Label = ({ children }: { children: string }) => (
@@ -67,12 +67,20 @@ const DriverInfoGrid = ({ car }: { car: Car }) => (
   </div>
 );
 
-const GapDeltaRow = ({ gap, delta }: { gap: Gap | null; delta: number }) => (
+const GapDeltaRow = ({
+  gap,
+  delta,
+}: {
+  gap: Gap | null;
+  delta: number | null;
+}) => (
   <div className="grid grid-cols-[1fr_1fr_2fr_2fr]">
     <div />
     <div />
     <div className="grid items-center justify-items-end">
-      <span className="font-mono text-4xl font-bold text-[#facc15]">
+      <span
+        className={`font-mono text-4xl font-bold ${gap === null ? 'text-[#555]' : 'text-[#facc15]'}`}
+      >
         {formatGap(gap)}
       </span>
       <Label>Gap</Label>

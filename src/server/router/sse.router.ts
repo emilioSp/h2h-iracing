@@ -2,20 +2,26 @@ import type { Context } from 'hono';
 import { streamSSE } from 'hono/streaming';
 import config from '#config';
 import { isIRacingConnected } from '#repository/irsdk.repository.ts';
+import { resetReferenceLaps } from '#repository/reference-lap.repository.ts';
 import { debug } from '#server/debug.ts';
-import { computeHead2Head } from '#service/head2head.service.ts';
+import {
+  computeHead2Head,
+  resetSessionNumber,
+} from '#service/head2head.service.ts';
 
 export const sseRouter = (c: Context) =>
   streamSSE(c, async (stream) => {
     while ((await isIRacingConnected()) && !stream.aborted) {
       const h2h = await computeHead2Head();
       if (!h2h) {
-        throw new Error('No session is available');
+        throw new Error('Session not available');
       }
 
       const json = JSON.stringify({ data: h2h });
       await stream.writeSSE({ data: json });
       await stream.sleep(config.POLL_INTERVAL_MS);
     }
+    resetReferenceLaps();
+    resetSessionNumber();
     debug('iRacing is not connected, stopping SSE stream');
   });

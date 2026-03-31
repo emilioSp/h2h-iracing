@@ -28,10 +28,9 @@
     "#utils/*": "./src/server/utils/*"
   },
   "dependencies": {
-    "@emiliosp/node-iracing-sdk": "1.0.9",
+    "@emiliosp/node-iracing-sdk": "1.0.10",
     "@hono/node-server": "1.19.12",
     "hono": "4.12.9",
-    "npm-check-updates": "^19.6.6",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "tailwindcss": "4.2.2",
