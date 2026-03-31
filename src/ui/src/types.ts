@@ -25,7 +25,7 @@ export type Head2Head = {
   behind: Car | null;
   gapAhead: Gap | null;
   gapBehind: Gap | null;
-  deltaAhead: number;
-  deltaBehind: number;
+  deltaAhead: number | null;
+  deltaBehind: number | null;
   bestRefLapTime: number;
 };

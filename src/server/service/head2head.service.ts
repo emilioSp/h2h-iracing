@@ -5,6 +5,7 @@ import {
   getPlayerCarIdx,
   getSessionNum,
   getSessionTime,
+  getSessionType,
   isIRacingConnected,
   refreshTelemetry,
 } from '#repository/irsdk.repository.ts';
@@ -12,10 +13,15 @@ import { resetReferenceLaps } from '#repository/reference-lap.repository.ts';
 import type { Car } from '#schema/car.schema.ts';
 import type { Driver } from '#schema/driver.schema.ts';
 import type { Head2Head } from '#schema/head2head.schema.ts';
+import {
+  type Delta,
+  getDeltaBestLap,
+  getDeltaLastLap,
+} from '#service/delta.service.ts';
 import { getDriverInfo, refreshDriverInfo } from '#service/driver.service.ts';
 import { getGap } from '#service/gap.service.ts';
 import { updateReferenceLaps } from '#service/reference-lap.service.ts';
-import { getRaceStandings, type Standing } from '#service/standings.service.ts';
+import { getStandings, type Standing } from '#service/standings.service.ts';
 
 let previousSessionNum = -1;
 
@@ -41,8 +47,11 @@ const tick = async (): Promise<boolean> => {
 export const computeCar = async (
   carIdx: number,
   standings: Standing[],
-): Promise<Car & { driver: Driver }> => {
-  const carStanding = standings.find((s) => s.carIdx === carIdx)!;
+): Promise<(Car & { driver: Driver }) | null> => {
+  const carStanding = standings.find((s) => s.carIdx === carIdx);
+  if (!carStanding) {
+    return null;
+  }
 
   const driver = getDriverInfo(carIdx)!;
 
@@ -53,7 +62,7 @@ export const computeCar = async (
     position: carStanding.pos,
     lastLapTime: await getLastLapTime(carIdx),
     bestLapTime: await getBestLapTime(carIdx),
-    lap: laps[carIdx] ?? 0,
+    lap: laps[carIdx] ?? 0, // TODO: use lapNumber
   };
 
   return car;
@@ -66,7 +75,9 @@ export const computeHead2Head = async (): Promise<Head2Head | null> => {
     process.env.DATA_MODE === 'mock' ? 4 : await getPlayerCarIdx();
   if (playerIdx < 0) return null;
 
-  const standings = await getRaceStandings();
+  const sessionType = await getSessionType();
+  const isRace = sessionType.includes('Race');
+  const standings = await getStandings(isRace);
   const sessionTime = await getSessionTime();
 
   const player = await computeCar(playerIdx, standings);
@@ -86,16 +97,15 @@ export const computeHead2Head = async (): Promise<Head2Head | null> => {
     behind = await computeCar(behindIdx, standings);
   }
 
-  const gapAhead = aheadIdx > 0 ? await getGap(playerIdx, aheadIdx) : null;
-  const gapBehind = behindIdx > 0 ? await getGap(playerIdx, behindIdx) : null;
+  // TODO: refactor this like delta service
+  const gapAhead =
+    isRace && aheadIdx > 0 ? await getGap(playerIdx, aheadIdx) : null;
+  const gapBehind =
+    isRace && behindIdx > 0 ? await getGap(playerIdx, behindIdx) : null;
 
-  const playerLap = player.lastLapTime;
-  const aheadLap = ahead?.lastLapTime ?? NaN;
-  const behindLap = behind?.lastLapTime ?? NaN;
-
-  const deltaAhead = playerLap > 1 && aheadLap > 1 ? playerLap - aheadLap : NaN;
-  const deltaBehind =
-    playerLap > 1 && behindLap > 1 ? playerLap - behindLap : NaN;
+  const delta: Delta = isRace
+    ? getDeltaLastLap(player, ahead, behind)
+    : getDeltaBestLap(player, ahead, behind);
 
   return {
     sessionTime,
@@ -104,7 +114,7 @@ export const computeHead2Head = async (): Promise<Head2Head | null> => {
     behind,
     gapAhead,
     gapBehind,
-    deltaAhead,
-    deltaBehind,
+    deltaAhead: delta.deltaAhead,
+    deltaBehind: delta.deltaBehind,
   };
 };

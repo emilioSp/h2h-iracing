@@ -10,7 +10,7 @@ export const sseRouter = (c: Context) =>
     while ((await isIRacingConnected()) && !stream.aborted) {
       const h2h = await computeHead2Head();
       if (!h2h) {
-        throw new Error('No session is available');
+        throw new Error('Standings not available');
       }
 
       const json = JSON.stringify({ data: h2h });

@@ -13,8 +13,8 @@ export const head2HeadSchema = z.object({
   behind: carSchema.nullable(),
   gapAhead: gapSchema.nullable(),
   gapBehind: gapSchema.nullable(),
-  deltaAhead: z.number(),
-  deltaBehind: z.number(),
+  deltaAhead: z.number().nullable(),
+  deltaBehind: z.number().nullable(),
 });
 
 export type Head2Head = z.infer<typeof head2HeadSchema>;

@@ -18,8 +18,8 @@ export const formatGap = (
   return `${twoDecimal}s`;
 };
 
-export const formatDelta = (d: number): string => {
-  if (!Number.isFinite(d)) return 'N/A';
+export const formatDelta = (d: number | null): string => {
+  if (d === null) return 'N/A';
   const sign = d > 0 ? '+' : d < 0 ? '-' : '';
   const abs = Math.abs(d);
   const sec = Math.floor(abs);
@@ -28,12 +28,12 @@ export const formatDelta = (d: number): string => {
   return `${sign}${twoDecimal}s`;
 };
 
+export const deltaClass = (d: number | null): string => {
+  if (d === null) return 'neutral';
+  return d < 0 ? 'gaining' : 'losing';
+};
+
 export const formatName = (name: string): string => {
   const parts = name.trim().split(' ');
   return parts[parts.length - 1];
-};
-
-export const deltaClass = (d: number): string => {
-  if (!Number.isFinite(d)) return 'neutral';
-  return d < 0 ? 'gaining' : 'losing';
 };
