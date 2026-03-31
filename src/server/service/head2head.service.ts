@@ -15,7 +15,7 @@ import type { Head2Head } from '#schema/head2head.schema.ts';
 import { getDriverInfo, refreshDriverInfo } from '#service/driver.service.ts';
 import { getGap } from '#service/gap.service.ts';
 import { updateReferenceLaps } from '#service/reference-lap.service.ts';
-import { getStandings, type Standing } from '#service/standings.service.ts';
+import { getRaceStandings, type Standing } from '#service/standings.service.ts';
 
 let previousSessionNum = -1;
 
@@ -66,7 +66,7 @@ export const computeHead2Head = async (): Promise<Head2Head | null> => {
     process.env.DATA_MODE === 'mock' ? 4 : await getPlayerCarIdx();
   if (playerIdx < 0) return null;
 
-  const standings = await getStandings();
+  const standings = await getRaceStandings();
   const sessionTime = await getSessionTime();
 
   const player = await computeCar(playerIdx, standings);
