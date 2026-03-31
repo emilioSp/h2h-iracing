@@ -12,12 +12,14 @@
     "cli:start:dev": "DATA_MODE=mock node --env-file=.env examples/cli.ts",
     "cli:start": "node --env-file=.env examples/cli.ts",
     "ui:start:dev": "vite --config vite.config.ts",
+    "ui:build": "vite build --config vite.config.ts",
     "ui:serve": "vite build --config vite.config.ts & vite preview --config vite.config.ts",
     "h2h:start:dev": "npm run server:start:dev & npm run ui:serve",
     "h2h:start": "npm run server:start & npm run ui:serve",
     "test": "vitest run --coverage --config vitest.config.ts",
     "lint": "biome check --write .",
-    "build": "tsc"
+    "build": "tsc",
+    "package": "node scripts/package.ts"
   },
   "imports": {
     "#service/*": "./src/server/service/*",
@@ -29,25 +31,25 @@
   },
   "dependencies": {
     "@emiliosp/node-iracing-sdk": "1.0.9",
-    "@hono/node-server": "1.19.10",
-    "hono": "4.12.7",
+    "@hono/node-server": "1.19.12",
+    "hono": "4.12.9",
+    "npm-check-updates": "^19.6.6",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "tailwindcss": "^4.2.2",
+    "tailwindcss": "4.2.2",
     "zod": "4.3.6"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.5",
+    "@biomejs/biome": "2.4.10",
     "@tailwindcss/vite": "4.2.2",
-    "@types/node": "24.11.0",
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
-    "@vitejs/plugin-react": "^4.0.0",
-    "@vitest/coverage-v8": "^4.0.18",
-    "eventsource": "4.1.0",
+    "@types/node": "25.5.0",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "6.0.1",
+    "@vitest/coverage-v8": "4.1.2",
     "tsx": "4.21.0",
-    "typescript": "5.9.3",
-    "vite": "7.3.1",
-    "vitest": "4.0.18"
+    "typescript": "6.0.2",
+    "vite": "8.0.3",
+    "vitest": "4.1.2"
   }
 }

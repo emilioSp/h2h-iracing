@@ -29,3 +29,5 @@ TODO.md
 .claude
 
 src/ui/dist
+.cache
+build
