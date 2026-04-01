@@ -17,7 +17,7 @@ import {
   getDeltaLastLap,
 } from '#service/delta.service.ts';
 import { getDriverInfo, refreshDriverInfo } from '#service/driver.service.ts';
-import { getGap } from '#service/gap.service.ts';
+import { getIRacingGap } from '#service/gap.service.ts';
 import { updateReferenceLaps } from '#service/reference-lap.service.ts';
 import { getStandings, type Standing } from '#service/standings.service.ts';
 
@@ -105,9 +105,9 @@ export const computeHead2Head = async (): Promise<Head2Head | null> => {
 
   // TODO: refactor this like delta service
   const gapAhead =
-    isRace && aheadIdx > 0 ? await getGap(playerIdx, aheadIdx) : null;
+    isRace && aheadIdx > 0 ? await getIRacingGap(playerIdx, aheadIdx) : null;
   const gapBehind =
-    isRace && behindIdx > 0 ? await getGap(playerIdx, behindIdx) : null;
+    isRace && behindIdx > 0 ? await getIRacingGap(playerIdx, behindIdx) : null;
 
   const delta: Delta = isRace
     ? getDeltaLastLap(player, ahead, behind)

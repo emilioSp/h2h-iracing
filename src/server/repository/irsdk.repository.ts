@@ -67,6 +67,9 @@ export const getTrackSurfaces = withConnect(
 export const getEstTime = withConnect(
   (): number[] => ir?.get(VARS.CAR_IDX_EST_TIME) ?? [],
 );
+export const getF2Time = withConnect(
+  (): number[] => ir?.get(VARS.CAR_IDX_F2_TIME) ?? [],
+);
 export const getSessionNum = withConnect(
   (): number => ir?.get(VARS.SESSION_NUM)[0] ?? -1,
 );

@@ -1,5 +1,6 @@
 import {
   getEstTime,
+  getF2Time,
   getLapDistPct,
   getLaps,
   getOnPitRoad,
@@ -106,3 +107,33 @@ export const getGap = async (
     unit: 'seconds',
   };
 };
+
+const iRacingDelta = (
+  f2Time: number[],
+  carIdxA: number,
+  carIdxB: number,
+): number => Math.abs(f2Time[carIdxA] - f2Time[carIdxB]);
+
+export const getIRacingGap = async (
+  carIdxA: number,
+  carIdxB: number,
+): Promise<Gap> => {
+  if (carIdxA === carIdxB) return { value: 0, unit: 'seconds' };
+
+  const [lapDistPct, laps, f2Time] = await Promise.all([
+    getLapDistPct(),
+    getLaps(),
+    getF2Time(),
+  ]);
+
+  const totalA = laps[carIdxA] + lapDistPct[carIdxA];
+  const totalB = laps[carIdxB] + lapDistPct[carIdxB];
+  const trueLapDiff = Math.abs(totalA - totalB);
+
+  if (trueLapDiff >= 1.0) {
+    return { value: Math.floor(trueLapDiff), unit: 'laps' };
+  }
+
+  return { value: iRacingDelta(f2Time, carIdxA, carIdxB), unit: 'seconds' };
+};
+
