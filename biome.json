@@ -10,7 +10,6 @@
     "includes": [
       "**",
       "!!**/node_modules",
-      "!!**/src/server/service/test-gap.ts",
       "!!**/dist",
       "!!**/coverage",
       "!!**/build"
