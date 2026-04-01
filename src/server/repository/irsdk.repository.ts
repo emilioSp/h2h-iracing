@@ -90,3 +90,10 @@ export const getSessionType = withConnect((): string => {
   }
   return session.SessionType;
 });
+export const getTrackLengthMeters = withConnect((): number => {
+  const weekendInfo = ir?.getSessionInfo(SESSION_DATA_KEYS.WEEKEND_INFO);
+  if (!weekendInfo) {
+    return 0;
+  }
+  return Number.parseFloat(weekendInfo.TrackLength) * 1000;
+});

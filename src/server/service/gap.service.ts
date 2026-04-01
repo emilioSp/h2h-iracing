@@ -5,10 +5,10 @@ import {
   getLaps,
   getOnPitRoad,
 } from '#repository/irsdk.repository.ts';
+import type { ReferenceLap } from '#repository/reference-lap.repository.ts';
 import { getRefLap } from '#repository/reference-lap.repository.ts';
 import { getClassEstLapTime } from '#service/driver.service.ts';
-import type { ReferenceLap } from '#utils/pchip.ts';
-import { interpolateAtPoint } from '#utils/pchip.ts';
+import { interpolateTimeAtTrackPosition } from '#service/reference-lap.service.ts';
 
 export type Gap = {
   value: number;
@@ -33,8 +33,8 @@ const referenceDelta = (
   aheadPct: number,
   behindPct: number,
 ): number => {
-  const timeAhead = interpolateAtPoint(refLap, aheadPct) ?? 0;
-  const timeBehind = interpolateAtPoint(refLap, behindPct) ?? 0;
+  const timeAhead = interpolateTimeAtTrackPosition(refLap, aheadPct) ?? 0;
+  const timeBehind = interpolateTimeAtTrackPosition(refLap, behindPct) ?? 0;
   let delta = timeAhead - timeBehind;
   const lapTime = refLap.finishTime - refLap.startTime;
   if (aheadPct < behindPct) delta += lapTime;
@@ -136,4 +136,3 @@ export const getIRacingGap = async (
 
   return { value: iRacingDelta(f2Time, carIdxA, carIdxB), unit: 'seconds' };
 };
-

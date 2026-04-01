@@ -7,11 +7,6 @@ vi.mock('#repository/irsdk.repository.ts', () => ({
   getOnPitRoad: vi.fn(),
 }));
 
-vi.mock('#utils/pchip.ts', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('#utils/pchip.ts')>();
-  return { ...actual, precomputePCHIPTangents: vi.fn() };
-});
-
 import {
   getLapDistPct,
   getOnPitRoad,
@@ -27,17 +22,20 @@ import {
   resetReferenceLaps,
   setActiveRefLap,
 } from '#repository/reference-lap.repository.ts';
-import { updateReferenceLaps } from '#service/reference-lap.service.ts';
-import { precomputePCHIPTangents, REFERENCE_INTERVAL } from '#utils/pchip.ts';
+import {
+  getMinPointsForValidLap,
+  getReferenceInterval,
+  interpolateTimeAtTrackPosition,
+  normalizeTrackPct,
+  updateReferenceLaps,
+} from '#service/reference-lap.service.ts';
 
 const mockGetLapDistPct = vi.mocked(getLapDistPct);
 const mockGetSessionTime = vi.mocked(getSessionTime);
 const mockGetTrackSurfaces = vi.mocked(getTrackSurfaces);
 const mockGetOnPitRoad = vi.mocked(getOnPitRoad);
-const mockPrecomputePCHIPTangents = vi.mocked(precomputePCHIPTangents);
 
 const TRACK_SURFACE_ON_TRACK = 3;
-const MIN_VALID_POINTS = 400;
 const PAST_FINISH_LINE_PCT = 0.01;
 const DEFAULT_TRACK_PCT = 0.5;
 const DEFAULT_SESSION_TIME = 100;
@@ -47,13 +45,13 @@ const seedActiveLap = (
   pointCount: number,
   opts?: Partial<ReferenceLap>,
 ): void => {
+  const interval = getReferenceInterval();
   const refPoints = new Map<number, ReferencePoint>();
   for (let i = 0; i < pointCount; i++) {
-    const pct = i * REFERENCE_INTERVAL;
+    const pct = i * interval;
     refPoints.set(pct, {
       trackPct: pct,
       timeElapsedSinceStart: i,
-      tangent: undefined,
     });
   }
   setActiveRefLap(carIdx, {
@@ -194,31 +192,29 @@ describe('lap completion', async () => {
 
   it('saves a valid clean lap to the recent window', async () => {
     const lapTime = 80;
-    seedActiveLap(0, MIN_VALID_POINTS);
+    seedActiveLap(0, getMinPointsForValidLap());
     mockGetLapDistPct.mockResolvedValue([PAST_FINISH_LINE_PCT]);
     mockGetSessionTime.mockResolvedValue(lapTime);
 
     await updateReferenceLaps();
 
     expect(getRefLap(0)).not.toBeNull();
-    expect(mockPrecomputePCHIPTangents).toHaveBeenCalledOnce();
   });
 
-  it('does not add to recent window when point count < 400', async () => {
+  it('does not add to recent window when point count is below threshold', async () => {
     const lapTime = 80;
-    seedActiveLap(0, MIN_VALID_POINTS - 1);
+    seedActiveLap(0, getMinPointsForValidLap() - 1);
     mockGetLapDistPct.mockResolvedValue([PAST_FINISH_LINE_PCT]);
     mockGetSessionTime.mockResolvedValue(lapTime);
 
     await updateReferenceLaps();
 
     expect(getRefLap(0)).toBeNull();
-    expect(mockPrecomputePCHIPTangents).not.toHaveBeenCalled();
   });
 
   it('does not add to recent window when lap is dirty', async () => {
     const lapTime = 80;
-    seedActiveLap(0, MIN_VALID_POINTS, { isCleanLap: false });
+    seedActiveLap(0, getMinPointsForValidLap(), { isCleanLap: false });
     mockGetLapDistPct.mockResolvedValue([PAST_FINISH_LINE_PCT]);
     mockGetSessionTime.mockResolvedValue(lapTime);
 
@@ -239,7 +235,7 @@ describe('lap completion', async () => {
     };
     addRecentLap(0, existingLap);
 
-    seedActiveLap(0, MIN_VALID_POINTS);
+    seedActiveLap(0, getMinPointsForValidLap());
     mockGetLapDistPct.mockResolvedValue([PAST_FINISH_LINE_PCT]);
     mockGetSessionTime.mockResolvedValue(newLapTime);
 
@@ -262,12 +258,102 @@ describe('lap completion', async () => {
     };
     addRecentLap(0, existingLap);
 
-    seedActiveLap(0, MIN_VALID_POINTS);
+    seedActiveLap(0, getMinPointsForValidLap());
     mockGetLapDistPct.mockResolvedValue([PAST_FINISH_LINE_PCT]);
     mockGetSessionTime.mockResolvedValue(newLapTime);
 
     await updateReferenceLaps();
 
     expect(getRefLap(0)).toBe(existingLap);
+  });
+});
+
+describe('normalizeTrackPct', () => {
+  it('returns 0 for key = 0', () => {
+    expect(normalizeTrackPct(0)).toBe(0);
+  });
+
+  it('returns the key unchanged when it falls exactly on a boundary', () => {
+    expect(normalizeTrackPct(getReferenceInterval())).toBe(getReferenceInterval());
+  });
+
+  it('truncates to the nearest referenceInterval boundary below', () => {
+    const keyBetweenBoundaries = 0.003; // between 0.0025 and 0.005
+    expect(normalizeTrackPct(keyBetweenBoundaries)).toBe(0.0025);
+  });
+
+  it('returns 0 for negative input', () => {
+    expect(normalizeTrackPct(-0.1)).toBe(0);
+  });
+});
+
+describe('interpolateTimeAtTrackPosition', () => {
+  const makePoint = (trackPct: number, time: number): ReferencePoint => ({
+    trackPct,
+    timeElapsedSinceStart: time,
+  });
+
+  const makeLap = (
+    points: Array<[number, ReferencePoint]>,
+    startTime = 0,
+    finishTime = 100,
+  ): ReferenceLap => ({
+    refPoints: new Map(points),
+    startTime,
+    finishTime,
+    lastTrackedPct: points[points.length - 1]?.[0] ?? 0,
+    isCleanLap: true,
+  });
+
+  it('returns null when no refPoint exists at the target position', () => {
+    const lap = makeLap([[0.5, makePoint(0.5, 50)]]);
+    expect(interpolateTimeAtTrackPosition(lap, 0.3)).toBeNull();
+  });
+
+  it('returns the p0 time when no next point exists', () => {
+    const trackPct = 1 - getReferenceInterval();
+    const time = 99.75;
+    const lap = makeLap([[trackPct, makePoint(trackPct, time)]]);
+    expect(interpolateTimeAtTrackPosition(lap, trackPct)).toBe(time);
+  });
+
+  it('linearly interpolates between two points', () => {
+    const interval = getReferenceInterval();
+    const lap = makeLap([
+      [0.0, makePoint(0.0, 0)],
+      [interval, makePoint(interval, 10)],
+    ]);
+    expect(interpolateTimeAtTrackPosition(lap, interval / 2)).toBeCloseTo(5, 10);
+  });
+
+  it('returns the stored time at an exact key', () => {
+    const interval = getReferenceInterval();
+    const lapTime = 100;
+    const buckets = Math.floor(1 / interval);
+    const entries: Array<[number, ReferencePoint]> = [];
+    for (let i = 0; i < buckets; i++) {
+      const pct = i * interval;
+      entries.push([pct, makePoint(pct, pct * lapTime)]);
+    }
+    const lap = makeLap(entries, 0, lapTime);
+    const storedPct = Math.floor(buckets / 2) * interval;
+    expect(interpolateTimeAtTrackPosition(lap, storedPct)).toBeCloseTo(storedPct * lapTime, 5);
+  });
+
+  it('wraps time correctly when interpolating across the finish line', () => {
+    const interval = getReferenceInterval();
+    const lapTime = 100;
+    const lastPct = 1 - interval;
+    const lap = makeLap(
+      [
+        [lastPct, makePoint(lastPct, lastPct * lapTime)],
+        [0, makePoint(0, 0)],
+      ],
+      0,
+      lapTime,
+    );
+    const currentTrackPositionPct = lastPct + interval / 2;
+    const expected = lastPct * lapTime + (interval / 2) * lapTime;
+    expect(interpolateTimeAtTrackPosition(lap, currentTrackPositionPct)).toBeCloseTo(expected, 3);
   });
 });
