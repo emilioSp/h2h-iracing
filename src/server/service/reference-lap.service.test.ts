@@ -25,10 +25,13 @@ import {
 import {
   getMinPointsForValidLap,
   getReferenceInterval,
+  initReferenceInterval,
   interpolateTimeAtTrackPosition,
   normalizeTrackPct,
   updateReferenceLaps,
 } from '#service/reference-lap.service.ts';
+
+const TEST_TRACK_LENGTH_METERS = 5000;
 
 const mockGetLapDistPct = vi.mocked(getLapDistPct);
 const mockGetSessionTime = vi.mocked(getSessionTime);
@@ -67,6 +70,7 @@ const seedActiveLap = (
 beforeEach(() => {
   vi.clearAllMocks();
   resetReferenceLaps();
+  initReferenceInterval(TEST_TRACK_LENGTH_METERS);
   mockGetLapDistPct.mockResolvedValue([DEFAULT_TRACK_PCT]);
   mockGetSessionTime.mockResolvedValue(DEFAULT_SESSION_TIME);
   mockGetTrackSurfaces.mockResolvedValue([TRACK_SURFACE_ON_TRACK]);
@@ -280,8 +284,9 @@ describe('normalizeTrackPct', () => {
   });
 
   it('truncates to the nearest referenceInterval boundary below', () => {
-    const keyBetweenBoundaries = 0.003; // between 0.0025 and 0.005
-    expect(normalizeTrackPct(keyBetweenBoundaries)).toBe(0.0025);
+    const interval = getReferenceInterval();
+    const keyBetweenBoundaries = interval * 1.5;
+    expect(normalizeTrackPct(keyBetweenBoundaries)).toBe(interval);
   });
 
   it('returns 0 for negative input', () => {
@@ -313,10 +318,11 @@ describe('interpolateTimeAtTrackPosition', () => {
   });
 
   it('returns the p0 time when no next point exists', () => {
-    const trackPct = 1 - getReferenceInterval();
-    const time = 99.75;
-    const lap = makeLap([[trackPct, makePoint(trackPct, time)]]);
-    expect(interpolateTimeAtTrackPosition(lap, trackPct)).toBe(time);
+    const rawPct = 0.5;
+    const key = normalizeTrackPct(rawPct);
+    const time = 50;
+    const lap = makeLap([[key, makePoint(key, time)]]);
+    expect(interpolateTimeAtTrackPosition(lap, rawPct)).toBe(time);
   });
 
   it('linearly interpolates between two points', () => {

@@ -12,7 +12,6 @@ import {
 } from '#repository/reference-lap.repository.ts';
 
 const REF_POINTS_DISTANCE_METERS = 10;
-const DEFAULT_INTERVAL = 0.0025;
 const DECIMAL_PLACES = 8;
 
 const TRACK_SURFACE_ON_TRACK = 3;
@@ -21,15 +20,13 @@ const COVERAGE_THRESHOLD = 0.6;
 export const getMinPointsForValidLap = (): number =>
   Math.floor((1 / getReferenceInterval()) * COVERAGE_THRESHOLD);
 
-let referenceInterval = DEFAULT_INTERVAL;
+let referenceInterval = 0;
 
 export const getReferenceInterval = (): number => referenceInterval;
 
 export const initReferenceInterval = (trackLengthMeters: number): void => {
   referenceInterval =
-    trackLengthMeters > 0
-      ? REF_POINTS_DISTANCE_METERS / trackLengthMeters
-      : DEFAULT_INTERVAL;
+    trackLengthMeters > 0 ? REF_POINTS_DISTANCE_METERS / trackLengthMeters : 0;
 };
 
 // truncates the raw percentage to the nearest referenceInterval boundary
