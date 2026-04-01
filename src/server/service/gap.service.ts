@@ -103,6 +103,16 @@ export const getGap = async (
         JSON.stringify(debug, null, 2),
       );
 
+      console.log('FERMATEEEEEEE');
+      console.log('FERMATEEEEEEE');
+      console.log('FERMATEEEEEEE');
+      console.log('FERMATEEEEEEE');
+      console.log('FERMATEEEEEEE');
+      console.log('FERMATEEEEEEE');
+      console.log('FERMATEEEEEEE');
+      console.log('FERMATEEEEEEE');
+      console.log('FERMATEEEEEEE');
+      console.log('FERMATEEEEEEE');
       throw new Error('MAMT!');
     }
     return {
