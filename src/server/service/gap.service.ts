@@ -1,4 +1,3 @@
-import fs from 'node:fs';
 import {
   getEstTime,
   getLapDistPct,
@@ -89,34 +88,8 @@ export const getGap = async (
   const hasRefData = refLap !== null && refLap.finishTime > 0;
 
   if (!anyOnPit && hasRefData) {
-    const value = referenceDelta(refLap, aheadPct, behindPct);
-    if (value >= 50) {
-      const debug = {
-        aheadIdx,
-        behindIdx,
-        aheadPct,
-        behindPct,
-        refLap: JSON.stringify(refLap, null, 2),
-      };
-      fs.writeFileSync(
-        `debug_${Date.now()}.log`,
-        JSON.stringify(debug, null, 2),
-      );
-
-      console.log('FERMATEEEEEEE');
-      console.log('FERMATEEEEEEE');
-      console.log('FERMATEEEEEEE');
-      console.log('FERMATEEEEEEE');
-      console.log('FERMATEEEEEEE');
-      console.log('FERMATEEEEEEE');
-      console.log('FERMATEEEEEEE');
-      console.log('FERMATEEEEEEE');
-      console.log('FERMATEEEEEEE');
-      console.log('FERMATEEEEEEE');
-      throw new Error('MAMT!');
-    }
     return {
-      value,
+      value: referenceDelta(refLap, aheadPct, behindPct),
       unit: 'seconds',
     };
   }
