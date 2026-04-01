@@ -29,7 +29,12 @@ export const initReferenceInterval = (trackLengthMeters: number): void => {
     trackLengthMeters > 0 ? REF_POINTS_DISTANCE_METERS / trackLengthMeters : 0;
 };
 
-// truncates the raw percentage to the nearest referenceInterval boundary
+// Truncates the raw percentage to the nearest referenceInterval boundary.
+// Example with referenceInterval = 0.002 (5000m track, 10m buckets):
+//   normalizeTrackPct(0.50734)
+//   → 0.50734 % 0.002 = 0.00134  (offset past the last bucket boundary)
+//   → 0.50734 - 0.00134 = 0.506  (snap to bucket boundary)
+//   → toFixed(8) + parseFloat to avoid floating-point drift
 export const normalizeTrackPct = (trackPct: number): number => {
   const normalizedTrackPct = Number.parseFloat(
     (trackPct - (trackPct % referenceInterval)).toFixed(DECIMAL_PLACES),
