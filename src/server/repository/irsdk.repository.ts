@@ -30,9 +30,11 @@ const withConnect = <TArgs extends unknown[], TReturn>(
 };
 
 export const refreshTelemetry = withConnect(() => ir?.refreshSharedMemory());
+
 export const isIRacingConnected = withConnect(
   (): boolean => ir?.isConnected() ?? false,
 );
+
 export const shutdown = withConnect((): void => ir?.shutdown());
 
 export const getPlayerCarIdx = withConnect(
@@ -52,30 +54,39 @@ export const getBestLapTime = withConnect((carIdx: number): number => {
 export const getLaps = withConnect(
   (): number[] => ir?.get(VARS.CAR_IDX_LAP) ?? [],
 );
+
 export const getSessionTime = withConnect(
   (): number => ir?.get(VARS.SESSION_TIME)[0] ?? 0,
 );
+
 export const getLapDistPct = withConnect(
   (): number[] => ir?.get(VARS.CAR_IDX_LAP_DIST_PCT) ?? [],
 );
+
 export const getOnPitRoad = withConnect(
   (): number[] => ir?.get(VARS.CAR_IDX_ON_PIT_ROAD) ?? [],
 );
+
 export const getTrackSurfaces = withConnect(
   (): number[] => ir?.get(VARS.CAR_IDX_TRACK_SURFACE) ?? [],
 );
+
 export const getEstTime = withConnect(
   (): number[] => ir?.get(VARS.CAR_IDX_EST_TIME) ?? [],
 );
+
 export const getSessionNum = withConnect(
   (): number => ir?.get(VARS.SESSION_NUM)[0] ?? -1,
 );
+
 export const getRawDrivers = withConnect(
   () => ir?.getSessionInfo(SESSION_DATA_KEYS.DRIVER_INFO).Drivers ?? [],
 );
+
 export const getClassPositions = withConnect(
   (): number[] => ir?.get(VARS.CAR_IDX_CLASS_POSITION) ?? [],
 );
+
 export const getSessionType = withConnect((): string => {
   const sessionNum = ir?.get(VARS.SESSION_NUM)[0] ?? -1;
   const sessionInfo = ir?.getSessionInfo(SESSION_DATA_KEYS.SESSION_INFO);
@@ -86,4 +97,12 @@ export const getSessionType = withConnect((): string => {
     throw new Error(`No session found for SessionNum ${sessionNum}`);
   }
   return session.SessionType;
+});
+
+export const getTrackLengthMeters = withConnect((): number => {
+  const weekendInfo = ir?.getSessionInfo(SESSION_DATA_KEYS.WEEKEND_INFO);
+  if (!weekendInfo) {
+    return 0;
+  }
+  return Number.parseFloat(weekendInfo.TrackLength) * 1000;
 });

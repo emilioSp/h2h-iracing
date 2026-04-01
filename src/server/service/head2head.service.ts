@@ -6,6 +6,7 @@ import {
   getSessionNum,
   getSessionTime,
   getSessionType,
+  getTrackLengthMeters,
   refreshTelemetry,
 } from '#repository/irsdk.repository.ts';
 import { resetReferenceLaps } from '#repository/reference-lap.repository.ts';
@@ -18,13 +19,21 @@ import {
 } from '#service/delta.service.ts';
 import { getDriverInfo, refreshDriverInfo } from '#service/driver.service.ts';
 import { getGap } from '#service/gap.service.ts';
-import { updateReferenceLaps } from '#service/reference-lap.service.ts';
+import {
+  initReferenceInterval,
+  updateReferenceLaps,
+} from '#service/reference-lap.service.ts';
 import { getStandings, type Standing } from '#service/standings.service.ts';
 
 let previousSessionNum = -1;
 
 export const resetSessionNumber = (): void => {
   previousSessionNum = -1;
+};
+
+export const initTrackLengthMeters = async (): Promise<void> => {
+  const trackLength = await getTrackLengthMeters();
+  initReferenceInterval(trackLength);
 };
 
 const tick = async (): Promise<void> => {
@@ -34,6 +43,7 @@ const tick = async (): Promise<void> => {
   const currentSessionNum = await getSessionNum();
   if (currentSessionNum !== previousSessionNum) {
     resetReferenceLaps();
+    await initTrackLengthMeters();
     previousSessionNum = currentSessionNum;
   }
 

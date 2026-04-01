@@ -1,6 +1,15 @@
-import type { ReferenceLap } from '#utils/pchip.ts';
+export type ReferencePoint = {
+  trackPct: number;
+  timeElapsedSinceStart: number;
+};
 
-export type { ReferenceLap, ReferencePoint } from '#utils/pchip.ts';
+export type ReferenceLap = {
+  refPoints: Map<number, ReferencePoint>;
+  startTime: number;
+  finishTime: number;
+  lastTrackedPct: number;
+  isCleanLap: boolean;
+};
 
 const RECENT_LAPS_WINDOW_SIZE = 4;
 

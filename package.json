@@ -24,8 +24,7 @@
     "#repository/*": "./src/server/repository/*",
     "#schema/*": "./src/server/schema/*",
     "#config": "./src/server/config.ts",
-    "#router/*": "./src/server/router/*",
-    "#utils/*": "./src/server/utils/*"
+    "#router/*": "./src/server/router/*"
   },
   "dependencies": {
     "@emiliosp/node-iracing-sdk": "1.0.10",
