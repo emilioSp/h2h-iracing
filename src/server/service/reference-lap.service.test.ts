@@ -274,7 +274,9 @@ describe('normalizeTrackPct', () => {
   });
 
   it('returns the key unchanged when it falls exactly on a boundary', () => {
-    expect(normalizeTrackPct(getReferenceInterval())).toBe(getReferenceInterval());
+    expect(normalizeTrackPct(getReferenceInterval())).toBe(
+      getReferenceInterval(),
+    );
   });
 
   it('truncates to the nearest referenceInterval boundary below', () => {
@@ -323,7 +325,10 @@ describe('interpolateTimeAtTrackPosition', () => {
       [0.0, makePoint(0.0, 0)],
       [interval, makePoint(interval, 10)],
     ]);
-    expect(interpolateTimeAtTrackPosition(lap, interval / 2)).toBeCloseTo(5, 10);
+    expect(interpolateTimeAtTrackPosition(lap, interval / 2)).toBeCloseTo(
+      5,
+      10,
+    );
   });
 
   it('returns the stored time at an exact key', () => {
@@ -337,7 +342,10 @@ describe('interpolateTimeAtTrackPosition', () => {
     }
     const lap = makeLap(entries, 0, lapTime);
     const storedPct = Math.floor(buckets / 2) * interval;
-    expect(interpolateTimeAtTrackPosition(lap, storedPct)).toBeCloseTo(storedPct * lapTime, 5);
+    expect(interpolateTimeAtTrackPosition(lap, storedPct)).toBeCloseTo(
+      storedPct * lapTime,
+      5,
+    );
   });
 
   it('wraps time correctly when interpolating across the finish line', () => {
@@ -354,6 +362,8 @@ describe('interpolateTimeAtTrackPosition', () => {
     );
     const currentTrackPositionPct = lastPct + interval / 2;
     const expected = lastPct * lapTime + (interval / 2) * lapTime;
-    expect(interpolateTimeAtTrackPosition(lap, currentTrackPositionPct)).toBeCloseTo(expected, 3);
+    expect(
+      interpolateTimeAtTrackPosition(lap, currentTrackPositionPct),
+    ).toBeCloseTo(expected, 3);
   });
 });

@@ -127,7 +127,9 @@ const collectLapData = (
     setActiveRefLap(carIdx, {
       startTime: sessionTime,
       finishTime: -1,
-      refPoints: new Map([[refPointKey, { trackPct, timeElapsedSinceStart: 0 }]]),
+      refPoints: new Map([
+        [refPointKey, { trackPct, timeElapsedSinceStart: 0 }],
+      ]),
       lastTrackedPct: trackPct,
       isCleanLap: isLapClean(trackSurface, isOnPitRoad),
     });
@@ -151,7 +153,9 @@ const collectLapData = (
     setActiveRefLap(carIdx, {
       startTime: sessionTime,
       finishTime: -1,
-      refPoints: new Map([[refPointKey, { trackPct, timeElapsedSinceStart: 0 }]]),
+      refPoints: new Map([
+        [refPointKey, { trackPct, timeElapsedSinceStart: 0 }],
+      ]),
       lastTrackedPct: trackPct,
       isCleanLap: isLapClean(trackSurface, isOnPitRoad),
     });
