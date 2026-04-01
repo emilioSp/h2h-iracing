@@ -11,7 +11,7 @@ import {
   setActiveRefLap,
 } from '#repository/reference-lap.repository.ts';
 
-const REF_POINTS_DISTANCE_METERS = 3;
+const REF_POINTS_DISTANCE_METERS = 10;
 const DEFAULT_INTERVAL = 0.0025;
 const DECIMAL_PLACES = 8;
 

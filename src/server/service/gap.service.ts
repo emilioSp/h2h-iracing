@@ -28,7 +28,7 @@ const estimatedDelta = (
   return Math.abs(delta);
 };
 
-const referenceDelta = (
+export const referenceDelta = (
   refLap: ReferenceLap,
   aheadPct: number,
   behindPct: number,
