@@ -10,6 +10,7 @@ import {
   type ReferenceLap,
   setActiveRefLap,
 } from '#repository/reference-lap.repository.ts';
+import { getCarIdxs } from '#service/driver.service.ts';
 
 const REF_POINTS_DISTANCE_METERS = 10;
 const DECIMAL_PLACES = 8;
@@ -182,15 +183,16 @@ export const updateReferenceLaps = async (): Promise<void> => {
   const sessionTime = await getSessionTime();
   const trackSurfaces = await getTrackSurfaces();
   const onPitRoad = await getOnPitRoad();
+  const carIdxs = await getCarIdxs();
 
-  for (let i = 0; i < lapDistPct.length; i++) {
-    if ((lapDistPct[i] ?? -1) < 0) continue;
+  for (const carIdx of carIdxs) {
+    if ((lapDistPct[carIdx] ?? -1) < 0) continue;
     collectLapData(
-      i,
-      lapDistPct[i],
+      carIdx,
+      lapDistPct[carIdx],
       sessionTime,
-      trackSurfaces[i] ?? -1,
-      onPitRoad[i] === 1,
+      trackSurfaces[carIdx] ?? -1,
+      onPitRoad[carIdx] === 1,
     );
   }
 };

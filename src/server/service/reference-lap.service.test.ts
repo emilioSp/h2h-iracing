@@ -7,12 +7,17 @@ vi.mock('#repository/irsdk.repository.ts', () => ({
   getOnPitRoad: vi.fn(),
 }));
 
+vi.mock('#service/driver.service.ts', () => ({
+  getCarIdxs: vi.fn(),
+}));
+
 import {
   getLapDistPct,
   getOnPitRoad,
   getSessionTime,
   getTrackSurfaces,
 } from '#repository/irsdk.repository.ts';
+import { getCarIdxs } from '#service/driver.service.ts';
 import {
   addRecentLap,
   getActiveRefLap,
@@ -37,6 +42,7 @@ const mockGetLapDistPct = vi.mocked(getLapDistPct);
 const mockGetSessionTime = vi.mocked(getSessionTime);
 const mockGetTrackSurfaces = vi.mocked(getTrackSurfaces);
 const mockGetOnPitRoad = vi.mocked(getOnPitRoad);
+const mockGetCarIdxs = vi.mocked(getCarIdxs);
 
 const TRACK_SURFACE_ON_TRACK = 3;
 const PAST_FINISH_LINE_PCT = 0.01;
@@ -75,6 +81,7 @@ beforeEach(() => {
   mockGetSessionTime.mockResolvedValue(DEFAULT_SESSION_TIME);
   mockGetTrackSurfaces.mockResolvedValue([TRACK_SURFACE_ON_TRACK]);
   mockGetOnPitRoad.mockResolvedValue([0]);
+  mockGetCarIdxs.mockResolvedValue([0]);
 });
 
 describe('getRefLap', () => {
