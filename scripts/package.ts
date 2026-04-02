@@ -18,9 +18,7 @@ const BUILD_DIR = join(PROJECT_ROOT, 'build');
 const DIST_DIR = join(BUILD_DIR, 'h2h-iracing');
 const CACHED_NODE = join(CACHE_DIR, 'node.exe');
 
-const today = new Date();
-const VERSION = `${today.getFullYear()}_${today.getMonth() + 1}_${today.getDate()}_${today.getHours()}${today.getMinutes()}`;
-const ZIP_FILE = join(BUILD_DIR, `h2h-iracing_${VERSION}.zip`);
+const ZIP_FILE = join(BUILD_DIR, `h2h-iracing.zip`);
 
 console.log('\n=== H2H iRacing Packager ===\n');
 
@@ -89,7 +87,7 @@ console.log('\n=== Build complete ===');
 console.log(`Output: ${ZIP_FILE} (${sizeMB} MB)`);
 console.log('Extract the zip, double-click h2h.bat to run.\n');
 
-cpSync(ZIP_FILE, join(PROJECT_ROOT, `h2h-iracing_${VERSION}.zip`));
+cpSync(ZIP_FILE, join(PROJECT_ROOT, `h2h-iracing.zip`));
 
 console.log('Restoring dev dependencies...');
 execSync('npm ci', { cwd: PROJECT_ROOT, stdio: 'inherit' });
