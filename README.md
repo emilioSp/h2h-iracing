@@ -2,7 +2,7 @@
 
 Real-time head-to-head battle overlay for iRacing. Tracks your position relative to the cars immediately ahead and behind you, showing gaps, deltas, and driver info.
 
-Three modes of operation:
+Two modes of operation:
 
 - **Server + UI** — HTTP server with SSE + React overlay for streaming software (OBS)
 - **CLI** — terminal UI for local monitoring (manly for development/testing)
@@ -28,7 +28,7 @@ Create a `.env` file with the following variables:
 | `DUMP_FILE_PATH`   | Path to `.bin` dump file (mock mode only)  | yes      |
 | `POLL_INTERVAL_MS` | Telemetry polling interval in milliseconds | yes      |
 | `PORT`             | HTTP server port                           | yes      |
-| `LOG_LEVEL`        | `debug` / `info` / `warn` / `error`        | yes      |
+| `LOG_LEVEL`        | `debug` / `info`                           | yes      |
 
 Start in mock mode (no iRacing required):
 
@@ -87,7 +87,7 @@ Each SSE message contains:
 npm test
 ```
 
-Runs Vitest with coverage (85% minimum). Tests use a real telemetry dump file.
+Runs Vitest with coverage (85% minimum). 
 
 ## Documentation
 
