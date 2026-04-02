@@ -10,7 +10,7 @@ const app = new Hono();
 app.get('/sse', sseRouter);
 app.use('/*', serveStatic({ root: './dist/ui' }));
 
-const server = serve({ fetch: app.fetch, port: config.PORT }, (info) => {
+const server = serve({ fetch: app.fetch, port: config.PORT, hostname: '127.0.0.1' }, (info) => {
   console.log(`Server running on http://localhost:${info.port}`);
   console.log(`Mode: ${config.DATA_MODE} | Poll: ${config.POLL_INTERVAL_MS}ms`);
 });
