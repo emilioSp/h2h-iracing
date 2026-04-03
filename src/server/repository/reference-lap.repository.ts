@@ -11,7 +11,7 @@ export type ReferenceLap = {
   isCleanLap: boolean;
 };
 
-const RECENT_LAPS_WINDOW_SIZE = 4;
+const RECENT_LAPS_WINDOW_SIZE = 5;
 
 const activeLaps = new Map<number, ReferenceLap>();
 const recentLaps = new Map<number, ReferenceLap[]>();
@@ -24,20 +24,22 @@ export const setActiveRefLap = (carIdx: number, lap: ReferenceLap): void => {
 };
 
 export const addRecentLap = (carIdx: number, lap: ReferenceLap): void => {
-  const window = recentLaps.get(carIdx) ?? [];
-  window.push(lap);
-  if (window.length > RECENT_LAPS_WINDOW_SIZE) window.shift();
-  recentLaps.set(carIdx, window);
+  const rollingWindow = recentLaps.get(carIdx) ?? [];
+  rollingWindow.push(lap);
+  if (rollingWindow.length > RECENT_LAPS_WINDOW_SIZE) rollingWindow.shift();
+  recentLaps.set(carIdx, rollingWindow);
 };
 
 export const getRefLap = (carIdx: number): ReferenceLap | null => {
-  const window = recentLaps.get(carIdx);
-  if (!window || window.length === 0) return null;
-  return window.reduce((best, lap) =>
-    lap.finishTime - lap.startTime < best.finishTime - best.startTime
-      ? lap
-      : best,
+  const rollingWindow = recentLaps.get(carIdx);
+  if (!rollingWindow || rollingWindow.length === 0) return null;
+  const bestLapRef = rollingWindow.reduce((lapA, lapB) =>
+    lapA.finishTime - lapA.startTime < lapB.finishTime - lapB.startTime
+      ? lapA
+      : lapB,
   );
+
+  return bestLapRef;
 };
 
 export const resetReferenceLaps = (): void => {
