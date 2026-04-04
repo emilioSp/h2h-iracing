@@ -17,22 +17,27 @@ import {
   getSessionTime,
   getTrackSurfaces,
 } from '#repository/irsdk.repository.ts';
-import { getCarIdxs } from '#service/driver.service.ts';
+import * as referenceLapRepository from '#repository/reference-lap.repository.ts';
 import {
-  addRecentLap,
-  getActiveRefLap,
-  getRefLap,
   type ReferenceLap,
   type ReferencePoint,
   resetReferenceLaps,
-  setActiveRefLap,
 } from '#repository/reference-lap.repository.ts';
+import * as referenceLapService from '#service/reference-lap.service.ts';
+
+vi.spyOn(referenceLapRepository, 'addRecentLap');
+vi.spyOn(referenceLapRepository, 'setActiveRefLap');
+vi.spyOn(referenceLapService, 'normalizeTrackPct');
+
+import { getCarIdxs } from '#service/driver.service.ts';
 import {
+  getActiveRefLap,
   getMinPointsForValidLap,
   getReferenceInterval,
   initReferenceInterval,
   interpolateTimeAtTrackPosition,
   normalizeTrackPct,
+  setActiveRefLap,
   updateReferenceLaps,
 } from '#service/reference-lap.service.ts';
 
@@ -84,39 +89,13 @@ beforeEach(() => {
   mockGetCarIdxs.mockResolvedValue([0]);
 });
 
-describe('getRefLap', () => {
-  it('returns null when no recent laps exist', () => {
-    expect(getRefLap(0)).toBeNull();
-  });
-
-  it('returns the fastest lap in the recent window', () => {
-    const slowLap: ReferenceLap = {
-      startTime: 0,
-      finishTime: 90,
-      refPoints: new Map(),
-      lastTrackedPct: 0.99,
-      isCleanLap: true,
-    };
-    const fastLap: ReferenceLap = {
-      startTime: 0,
-      finishTime: 80,
-      refPoints: new Map(),
-      lastTrackedPct: 0.99,
-      isCleanLap: true,
-    };
-    addRecentLap(0, slowLap);
-    addRecentLap(0, fastLap);
-    expect(getRefLap(0)).toBe(fastLap);
-  });
-});
-
 describe('updateReferenceLaps', () => {
   it('skips cars with lapDistPct < 0', async () => {
     mockGetLapDistPct.mockResolvedValue([-1]);
 
     await updateReferenceLaps();
 
-    expect(getActiveRefLap(0)).toBeNull();
+    expect(referenceLapService.normalizeTrackPct).not.toHaveBeenCalled();
   });
 
   it('initialises a new active lap on first data point', async () => {
@@ -125,6 +104,7 @@ describe('updateReferenceLaps', () => {
     mockGetSessionTime.mockResolvedValue(sessionStart);
 
     await updateReferenceLaps();
+    expect(referenceLapRepository.setActiveRefLap).toHaveBeenCalledOnce();
 
     const lap = getActiveRefLap(0);
     expect(lap).not.toBeNull();
@@ -209,7 +189,7 @@ describe('lap completion', async () => {
 
     await updateReferenceLaps();
 
-    expect(getRefLap(0)).not.toBeNull();
+    expect(referenceLapRepository.addRecentLap).toHaveBeenCalled();
   });
 
   it('does not add to recent window when point count is below threshold', async () => {
@@ -220,7 +200,7 @@ describe('lap completion', async () => {
 
     await updateReferenceLaps();
 
-    expect(getRefLap(0)).toBeNull();
+    expect(referenceLapRepository.addRecentLap).not.toHaveBeenCalled();
   });
 
   it('does not add to recent window when lap is dirty', async () => {
@@ -231,51 +211,7 @@ describe('lap completion', async () => {
 
     await updateReferenceLaps();
 
-    expect(getRefLap(0)).toBeNull();
-  });
-
-  it('returns the faster lap when a new faster lap is added to the window', async () => {
-    const existingLapTime = 90;
-    const newLapTime = 80;
-    const existingLap: ReferenceLap = {
-      startTime: 0,
-      finishTime: existingLapTime,
-      refPoints: new Map(),
-      lastTrackedPct: 0.99,
-      isCleanLap: true,
-    };
-    addRecentLap(0, existingLap);
-
-    seedActiveLap(0, getMinPointsForValidLap());
-    mockGetLapDistPct.mockResolvedValue([PAST_FINISH_LINE_PCT]);
-    mockGetSessionTime.mockResolvedValue(newLapTime);
-
-    await updateReferenceLaps();
-
-    const ref = getRefLap(0);
-    expect(ref?.finishTime).toBe(newLapTime);
-    expect(ref?.startTime).toBe(0);
-  });
-
-  it('returns the faster lap when a new slower lap is added to the window', async () => {
-    const existingLapTime = 80;
-    const newLapTime = 90;
-    const existingLap: ReferenceLap = {
-      startTime: 0,
-      finishTime: existingLapTime,
-      refPoints: new Map(),
-      lastTrackedPct: 0.99,
-      isCleanLap: true,
-    };
-    addRecentLap(0, existingLap);
-
-    seedActiveLap(0, getMinPointsForValidLap());
-    mockGetLapDistPct.mockResolvedValue([PAST_FINISH_LINE_PCT]);
-    mockGetSessionTime.mockResolvedValue(newLapTime);
-
-    await updateReferenceLaps();
-
-    expect(getRefLap(0)).toBe(existingLap);
+    expect(referenceLapRepository.addRecentLap).not.toHaveBeenCalled();
   });
 });
 

@@ -5,9 +5,11 @@ import {
   getOnPitRoad,
 } from '#repository/irsdk.repository.ts';
 import type { ReferenceLap } from '#repository/reference-lap.repository.ts';
-import { getRefLap } from '#repository/reference-lap.repository.ts';
 import { getClassEstLapTime } from '#service/driver.service.ts';
-import { interpolateTimeAtTrackPosition } from '#service/reference-lap.service.ts';
+import {
+  getRefLap,
+  interpolateTimeAtTrackPosition,
+} from '#service/reference-lap.service.ts';
 
 export type Gap = {
   value: number;

@@ -14,6 +14,7 @@ vi.mock('#repository/reference-lap.repository.ts', () => ({
 
 vi.mock('#service/reference-lap.service.ts', () => ({
   interpolateTimeAtTrackPosition: vi.fn(),
+  getRefLap: vi.fn(),
 }));
 
 vi.mock('#service/driver.service.ts', () => ({
@@ -26,9 +27,11 @@ import {
   getLaps,
   getOnPitRoad,
 } from '#repository/irsdk.repository.ts';
-import { getRefLap } from '#repository/reference-lap.repository.ts';
 import { getClassEstLapTime } from '#service/driver.service.ts';
-import { interpolateTimeAtTrackPosition } from '#service/reference-lap.service.ts';
+import {
+  getRefLap,
+  interpolateTimeAtTrackPosition,
+} from '#service/reference-lap.service.ts';
 
 const mockGetLapDistancePercentage = vi.mocked(getLapDistPct);
 const mockGetOnPitRoad = vi.mocked(getOnPitRoad);

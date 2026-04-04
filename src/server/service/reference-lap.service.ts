@@ -4,12 +4,8 @@ import {
   getSessionTime,
   getTrackSurfaces,
 } from '#repository/irsdk.repository.ts';
-import {
-  addRecentLap,
-  getActiveRefLap,
-  type ReferenceLap,
-  setActiveRefLap,
-} from '#repository/reference-lap.repository.ts';
+import type { ReferenceLap } from '#repository/reference-lap.repository.ts';
+import * as referenceLapRepository from '#repository/reference-lap.repository.ts';
 import { getCarIdxs } from '#service/driver.service.ts';
 
 const REF_POINTS_DISTANCE_METERS = 10;
@@ -124,10 +120,10 @@ const collectLapData = (
   isOnPitRoad: boolean,
 ): void => {
   const refPointKey = normalizeTrackPct(trackPct);
-  const refLap = getActiveRefLap(carIdx);
+  const refLap = referenceLapRepository.getActiveRefLap(carIdx);
 
   if (!refLap) {
-    setActiveRefLap(carIdx, {
+    referenceLapRepository.setActiveRefLap(carIdx, {
       startTime: sessionTime,
       finishTime: -1,
       refPoints: new Map([
@@ -150,10 +146,10 @@ const collectLapData = (
       lapTime > 0 &&
       refLap.isCleanLap
     ) {
-      addRecentLap(carIdx, refLap);
+      referenceLapRepository.addRecentLap(carIdx, refLap);
     }
 
-    setActiveRefLap(carIdx, {
+    referenceLapRepository.setActiveRefLap(carIdx, {
       startTime: sessionTime,
       finishTime: -1,
       refPoints: new Map([
@@ -196,3 +192,13 @@ export const updateReferenceLaps = async (): Promise<void> => {
     );
   }
 };
+
+export const getActiveRefLap = (carIdx: number): ReferenceLap | null =>
+  referenceLapRepository.getActiveRefLap(carIdx);
+
+export const setActiveRefLap = (carIdx: number, lap: ReferenceLap): void => {
+  referenceLapRepository.setActiveRefLap(carIdx, lap);
+};
+
+export const getRefLap = (carIdx: number): ReferenceLap | null =>
+  referenceLapRepository.getRefLap(carIdx);

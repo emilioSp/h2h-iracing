@@ -11,7 +11,7 @@ export type ReferenceLap = {
   isCleanLap: boolean;
 };
 
-const RECENT_LAPS_WINDOW_SIZE = 5;
+export const ROLLING_WINDOW_LAPS_SIZE = 5;
 
 const activeLaps = new Map<number, ReferenceLap>();
 const recentLaps = new Map<number, ReferenceLap[]>();
@@ -26,7 +26,7 @@ export const setActiveRefLap = (carIdx: number, lap: ReferenceLap): void => {
 export const addRecentLap = (carIdx: number, lap: ReferenceLap): void => {
   const rollingWindow = recentLaps.get(carIdx) ?? [];
   rollingWindow.push(lap);
-  if (rollingWindow.length > RECENT_LAPS_WINDOW_SIZE) rollingWindow.shift();
+  if (rollingWindow.length > ROLLING_WINDOW_LAPS_SIZE) rollingWindow.shift();
   recentLaps.set(carIdx, rollingWindow);
 };
 
