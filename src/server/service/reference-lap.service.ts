@@ -91,7 +91,9 @@ export const interpolateTimeAtTrackPosition = (
   if (!refPoint0) return null;
   if (!refPoint1) return refPoint0.timeElapsedSinceStart;
 
+  // This is to manage the boundary case when refPoint0 is near the end of the track and refPoint1 is near the start, e.g. 98% and 0.5% respectively
   const crossedFinishLine = refPoint1.trackPct - refPoint0.trackPct <= 0;
+
   const distanceBetweenRefPoints = crossedFinishLine
     ? 1 - refPoint0.trackPct + refPoint1.trackPct
     : refPoint1.trackPct - refPoint0.trackPct;
@@ -202,3 +204,6 @@ export const setActiveRefLap = (carIdx: number, lap: ReferenceLap): void => {
 
 export const getRefLap = (carIdx: number): ReferenceLap | null =>
   referenceLapRepository.getRefLap(carIdx);
+
+export const resetReferenceLaps = (): void =>
+  referenceLapRepository.resetReferenceLaps();

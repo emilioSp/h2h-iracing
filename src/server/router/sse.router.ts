@@ -2,12 +2,12 @@ import type { Context } from 'hono';
 import { streamSSE } from 'hono/streaming';
 import config from '#config';
 import { isIRacingConnected } from '#repository/irsdk.repository.ts';
-import { resetReferenceLaps } from '#repository/reference-lap.repository.ts';
 import { debug } from '#server/debug.ts';
 import {
   computeHead2Head,
   resetSessionNumber,
 } from '#service/head2head.service.ts';
+import { resetReferenceLaps } from '#service/reference-lap.service.ts';
 
 export const sseRouter = (c: Context) =>
   streamSSE(c, async (stream) => {
