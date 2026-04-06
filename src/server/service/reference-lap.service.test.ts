@@ -3,7 +3,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 vi.mock('#repository/irsdk.repository.ts', () => ({
   getLapDistPct: vi.fn(),
   getSessionTime: vi.fn(),
-  getTrackSurfaces: vi.fn(),
   getOnPitRoad: vi.fn(),
 }));
 
@@ -15,7 +14,6 @@ import {
   getLapDistPct,
   getOnPitRoad,
   getSessionTime,
-  getTrackSurfaces,
 } from '#repository/irsdk.repository.ts';
 import * as referenceLapRepository from '#repository/reference-lap.repository.ts';
 import {
@@ -45,11 +43,9 @@ const TEST_TRACK_LENGTH_METERS = 5000;
 
 const mockGetLapDistPct = vi.mocked(getLapDistPct);
 const mockGetSessionTime = vi.mocked(getSessionTime);
-const mockGetTrackSurfaces = vi.mocked(getTrackSurfaces);
 const mockGetOnPitRoad = vi.mocked(getOnPitRoad);
 const mockGetCarIdxs = vi.mocked(getCarIdxs);
 
-const TRACK_SURFACE_ON_TRACK = 3;
 const PAST_FINISH_LINE_PCT = 0.01;
 const DEFAULT_TRACK_PCT = 0.5;
 const DEFAULT_SESSION_TIME = 100;
@@ -73,7 +69,7 @@ const seedActiveLap = (
     finishTime: -1,
     refPoints,
     lastTrackedPct: 0.97,
-    isCleanLap: true,
+    isOnPitRoad: false,
     ...opts,
   });
 };
@@ -84,7 +80,6 @@ beforeEach(() => {
   initReferenceInterval(TEST_TRACK_LENGTH_METERS);
   mockGetLapDistPct.mockResolvedValue([DEFAULT_TRACK_PCT]);
   mockGetSessionTime.mockResolvedValue(DEFAULT_SESSION_TIME);
-  mockGetTrackSurfaces.mockResolvedValue([TRACK_SURFACE_ON_TRACK]);
   mockGetOnPitRoad.mockResolvedValue([0]);
   mockGetCarIdxs.mockResolvedValue([0]);
 });
@@ -139,30 +134,14 @@ describe('updateReferenceLaps', () => {
     const fewPoints = 5;
     seedActiveLap(0, fewPoints, {
       lastTrackedPct: currentPct,
-      isCleanLap: true,
+      isOnPitRoad: false,
     });
     mockGetLapDistPct.mockResolvedValue([nextPct]);
     mockGetOnPitRoad.mockResolvedValue([1]);
 
     await updateReferenceLaps();
 
-    expect(getActiveRefLap(0)?.isCleanLap).toBe(false);
-  });
-
-  it('does not add refPoints on a dirty lap', async () => {
-    const currentPct = 0.5;
-    const nextPct = 0.9;
-    const fewPoints = 5;
-    seedActiveLap(0, fewPoints, {
-      lastTrackedPct: currentPct,
-      isCleanLap: false,
-    });
-    const sizeBefore = getActiveRefLap(0)?.refPoints.size ?? 0;
-
-    mockGetLapDistPct.mockResolvedValue([nextPct]);
-    await updateReferenceLaps();
-
-    expect(getActiveRefLap(0)?.refPoints.size).toBe(sizeBefore);
+    expect(getActiveRefLap(0)?.isOnPitRoad).toBe(true);
   });
 });
 
@@ -205,7 +184,7 @@ describe('lap completion', async () => {
 
   it('does not add to recent window when lap is dirty', async () => {
     const lapTime = 80;
-    seedActiveLap(0, getMinPointsForValidLap(), { isCleanLap: false });
+    seedActiveLap(0, getMinPointsForValidLap(), { isOnPitRoad: true });
     mockGetLapDistPct.mockResolvedValue([PAST_FINISH_LINE_PCT]);
     mockGetSessionTime.mockResolvedValue(lapTime);
 
@@ -252,7 +231,7 @@ describe('interpolateTimeAtTrackPosition', () => {
     startTime,
     finishTime,
     lastTrackedPct: points[points.length - 1]?.[0] ?? 0,
-    isCleanLap: true,
+    isOnPitRoad: false,
   });
 
   it('returns null when no refPoint exists at the target position', () => {

@@ -2,7 +2,6 @@ import {
   getLapDistPct,
   getOnPitRoad,
   getSessionTime,
-  getTrackSurfaces,
 } from '#repository/irsdk.repository.ts';
 import type { ReferenceLap } from '#repository/reference-lap.repository.ts';
 import * as referenceLapRepository from '#repository/reference-lap.repository.ts';
@@ -11,7 +10,6 @@ import { getCarIdxs } from '#service/driver.service.ts';
 const REF_POINTS_DISTANCE_METERS = 10;
 const DECIMAL_PLACES = 8;
 
-const TRACK_SURFACE_ON_TRACK = 3;
 const COVERAGE_THRESHOLD = 0.6;
 
 export const getMinPointsForValidLap = (): number =>
@@ -111,20 +109,26 @@ export const interpolateTimeAtTrackPosition = (
   );
 };
 
-const isLapClean = (trackSurface: number, isOnPitRoad: boolean): boolean =>
-  trackSurface === TRACK_SURFACE_ON_TRACK && !isOnPitRoad;
+const isLapValid = (lap: ReferenceLap) => {
+  const lapTime = lap.finishTime - lap.startTime;
+  return (
+    lap.refPoints.size >= getMinPointsForValidLap() &&
+    lapTime > 0 &&
+    !lap.isOnPitRoad
+  );
+};
 
 const collectLapData = (
   carIdx: number,
   trackPct: number,
   sessionTime: number,
-  trackSurface: number,
   isOnPitRoad: boolean,
 ): void => {
   const refPointKey = normalizeTrackPct(trackPct);
-  const refLap = referenceLapRepository.getActiveRefLap(carIdx);
+  const activeRefLap = referenceLapRepository.getActiveRefLap(carIdx);
 
-  if (!refLap) {
+  // init ref lap
+  if (!activeRefLap) {
     referenceLapRepository.setActiveRefLap(carIdx, {
       startTime: sessionTime,
       finishTime: -1,
@@ -132,23 +136,18 @@ const collectLapData = (
         [refPointKey, { trackPct, timeElapsedSinceStart: 0 }],
       ]),
       lastTrackedPct: trackPct,
-      isCleanLap: isLapClean(trackSurface, isOnPitRoad),
+      isOnPitRoad,
     });
     return;
   }
 
-  const isLapComplete = refLap.lastTrackedPct > 0.95 && trackPct < 0.05;
+  const isLapCompleted = activeRefLap.lastTrackedPct > 0.95 && trackPct < 0.05;
 
-  if (isLapComplete) {
-    refLap.finishTime = sessionTime;
-    const lapTime = refLap.finishTime - refLap.startTime;
+  if (isLapCompleted) {
+    activeRefLap.finishTime = sessionTime;
 
-    if (
-      refLap.refPoints.size >= getMinPointsForValidLap() &&
-      lapTime > 0 &&
-      refLap.isCleanLap
-    ) {
-      referenceLapRepository.addRecentLap(carIdx, refLap);
+    if (isLapValid(activeRefLap)) {
+      referenceLapRepository.addRecentLap(carIdx, activeRefLap);
     }
 
     referenceLapRepository.setActiveRefLap(carIdx, {
@@ -158,28 +157,24 @@ const collectLapData = (
         [refPointKey, { trackPct, timeElapsedSinceStart: 0 }],
       ]),
       lastTrackedPct: trackPct,
-      isCleanLap: isLapClean(trackSurface, isOnPitRoad),
+      isOnPitRoad,
     });
+
     return;
   }
 
-  if (refLap.isCleanLap && isOnPitRoad) {
-    refLap.isCleanLap = false;
-  }
-
-  if (!refLap.refPoints.has(refPointKey) && refLap.isCleanLap) {
-    refLap.refPoints.set(refPointKey, {
-      timeElapsedSinceStart: sessionTime - refLap.startTime,
-      trackPct,
-    });
-    refLap.lastTrackedPct = trackPct;
-  }
+  // update active ref lap
+  activeRefLap.isOnPitRoad = isOnPitRoad;
+  activeRefLap.refPoints.set(refPointKey, {
+    timeElapsedSinceStart: sessionTime - activeRefLap.startTime,
+    trackPct,
+  });
+  activeRefLap.lastTrackedPct = trackPct;
 };
 
 export const updateReferenceLaps = async (): Promise<void> => {
   const lapDistPct = await getLapDistPct();
   const sessionTime = await getSessionTime();
-  const trackSurfaces = await getTrackSurfaces();
   const onPitRoad = await getOnPitRoad();
   const carIdxs = await getCarIdxs();
 
@@ -189,7 +184,6 @@ export const updateReferenceLaps = async (): Promise<void> => {
       carIdx,
       lapDistPct[carIdx],
       sessionTime,
-      trackSurfaces[carIdx] ?? -1,
       onPitRoad[carIdx] === 1,
     );
   }
