@@ -67,10 +67,6 @@ export const getOnPitRoad = withConnect(
   (): number[] => ir?.get(VARS.CAR_IDX_ON_PIT_ROAD) ?? [],
 );
 
-export const getTrackSurfaces = withConnect(
-  (): number[] => ir?.get(VARS.CAR_IDX_TRACK_SURFACE) ?? [],
-);
-
 export const getEstTime = withConnect(
   (): number[] => ir?.get(VARS.CAR_IDX_EST_TIME) ?? [],
 );

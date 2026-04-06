@@ -8,7 +8,7 @@ export type ReferenceLap = {
   startTime: number;
   finishTime: number;
   lastTrackedPct: number;
-  isCleanLap: boolean;
+  isOnPitRoad: boolean;
 };
 
 export const ROLLING_WINDOW_LAPS_SIZE = 5;
