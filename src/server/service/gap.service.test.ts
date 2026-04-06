@@ -22,6 +22,7 @@ import {
   addRecentLap,
   type ReferenceLap,
 } from '#repository/reference-lap.repository.ts';
+import type { Car } from '#schema/car.schema.ts';
 import { getClassEstLapTime } from '#service/driver.service.ts';
 import {
   getReferenceInterval,
@@ -35,6 +36,22 @@ const mockGetOnPitRoad = vi.mocked(getOnPitRoad);
 const mockGetLaps = vi.mocked(getLaps);
 const mockGetEstTime = vi.mocked(getEstTime);
 const mockGetClassEstLapTime = vi.mocked(getClassEstLapTime);
+
+const makeCar = (carIdx: number): Car => ({
+  driver: {
+    carIdx,
+    name: '',
+    carNumber: '',
+    car: '',
+    iRating: 0,
+    license: '',
+    classEstLapTime: 0,
+  },
+  position: 0,
+  lastLapTime: 0,
+  bestLapTime: 0,
+  lap: 0,
+});
 
 const makeReferenceLap = (): ReferenceLap => {
   const startTime = 0;
@@ -118,15 +135,25 @@ beforeEach(() => {
 
 describe('getGap', () => {
   it('returns 0 seconds when both cars are the same', async () => {
-    expect(await getGap(0, 0)).toEqual({ value: 0, unit: 'seconds' });
+    const { gapAhead, gapBehind } = await getGap(makeCar(0), makeCar(0), null);
+    expect(gapAhead).toEqual({ value: 0, unit: 'seconds' });
+    expect(gapBehind).toBeNull();
   });
 
   it('returns 0 seconds when no reference lap and no class est lap time', async () => {
-    mockGetLapDistancePercentage.mockResolvedValue([0.3, 0.5]);
+    // player=car0 at 30%, ahead=car1 at 50%, behind=car2 at 10%
+    mockGetLapDistancePercentage.mockResolvedValue([0.3, 0.5, 0.1]);
+    mockGetLaps.mockResolvedValue([3, 3, 3]);
     mockGetClassEstLapTime.mockReturnValue(0);
-    mockGetEstTime.mockResolvedValue([0, 0]);
+    mockGetEstTime.mockResolvedValue([0, 0, 0]);
 
-    expect(await getGap(0, 1)).toEqual({ value: 0, unit: 'seconds' });
+    const { gapAhead, gapBehind } = await getGap(
+      makeCar(1),
+      makeCar(0),
+      makeCar(2),
+    );
+    expect(gapAhead).toEqual({ value: 0, unit: 'seconds' });
+    expect(gapBehind).toEqual({ value: 0, unit: 'seconds' });
   });
 
   it('uses estimated delta when one of the cars is on pit road', async () => {
@@ -135,20 +162,29 @@ describe('getGap', () => {
     mockGetClassEstLapTime.mockReturnValue(90);
     mockGetEstTime.mockResolvedValue([27, 45]);
 
-    expect(await getGap(0, 1)).toEqual({ value: 45 - 27, unit: 'seconds' });
+    const { gapAhead, gapBehind } = await getGap(makeCar(1), makeCar(0), null);
+    expect(gapAhead).toEqual({ value: 45 - 27, unit: 'seconds' });
+    expect(gapBehind).toBeNull();
   });
 
-  it('returns the time delta using the reference lap when both cars are on track', async () => {
-    // car 0 at 30%, car 1 at 50% → car 1 is ahead, car 0 is the behind car whose reference lap is used
-    mockGetLapDistancePercentage.mockResolvedValue([0.3, 0.5]);
-    mockGetOnPitRoad.mockResolvedValue([0, 0]);
+  it('returns the time delta using the reference lap when all cars are on track', async () => {
+    // player=car0 at 30%, ahead=car1 at 50%, behind=car2 at 10%
+    // gapAhead uses car0's ref lap: (0.5 - 0.3) * 90 = 18s
+    // gapBehind uses car2's ref lap: (0.3 - 0.1) * 90 = 18s
+    mockGetLapDistancePercentage.mockResolvedValue([0.3, 0.5, 0.1]);
+    mockGetOnPitRoad.mockResolvedValue([0, 0, 0]);
+    mockGetLaps.mockResolvedValue([3, 3, 3]);
     addRecentLap(0, makeReferenceLap());
     addRecentLap(1, makeReferenceLap());
+    addRecentLap(2, makeReferenceLap());
 
-    expect(await getGap(0, 1)).toEqual({
-      value: 18,
-      unit: 'seconds',
-    });
+    const { gapAhead, gapBehind } = await getGap(
+      makeCar(1),
+      makeCar(0),
+      makeCar(2),
+    );
+    expect(gapAhead).toEqual({ value: 18, unit: 'seconds' });
+    expect(gapBehind).toEqual({ value: 18, unit: 'seconds' });
   });
 
   it('corrects gap when ahead car crossed finish line and gap exceeds half a lap', async () => {
@@ -157,9 +193,10 @@ describe('getGap', () => {
     mockGetOnPitRoad.mockResolvedValue([0, 0]);
     addRecentLap(0, makeReferenceLap());
 
-    const result = await getGap(0, 1);
-    expect(result.unit).toBe('seconds');
-    expect(result.value).toBeCloseTo(54);
+    const { gapAhead, gapBehind } = await getGap(makeCar(1), makeCar(0), null);
+    expect(gapAhead?.unit).toBe('seconds');
+    expect(gapAhead?.value).toBeCloseTo(54);
+    expect(gapBehind).toBeNull();
   });
 
   it('uses estimated delta when behind car has completed fewer than 2 laps', async () => {
@@ -170,16 +207,9 @@ describe('getGap', () => {
     mockGetClassEstLapTime.mockReturnValue(90);
     mockGetEstTime.mockResolvedValue([27, 45]);
 
-    expect(await getGap(0, 1)).toEqual({ value: 45 - 27, unit: 'seconds' });
-  });
-
-  it('uses estimated delta when behind car has 2+ laps but no ref lap', async () => {
-    mockGetLapDistancePercentage.mockResolvedValue([0.3, 0.5]);
-    mockGetLaps.mockResolvedValue([3, 3]);
-    mockGetClassEstLapTime.mockReturnValue(90);
-    mockGetEstTime.mockResolvedValue([27, 45]);
-
-    expect(await getGap(0, 1)).toEqual({ value: 45 - 27, unit: 'seconds' });
+    const { gapAhead, gapBehind } = await getGap(makeCar(1), makeCar(0), null);
+    expect(gapAhead).toEqual({ value: 45 - 27, unit: 'seconds' });
+    expect(gapBehind).toBeNull();
   });
 
   it('handles wrap-around with estimated delta', async () => {
@@ -191,9 +221,10 @@ describe('getGap', () => {
     mockGetClassEstLapTime.mockReturnValue(90);
     mockGetEstTime.mockResolvedValue([1.8, 88.2]);
 
-    const result = await getGap(0, 1);
-    expect(result.unit).toBe('seconds');
-    expect(result.value).toBeCloseTo(3.6);
+    const { gapAhead, gapBehind } = await getGap(makeCar(0), makeCar(1), null);
+    expect(gapAhead?.unit).toBe('seconds');
+    expect(gapAhead?.value).toBeCloseTo(3.6);
+    expect(gapBehind).toBeNull();
   });
 
   it('handles wrap-around when one car just crossed the finish line', async () => {
@@ -206,29 +237,43 @@ describe('getGap', () => {
     addRecentLap(0, makeReferenceLap());
     addRecentLap(1, makeReferenceLap());
 
-    const result = await getGap(0, 1);
-    expect(result.unit).toBe('seconds');
-    expect(result.value).toBeCloseTo(3.6);
+    const { gapAhead, gapBehind } = await getGap(null, makeCar(0), makeCar(1));
+    expect(gapBehind?.unit).toBe('seconds');
+    expect(gapBehind?.value).toBeCloseTo(3.6);
+    expect(gapAhead).toBeNull();
   });
 
   it('returns laps when cars are multiple laps apart', async () => {
     // car 0 (player) on lap 1, car 1 (ahead) on lap 3 — both at same pct
-    mockGetLapDistancePercentage.mockResolvedValue([0.5, 0.5]);
-    mockGetLaps.mockResolvedValue([1, 3]);
+    mockGetLapDistancePercentage.mockResolvedValue([0.5, 0.5, 0.5]);
+    mockGetLaps.mockResolvedValue([3, 5, 1]);
 
-    expect(await getGap(0, 1)).toEqual({ value: 2, unit: 'laps' });
+    const { gapAhead, gapBehind } = await getGap(
+      makeCar(1),
+      makeCar(0),
+      makeCar(2),
+    );
+    expect(gapAhead).toEqual({ value: 2, unit: 'laps' });
+    expect(gapBehind).toEqual({ value: 2, unit: 'laps' });
   });
 
   it('returns seconds when laps differ by 1 but cars are close on track (wrap-around)', async () => {
     // ahead just crossed finish (lap=6, pct=0.02), behind approaching finish (lap=5, pct=0.98)
-    mockGetLapDistancePercentage.mockResolvedValue([0.98, 0.02]);
-    mockGetLaps.mockResolvedValue([5, 6]);
-    mockGetOnPitRoad.mockResolvedValue([0, 0]);
+    mockGetLapDistancePercentage.mockResolvedValue([0.98, 0.02, 0.5]);
+    mockGetLaps.mockResolvedValue([5, 6, 5]);
+    mockGetOnPitRoad.mockResolvedValue([0, 0, 0]);
     addRecentLap(0, makeReferenceLap());
     addRecentLap(1, makeReferenceLap());
+    addRecentLap(2, makeReferenceLap());
 
-    const result = await getGap(0, 1);
-    expect(result.unit).toBe('seconds');
-    expect(result.value).toBeCloseTo(3.6);
+    const { gapAhead, gapBehind } = await getGap(
+      makeCar(1),
+      makeCar(0),
+      makeCar(2),
+    );
+    expect(gapAhead?.unit).toBe('seconds');
+    expect(gapAhead?.value).toBeCloseTo(3.6);
+    expect(gapBehind?.unit).toBe('seconds');
+    expect(gapBehind?.value).toBe(43.2);
   });
 });
