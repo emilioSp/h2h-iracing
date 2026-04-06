@@ -5,9 +5,12 @@ import {
   getOnPitRoad,
 } from '#repository/irsdk.repository.ts';
 import type { ReferenceLap } from '#repository/reference-lap.repository.ts';
-import { getRefLap } from '#repository/reference-lap.repository.ts';
+import type { Car } from '#schema/car.schema.ts';
 import { getClassEstLapTime } from '#service/driver.service.ts';
-import { interpolateTimeAtTrackPosition } from '#service/reference-lap.service.ts';
+import {
+  getRefLap,
+  interpolateTimeAtTrackPosition,
+} from '#service/reference-lap.service.ts';
 
 export type Gap = {
   value: number;
@@ -40,32 +43,23 @@ const referenceDelta = (
   return Math.abs(delta);
 };
 
-export const getGap = async (
-  carIdxA: number,
-  carIdxB: number,
-): Promise<Gap> => {
-  if (carIdxA === carIdxB) return { value: 0, unit: 'seconds' };
+const computeGap = async (ahead: Car, behind: Car): Promise<Gap> => {
+  if (ahead.driver.carIdx === behind.driver.carIdx)
+    return { value: 0, unit: 'seconds' };
 
-  const [lapDistPct, laps] = await Promise.all([getLapDistPct(), getLaps()]);
-  const pctA = lapDistPct[carIdxA] ?? 0;
-  const pctB = lapDistPct[carIdxB] ?? 0;
+  const lapDistPct = await getLapDistPct();
+  const laps = await getLaps();
+  const aheadIdx = ahead.driver.carIdx;
+  const behindIdx = behind.driver.carIdx;
+  const aheadPct = lapDistPct[aheadIdx] ?? 0;
+  const behindPct = lapDistPct[behindIdx] ?? 0;
 
-  const lapsA = laps[carIdxA] ?? 0;
-  const lapsB = laps[carIdxB] ?? 0;
+  const lapDiff =
+    (laps[aheadIdx] ?? 0) + aheadPct - ((laps[behindIdx] ?? 0) + behindPct);
 
-  const totalA = lapsA + pctA;
-  const totalB = lapsB + pctB;
-  const isBAhead = totalB > totalA;
-  const trueLapDiff = Math.abs(totalA - totalB);
-
-  if (trueLapDiff >= 1.0) {
-    return { value: Math.floor(trueLapDiff), unit: 'laps' };
+  if (lapDiff >= 1.0) {
+    return { value: Math.floor(lapDiff), unit: 'laps' };
   }
-
-  const aheadIdx = isBAhead ? carIdxB : carIdxA;
-  const behindIdx = isBAhead ? carIdxA : carIdxB;
-  const aheadPct = isBAhead ? pctB : pctA;
-  const behindPct = isBAhead ? pctA : pctB;
 
   const classLapTime = getClassEstLapTime(behindIdx);
   if ((laps[behindIdx] ?? 0) < 2) {
@@ -105,4 +99,14 @@ export const getGap = async (
     ),
     unit: 'seconds',
   };
+};
+
+export const getGap = async (
+  ahead: Car | null,
+  player: Car,
+  behind: Car | null,
+): Promise<{ gapAhead: Gap | null; gapBehind: Gap | null }> => {
+  const gapAhead = ahead !== null ? await computeGap(ahead, player) : null;
+  const gapBehind = behind !== null ? await computeGap(player, behind) : null;
+  return { gapAhead, gapBehind };
 };

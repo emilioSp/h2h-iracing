@@ -9,7 +9,6 @@ import {
   getTrackLengthMeters,
   refreshTelemetry,
 } from '#repository/irsdk.repository.ts';
-import { resetReferenceLaps } from '#repository/reference-lap.repository.ts';
 import type { Car } from '#schema/car.schema.ts';
 import type { Head2Head } from '#schema/head2head.schema.ts';
 import {
@@ -21,6 +20,7 @@ import { getDriverInfo, refreshDriverInfo } from '#service/driver.service.ts';
 import { getGap } from '#service/gap.service.ts';
 import {
   initReferenceInterval,
+  resetReferenceLaps,
   updateReferenceLaps,
 } from '#service/reference-lap.service.ts';
 import { getStandings, type Standing } from '#service/standings.service.ts';
@@ -113,11 +113,9 @@ export const computeHead2Head = async (): Promise<Head2Head | null> => {
     behind = await computeCar(behindIdx, standings);
   }
 
-  // TODO: refactor this like delta service
-  const gapAhead =
-    isRace && aheadIdx > 0 ? await getGap(playerIdx, aheadIdx) : null;
-  const gapBehind =
-    isRace && behindIdx > 0 ? await getGap(playerIdx, behindIdx) : null;
+  const { gapAhead, gapBehind } = isRace
+    ? await getGap(ahead, player, behind)
+    : { gapAhead: null, gapBehind: null };
 
   const delta: Delta = isRace
     ? getDeltaLastLap(player, ahead, behind)
