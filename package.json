@@ -1,6 +1,6 @@
 {
   "name": "h2h-iracing",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "head2head overlay for iRacing",
   "license": "ISC",
   "author": "",
@@ -17,7 +17,7 @@
     "lint": "biome check --write .",
     "build": "tsc",
     "package": "node scripts/package.ts",
-    "release": "npm run package && gh release create v${npm_package_version} ./h2h-iracing.zip --generate-notes"
+    "release": "npm run package && gh release create v${npm_package_version} \"./h2h-iracing-${npm_package_version}.zip\" --generate-notes"
   },
   "imports": {
     "#server/*": "./src/server/*",
