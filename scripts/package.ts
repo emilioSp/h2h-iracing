@@ -2,6 +2,7 @@ import { execSync } from 'node:child_process';
 import {
   cpSync,
   existsSync,
+  globSync,
   mkdirSync,
   rmSync,
   statSync,
@@ -17,8 +18,9 @@ const CACHE_DIR = join(PROJECT_ROOT, '.cache');
 const BUILD_DIR = join(PROJECT_ROOT, 'build');
 const DIST_DIR = join(BUILD_DIR, 'h2h-iracing');
 const CACHED_NODE = join(CACHE_DIR, 'node.exe');
+const VERSION = process.env.npm_package_version;
 
-const ZIP_FILE = join(BUILD_DIR, `h2h-iracing.zip`);
+const ZIP_FILE = join(BUILD_DIR, `h2h-iracing-${VERSION}.zip`);
 
 console.log('\n=== H2H iRacing Packager ===\n');
 
@@ -75,7 +77,9 @@ cpSync(join(PROJECT_ROOT, 'node_modules'), join(DIST_DIR, 'node_modules'), {
 });
 
 console.log('Creating zip archive...');
-if (existsSync(ZIP_FILE)) rmSync(ZIP_FILE);
+globSync('h2h-iracing-*.zip', { cwd: PROJECT_ROOT }).forEach((file) => {
+  rmSync(join(PROJECT_ROOT, file));
+});
 execSync(`zip -r -q "${ZIP_FILE}" h2h-iracing`, {
   cwd: BUILD_DIR,
   stdio: 'inherit',
@@ -87,7 +91,7 @@ console.log('\n=== Build complete ===');
 console.log(`Output: ${ZIP_FILE} (${sizeMB} MB)`);
 console.log('Extract the zip, double-click h2h.bat to run.\n');
 
-cpSync(ZIP_FILE, join(PROJECT_ROOT, `h2h-iracing.zip`));
+cpSync(ZIP_FILE, join(PROJECT_ROOT, `h2h-iracing-${VERSION}.zip`));
 
 console.log('Restoring dev dependencies...');
 execSync('npm ci', { cwd: PROJECT_ROOT, stdio: 'inherit' });

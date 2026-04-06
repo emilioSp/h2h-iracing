@@ -17,7 +17,7 @@
     "lint": "biome check --write .",
     "build": "tsc",
     "package": "node scripts/package.ts",
-    "release": "npm run package && gh release create v${npm_package_version} ./h2h-iracing.zip --generate-notes"
+    "release": "npm run package && gh release create v${npm_package_version} ./h2h-iracing-${npm_package_version}.zip --generate-notes"
   },
   "imports": {
     "#server/*": "./src/server/*",
