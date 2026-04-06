@@ -113,11 +113,9 @@ export const computeHead2Head = async (): Promise<Head2Head | null> => {
     behind = await computeCar(behindIdx, standings);
   }
 
-  // TODO: refactor this like delta service
-  const gapAhead =
-    isRace && aheadIdx > 0 ? await getGap(playerIdx, aheadIdx) : null;
-  const gapBehind =
-    isRace && behindIdx > 0 ? await getGap(playerIdx, behindIdx) : null;
+  const { gapAhead, gapBehind } = isRace
+    ? await getGap(ahead, player, behind)
+    : { gapAhead: null, gapBehind: null };
 
   const delta: Delta = isRace
     ? getDeltaLastLap(player, ahead, behind)
