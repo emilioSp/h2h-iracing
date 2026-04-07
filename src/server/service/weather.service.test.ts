@@ -3,9 +3,9 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const mockIr = vi.hoisted(() => ({
   isConnected: vi.fn(),
   get: vi.fn(),
+  getSessionInfo: vi.fn(),
   shutdown: vi.fn(),
   refreshSharedMemory: vi.fn(),
-  getSessionInfo: vi.fn(),
 }));
 
 vi.mock('@emiliosp/node-iracing-sdk', async (importOriginal) => {
@@ -20,7 +20,7 @@ vi.mock('@emiliosp/node-iracing-sdk', async (importOriginal) => {
   };
 });
 
-import { VARS } from '@emiliosp/node-iracing-sdk';
+import { SESSION_DATA_KEYS, VARS } from '@emiliosp/node-iracing-sdk';
 import { computeWeather } from '#service/weather.service.ts';
 
 beforeEach(() => {
@@ -34,7 +34,6 @@ describe('computeWeather', () => {
     mockIr.get.mockImplementation((varName: string) => {
       const values: Record<string, number[]> = {
         [VARS.AIR_TEMP]: [22.5],
-        [VARS.RELATIVE_HUMIDITY]: [60],
         [VARS.TRACK_TEMP_CREW]: [35.0],
         [VARS.TRACK_WETNESS]: [1], // Dry
         [VARS.PRECIPITATION]: [0],
@@ -43,13 +42,22 @@ describe('computeWeather', () => {
       };
       return values[varName] ?? [0];
     });
+    mockIr.getSessionInfo.mockImplementation(
+      (varName: string): Record<string, string> => {
+        const values: Record<string, Record<string, string>> = {
+          [SESSION_DATA_KEYS.WEEKEND_INFO]: { TrackRelativeHumidity: '60.6 %' },
+        };
+
+        return values[varName] ?? [0];
+      },
+    );
 
     const weather = await computeWeather();
 
     expect(weather).toEqual({
       airTemperatureC: 22.5,
       trackTemperatureC: 35.0,
-      relativeHumidityPct: 60,
+      relativeHumidityPct: 60.6,
       precipitationPct: 0,
       trackWetness: 'Dry',
       windDirectionRad: 0,

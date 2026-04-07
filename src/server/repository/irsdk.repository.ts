@@ -118,9 +118,12 @@ export const getAirTemperature = withConnect(
   (): number => ir?.get(VARS.AIR_TEMP)[0] ?? 0,
 );
 
-export const getRelativeHumidity = withConnect(
-  (): number => ir?.get(VARS.RELATIVE_HUMIDITY)[0] ?? 0,
-);
+export const getRelativeHumidity = withConnect((): number => {
+  const trackRelativeHumidity = ir?.getSessionInfo(
+    SESSION_DATA_KEYS.WEEKEND_INFO,
+  ).TrackRelativeHumidity;
+  return parseFloat(trackRelativeHumidity ?? '0');
+});
 
 export const getTrackTemperature = withConnect(
   (): number => ir?.get(VARS.TRACK_TEMP_CREW)[0] ?? 0,
