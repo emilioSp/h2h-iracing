@@ -48,8 +48,14 @@ if (existsSync(BUILD_DIR)) {
 }
 mkdirSync(DIST_DIR, { recursive: true });
 
-console.log('Building UI...');
-execSync('npm run ui:build', {
+console.log('Building dashboards...');
+
+execSync('npm run h2h:build', {
+  cwd: PROJECT_ROOT,
+  stdio: 'inherit',
+});
+
+execSync('npm run weather:build', {
   cwd: PROJECT_ROOT,
   stdio: 'inherit',
 });
