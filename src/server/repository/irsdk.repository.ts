@@ -102,3 +102,50 @@ export const getTrackLengthMeters = withConnect((): number => {
   }
   return Number.parseFloat(weekendInfo.TrackLength) * 1000;
 });
+
+const TRACK_WETNESS_LABELS = [
+  'Unknown',
+  'Dry',
+  'Mostly Dry',
+  'Very Lightly Wet',
+  'Lightly Wet',
+  'Moderately Wet',
+  'Very Wet',
+  'Extremely Wet',
+] as const;
+
+export const getAirTemperature = withConnect(
+  (): number => ir?.get(VARS.AIR_TEMP)[0] ?? 0,
+);
+
+export const getRelativeHumidity = withConnect((): number => {
+  const trackRelativeHumidity = ir?.getSessionInfo(
+    SESSION_DATA_KEYS.WEEKEND_INFO,
+  ).TrackRelativeHumidity;
+  return parseFloat(trackRelativeHumidity ?? '0');
+});
+
+export const getTrackTemperature = withConnect(
+  (): number => ir?.get(VARS.TRACK_TEMP_CREW)[0] ?? 0,
+);
+
+export const getTrackWetness = withConnect((): string => {
+  const raw = ir?.get(VARS.TRACK_WETNESS)[0] ?? 0;
+  return TRACK_WETNESS_LABELS[raw] ?? 'Unknown';
+});
+
+export const getPrecipitation = withConnect(
+  (): number => ir?.get(VARS.PRECIPITATION)[0] ?? 0,
+);
+
+export const getWindDirection = withConnect(
+  (): number => ir?.get(VARS.WIND_DIR)[0] ?? 0,
+);
+
+export const getYawNorthDirection = withConnect(
+  () => ir?.get(VARS.YAW_NORTH)[0] ?? 0,
+);
+
+export const getWindVelocity = withConnect(
+  (): number => ir?.get(VARS.WIND_VEL)[0] ?? 0,
+);

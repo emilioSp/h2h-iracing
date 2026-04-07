@@ -3,8 +3,10 @@ import config from '#config';
 import { isIRacingConnected } from '#repository/irsdk.repository.ts';
 import type { Car } from '#schema/car.schema.ts';
 import type { Head2Head } from '#schema/head2head.schema.ts';
+import type { Weather } from '#schema/weather.schema.ts';
 import type { Gap } from '#service/gap.service.ts';
 import { computeHead2Head } from '#service/head2head.service.ts';
+import { computeWeather } from '#service/weather.service.ts';
 
 const W = 64;
 const LINE = '═'.repeat(W);
@@ -100,13 +102,97 @@ export const printHead2Head = (head2Head: Head2Head | null): void => {
   console.log(`╚${LINE}╝`);
 };
 
+const COMPASS_LABELS = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'] as const;
+
+const compassIndex = (deg: number): number =>
+  Math.round((((deg % 360) + 360) % 360) / 45) % 8;
+
+// Relative wind: 0°=headwind, 90°=crosswind from right, 180°=tailwind, 270°=crosswind from left
+const RELATIVE_WIND_LABELS = [
+  'Headwind',
+  'Front-right wind',
+  'Crosswind (right)',
+  'Rear-right wind',
+  'Tailwind',
+  'Rear-left wind',
+  'Crosswind (left)',
+  'Front-left wind',
+] as const;
+
+const relativeWindIndex = (deg: number): number => Math.round(deg / 45) % 8;
+
+// Car diagram: ▲ is centered at column 11 in each row.
+// Arrow positions: tl=front-left, tc=headwind, tr=front-right,
+//                 ml=left crosswind, mr=right crosswind,
+//                 bl=rear-left, bc=tailwind, br=rear-right
+const buildCarDiagram = (relIdx: number): string[] => {
+  const tl = relIdx === 7 ? '↘' : ' ';
+  const tc = relIdx === 0 ? '↓' : ' ';
+  const tr = relIdx === 1 ? '↙' : ' ';
+  const ml = relIdx === 6 ? '→' : ' ';
+  const mr = relIdx === 2 ? '←' : ' ';
+  const bl = relIdx === 5 ? '↗' : ' ';
+  const bc = relIdx === 4 ? '↑' : ' ';
+  const br = relIdx === 3 ? '↖' : ' ';
+
+  return [
+    '         FRONT',
+    `       ${tl}   ${tc}   ${tr}`,
+    `   L   ${ml}   ▲   ${mr}   R`,
+    `       ${bl}   ${bc}   ${br}`,
+    '          REAR',
+  ];
+};
+
+export const printWeather = (weather: Weather): void => {
+  const kmh = (weather.windVelocityMs * 3.6).toFixed(1);
+
+  const windLabel = COMPASS_LABELS[compassIndex(weather.windDirectionDeg)];
+  const headingLabel =
+    COMPASS_LABELS[compassIndex(weather.yawNorthDirectionDeg)];
+  const relIdx = relativeWindIndex(weather.windRelativeDirectionDeg);
+  const relLabel = RELATIVE_WIND_LABELS[relIdx];
+
+  console.log(`╔${LINE}╗`);
+  console.log(`║  ${pad('WEATHER DASHBOARD', W)}║`);
+  console.log(`╠${LINE}╣`);
+  row('Air Temp:   ', `${weather.airTemperatureC.toFixed(1)}°C`);
+  row('Track Temp: ', `${weather.trackTemperatureC.toFixed(1)}°C`);
+  row('Humidity:   ', `${Math.round(weather.relativeHumidityPct)}%`);
+  row('Rain:       ', `${Math.round(weather.precipitationPct)}%`);
+  row('Wetness:    ', weather.trackWetness);
+  console.log(`╠${LINE}╣`);
+  row(
+    'Wind:     ',
+    `${windLabel.padEnd(3)}  (${weather.windDirectionDeg.toFixed(1)}°)  ${kmh} km/h`,
+  );
+  row(
+    'Heading:  ',
+    `${headingLabel.padEnd(3)}  (${weather.yawNorthDirectionDeg.toFixed(1)}°)`,
+  );
+  row(
+    'Relative: ',
+    `${relLabel}  (${weather.windRelativeDirectionDeg.toFixed(1)}°)`,
+  );
+  console.log(`║    ${pad('', W - 2)}║`);
+  for (const line of buildCarDiagram(relIdx)) {
+    console.log(`║    ${pad(line, W - 2)}║`);
+  }
+  console.log(`║    ${pad('', W - 2)}║`);
+  console.log(`╚${LINE}╝`);
+};
+
 while (true) {
   if (!(await isIRacingConnected())) {
     continue;
   }
-  const head2Head = await computeHead2Head();
+  const [head2Head, weather] = await Promise.all([
+    computeHead2Head(),
+    computeWeather(),
+  ]);
 
   printHead2Head(head2Head);
+  printWeather(weather);
 
   if (config.DATA_MODE === 'mock') break;
   await setTimeout(config.POLL_INTERVAL_MS);
