@@ -4,10 +4,12 @@ import { Hono } from 'hono';
 import config from '#config';
 import { shutdown } from '#repository/irsdk.repository.ts';
 import { h2hRouter } from '#router/h2h.router.ts';
+import { weatherRouter } from '#router/weather.router.ts';
 
 const app = new Hono();
 
 app.get('/sse/h2h', h2hRouter);
+app.get('/sse/weather', weatherRouter);
 app.get('/h2h', serveStatic({ path: './dist/h2h-dashboard/index.html' }));
 app.use('/*', serveStatic({ root: './dist' }));
 
