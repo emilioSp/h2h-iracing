@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import * as iracingRepository from '#repository/irsdk.repository.ts';
 import * as head2headService from '#service/head2head.service.ts';
-import { sseRouter } from './sse.router.ts';
+import { h2hRouter } from './h2h.router.ts';
 
 vi.mock('hono/streaming');
 
@@ -30,12 +30,12 @@ const setupStreamSSE = async () => {
   return { stream, run: () => run() };
 };
 
-describe('sseRouter', () => {
+describe('h2hRouter', () => {
   it('writes error event when iRacing is not connected', async () => {
     const { run } = await setupStreamSSE();
     vi.spyOn(iracingRepository, 'isIRacingConnected').mockResolvedValue(false);
 
-    sseRouter({} as never);
+    h2hRouter({} as never);
     try {
       await run();
     } catch (e) {
@@ -48,7 +48,7 @@ describe('sseRouter', () => {
     vi.spyOn(iracingRepository, 'isIRacingConnected').mockResolvedValue(true);
     vi.spyOn(head2headService, 'computeHead2Head').mockResolvedValue(null);
 
-    sseRouter({} as never);
+    h2hRouter({} as never);
     try {
       await run();
     } catch (e: unknown) {

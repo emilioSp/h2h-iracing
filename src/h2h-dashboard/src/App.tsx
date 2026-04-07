@@ -57,7 +57,7 @@ export const App = () => {
     let retryTimeout: ReturnType<typeof setTimeout>;
 
     const connect = () => {
-      es = new EventSource('/sse');
+      es = new EventSource('/sse/h2h');
       es.onmessage = (e) => {
         const parsed = JSON.parse(e.data) as { data: Head2Head };
         setH2h(parsed.data);

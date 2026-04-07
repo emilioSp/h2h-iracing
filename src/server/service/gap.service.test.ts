@@ -119,7 +119,7 @@ const makeReferenceLap = (): ReferenceLap => {
       ],
     ]),
     lastTrackedPct: 0.99,
-    isCleanLap: true,
+    isOnPitRoad: false,
   };
 };
 

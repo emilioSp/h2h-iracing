@@ -67,7 +67,7 @@ cpSync(join(PROJECT_ROOT, 'src/server'), join(DIST_DIR, 'src/server'), {
   recursive: true,
   filter: (src) => !src.endsWith('.test.ts'),
 });
-cpSync(join(PROJECT_ROOT, 'dist/ui'), join(DIST_DIR, 'dist/ui'), {
+cpSync(join(PROJECT_ROOT, 'dist/h2h-dashboard'), join(DIST_DIR, 'dist/h2h-dashboard'), {
   recursive: true,
 });
 
