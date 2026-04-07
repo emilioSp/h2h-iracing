@@ -9,7 +9,7 @@ import {
 const common = {
   refPoints: new Map(),
   lastTrackedPct: 0.99,
-  isCleanLap: true,
+  isOnPitRoad: false,
 };
 
 const lap1: ReferenceLap = {

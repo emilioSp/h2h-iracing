@@ -9,7 +9,7 @@ import {
 } from '#service/head2head.service.ts';
 import { resetReferenceLaps } from '#service/reference-lap.service.ts';
 
-export const sseRouter = (c: Context) =>
+export const h2hRouter = (c: Context) =>
   streamSSE(c, async (stream) => {
     while ((await isIRacingConnected()) && !stream.aborted) {
       const h2h = await computeHead2Head();
