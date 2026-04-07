@@ -7,7 +7,12 @@ export const weatherSchema = z.object({
   precipitationPct: z.number(),
   trackWetness: z.string(),
   windDirectionRad: z.number(),
+  windDirectionDeg: z.number(),
+  windRelativeDirectionRad: z.number(),
+  windRelativeDirectionDeg: z.number(),
   windVelocityMs: z.number(),
+  yawNorthDirectionRad: z.number(),
+  yawNorthDirectionDeg: z.number(),
 });
 
 export type Weather = z.infer<typeof weatherSchema>;

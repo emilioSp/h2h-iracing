@@ -103,19 +103,55 @@ export const printHead2Head = (head2Head: Head2Head | null): void => {
 };
 
 const COMPASS_LABELS = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'] as const;
-const COMPASS_ARROWS = ['↑', '↗', '→', '↘', '↓', '↙', '←', '↖'] as const;
 
-const windCompassIndex = (rad: number): number => {
-  const deg = ((rad * 180) / Math.PI + 360) % 360;
-  return Math.round(deg / 45) % 8;
+const compassIndex = (deg: number): number =>
+  Math.round((((deg % 360) + 360) % 360) / 45) % 8;
+
+// Relative wind: 0°=headwind, 90°=crosswind from right, 180°=tailwind, 270°=crosswind from left
+const RELATIVE_WIND_LABELS = [
+  'Headwind',
+  'Front-right wind',
+  'Crosswind (right)',
+  'Rear-right wind',
+  'Tailwind',
+  'Rear-left wind',
+  'Crosswind (left)',
+  'Front-left wind',
+] as const;
+
+const relativeWindIndex = (deg: number): number => Math.round(deg / 45) % 8;
+
+// Car diagram: ▲ is centered at column 11 in each row.
+// Arrow positions: tl=front-left, tc=headwind, tr=front-right,
+//                 ml=left crosswind, mr=right crosswind,
+//                 bl=rear-left, bc=tailwind, br=rear-right
+const buildCarDiagram = (relIdx: number): string[] => {
+  const tl = relIdx === 7 ? '↘' : ' ';
+  const tc = relIdx === 0 ? '↓' : ' ';
+  const tr = relIdx === 1 ? '↙' : ' ';
+  const ml = relIdx === 6 ? '→' : ' ';
+  const mr = relIdx === 2 ? '←' : ' ';
+  const bl = relIdx === 5 ? '↗' : ' ';
+  const bc = relIdx === 4 ? '↑' : ' ';
+  const br = relIdx === 3 ? '↖' : ' ';
+
+  return [
+    '         FRONT',
+    `       ${tl}   ${tc}   ${tr}`,
+    `   L   ${ml}   ▲   ${mr}   R`,
+    `       ${bl}   ${bc}   ${br}`,
+    '          REAR',
+  ];
 };
 
 export const printWeather = (weather: Weather): void => {
-  const idx = windCompassIndex(weather.windDirectionRad);
-  const label = COMPASS_LABELS[idx];
-  const arrow = COMPASS_ARROWS[idx];
-  const deg = ((weather.windDirectionRad * 180) / Math.PI + 360) % 360;
   const kmh = (weather.windVelocityMs * 3.6).toFixed(1);
+
+  const windLabel = COMPASS_LABELS[compassIndex(weather.windDirectionDeg)];
+  const headingLabel =
+    COMPASS_LABELS[compassIndex(weather.yawNorthDirectionDeg)];
+  const relIdx = relativeWindIndex(weather.windRelativeDirectionDeg);
+  const relLabel = RELATIVE_WIND_LABELS[relIdx];
 
   console.log(`╔${LINE}╗`);
   console.log(`║  ${pad('WEATHER DASHBOARD', W)}║`);
@@ -126,16 +162,23 @@ export const printWeather = (weather: Weather): void => {
   row('Rain:       ', `${Math.round(weather.precipitationPct)}%`);
   row('Wetness:    ', weather.trackWetness);
   console.log(`╠${LINE}╣`);
-  row('Direction:  ', `${label}  (${deg.toFixed(1)}°)`);
+  row(
+    'Wind:     ',
+    `${windLabel.padEnd(3)}  (${weather.windDirectionDeg.toFixed(1)}°)  ${kmh} km/h`,
+  );
+  row(
+    'Heading:  ',
+    `${headingLabel.padEnd(3)}  (${weather.yawNorthDirectionDeg.toFixed(1)}°)`,
+  );
+  row(
+    'Relative: ',
+    `${relLabel}  (${weather.windRelativeDirectionDeg.toFixed(1)}°)`,
+  );
   console.log(`║    ${pad('', W - 2)}║`);
-  console.log(`║    ${pad('     N', W - 2)}║`);
-  console.log(`║    ${pad('  NW   NE', W - 2)}║`);
-  console.log(`║    ${pad(` W  ${arrow}  E`, W - 2)}║`);
-  console.log(`║    ${pad('  SW   SE', W - 2)}║`);
-  console.log(`║    ${pad('     S', W - 2)}║`);
+  for (const line of buildCarDiagram(relIdx)) {
+    console.log(`║    ${pad(line, W - 2)}║`);
+  }
   console.log(`║    ${pad('', W - 2)}║`);
-  console.log(`╠${LINE}╣`);
-  row('Speed:      ', `${kmh} km/h`);
   console.log(`╚${LINE}╝`);
 };
 

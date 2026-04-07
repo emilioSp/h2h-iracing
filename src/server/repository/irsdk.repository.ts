@@ -142,6 +142,10 @@ export const getWindDirection = withConnect(
   (): number => ir?.get(VARS.WIND_DIR)[0] ?? 0,
 );
 
+export const getYawNorthDirection = withConnect(
+  () => ir?.get(VARS.YAW_NORTH)[0] ?? 0,
+);
+
 export const getWindVelocity = withConnect(
   (): number => ir?.get(VARS.WIND_VEL)[0] ?? 0,
 );

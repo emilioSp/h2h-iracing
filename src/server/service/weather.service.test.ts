@@ -39,6 +39,7 @@ describe('computeWeather', () => {
         [VARS.PRECIPITATION]: [0],
         [VARS.WIND_DIR]: [0],
         [VARS.WIND_VEL]: [5.0],
+        [VARS.YAW_NORTH]: [Math.PI],
       };
       return values[varName] ?? [0];
     });
@@ -61,7 +62,12 @@ describe('computeWeather', () => {
       precipitationPct: 0,
       trackWetness: 'Dry',
       windDirectionRad: 0,
+      windDirectionDeg: 0,
+      windRelativeDirectionRad: Math.PI,
+      windRelativeDirectionDeg: 180,
       windVelocityMs: 5.0,
+      yawNorthDirectionRad: Math.PI,
+      yawNorthDirectionDeg: 180,
     });
   });
 
