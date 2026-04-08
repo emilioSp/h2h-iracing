@@ -143,7 +143,7 @@ export const CompassRose = ({ windRelativeDeg, size = 280 }: Props) => {
         style={{
           transform: `rotate(${displayDeg}deg)`,
           transformOrigin: `${r}px ${r}px`,
-          transition: 'transform 0.5s ease-in-out',
+          transition: 'transform linear',
         }}
       >
         {/* Trail chunks */}

@@ -79,16 +79,19 @@ export const App = () => {
       </div>
 
       {/* Compass area */}
-      <div className="grid justify-items-center content-center gap-4">
+      <div className="grid grid-cols-2 items-center justify-items-center h-full">
         <CompassRose
           windRelativeDeg={weather.windRelativeDirectionDeg}
-          size={340}
+          size={360}
         />
 
-        <div className="grid grid-flow-col items-center gap-2 text-dim">
-          <Wind size={24} />
-          <span className="text-2xl tracking-widest uppercase">
-            {windLabel} &nbsp;·&nbsp; {kmh} km/h
+        <div className="grid justify-items-center gap-2 border border-border rounded-xl p-8">
+          <Wind size={50} className="text-gaining" />
+          <span className="text-5xl font-bold font-mono tracking-widest uppercase">
+            {windLabel}
+          </span>
+          <span className="text-5xl font-mono font-bold text-white text-dim">
+            {kmh} km/h
           </span>
         </div>
       </div>
