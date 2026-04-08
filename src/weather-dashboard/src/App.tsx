@@ -1,5 +1,14 @@
-import { CloudRain, Droplets, Road, Sun, Waves, Wind } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import {
+  Clock,
+  CloudRain,
+  Droplets,
+  Flag,
+  Road,
+  Sun,
+  Waves,
+  Wind,
+} from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 import { WelcomePage } from '../../common/WelcomePage.js';
 import { CompassRose } from './CompassRose.js';
 import type { WeatherData } from './types.js';
@@ -8,6 +17,20 @@ import './styles.css';
 const COMPASS_LABELS = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'] as const;
 const compassIndex = (deg: number) =>
   Math.round((((deg % 360) + 360) % 360) / 45) % 8;
+
+const formatSessionTime = (seconds: number): string => {
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+};
+
+const formatLocalTime = (date: Date): string =>
+  date.toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  });
 
 type MetricChipProps = {
   value: string;
@@ -23,6 +46,13 @@ const MetricChip = ({ value, icon }: MetricChipProps) => (
 
 export const App = () => {
   const [weather, setWeather] = useState<WeatherData | null>(null);
+  const [localTime, setLocalTime] = useState(() => new Date());
+  const localTimerRef = useRef<ReturnType<typeof setInterval>>(undefined);
+
+  useEffect(() => {
+    localTimerRef.current = setInterval(() => setLocalTime(new Date()), 1000);
+    return () => clearInterval(localTimerRef.current);
+  }, []);
 
   useEffect(() => {
     let es: EventSource;
@@ -93,6 +123,17 @@ export const App = () => {
           <span className="text-5xl font-mono font-bold text-white text-dim">
             {kmh} km/h
           </span>
+          <div className="w-full border-t border-border my-2" />
+          <div className="grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-2 w-full">
+            <Flag size={28} className="text-gaining" />
+            <span className="text-2xl font-mono font-bold text-right">
+              {formatSessionTime(weather.sessionSecondsAfterMidnight)}
+            </span>
+            <Clock size={28} className="text-gaining" />
+            <span className="text-2xl font-mono font-bold text-right">
+              {formatLocalTime(localTime)}
+            </span>
+          </div>
         </div>
       </div>
     </div>
