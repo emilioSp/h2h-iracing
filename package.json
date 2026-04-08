@@ -30,7 +30,7 @@
     "#router/*": "./src/server/router/*"
   },
   "dependencies": {
-    "@emiliosp/node-iracing-sdk": "1.1.0",
+    "@emiliosp/node-iracing-sdk": "1.2.0",
     "@hono/node-server": "1.19.12",
     "hono": "4.12.9",
     "lucide-react": "1.7.0",
