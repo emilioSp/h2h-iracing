@@ -1,53 +1,8 @@
 import { useEffect, useState } from 'react';
+import { WelcomePage } from '../../common/WelcomePage.js';
 import { CarCard } from './CarCard.js';
 import type { Head2Head } from './types.js';
 import './styles.css';
-
-const WelcomePage = () => (
-  <div className="relative grid place-items-center w-200 h-120 bg-bg font-mono overflow-hidden">
-    {/* Corner HUD brackets */}
-    <div className="absolute top-8 left-8 w-10 h-10 border-t border-l border-border-player" />
-    <div className="absolute top-8 right-8 w-10 h-10 border-t border-r border-border-player" />
-    <div className="absolute bottom-8 left-8 w-10 h-10 border-b border-l border-border-player" />
-    <div className="absolute bottom-8 right-8 w-10 h-10 border-b border-r border-border-player" />
-
-    <div className="flex flex-col items-center gap-5">
-      {/* H2H logo */}
-      <div className="flex items-end leading-none">
-        <span className="text-[110px] font-black text-white leading-none">
-          H
-        </span>
-        <span className="text-[72px] font-black text-gaining leading-none pb-3 px-1">
-          2
-        </span>
-        <span className="text-[110px] font-black text-white leading-none">
-          H
-        </span>
-      </div>
-
-      {/* Divider */}
-      <div className="flex items-center gap-4">
-        <div className="h-px w-20 bg-border-player" />
-        <span className="text-3xl tracking-[7px] text-[#888] uppercase">
-          Head to Head
-        </span>
-        <div className="h-px w-20 bg-border-player" />
-      </div>
-
-      <span className="text-3xl tracking-[12px] text-[#555] uppercase">
-        iRacing Overlay
-      </span>
-
-      {/* Status */}
-      <div className="flex items-center gap-3 mt-6">
-        <div className={`w-3 h-3 rounded-full animate-pulse bg-losing`} />
-        <span className="text-xl tracking-[4px] text-[#555] uppercase">
-          Waiting for session
-        </span>
-      </div>
-    </div>
-  </div>
-);
 
 export const App = () => {
   const [h2h, setH2h] = useState<Head2Head | null>(null);
@@ -81,7 +36,7 @@ export const App = () => {
   }, []);
 
   if (!h2h) {
-    return <WelcomePage />;
+    return <WelcomePage subtitle="Head to Head" />;
   }
 
   return (
