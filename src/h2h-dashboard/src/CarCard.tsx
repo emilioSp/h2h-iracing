@@ -19,15 +19,15 @@ type Props =
     };
 
 const Label = ({ children }: { children: string }) => (
-  <span className="text-[12px] text-[#555] uppercase tracking-widest leading-none">
+  <span className="text-[12px] text-dim uppercase tracking-widest leading-none">
     {children}
   </span>
 );
 
 const deltaColors: Record<string, string> = {
-  gaining: 'text-[#00e676]',
-  losing: 'text-[#ff1744]',
-  neutral: 'text-[#555]',
+  gaining: 'text-green',
+  losing: 'text-red',
+  neutral: 'text-dim',
 };
 
 const DriverInfoGrid = ({ car }: { car: Car }) => (
@@ -50,7 +50,7 @@ const DriverInfoGrid = ({ car }: { car: Car }) => (
       <Label>Last</Label>
     </div>
     <div className="grid place-items-center">
-      <span className="font-mono text-3xl font-bold text-[#aaa]">
+      <span className="font-mono text-3xl font-bold text-white">
         P{car.position}
       </span>
     </div>
@@ -79,7 +79,7 @@ const GapDeltaRow = ({
     <div />
     <div className="grid items-center justify-items-end">
       <span
-        className={`font-mono text-4xl font-bold ${gap === null ? 'text-[#555]' : 'text-[#facc15]'}`}
+        className={`font-mono text-4xl font-bold ${gap === null ? 'text-dim' : 'text-yellow'}`}
       >
         {formatGap(gap)}
       </span>

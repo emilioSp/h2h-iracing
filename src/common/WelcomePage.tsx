@@ -14,7 +14,7 @@ export const WelcomePage = ({ subtitle }: Props) => (
         <span className="text-[110px] font-black text-white leading-none">
           H
         </span>
-        <span className="text-[72px] font-black text-gaining leading-none pb-3 px-1">
+        <span className="text-[72px] font-black text-green leading-none pb-3 px-1">
           2
         </span>
         <span className="text-[110px] font-black text-white leading-none">
@@ -24,19 +24,19 @@ export const WelcomePage = ({ subtitle }: Props) => (
 
       <div className="grid grid-flow-col items-center gap-4">
         <div className="h-px w-20 bg-border-player" />
-        <span className="text-3xl tracking-[7px] text-[#888] uppercase">
+        <span className="text-3xl tracking-[7px] text-dim uppercase">
           {subtitle}
         </span>
         <div className="h-px w-20 bg-border-player" />
       </div>
 
-      <span className="text-3xl tracking-[12px] text-[#555] uppercase">
+      <span className="text-3xl tracking-[12px] text-dim uppercase">
         iRacing Overlay
       </span>
 
       <div className="grid grid-flow-col items-center gap-3 mt-6">
-        <div className="w-3 h-3 rounded-full animate-pulse bg-losing" />
-        <span className="text-xl tracking-[4px] text-[#555] uppercase">
+        <div className="w-3 h-3 rounded-full animate-pulse bg-red" />
+        <span className="text-xl tracking-[4px] text-dim uppercase">
           Waiting for session
         </span>
       </div>

@@ -39,7 +39,7 @@ type MetricChipProps = {
 
 const MetricChip = ({ value, icon }: MetricChipProps) => (
   <div className="grid justify-items-center content-center gap-2 border-r border-border last:border-r-0 h-full">
-    <div className="text-gaining">{icon}</div>
+    <div className="text-green">{icon}</div>
     <span className="text-2xl font-bold text-white font-mono">{value}</span>
   </div>
 );
@@ -116,7 +116,7 @@ export const App = () => {
         />
 
         <div className="grid justify-items-center gap-2 border border-border rounded-xl p-8">
-          <Wind size={50} className="text-gaining" />
+          <Wind size={50} className="text-green" />
           <span className="text-5xl font-bold font-mono tracking-widest uppercase">
             {windLabel}
           </span>
@@ -125,11 +125,11 @@ export const App = () => {
           </span>
           <div className="w-full border-t border-border my-2" />
           <div className="grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-2 w-full">
-            <Flag size={28} className="text-gaining" />
+            <Flag size={28} className="text-green" />
             <span className="text-2xl font-mono font-bold text-right">
               {formatSessionTime(weather.sessionSecondsAfterMidnight)}
             </span>
-            <Clock size={28} className="text-gaining" />
+            <Clock size={28} className="text-green" />
             <span className="text-2xl font-mono font-bold text-right">
               {formatLocalTime(localTime)}
             </span>

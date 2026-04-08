@@ -2,8 +2,8 @@
 @source "../../common";
 
 @theme {
-  --color-gaining: #00e676;
-  --color-losing: #ff1744;
+  --color-green: #00e676;
+  --color-red: #ff1744;
   --color-dim: #888888;
   --color-bg: #0d0d0d;
   --color-card: #161616;
