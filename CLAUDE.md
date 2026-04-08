@@ -69,6 +69,7 @@ Defined in `package.json` `imports` field:
 - **API responses**: `{ data: T }` for success, `{ error: { code, message } }` for errors.
 - **Error handling**: Custom Error classes in `src/error/`, discriminated via `instanceof`.
 - **Logging**: `console`-based with `LOG_LEVEL` env var (debug, info, warn, error).
+- Prefer CSS grid over flexbox for layout.
 - Run `npm run lint` to check; Biome handles both linting and formatting.
 
 ## Testing
@@ -78,7 +79,7 @@ Defined in `package.json` `imports` field:
 - Integration tests for feature flows (prefer over unit tests)
 - Never mock the DB client - use real test database
 - Mock external API calls in integration tests
-- Ask before adding new dependencies
+- Ask before adding new dependencies, and always install with `--save-exact` to avoid version drift.
 
 ## Documentation
 
