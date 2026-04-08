@@ -2,6 +2,7 @@ import {
   getAirTemperature,
   getPrecipitation,
   getRelativeHumidity,
+  getSessionSecondsAfterMidnight,
   getTrackTemperature,
   getTrackWetness,
   getWindDirection,
@@ -38,5 +39,6 @@ export const computeWeather = async (): Promise<Weather> => {
     windVelocityMs: await getWindVelocity(),
     yawNorthDirectionRad,
     yawNorthDirectionDeg: radToDeg(yawNorthDirectionRad),
+    sessionSecondsAfterMidnight: await getSessionSecondsAfterMidnight(),
   };
 };

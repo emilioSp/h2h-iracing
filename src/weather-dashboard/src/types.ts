@@ -7,4 +7,5 @@ export type WeatherData = {
   windDirectionDeg: number;
   windRelativeDirectionDeg: number;
   windVelocityMs: number;
+  sessionSecondsAfterMidnight: number;
 };

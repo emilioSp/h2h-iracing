@@ -40,6 +40,7 @@ describe('computeWeather', () => {
         [VARS.WIND_DIR]: [0],
         [VARS.WIND_VEL]: [5.0],
         [VARS.YAW_NORTH]: [Math.PI],
+        [VARS.SESSION_TIME_OF_DAY]: [43200],
       };
       return values[varName] ?? [0];
     });
@@ -68,6 +69,7 @@ describe('computeWeather', () => {
       windVelocityMs: 5.0,
       yawNorthDirectionRad: Math.PI,
       yawNorthDirectionDeg: 180,
+      sessionSecondsAfterMidnight: 43200,
     });
   });
 
