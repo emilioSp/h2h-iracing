@@ -11,7 +11,9 @@ Two modes of operation:
 
 ![Welcome page](docs/H2H_welcome_page.jpg)
 
-![Race overlay](docs/H2H_race.jpg)
+![H2H overlay](docs/H2H_dashboard.jpg)
+
+![Weather overlay](docs/H2H_weather_overlay.jpg)
 
 ## Prerequisites
 
