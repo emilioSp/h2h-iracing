@@ -80,6 +80,13 @@ cpSync(
     recursive: true,
   },
 );
+cpSync(
+  join(PROJECT_ROOT, 'dist/weather-dashboard'),
+  join(DIST_DIR, 'dist/weather-dashboard'),
+  {
+    recursive: true,
+  },
+);
 
 console.log('Copying node_modules (production)...');
 cpSync(join(PROJECT_ROOT, 'node_modules'), join(DIST_DIR, 'node_modules'), {
