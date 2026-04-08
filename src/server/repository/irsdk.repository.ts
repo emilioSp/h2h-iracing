@@ -149,3 +149,31 @@ export const getYawNorthDirection = withConnect(
 export const getWindVelocity = withConnect(
   (): number => ir?.get(VARS.WIND_VEL)[0] ?? 0,
 );
+
+export const getSessionSecondsAfterMidnight = withConnect(
+  (): number => ir?.get(VARS.SESSION_TIME_OF_DAY)[0] ?? 0,
+);
+
+export const getAbsAdjust = withConnect(
+  (): number => ir?.get(VARS.DC_ABS)[0] ?? 0,
+);
+
+export const getTcAdjust = withConnect(
+  (): number => ir?.get(VARS.DC_TRACTION_CONTROL)[0] ?? 0,
+);
+
+export const getIsAbsActive = withConnect(
+  (): boolean => ir?.get(VARS.BRAKE_ABS_ACTIVE)[0] ?? false,
+);
+
+export const getIsTcActive = withConnect(
+  (): boolean => ir?.get(VARS.DC_TRACTION_CONTROL_TOGGLE)[0] ?? false,
+);
+
+export const getBrakeBias = withConnect(
+  (): number => ir?.get(VARS.DC_BRAKE_BIAS)[0] ?? 0,
+);
+
+export const getIsPitSpeedLimiterActive = withConnect(
+  (): boolean => ir?.get(VARS.DC_PIT_SPEED_LIMITER_TOGGLE)[0] ?? false,
+);

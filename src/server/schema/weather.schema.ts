@@ -13,6 +13,7 @@ export const weatherSchema = z.object({
   windVelocityMs: z.number(),
   yawNorthDirectionRad: z.number(),
   yawNorthDirectionDeg: z.number(),
+  sessionSecondsAfterMidnight: z.number(),
 });
 
 export type Weather = z.infer<typeof weatherSchema>;

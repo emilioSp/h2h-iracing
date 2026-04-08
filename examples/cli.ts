@@ -2,8 +2,10 @@ import { setTimeout } from 'node:timers/promises';
 import config from '#config';
 import { isIRacingConnected } from '#repository/irsdk.repository.ts';
 import type { Car } from '#schema/car.schema.ts';
+import type { CarTelemetry } from '#schema/car-telemetry.schema.ts';
 import type { Head2Head } from '#schema/head2head.schema.ts';
 import type { Weather } from '#schema/weather.schema.ts';
+import { computeCarTelemetry } from '#service/car-telemetry.service.ts';
 import type { Gap } from '#service/gap.service.ts';
 import { computeHead2Head } from '#service/head2head.service.ts';
 import { computeWeather } from '#service/weather.service.ts';
@@ -102,6 +104,12 @@ export const printHead2Head = (head2Head: Head2Head | null): void => {
   console.log(`╚${LINE}╝`);
 };
 
+const formatTimeOfDay = (seconds: number): string => {
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+};
+
 const COMPASS_LABELS = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'] as const;
 
 const compassIndex = (deg: number): number =>
@@ -156,6 +164,7 @@ export const printWeather = (weather: Weather): void => {
   console.log(`╔${LINE}╗`);
   console.log(`║  ${pad('WEATHER DASHBOARD', W)}║`);
   console.log(`╠${LINE}╣`);
+  row('Time:       ', formatTimeOfDay(weather.sessionSecondsAfterMidnight));
   row('Air Temp:   ', `${weather.airTemperatureC.toFixed(1)}°C`);
   row('Track Temp: ', `${weather.trackTemperatureC.toFixed(1)}°C`);
   row('Humidity:   ', `${Math.round(weather.relativeHumidityPct)}%`);
@@ -182,17 +191,38 @@ export const printWeather = (weather: Weather): void => {
   console.log(`╚${LINE}╝`);
 };
 
+const flag = (active: boolean) => (active ? 'ON ' : 'OFF');
+
+export const printCarTelemetry = (car: CarTelemetry): void => {
+  console.log(`╔${LINE}╗`);
+  console.log(`║  ${pad('CAR DASHBOARD', W)}║`);
+  console.log(`╠${LINE}╣`);
+  row(
+    'ABS:        ',
+    `${car.abs.toFixed(0).padEnd(4)} [${flag(car.isAbsActive)}]`,
+  );
+  row(
+    'TC:         ',
+    `${car.tc.toFixed(0).padEnd(4)} [${flag(car.isTcActive)}]`,
+  );
+  row('Brake Bias: ', `${(car.brakeBias).toFixed(2)}%`);
+  row('Pit Limiter:', flag(car.isPitSpeedLimiterActive));
+  console.log(`╚${LINE}╝`);
+};
+
 while (true) {
   if (!(await isIRacingConnected())) {
     continue;
   }
-  const [head2Head, weather] = await Promise.all([
+  const [head2Head, weather, carTelemetry] = await Promise.all([
     computeHead2Head(),
     computeWeather(),
+    computeCarTelemetry(),
   ]);
 
   printHead2Head(head2Head);
   printWeather(weather);
+  printCarTelemetry(carTelemetry);
 
   if (config.DATA_MODE === 'mock') break;
   await setTimeout(config.POLL_INTERVAL_MS);
