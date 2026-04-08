@@ -13,7 +13,7 @@ Two modes of operation:
 
 ![H2H overlay](docs/H2H_dashboard.jpg)
 
-![Weather overlay](docs/H2H_weather_overlay.jpg)
+![Weather overlay](docs/H2H_weather_dashboard.jpg)
 
 ## Prerequisites
 
