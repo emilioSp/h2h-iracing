@@ -1,0 +1,24 @@
+@import "tailwindcss";
+@source "../../common";
+
+@theme {
+  --color-green: #00e676;
+  --color-red: #ff1744;
+  --color-blue: #448aff;
+  --color-yellow: #facc15;
+  --color-dim: #888888;
+  --color-bg: #0d0d0d;
+  --color-card: #161616;
+  --color-border: #2a2a2a;
+  --color-border-player: #3a3a6a;
+  --font-mono: "Courier New", Courier, monospace;
+}
+
+html,
+body,
+#root {
+  width: 800px;
+  height: 480px;
+  overflow: hidden;
+  background-color: var(--color-bg);
+}

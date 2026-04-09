@@ -60,6 +60,11 @@ execSync('npm run weather:build', {
   stdio: 'inherit',
 });
 
+execSync('npm run car:build', {
+  cwd: PROJECT_ROOT,
+  stdio: 'inherit',
+});
+
 console.log('Installing production dependencies...');
 execSync('npm ci --omit=dev', { cwd: PROJECT_ROOT, stdio: 'inherit' });
 
@@ -83,6 +88,13 @@ cpSync(
 cpSync(
   join(PROJECT_ROOT, 'dist/weather-dashboard'),
   join(DIST_DIR, 'dist/weather-dashboard'),
+  {
+    recursive: true,
+  },
+);
+cpSync(
+  join(PROJECT_ROOT, 'dist/car-dashboard'),
+  join(DIST_DIR, 'dist/car-dashboard'),
   {
     recursive: true,
   },

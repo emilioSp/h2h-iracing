@@ -13,6 +13,7 @@ app.get('/sse/h2h', h2hRouter);
 app.get('/sse/weather', weatherRouter);
 app.get('/sse/car', carTelemetryRouter);
 app.get('/h2h', serveStatic({ path: './dist/h2h-dashboard/index.html' }));
+app.get('/car', serveStatic({ path: './dist/car-dashboard/index.html' }));
 app.use('/*', serveStatic({ root: './dist' }));
 
 const server = serve(
