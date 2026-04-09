@@ -113,7 +113,7 @@ export const App = () => {
       />
       <MetricCell
         label="BB"
-        value={`${car.brakeBias.toFixed(2)}%`}
+        value={`${car.brakeBias.toFixed(1)}%`}
         icon={<Gauge size={56} />}
       />
       <MetricCell
