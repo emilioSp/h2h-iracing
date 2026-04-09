@@ -45,9 +45,13 @@ describe('computeWeather', () => {
       return values[varName] ?? [0];
     });
     mockIr.getSessionInfo.mockImplementation(
-      (varName: string): Record<string, string> => {
-        const values: Record<string, Record<string, string>> = {
-          [SESSION_DATA_KEYS.WEEKEND_INFO]: { TrackRelativeHumidity: '60.6 %' },
+      (varName: string): Record<string, Record<string, string>> => {
+        const values: Record<string, Record<string, Record<string, string>>> = {
+          [SESSION_DATA_KEYS.WEEKEND_INFO]: {
+            WeekendOptions: {
+              RelativeHumidity: '60.6 %',
+            },
+          },
         };
 
         return values[varName] ?? [0];

@@ -119,10 +119,13 @@ export const getAirTemperature = withConnect(
 );
 
 export const getRelativeHumidity = withConnect((): number => {
-  const trackRelativeHumidity = ir?.getSessionInfo(
-    SESSION_DATA_KEYS.WEEKEND_INFO,
-  ).TrackRelativeHumidity;
-  return parseFloat(trackRelativeHumidity ?? '0');
+  console.log(ir?.getSessionInfo(SESSION_DATA_KEYS.SESSION_INFO));
+  console.log(ir?.getSessionInfo(SESSION_DATA_KEYS.WEEKEND_INFO));
+  console.log(ir?.getSessionInfo(SESSION_DATA_KEYS.DRIVER_INFO));
+
+  const relativeHumidity = ir?.getSessionInfo(SESSION_DATA_KEYS.WEEKEND_INFO)
+    ?.WeekendOptions.RelativeHumidity;
+  return parseFloat(relativeHumidity ?? '0');
 });
 
 export const getTrackTemperature = withConnect(
