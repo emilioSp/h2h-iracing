@@ -167,7 +167,7 @@ export const printWeather = (weather: Weather): void => {
   row('Time:       ', formatTimeOfDay(weather.sessionSecondsAfterMidnight));
   row('Air Temp:   ', `${weather.airTemperatureC.toFixed(1)}°C`);
   row('Track Temp: ', `${weather.trackTemperatureC.toFixed(1)}°C`);
-  row('Humidity:   ', `${Math.round(weather.relativeHumidityPct)}%`);
+  row('Humidity:   ', `${weather.relativeHumidityPct}%`);
   row('Rain:       ', `${Math.round(weather.precipitationPct)}%`);
   row('Wetness:    ', weather.trackWetness);
   console.log(`╠${LINE}╣`);

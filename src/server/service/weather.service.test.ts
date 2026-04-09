@@ -20,7 +20,7 @@ vi.mock('@emiliosp/node-iracing-sdk', async (importOriginal) => {
   };
 });
 
-import { SESSION_DATA_KEYS, VARS } from '@emiliosp/node-iracing-sdk';
+import { VARS } from '@emiliosp/node-iracing-sdk';
 import { computeWeather } from '#service/weather.service.ts';
 
 beforeEach(() => {
@@ -41,22 +41,10 @@ describe('computeWeather', () => {
         [VARS.WIND_VEL]: [5.0],
         [VARS.YAW_NORTH]: [Math.PI],
         [VARS.SESSION_TIME_OF_DAY]: [43200],
+        [VARS.RELATIVE_HUMIDITY]: [0.605999079065],
       };
       return values[varName] ?? [0];
     });
-    mockIr.getSessionInfo.mockImplementation(
-      (varName: string): Record<string, Record<string, string>> => {
-        const values: Record<string, Record<string, Record<string, string>>> = {
-          [SESSION_DATA_KEYS.WEEKEND_INFO]: {
-            WeekendOptions: {
-              RelativeHumidity: '60.6 %',
-            },
-          },
-        };
-
-        return values[varName] ?? [0];
-      },
-    );
 
     const weather = await computeWeather();
 
