@@ -30,11 +30,15 @@ export const computeWeather = async (): Promise<Weather> => {
     ((await getRelativeHumidity()) * 100).toFixed(2),
   );
 
+  const precipitationPct = parseFloat(
+    ((await getPrecipitation()) * 100).toFixed(2),
+  );
+
   return {
     airTemperatureC: await getAirTemperature(),
     trackTemperatureC: await getTrackTemperature(),
     relativeHumidityPct,
-    precipitationPct: await getPrecipitation(),
+    precipitationPct,
     trackWetness: await getTrackWetness(),
     windDirectionRad,
     windDirectionDeg: radToDeg(windDirectionRad),

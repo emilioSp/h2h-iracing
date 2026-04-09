@@ -98,11 +98,11 @@ export const App = () => {
         />
         <MetricChip
           icon={<Droplets size={28} />}
-          value={`${Math.round(weather.relativeHumidityPct)}%`}
+          value={`${weather.relativeHumidityPct}%`}
         />
         <MetricChip
           icon={<CloudRain size={28} />}
-          value={`${Math.round(weather.precipitationPct)}%`}
+          value={`${weather.precipitationPct}%`}
         />
         <MetricChip icon={<Waves size={28} />} value={weather.trackWetness} />
       </div>

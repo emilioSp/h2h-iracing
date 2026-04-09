@@ -36,7 +36,7 @@ describe('computeWeather', () => {
         [VARS.AIR_TEMP]: [22.5],
         [VARS.TRACK_TEMP_CREW]: [35.0],
         [VARS.TRACK_WETNESS]: [1], // Dry
-        [VARS.PRECIPITATION]: [0],
+        [VARS.PRECIPITATION]: [0.545343434],
         [VARS.WIND_DIR]: [0],
         [VARS.WIND_VEL]: [5.0],
         [VARS.YAW_NORTH]: [Math.PI],
@@ -52,7 +52,7 @@ describe('computeWeather', () => {
       airTemperatureC: 22.5,
       trackTemperatureC: 35.0,
       relativeHumidityPct: 60.6,
-      precipitationPct: 0,
+      precipitationPct: 54.53,
       trackWetness: 'Dry',
       windDirectionRad: 0,
       windDirectionDeg: 0,
