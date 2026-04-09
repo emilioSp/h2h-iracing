@@ -40,20 +40,20 @@ export const App = () => {
   }
 
   return (
-    <div className="grid grid-rows-[120px_240px_120px] w-200 h-120 bg-black text-white">
+    <div className="grid grid-rows-[120px_240px_120px] w-200 h-120 bg-bg text-white">
       {/* Ahead */}
-      <div>
+      <div className="bg-card">
         {h2h.ahead ? (
           <CarCard car={h2h.ahead} variant="ahead" />
         ) : (
-          <div className="grid place-items-center h-full font-mono text-3xl text-[#444] uppercase tracking-[4px]">
+          <div className="grid place-items-center h-full font-mono text-3xl text-dim uppercase tracking-[4px]">
             Race leader
           </div>
         )}
       </div>
 
       {/* Player */}
-      <div className="border-y border-border-player">
+      <div className="border-y border-border-player bg-player-bg">
         <CarCard
           car={h2h.player}
           variant="player"
@@ -65,11 +65,11 @@ export const App = () => {
       </div>
 
       {/* Behind */}
-      <div>
+      <div className="bg-card">
         {h2h.behind ? (
           <CarCard car={h2h.behind} variant="behind" />
         ) : (
-          <div className="grid place-items-center h-full font-mono text-3xl text-[#444] uppercase tracking-[4px]">
+          <div className="grid place-items-center h-full font-mono text-3xl text-dim uppercase tracking-[4px]">
             Last place
           </div>
         )}

@@ -20,7 +20,7 @@ type Props =
     };
 
 const Label = ({ children }: { children: string }) => (
-  <span className="text-[12px] text-white uppercase tracking-widest leading-none">
+  <span className="text-[13px] text-dim uppercase tracking-widest leading-none">
     {children}
   </span>
 );
@@ -57,7 +57,7 @@ const DriverInfoGrid = ({ car }: { car: Car }) => {
 
   return (
     <div className="grid grid-cols-[80px_1fr_1fr_2fr_2fr] grid-rows-2 h-full">
-      <div className="col-span-3 grid items-center min-w-0 pl-[22px]">
+      <div className="col-span-3 grid items-center min-w-0 pl-6">
         <span className="font-mono text-3xl font-semibold text-white truncate">
           {formatName(car.driver.name)}
         </span>
@@ -89,7 +89,7 @@ const DriverInfoGrid = ({ car }: { car: Car }) => {
         </span>
       </div>
       <div className="grid items-center justify-items-end">
-        <span className="font-mono text-3xl font-bold text-white pr-[5px]">
+        <span className="font-mono text-3xl font-bold text-white pr-1.5">
           {car.driver.iRating}
         </span>
       </div>
