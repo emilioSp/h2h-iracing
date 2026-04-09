@@ -19,7 +19,7 @@ type Props =
     };
 
 const Label = ({ children }: { children: string }) => (
-  <span className="text-[12px] text-dim uppercase tracking-widest leading-none">
+  <span className="text-[12px] text-white uppercase tracking-widest leading-none">
     {children}
   </span>
 );
@@ -91,7 +91,7 @@ const GapDeltaRow = ({
       >
         {formatDelta(delta)}
       </span>
-      <Label>Delta</Label>
+      <Label>Delta lap</Label>
     </div>
   </div>
 );
