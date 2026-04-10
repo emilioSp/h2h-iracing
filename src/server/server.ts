@@ -34,9 +34,12 @@ const server = serve(
   },
 );
 
-process.on('SIGINT', async () => {
+const cleanShutdown = async () => {
   await shutdown();
   server.close();
   console.log('\nShutdown complete');
   process.exit(0);
-});
+};
+
+process.on('SIGINT', cleanShutdown);
+process.on('SIGTERM', cleanShutdown);
