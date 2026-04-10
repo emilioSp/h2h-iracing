@@ -1,6 +1,6 @@
 {
   "name": "h2h-iracing",
-  "version": "1.17.2",
+  "version": "1.19.0",
   "description": "head2head overlay for iRacing",
   "license": "ISC",
   "author": "",
@@ -49,6 +49,8 @@
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "6.0.1",
     "@vitest/coverage-v8": "4.1.2",
+    "@yao-pkg/pkg": "6.14.2",
+    "resedit": "3.0.2",
     "tsx": "4.21.0",
     "typescript": "6.0.2",
     "vite": "8.0.5",

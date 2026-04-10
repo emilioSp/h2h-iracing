@@ -31,12 +31,19 @@ const server = serve(
     console.log(
       `Mode: ${config.DATA_MODE} | Poll: ${config.POLL_INTERVAL_MS}ms`,
     );
+
+    if (config.DATA_MODE === 'live') {
+      console.log('Do NOT close this window...');
+    }
   },
 );
 
-process.on('SIGINT', async () => {
+const cleanShutdown = async () => {
   await shutdown();
   server.close();
   console.log('\nShutdown complete');
   process.exit(0);
-});
+};
+
+process.on('SIGINT', cleanShutdown);
+process.on('SIGTERM', cleanShutdown);

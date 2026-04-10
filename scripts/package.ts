@@ -4,11 +4,13 @@ import {
   existsSync,
   globSync,
   mkdirSync,
+  readFileSync,
   rmSync,
   statSync,
   writeFileSync,
 } from 'node:fs';
 import { join, resolve } from 'node:path';
+import { Data, NtExecutable, NtExecutableResource, Resource } from 'resedit';
 
 const NODE_VERSION = '24.3.0';
 const PROJECT_ROOT = resolve(import.meta.dirname, '..');
@@ -65,13 +67,60 @@ execSync('npm run car:build', {
   stdio: 'inherit',
 });
 
+console.log('Building launcher exe...');
+execSync(
+  `node_modules/.bin/pkg scripts/launcher.cjs --targets node24-win-x64 --output ${join(BUILD_DIR, 'h2h-iracing.exe')}`,
+  { cwd: PROJECT_ROOT, stdio: 'inherit' },
+);
+
+const icoPath = join(SCRIPTS_DIR, 'h2h.ico');
+if (existsSync(icoPath)) {
+  console.log('Embedding icon and version info...');
+  const exePath = join(BUILD_DIR, 'h2h-iracing.exe');
+  const exe = NtExecutable.from(readFileSync(exePath), { ignoreCert: true });
+  const res = NtExecutableResource.from(exe);
+
+  // Parse the .ico file into individual icon images, then replace icon group ID 1 in the PE resource table with them
+  const iconFile = Data.IconFile.from(readFileSync(icoPath));
+  Resource.IconGroupEntry.replaceIconsForResource(
+    res.entries,
+    1,
+    1033, // ID for en-US
+    iconFile.icons.map((i) => i.data),
+  );
+
+  const version = VERSION ?? '0.0.0';
+  const [major, minor, patch] = version.split('.').map(Number);
+  const versionInfos = Resource.VersionInfo.fromEntries(res.entries);
+  const vi =
+    versionInfos.length > 0
+      ? versionInfos[0]
+      : Resource.VersionInfo.createEmpty();
+  vi.setFileVersion(major, minor, patch, 0);
+  vi.setProductVersion(major, minor, patch, 0);
+  vi.setStringValues(
+    { lang: 1033, codepage: 1200 },
+    {
+      FileDescription: 'H2H iRacing Overlay',
+      ProductName: 'H2H iRacing',
+      FileVersion: version,
+      ProductVersion: version,
+    },
+  );
+  vi.outputToResourceEntries(res.entries);
+  res.outputResource(exe);
+  writeFileSync(exePath, Buffer.from(exe.generate()));
+} else {
+  console.log('Warning: scripts/h2h.ico not found — skipping icon embedding.');
+}
+
 console.log('Installing production dependencies...');
 execSync('npm ci --omit=dev', { cwd: PROJECT_ROOT, stdio: 'inherit' });
 
 console.log('Assembling distribution...');
 
 cpSync(CACHED_NODE, join(DIST_DIR, 'node.exe'));
-cpSync(join(SCRIPTS_DIR, 'h2h.bat'), join(DIST_DIR, 'h2h.bat'));
+cpSync(join(BUILD_DIR, 'h2h-iracing.exe'), join(DIST_DIR, 'h2h-iracing.exe'));
 cpSync(join(PROJECT_ROOT, '.env'), join(DIST_DIR, '.env'));
 cpSync(join(PROJECT_ROOT, 'package.json'), join(DIST_DIR, 'package.json'));
 cpSync(join(PROJECT_ROOT, 'src/server'), join(DIST_DIR, 'src/server'), {
@@ -118,7 +167,7 @@ const sizeMB = (statSync(ZIP_FILE).size / 1024 / 1024).toFixed(1);
 
 console.log('\n=== Build complete ===');
 console.log(`Output: ${ZIP_FILE} (${sizeMB} MB)`);
-console.log('Extract the zip, double-click h2h.bat to run.\n');
+console.log('Extract the zip and double-click h2h-iracing.exe to run.\n');
 
 cpSync(ZIP_FILE, join(PROJECT_ROOT, `h2h-iracing-${VERSION}.zip`));
 
