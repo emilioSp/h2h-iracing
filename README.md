@@ -7,20 +7,26 @@ Ready to be used within SimHub or OBS for live streaming.
 - Weather overlay: Displays current track weather conditions and wind direction/speed relative to the car direction.
 - Car telemetry overlay: Shows key car telemetry data (ABS, TC, brake bias, pit limiter)
 
-Two modes of operation:
+## Download & Installation
 
-- **Server + UI** — HTTP server with SSE + React overlay for streaming software (OBS)
-- **CLI** — terminal UI for local monitoring (manly for development/testing)
+1. Go to [Release page](https://github.com/emilioSp/h2h-iracing/releases), download the latest version of H2H and unzip it.
+2. Run the executable file (h2h-iracing.exe) to start the server. You should see a welcome page with instructions and a link to the dashboard.
+3. Import the desired overlay into SimHub
+
+.simhubdash files for SimHub overlays:
+- [Head-to-Head overlay](/simhub_dashies/H2H%20-%20Head%202%20Head.simhubdash)
+- [Weather overlay](/simhub_dashies/H2H%20-%20Weather%20Dashboard.simhubdash)
+- [Car telemetry overlay](/simhub_dashies/H2H%20-%20Car%20dashboard.simhubdash)
 
 ## Screenshots
 
 ![Welcome page](docs/H2H_welcome_page.jpg)
 
-![H2H overlay](docs/H2H_dashboard.jpg)
+![Head-to-Head overlay](docs/H2H_dashboard.jpg)
 
 ![Weather overlay](docs/H2H_weather_dashboard.jpg)
 
-![Car overlay](docs/H2H_car_telemetry_dashboard.jpg)
+![Car telemetry overlay](docs/H2H_car_telemetry_dashboard.jpg)
 
 ## Youtube video demonstration
 
@@ -33,6 +39,11 @@ Two modes of operation:
 - [SimHub](https://www.simhubdash.com/) or an OBS browser for live streaming (e.g [OBS](https://obsproject.com/kb/browser-source))
 
 ## Local Development
+
+Two modes of operation:
+
+- **Server + UI** — HTTP server with SSE + React overlays
+- **CLI** — terminal UI for local monitoring (manly for development/testing)
 
 Create a `.env` file with the following variables:
 
