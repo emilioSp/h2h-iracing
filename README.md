@@ -11,12 +11,7 @@ Ready to be used within SimHub or OBS for live streaming.
 
 1. Go to [Release page](https://github.com/emilioSp/h2h-iracing/releases), download the latest version of H2H and unzip it.
 2. Run the executable file (h2h-iracing.exe) to start the server. You should see a welcome page with instructions and a link to the dashboard.
-3. Import the desired overlay into SimHub
-
-.simhubdash files for SimHub overlays:
-- [Head-to-Head overlay](/simhub_dashies/H2H%20-%20Head%202%20Head.simhubdash)
-- [Weather overlay](/simhub_dashies/H2H%20-%20Weather%20Dashboard.simhubdash)
-- [Car telemetry overlay](/simhub_dashies/H2H%20-%20Car%20dashboard.simhubdash)
+3. SimHub dashboards are included in the release, but you can also find them in the `simhub_dashies` folder. Import them into SimHub.
 
 ## Screenshots
 

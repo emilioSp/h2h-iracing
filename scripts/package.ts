@@ -20,6 +20,7 @@ const CACHE_DIR = join(PROJECT_ROOT, '.cache');
 const BUILD_DIR = join(PROJECT_ROOT, 'build');
 const DIST_DIR = join(BUILD_DIR, 'h2h-iracing');
 const CACHED_NODE = join(CACHE_DIR, 'node.exe');
+const SIMHUB_DASHIES_DIR = join(PROJECT_ROOT, 'simhub_dashies');
 const VERSION = process.env.npm_package_version;
 
 const ZIP_FILE = join(BUILD_DIR, `h2h-iracing-${VERSION}.zip`);
@@ -121,6 +122,18 @@ console.log('Assembling distribution...');
 
 cpSync(CACHED_NODE, join(DIST_DIR, 'node.exe'));
 cpSync(join(BUILD_DIR, 'h2h-iracing.exe'), join(DIST_DIR, 'h2h-iracing.exe'));
+cpSync(
+  join(SIMHUB_DASHIES_DIR, 'H2H-Car_dashboard.simhubdash'),
+  join(DIST_DIR, 'H2H-Car_dashboard.simhubdash'),
+);
+cpSync(
+  join(SIMHUB_DASHIES_DIR, 'H2H-Head_to_Head_dashboard.simhubdash'),
+  join(DIST_DIR, 'H2H-Head_to_Head_dashboard.simhubdash'),
+);
+cpSync(
+  join(SIMHUB_DASHIES_DIR, 'H2H-Weather_dashboard.simhubdash'),
+  join(DIST_DIR, 'H2H-Weather_dashboard.simhubdash'),
+);
 cpSync(join(PROJECT_ROOT, '.env'), join(DIST_DIR, '.env'));
 cpSync(join(PROJECT_ROOT, 'package.json'), join(DIST_DIR, 'package.json'));
 cpSync(join(PROJECT_ROOT, 'src/server'), join(DIST_DIR, 'src/server'), {
