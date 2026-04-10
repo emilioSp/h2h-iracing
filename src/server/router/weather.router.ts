@@ -10,7 +10,7 @@ export const weatherRouter = (c: Context) =>
     while ((await isIRacingConnected()) && !stream.aborted) {
       const weather = await computeWeather();
       await stream.writeSSE({ data: JSON.stringify({ data: weather }) });
-      await stream.sleep(config.POLL_INTERVAL_WEATHER_MS);
+      await stream.sleep(config.POLL_INTERVAL_MS);
     }
     debug('iRacing is not connected, stopping SSE stream');
   });
