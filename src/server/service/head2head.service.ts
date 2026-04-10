@@ -9,6 +9,8 @@ import {
   getTrackLengthMeters,
   refreshTelemetry,
 } from '#repository/irsdk.repository.ts';
+import type { Car } from '#schema/car.schema.ts';
+import type { Head2Head } from '#schema/head2head.schema.ts';
 import {
   type Delta,
   getDeltaBestLap,
@@ -22,8 +24,6 @@ import {
   updateReferenceLaps,
 } from '#service/reference-lap.service.ts';
 import { getStandings, type Standing } from '#service/standings.service.ts';
-import type { Car } from '../../schema/car.schema.ts';
-import type { Head2Head } from '../../schema/head2head.schema.ts';
 
 let previousSessionNum = -1;
 
