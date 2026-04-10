@@ -1,6 +1,11 @@
 # h2h-iracing
 
-Real-time head-to-head battle overlay for iRacing. Tracks your position relative to the cars immediately ahead and behind you, showing gaps, deltas, and driver info.
+A collection of dashboards / overlays for iRacing, built with Node.js and TypeScript. 
+Ready to be used within SimHub or OBS for live streaming.
+
+- Real-time head-to-head battle overlay for iRacing: Tracks your position relative to the cars immediately ahead and behind you, showing gaps, deltas, and driver info.
+- Weather overlay: Displays current track weather conditions and wind direction/speed relative to the car direction.
+- Car telemetry overlay: Shows key car telemetry data (ABS, TC, brake bias, pit limiter)
 
 Two modes of operation:
 
@@ -15,6 +20,8 @@ Two modes of operation:
 
 ![Weather overlay](docs/H2H_weather_dashboard.jpg)
 
+![Car overlay](docs/H2H_car_telemetry_dashboard.jpg)
+
 ## Prerequisites
 
 - Node.js 24+
@@ -24,13 +31,14 @@ Two modes of operation:
 
 Create a `.env` file with the following variables:
 
-| Variable           | Description                                | Required |
-| ------------------ | ------------------------------------------ | -------- |
-| `DATA_MODE`        | `live` (iRacing SDK) or `mock` (dump file) | yes      |
-| `DUMP_FILE_PATH`   | Path to `.bin` dump file (mock mode only)  | yes      |
-| `POLL_INTERVAL_MS` | Telemetry polling interval in milliseconds | yes      |
-| `PORT`             | HTTP server port                           | yes      |
-| `LOG_LEVEL`        | `debug` / `info`                           | yes      |
+| Variable                   | Description                                            | Required |
+|----------------------------|--------------------------------------------------------| -------- |
+| `DATA_MODE`                | `live` (iRacing SDK) or `mock` (dump file)             | yes      |
+| `DUMP_FILE_PATH`           | Path to `.bin` dump file (mock mode only)              | yes      |
+| `POLL_INTERVAL_MS`         | Telemetry polling interval in milliseconds             | yes      |
+| `POLL_INTERVAL_WEATHER_MS` | Telemetry polling interval for weather in milliseconds | yes      |
+| `PORT`                     | HTTP server port                                       | yes      |
+| `LOG_LEVEL`                | `debug` / `info`                                       | yes      |
 
 Start in mock mode (no iRacing required):
 
@@ -54,11 +62,11 @@ npm run cli:start
 
 ## API
 
-### `GET /sse`
+All endpoints use Server-Sent Events (SSE) and push updates at every poll interval.
 
-Server-Sent Events endpoint. Pushes the head to head state event at every poll interval.
+### `GET /sse/h2h`
 
-Each SSE message contains:
+Head-to-head state relative to the cars immediately ahead and behind.
 
 ```json
 {
@@ -66,7 +74,7 @@ Each SSE message contains:
     "sessionTime": 1234.5,
     "player": {
       "position": 3,
-      "driver": { "name": "...", "iRating": 3000, "license": "A 4.99", "carName": "..." },
+      "driver": { "carIdx": 7, "name": "...", "carNumber": "07", "car": "...", "iRating": 3000, "license": "A 4.99", "classEstLapTime": 84.1 },
       "lastLapTime": 85.123,
       "bestLapTime": 84.567,
       "lap": 12
@@ -83,13 +91,52 @@ Each SSE message contains:
 
 `ahead` and `behind` are `null` when there is no car in that position. `gapAhead` and `gapBehind` are `null` accordingly. The `unit` field can be `"seconds"` or `"laps"`.
 
+### `GET /sse/weather`
+
+Current track weather conditions.
+
+```json
+{
+  "data": {
+    "airTemperatureC": 24.5,
+    "trackTemperatureC": 31.2,
+    "relativeHumidityPct": 58.0,
+    "precipitationPct": 0.0,
+    "trackWetness": "Dry",
+    "windDirectionRad": 1.57,
+    "windDirectionDeg": 90.0,
+    "windRelativeDirectionRad": 0.42,
+    "windRelativeDirectionDeg": 24.0,
+    "windVelocityMs": 3.5,
+    "yawNorthDirectionRad": 1.15,
+    "yawNorthDirectionDeg": 65.9,
+    "sessionSecondsAfterMidnight": 43200
+  }
+}
+```
+
+### `GET /sse/car`
+
+Key car telemetry data.
+
+```json
+{
+  "data": {
+    "abs": 4,
+    "tc": 3,
+    "isAbsActive": false,
+    "isTcActive": false,
+    "brakeBias": 54.2,
+    "isPitSpeedLimiterActive": false
+  }
+}
+```
+
 ## Testing
 
 ```bash
 npm test
 ```
-
-Runs Vitest with coverage (85% minimum). 
 
 ## Documentation
 

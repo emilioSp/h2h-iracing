@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
+import type { Head2Head } from '#schema/head2head.schema.ts';
 import { WelcomePage } from '../../common/WelcomePage.js';
 import { CarCard } from './CarCard.js';
-import type { Head2Head } from './types.js';
 import './styles.css';
 
 export const App = () => {

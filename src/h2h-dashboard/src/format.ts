@@ -12,20 +12,14 @@ export const formatGap = (
   if (gap === null) return 'N/A';
   if (gap.unit === 'laps') return `${gap.value}L`;
   if (!Number.isFinite(gap.value)) return 'N/A';
-  const sec = Math.floor(gap.value);
-  const ms = Math.round((gap.value % 1) * 1000);
-  const twoDecimal = `${sec}.${String(ms).padStart(3, '0')}`.slice(0, -1);
-  return `${twoDecimal}s`;
+  return `${gap.value.toFixed(1)}s`;
 };
 
 export const formatDelta = (d: number | null): string => {
   if (d === null) return 'N/A';
   const sign = d > 0 ? '+' : d < 0 ? '-' : '';
   const abs = Math.abs(d);
-  const sec = Math.floor(abs);
-  const ms = Math.round((abs % 1) * 1000);
-  const twoDecimal = `${sec}.${String(ms).padStart(3, '0')}`.slice(0, -1);
-  return `${sign}${twoDecimal}s`;
+  return `${sign}${abs.toFixed(2).padStart(3, '0')}s`;
 };
 
 export const deltaClass = (d: number | null): string => {

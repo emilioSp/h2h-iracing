@@ -1,4 +1,4 @@
-import type { Car } from '#schema/car.schema.ts';
+import type { Car } from '../../schema/car.schema.ts';
 
 export type Delta = {
   deltaAhead: number | null;

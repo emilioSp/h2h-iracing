@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { Car } from '#schema/car.schema.ts';
+import type { Car } from '../src/schema/car.schema.ts';
 import {
   formatDelta,
   formatGap,

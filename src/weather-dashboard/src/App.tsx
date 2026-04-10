@@ -9,9 +9,9 @@ import {
   Wind,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import type { Weather } from '#schema/weather.schema.ts';
 import { WelcomePage } from '../../common/WelcomePage.js';
 import { CompassRose } from './CompassRose.js';
-import type { WeatherData } from './types.js';
 import './styles.css';
 
 const COMPASS_LABELS = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'] as const;
@@ -44,7 +44,7 @@ const MetricChip = ({ value, icon }: MetricChipProps) => (
 );
 
 export const App = () => {
-  const [weather, setWeather] = useState<WeatherData | null>(null);
+  const [weather, setWeather] = useState<Weather | null>(null);
   const [localTime, setLocalTime] = useState(() => new Date());
   const localTimerRef = useRef<ReturnType<typeof setInterval>>(undefined);
 
@@ -60,7 +60,7 @@ export const App = () => {
     const connect = () => {
       es = new EventSource('/sse/weather');
       es.onmessage = (e) => {
-        const parsed = JSON.parse(e.data) as { data: WeatherData };
+        const parsed = JSON.parse(e.data) as { data: Weather };
         setWeather(parsed.data);
       };
       es.onerror = () => {

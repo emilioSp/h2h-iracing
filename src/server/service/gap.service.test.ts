@@ -22,7 +22,6 @@ import {
   addRecentLap,
   type ReferenceLap,
 } from '#repository/reference-lap.repository.ts';
-import type { Car } from '#schema/car.schema.ts';
 import { getClassEstLapTime } from '#service/driver.service.ts';
 import {
   getReferenceInterval,
@@ -30,6 +29,7 @@ import {
   normalizeTrackPct,
   resetReferenceLaps,
 } from '#service/reference-lap.service.ts';
+import type { Car } from '../../schema/car.schema.ts';
 
 const mockGetLapDistancePercentage = vi.mocked(getLapDistPct);
 const mockGetOnPitRoad = vi.mocked(getOnPitRoad);

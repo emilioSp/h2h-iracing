@@ -20,8 +20,16 @@ const server = serve(
   { fetch: app.fetch, port: config.PORT, hostname: '127.0.0.1' },
   (info) => {
     console.log(`Server running on http://localhost:${info.port}`);
+
+    console.log('Dashboards:');
+    console.table({
+      'Head to Head': { URL: `http://localhost:${info.port}/h2h-dashboard` },
+      'Car Telemetry': { URL: `http://localhost:${info.port}/car-dashboard` },
+      Weather: { URL: `http://localhost:${info.port}/weather-dashboard` },
+    });
+
     console.log(
-      `Mode: ${config.DATA_MODE} | Poll: ${config.POLL_INTERVAL_MS}ms`,
+      `Mode: ${config.DATA_MODE} | Poll: ${config.POLL_INTERVAL_MS}ms | Poll weather: ${config.POLL_INTERVAL_WEATHER_MS}ms`,
     );
   },
 );

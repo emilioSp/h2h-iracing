@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
+import type { Car } from '#schema/car.schema.ts';
+import type { Gap } from '#schema/head2head.schema.ts';
 import {
   deltaClass,
   formatDelta,
@@ -6,7 +8,6 @@ import {
   formatName,
   formatTime,
 } from './format.js';
-import type { Car, Gap } from './types.js';
 
 type Props =
   | { car: Car; variant: 'ahead' | 'behind' }

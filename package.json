@@ -27,7 +27,7 @@
     "#server/*": "./src/server/*",
     "#service/*": "./src/server/service/*",
     "#repository/*": "./src/server/repository/*",
-    "#schema/*": "./src/server/schema/*",
+    "#schema/*": "./src/schema/*",
     "#config": "./src/server/config.ts",
     "#router/*": "./src/server/router/*"
   },

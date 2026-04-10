@@ -1,14 +1,14 @@
 import { setTimeout } from 'node:timers/promises';
 import config from '#config';
 import { isIRacingConnected } from '#repository/irsdk.repository.ts';
-import type { Car } from '#schema/car.schema.ts';
-import type { CarTelemetry } from '#schema/car-telemetry.schema.ts';
-import type { Head2Head } from '#schema/head2head.schema.ts';
-import type { Weather } from '#schema/weather.schema.ts';
 import { computeCarTelemetry } from '#service/car-telemetry.service.ts';
 import type { Gap } from '#service/gap.service.ts';
 import { computeHead2Head } from '#service/head2head.service.ts';
 import { computeWeather } from '#service/weather.service.ts';
+import type { Car } from '../src/schema/car.schema.ts';
+import type { CarTelemetry } from '../src/schema/car-telemetry.schema.ts';
+import type { Head2Head } from '../src/schema/head2head.schema.ts';
+import type { Weather } from '../src/schema/weather.schema.ts';
 
 const W = 64;
 const LINE = '═'.repeat(W);

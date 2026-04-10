@@ -9,7 +9,7 @@ import {
   getWindVelocity,
   getYawNorthDirection,
 } from '#repository/irsdk.repository.ts';
-import type { Weather } from '#schema/weather.schema.ts';
+import type { Weather } from '../../schema/weather.schema.ts';
 
 const radToDeg = (rad: number) => rad * (180 / Math.PI);
 

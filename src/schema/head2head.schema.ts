@@ -18,3 +18,4 @@ export const head2HeadSchema = z.object({
 });
 
 export type Head2Head = z.infer<typeof head2HeadSchema>;
+export type Gap = z.infer<typeof gapSchema>;
