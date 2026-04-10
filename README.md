@@ -22,10 +22,15 @@ Two modes of operation:
 
 ![Car overlay](docs/H2H_car_telemetry_dashboard.jpg)
 
+## Youtube video demonstration
+
+[![YT clip](https://img.youtube.com/vi/PTLM69iB8SU/0.jpg)](https://www.youtube.com/watch?v=PTLM69iB8SU)
+
 ## Prerequisites
 
-- Node.js 24+
+- Node.js 24+ (for development)
 - iRacing running on Windows (for live mode)
+- [SimHub](https://www.simhubdash.com/) or an OBS browser for live streaming (e.g [OBS](https://obsproject.com/kb/browser-source))
 
 ## Local Development
 
