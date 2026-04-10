@@ -29,7 +29,7 @@ const server = serve(
     });
 
     console.log(
-      `Mode: ${config.DATA_MODE} | Poll: ${config.POLL_INTERVAL_MS}ms | Poll weather: ${config.POLL_INTERVAL_WEATHER_MS}ms`,
+      `Mode: ${config.DATA_MODE} | Poll: ${config.POLL_INTERVAL_MS}ms`,
     );
   },
 );

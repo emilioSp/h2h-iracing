@@ -27,11 +27,11 @@ export const computeWeather = async (): Promise<Weather> => {
   if (windRelativeDirectionRad < 0) windRelativeDirectionRad += Math.PI * 2;
 
   const relativeHumidityPct = parseFloat(
-    ((await getRelativeHumidity()) * 100).toFixed(2),
+    ((await getRelativeHumidity()) * 100).toFixed(1),
   );
 
   const precipitationPct = parseFloat(
-    ((await getPrecipitation()) * 100).toFixed(2),
+    ((await getPrecipitation()) * 100).toFixed(1),
   );
 
   return {

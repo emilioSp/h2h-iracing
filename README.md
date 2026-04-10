@@ -36,7 +36,6 @@ Create a `.env` file with the following variables:
 | `DATA_MODE`                | `live` (iRacing SDK) or `mock` (dump file)             | yes      |
 | `DUMP_FILE_PATH`           | Path to `.bin` dump file (mock mode only)              | yes      |
 | `POLL_INTERVAL_MS`         | Telemetry polling interval in milliseconds             | yes      |
-| `POLL_INTERVAL_WEATHER_MS` | Telemetry polling interval for weather in milliseconds | yes      |
 | `PORT`                     | HTTP server port                                       | yes      |
 | `LOG_LEVEL`                | `debug` / `info`                                       | yes      |
 

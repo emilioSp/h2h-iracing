@@ -52,7 +52,7 @@ describe('computeWeather', () => {
       airTemperatureC: 22.5,
       trackTemperatureC: 35.0,
       relativeHumidityPct: 60.6,
-      precipitationPct: 54.53,
+      precipitationPct: 54.5,
       trackWetness: 'Dry',
       windDirectionRad: 0,
       windDirectionDeg: 0,
