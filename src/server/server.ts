@@ -31,6 +31,10 @@ const server = serve(
     console.log(
       `Mode: ${config.DATA_MODE} | Poll: ${config.POLL_INTERVAL_MS}ms`,
     );
+
+    if (config.DATA_MODE === 'live') {
+      console.log('Do NOT close this window...');
+    }
   },
 );
 
