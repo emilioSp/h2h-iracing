@@ -12,7 +12,7 @@ import {
 import { join, resolve } from 'node:path';
 import { Data, NtExecutable, NtExecutableResource, Resource } from 'resedit';
 
-const NODE_VERSION = '24.3.0';
+const NODE_VERSION = '24.14.1';
 const PROJECT_ROOT = resolve(import.meta.dirname, '..');
 const SCRIPTS_DIR = join(PROJECT_ROOT, 'scripts');
 const NODE_MODULES = join(PROJECT_ROOT, 'node_modules');
