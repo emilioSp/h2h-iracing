@@ -5,7 +5,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  CI:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout repository
