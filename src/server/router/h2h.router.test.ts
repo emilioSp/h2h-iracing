@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import * as iracingRepository from '#repository/irsdk.repository.ts';
 import * as head2headService from '#service/head2head.service.ts';
+import * as referenceLapService from '#service/reference-lap.service.ts';
 import { h2hRouter } from './h2h.router.ts';
 
 vi.mock('hono/streaming');
@@ -43,16 +44,22 @@ describe('h2hRouter', () => {
     }
   });
 
-  it('writes error event when no active session', async () => {
-    const { run } = await setupStreamSSE();
+  it('exits sse loop when no active session', async () => {
+    const { stream, run } = await setupStreamSSE();
     vi.spyOn(iracingRepository, 'isIRacingConnected').mockResolvedValue(true);
     vi.spyOn(head2headService, 'computeHead2Head').mockResolvedValue(null);
+    const resetReferenceLapsSpy = vi
+      .spyOn(referenceLapService, 'resetReferenceLaps')
+      .mockReturnValue(undefined);
+    const resetSessionNumberSpy = vi
+      .spyOn(head2headService, 'resetSessionNumber')
+      .mockReturnValue(undefined);
 
     h2hRouter({} as never);
-    try {
-      await run();
-    } catch (e: unknown) {
-      expect(e instanceof Error && e.message).toBe('Session not available');
-    }
+    await run();
+
+    expect(stream.writeSSE).not.toHaveBeenCalled();
+    expect(resetReferenceLapsSpy).toHaveBeenCalledOnce();
+    expect(resetSessionNumberSpy).toHaveBeenCalledOnce();
   });
 });

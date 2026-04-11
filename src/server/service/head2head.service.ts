@@ -1,6 +1,6 @@
 import {
   getBestLapTime,
-  getLaps,
+  getLapsCompleted,
   getLastLapTime,
   getPlayerCarIdx,
   getSessionNum,
@@ -60,14 +60,14 @@ export const computeCar = async (
   // biome-ignore lint/style/noNonNullAssertion: we assume the driver info is always available for valid carIdx
   const driver = getDriverInfo(carIdx)!;
 
-  const laps = await getLaps();
+  const lapsCompleted = await getLapsCompleted();
 
   const car = {
     driver,
     position: carStanding?.pos ?? 0,
     lastLapTime: await getLastLapTime(carIdx),
     bestLapTime: await getBestLapTime(carIdx),
-    lap: laps[carIdx] ?? 0, // TODO: use lapNumber
+    lap: lapsCompleted[carIdx] ?? 0, // TODO: use lapNumber
   };
 
   return car;

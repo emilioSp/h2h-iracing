@@ -1,7 +1,6 @@
 import {
-  getEstTime,
   getLapDistPct,
-  getLaps,
+  getLapsCompleted,
   getOnPitRoad,
 } from '#repository/irsdk.repository.ts';
 import type { ReferenceLap } from '#repository/reference-lap.repository.ts';
@@ -18,14 +17,11 @@ export type Gap = {
 };
 
 const estimatedDelta = (
-  estTime: number[],
   classLapTime: number,
-  aheadIdx: number,
-  behindIdx: number,
   aheadPct: number,
   behindPct: number,
 ): number => {
-  let delta = (estTime[aheadIdx] ?? 0) - (estTime[behindIdx] ?? 0);
+  let delta = aheadPct * classLapTime - behindPct * classLapTime;
   if (aheadPct < behindPct) delta += classLapTime;
   return Math.abs(delta);
 };
@@ -48,30 +44,25 @@ const computeGap = async (ahead: Car, behind: Car): Promise<Gap> => {
     return { value: 0, unit: 'seconds' };
 
   const lapDistPct = await getLapDistPct();
-  const laps = await getLaps();
+  const lapsCompleted = await getLapsCompleted();
   const aheadIdx = ahead.driver.carIdx;
   const behindIdx = behind.driver.carIdx;
   const aheadPct = lapDistPct[aheadIdx] ?? 0;
   const behindPct = lapDistPct[behindIdx] ?? 0;
 
   const lapDiff =
-    (laps[aheadIdx] ?? 0) + aheadPct - ((laps[behindIdx] ?? 0) + behindPct);
+    (lapsCompleted[aheadIdx] ?? 0) +
+    aheadPct -
+    ((lapsCompleted[behindIdx] ?? 0) + behindPct);
 
   if (lapDiff >= 1.0) {
     return { value: Math.floor(lapDiff), unit: 'laps' };
   }
 
   const classLapTime = getClassEstLapTime(behindIdx);
-  if ((laps[behindIdx] ?? 0) < 2) {
+  if ((lapsCompleted[behindIdx] ?? 0) < 2) {
     return {
-      value: estimatedDelta(
-        await getEstTime(),
-        classLapTime,
-        aheadIdx,
-        behindIdx,
-        aheadPct,
-        behindPct,
-      ),
+      value: estimatedDelta(classLapTime, aheadPct, behindPct),
       unit: 'seconds',
     };
   }
@@ -89,14 +80,7 @@ const computeGap = async (ahead: Car, behind: Car): Promise<Gap> => {
   }
 
   return {
-    value: estimatedDelta(
-      await getEstTime(),
-      classLapTime,
-      aheadIdx,
-      behindIdx,
-      aheadPct,
-      behindPct,
-    ),
+    value: estimatedDelta(classLapTime, aheadPct, behindPct),
     unit: 'seconds',
   };
 };
