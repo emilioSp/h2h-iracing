@@ -5,7 +5,6 @@ vi.mock('#repository/irsdk.repository.ts', () => ({
   getLapDistPct: vi.fn(),
   getOnPitRoad: vi.fn(),
   getLaps: vi.fn(),
-  getEstTime: vi.fn(),
 }));
 
 vi.mock('#service/driver.service.ts', () => ({
@@ -13,7 +12,6 @@ vi.mock('#service/driver.service.ts', () => ({
 }));
 
 import {
-  getEstTime,
   getLapDistPct,
   getLaps,
   getOnPitRoad,
@@ -34,7 +32,6 @@ import {
 const mockGetLapDistancePercentage = vi.mocked(getLapDistPct);
 const mockGetOnPitRoad = vi.mocked(getOnPitRoad);
 const mockGetLaps = vi.mocked(getLaps);
-const mockGetEstTime = vi.mocked(getEstTime);
 const mockGetClassEstLapTime = vi.mocked(getClassEstLapTime);
 
 const makeCar = (carIdx: number): Car => ({
@@ -127,7 +124,6 @@ beforeEach(() => {
   vi.clearAllMocks();
   mockGetOnPitRoad.mockResolvedValue([0, 0]);
   mockGetLaps.mockResolvedValue([3, 3]);
-  mockGetEstTime.mockResolvedValue([0, 0]);
   mockGetClassEstLapTime.mockResolvedValue(0);
   initReferenceInterval(5_000);
   resetReferenceLaps();
@@ -145,7 +141,6 @@ describe('getGap', () => {
     mockGetLapDistancePercentage.mockResolvedValue([0.3, 0.5, 0.1]);
     mockGetLaps.mockResolvedValue([3, 3, 3]);
     mockGetClassEstLapTime.mockReturnValue(0);
-    mockGetEstTime.mockResolvedValue([0, 0, 0]);
 
     const { gapAhead, gapBehind } = await getGap(
       makeCar(1),
@@ -157,13 +152,14 @@ describe('getGap', () => {
   });
 
   it('uses estimated delta when one of the cars is on pit road', async () => {
+    // ahead=car1 at 50%, behind=car0 at 30%, classLapTime=90
+    // delta = (0.5 - 0.3) * 90 = 18s
     mockGetLapDistancePercentage.mockResolvedValue([0.3, 0.5]);
     mockGetOnPitRoad.mockResolvedValue([0, 1]);
     mockGetClassEstLapTime.mockReturnValue(90);
-    mockGetEstTime.mockResolvedValue([27, 45]);
 
     const { gapAhead, gapBehind } = await getGap(makeCar(1), makeCar(0), null);
-    expect(gapAhead).toEqual({ value: 45 - 27, unit: 'seconds' });
+    expect(gapAhead).toEqual({ value: 18, unit: 'seconds' });
     expect(gapBehind).toBeNull();
   });
 
@@ -200,26 +196,25 @@ describe('getGap', () => {
   });
 
   it('uses estimated delta when behind car has completed fewer than 2 laps', async () => {
-    // car 0 at 30%, car 1 at 50% → both on lap 1, car 0 is behind with only 1 lap completed
+    // ahead=car1 at 50%, behind=car0 at 30%, classLapTime=90
+    // delta = (0.5 - 0.3) * 90 = 18s
     mockGetLapDistancePercentage.mockResolvedValue([0.3, 0.5]);
     mockGetLaps.mockResolvedValue([1, 1]);
     addRecentLap(0, makeReferenceLap());
     mockGetClassEstLapTime.mockReturnValue(90);
-    mockGetEstTime.mockResolvedValue([27, 45]);
 
     const { gapAhead, gapBehind } = await getGap(makeCar(1), makeCar(0), null);
-    expect(gapAhead).toEqual({ value: 45 - 27, unit: 'seconds' });
+    expect(gapAhead).toEqual({ value: 18, unit: 'seconds' });
     expect(gapBehind).toBeNull();
   });
 
   it('handles wrap-around with estimated delta', async () => {
-    // car 0 just crossed finish (lap=1, pct=0.02), car 1 approaching (lap=0, pct=0.98)
-    // total: car0=1.02, car1=0.98 → car 0 is ahead
-    // estTime[ahead=0]=1.8, estTime[behind=1]=88.2 → delta = 1.8 - 88.2 = -86.4 → +90 → 3.6s
+    // car0 just crossed finish (lap=1, pct=0.02), car1 approaching (lap=0, pct=0.98)
+    // total: car0=1.02, car1=0.98 → car0 is ahead
+    // delta = 0.02*90 - 0.98*90 = -86.4 → +90 (wrap-around) → 3.6s
     mockGetLapDistancePercentage.mockResolvedValue([0.02, 0.98]);
     mockGetLaps.mockResolvedValue([1, 0]);
     mockGetClassEstLapTime.mockReturnValue(90);
-    mockGetEstTime.mockResolvedValue([1.8, 88.2]);
 
     const { gapAhead, gapBehind } = await getGap(makeCar(0), makeCar(1), null);
     expect(gapAhead?.unit).toBe('seconds');

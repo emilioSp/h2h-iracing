@@ -1,5 +1,4 @@
 import {
-  getEstTime,
   getLapDistPct,
   getLaps,
   getOnPitRoad,
@@ -18,14 +17,11 @@ export type Gap = {
 };
 
 const estimatedDelta = (
-  estTime: number[],
   classLapTime: number,
-  aheadIdx: number,
-  behindIdx: number,
   aheadPct: number,
   behindPct: number,
 ): number => {
-  let delta = (estTime[aheadIdx] ?? 0) - (estTime[behindIdx] ?? 0);
+  let delta = aheadPct * classLapTime - behindPct * classLapTime;
   if (aheadPct < behindPct) delta += classLapTime;
   return Math.abs(delta);
 };
@@ -64,14 +60,7 @@ const computeGap = async (ahead: Car, behind: Car): Promise<Gap> => {
   const classLapTime = getClassEstLapTime(behindIdx);
   if ((laps[behindIdx] ?? 0) < 2) {
     return {
-      value: estimatedDelta(
-        await getEstTime(),
-        classLapTime,
-        aheadIdx,
-        behindIdx,
-        aheadPct,
-        behindPct,
-      ),
+      value: estimatedDelta(classLapTime, aheadPct, behindPct),
       unit: 'seconds',
     };
   }
@@ -89,14 +78,7 @@ const computeGap = async (ahead: Car, behind: Car): Promise<Gap> => {
   }
 
   return {
-    value: estimatedDelta(
-      await getEstTime(),
-      classLapTime,
-      aheadIdx,
-      behindIdx,
-      aheadPct,
-      behindPct,
-    ),
+    value: estimatedDelta(classLapTime, aheadPct, behindPct),
     unit: 'seconds',
   };
 };
