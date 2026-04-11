@@ -1,4 +1,5 @@
 'use strict';
+// TODO: check if esm is really supported: https://github.com/yao-pkg/pkg/issues/16
 const { spawn } = require('node:child_process');
 const { dirname, join } = require('node:path');
 
