@@ -51,8 +51,8 @@ export const getBestLapTime = withConnect((carIdx: number): number => {
   return bestLapTime > 0 ? bestLapTime : NaN;
 });
 
-export const getLaps = withConnect(
-  (): number[] => ir?.get(VARS.CAR_IDX_LAP) ?? [],
+export const getLapsCompleted = withConnect(
+  (): number[] => ir?.get(VARS.CAR_IDX_LAP_COMPLETED) ?? [],
 );
 
 export const getSessionTime = withConnect(

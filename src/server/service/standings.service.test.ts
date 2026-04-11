@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('#repository/irsdk.repository.ts', () => ({
   getLapDistPct: vi.fn(),
-  getLaps: vi.fn(),
+  getLapsCompleted: vi.fn(),
   getClassPositions: vi.fn(),
 }));
 
@@ -13,7 +13,7 @@ vi.mock('#service/driver.service.ts', () => ({
 import {
   getClassPositions,
   getLapDistPct,
-  getLaps,
+  getLapsCompleted,
 } from '#repository/irsdk.repository.ts';
 import { getCarIdxs } from '#service/driver.service.ts';
 import {
@@ -23,7 +23,7 @@ import {
 } from '#service/standings.service.ts';
 
 const mockGetLapDistPct = vi.mocked(getLapDistPct);
-const mockGetLaps = vi.mocked(getLaps);
+const mockGetLapsCompleted = vi.mocked(getLapsCompleted);
 const mockGetClassPositions = vi.mocked(getClassPositions);
 const mockGetCarIdxs = vi.mocked(getCarIdxs);
 
@@ -35,7 +35,7 @@ describe('getRaceStandings', () => {
   it('sorts cars by total distance descending and assigns positions', async () => {
     mockGetCarIdxs.mockResolvedValue([1, 2, 3]);
     mockGetLapDistPct.mockResolvedValue([0, 0.8, 0.5, 0.3]);
-    mockGetLaps.mockResolvedValue([0, 5, 5, 6]);
+    mockGetLapsCompleted.mockResolvedValue([0, 5, 5, 6]);
 
     const standings = await getRaceStandings();
 
@@ -88,7 +88,7 @@ describe('getStandings', () => {
   it('delegates to getRaceStandings when isRace is true', async () => {
     mockGetCarIdxs.mockResolvedValue([1, 2]);
     mockGetLapDistPct.mockResolvedValue([0, 0.5, 0.3]);
-    mockGetLaps.mockResolvedValue([0, 3, 4]);
+    mockGetLapsCompleted.mockResolvedValue([0, 3, 4]);
 
     const standings = await getStandings(true);
 

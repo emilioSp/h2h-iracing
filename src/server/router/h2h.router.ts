@@ -14,7 +14,8 @@ export const h2hRouter = (c: Context) =>
     while ((await isIRacingConnected()) && !stream.aborted) {
       const h2h = await computeHead2Head();
       if (!h2h) {
-        throw new Error('Session not available');
+        debug('Session not available');
+        break;
       }
 
       const json = JSON.stringify({ data: h2h });

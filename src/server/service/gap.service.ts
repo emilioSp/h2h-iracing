@@ -1,6 +1,6 @@
 import {
   getLapDistPct,
-  getLaps,
+  getLapsCompleted,
   getOnPitRoad,
 } from '#repository/irsdk.repository.ts';
 import type { ReferenceLap } from '#repository/reference-lap.repository.ts';
@@ -44,22 +44,23 @@ const computeGap = async (ahead: Car, behind: Car): Promise<Gap> => {
     return { value: 0, unit: 'seconds' };
 
   const lapDistPct = await getLapDistPct();
-  const laps = await getLaps();
+  const lapsCompleted = await getLapsCompleted();
   const aheadIdx = ahead.driver.carIdx;
   const behindIdx = behind.driver.carIdx;
   const aheadPct = lapDistPct[aheadIdx] ?? 0;
   const behindPct = lapDistPct[behindIdx] ?? 0;
 
   const lapDiff =
-    (laps[aheadIdx] ?? 0) + aheadPct - ((laps[behindIdx] ?? 0) + behindPct);
+    (lapsCompleted[aheadIdx] ?? 0) +
+    aheadPct -
+    ((lapsCompleted[behindIdx] ?? 0) + behindPct);
 
   if (lapDiff >= 1.0) {
     return { value: Math.floor(lapDiff), unit: 'laps' };
   }
 
   const classLapTime = getClassEstLapTime(behindIdx);
-  // TODO: restore 2
-  if ((laps[behindIdx] ?? 0) < 15) {
+  if ((lapsCompleted[behindIdx] ?? 0) < 2) {
     return {
       value: estimatedDelta(classLapTime, aheadPct, behindPct),
       unit: 'seconds',
