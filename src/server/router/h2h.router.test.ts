@@ -1,30 +1,34 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import * as iracingRepository from '#repository/irsdk.repository.ts';
-import * as head2headService from '#service/head2head.service.ts';
-import * as referenceLapService from '#service/reference-lap.service.ts';
+import * as broadcasterService from '#service/broadcaster.service.ts';
+import { dashboardType } from '#service/broadcaster.service.ts';
 import { h2hRouter } from './h2h.router.ts';
 
 vi.mock('hono/streaming');
+
+vi.mock(import('#service/broadcaster.service.ts'), async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    addClient: vi.fn(),
+    removeClient: vi.fn(),
+  };
+});
 
 afterEach(() => {
   vi.restoreAllMocks();
   vi.clearAllMocks();
 });
 
-const mockStream = () => ({
-  writeSSE: vi.fn().mockResolvedValue(undefined),
-  sleep: vi.fn().mockResolvedValue(undefined),
-});
-
 const setupStreamSSE = async () => {
   const { streamSSE } = await import('hono/streaming');
-  const stream = mockStream();
+  const stream = {
+    writeSSE: vi.fn().mockResolvedValue(undefined),
+    onAbort: vi.fn(),
+  };
   let run: () => Promise<void>;
 
   vi.mocked(streamSSE).mockImplementationOnce((_c, cb) => {
-    run = async () => {
-      return await cb(stream as never);
-    };
+    run = async () => cb(stream as never);
     return new Response();
   });
 
@@ -32,34 +36,42 @@ const setupStreamSSE = async () => {
 };
 
 describe('h2hRouter', () => {
-  it('writes error event when iRacing is not connected', async () => {
-    const { run } = await setupStreamSSE();
-    vi.spyOn(iracingRepository, 'isIRacingConnected').mockResolvedValue(false);
-
-    h2hRouter({} as never);
-    try {
-      await run();
-    } catch (e) {
-      expect(e instanceof Error && e.message).toBe('iRacing is not available');
-    }
-  });
-
-  it('exits sse loop when no active session', async () => {
+  it('registers client with broadcaster on connect', async () => {
     const { stream, run } = await setupStreamSSE();
-    vi.spyOn(iracingRepository, 'isIRacingConnected').mockResolvedValue(true);
-    vi.spyOn(head2headService, 'computeHead2Head').mockResolvedValue(null);
-    const resetReferenceLapsSpy = vi
-      .spyOn(referenceLapService, 'resetReferenceLaps')
-      .mockReturnValue(undefined);
-    const resetSessionNumberSpy = vi
-      .spyOn(head2headService, 'resetSessionNumber')
-      .mockReturnValue(undefined);
+    vi.mocked(stream.onAbort).mockImplementationOnce((cb) => cb());
 
     h2hRouter({} as never);
     await run();
 
-    expect(stream.writeSSE).not.toHaveBeenCalled();
-    expect(resetReferenceLapsSpy).toHaveBeenCalledOnce();
-    expect(resetSessionNumberSpy).toHaveBeenCalledOnce();
+    expect(broadcasterService.addClient).toHaveBeenCalledWith(
+      dashboardType.H2H,
+      expect.objectContaining({ write: expect.any(Function) }),
+    );
+  });
+
+  it('deregisters client from broadcaster on abort', async () => {
+    const { stream, run } = await setupStreamSSE();
+    vi.mocked(stream.onAbort).mockImplementationOnce((cb) => cb());
+
+    h2hRouter({} as never);
+    await run();
+
+    expect(broadcasterService.removeClient).toHaveBeenCalledWith(
+      dashboardType.H2H,
+      expect.objectContaining({ write: expect.any(Function) }),
+    );
+  });
+
+  it('passes write function that calls stream.writeSSE', async () => {
+    const { stream, run } = await setupStreamSSE();
+    vi.mocked(stream.onAbort).mockImplementationOnce((cb) => cb());
+
+    h2hRouter({} as never);
+    await run();
+
+    const client = vi.mocked(broadcasterService.addClient).mock.calls[0][1];
+    await client.write('test-data');
+
+    expect(stream.writeSSE).toHaveBeenCalledWith({ data: 'test-data' });
   });
 });
