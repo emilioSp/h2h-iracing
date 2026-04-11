@@ -58,7 +58,8 @@ const computeGap = async (ahead: Car, behind: Car): Promise<Gap> => {
   }
 
   const classLapTime = getClassEstLapTime(behindIdx);
-  if ((laps[behindIdx] ?? 0) < 2) {
+  // TODO: restore 2
+  if ((laps[behindIdx] ?? 0) < 15) {
     return {
       value: estimatedDelta(classLapTime, aheadPct, behindPct),
       unit: 'seconds',
