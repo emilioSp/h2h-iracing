@@ -20,6 +20,7 @@ const CACHE_DIR = join(PROJECT_ROOT, '.cache');
 const BUILD_DIR = join(PROJECT_ROOT, 'build');
 const DIST_DIR = join(BUILD_DIR, 'h2h-iracing');
 const CACHED_NODE = join(CACHE_DIR, 'node.exe');
+const CACHED_NODE_VERSION = join(CACHE_DIR, 'node.exe.version');
 const SIMHUB_DASHIES_DIR = join(PROJECT_ROOT, 'simhub_dashies');
 const VERSION = process.env.npm_package_version;
 
@@ -33,16 +34,21 @@ rmSync(NODE_MODULES, { recursive: true, force: true });
 rmSync(join(PROJECT_ROOT, 'dist'), { recursive: true, force: true });
 execSync('npm ci', { cwd: PROJECT_ROOT, stdio: 'inherit' });
 
-if (!existsSync(CACHED_NODE)) {
-  const url = `https://nodejs.org/dist/v${NODE_VERSION}/win-x64/node.exe`;
+const cachedVersion =
+  existsSync(CACHED_NODE_VERSION) ?
+    readFileSync(CACHED_NODE_VERSION, 'utf-8').trim()
+  : null;
+
+if (existsSync(CACHED_NODE) && cachedVersion === NODE_VERSION) {
+  console.log(`Using cached node.exe (v${NODE_VERSION})`);
+} else {
   console.log(`Downloading Node.js v${NODE_VERSION}...`);
+  const url = `https://nodejs.org/dist/v${NODE_VERSION}/win-x64/node.exe`;
   const res = await fetch(url);
   if (!res.ok) throw new Error(`Failed to download node.exe: ${res.status}`);
-  const buffer = Buffer.from(await res.arrayBuffer());
-  writeFileSync(CACHED_NODE, buffer);
+  writeFileSync(CACHED_NODE, Buffer.from(await res.arrayBuffer()));
+  writeFileSync(CACHED_NODE_VERSION, NODE_VERSION);
   console.log('Downloaded node.exe');
-} else {
-  console.log('Using cached node.exe');
 }
 
 if (existsSync(BUILD_DIR)) {
