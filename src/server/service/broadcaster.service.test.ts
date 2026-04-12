@@ -25,14 +25,17 @@ import {
   addClient,
   dashboardType,
   removeClient,
-  stopPoller,
+  stopBroadcasting,
 } from '#service/broadcaster.service.ts';
 import * as carService from '#service/car-telemetry.service.ts';
 import * as h2hService from '#service/head2head.service.ts';
 import * as refLapService from '#service/reference-lap.service.ts';
 import * as weatherService from '#service/weather.service.ts';
 
-const mockClient = () => ({ write: vi.fn().mockResolvedValue(undefined) });
+const mockClient = () => ({
+  write: vi.fn().mockResolvedValue(undefined),
+  close: vi.fn(),
+});
 
 beforeEach(() => {
   vi.useFakeTimers();
@@ -49,7 +52,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  stopPoller();
+  stopBroadcasting();
   vi.useRealTimers();
   vi.clearAllMocks();
 });
@@ -175,6 +178,7 @@ describe('broadcast tick', () => {
   it('removes client and continues broadcasting when a write fails', async () => {
     const failingClient = {
       write: vi.fn().mockRejectedValue(new Error('stream closed')),
+      close: vi.fn(),
     };
     const healthyClient = mockClient();
     addClient(dashboardType.WEATHER, failingClient);
@@ -188,5 +192,62 @@ describe('broadcast tick', () => {
 
     expect(failingClient.write).toHaveBeenCalledOnce();
     expect(healthyClient.write).toHaveBeenCalledTimes(2);
+  });
+
+  it('calls close on all clients when iRacing disconnects', async () => {
+    vi.mocked(iracingRepo.isIRacingConnected).mockResolvedValue(false);
+    const weatherClient = mockClient();
+    const carClient = mockClient();
+    addClient(dashboardType.WEATHER, weatherClient);
+    addClient(dashboardType.CAR, carClient);
+
+    await vi.advanceTimersByTimeAsync(100);
+
+    expect(weatherClient.close).toHaveBeenCalledOnce();
+    expect(carClient.close).toHaveBeenCalledOnce();
+  });
+
+  it('calls close on h2h clients when computeHead2Head returns null', async () => {
+    vi.mocked(h2hService.computeHead2Head).mockResolvedValue(null);
+    const client = mockClient();
+    addClient(dashboardType.H2H, client);
+
+    await vi.advanceTimersByTimeAsync(100);
+
+    expect(client.close).toHaveBeenCalledOnce();
+  });
+});
+
+describe('stopPoller', () => {
+  it('calls close on all registered clients', () => {
+    const weatherClient = mockClient();
+    const h2hClient = mockClient();
+    addClient(dashboardType.WEATHER, weatherClient);
+    addClient(dashboardType.H2H, h2hClient);
+
+    stopBroadcasting();
+
+    expect(weatherClient.close).toHaveBeenCalledOnce();
+    expect(h2hClient.close).toHaveBeenCalledOnce();
+  });
+
+  it('calls h2h cleanup when h2h clients are registered', () => {
+    const client = mockClient();
+    addClient(dashboardType.H2H, client);
+
+    stopBroadcasting();
+
+    expect(refLapService.resetReferenceLaps).toHaveBeenCalledOnce();
+    expect(h2hService.resetSessionNumber).toHaveBeenCalledOnce();
+  });
+
+  it('does not call h2h cleanup when no h2h clients are registered', () => {
+    const client = mockClient();
+    addClient(dashboardType.WEATHER, client);
+
+    stopBroadcasting();
+
+    expect(refLapService.resetReferenceLaps).not.toHaveBeenCalled();
+    expect(h2hService.resetSessionNumber).not.toHaveBeenCalled();
   });
 });

@@ -24,6 +24,7 @@ const setupStreamSSE = async () => {
   const stream = {
     writeSSE: vi.fn().mockResolvedValue(undefined),
     onAbort: vi.fn(),
+    close: vi.fn().mockResolvedValue(undefined),
   };
   let run: () => Promise<void>;
 

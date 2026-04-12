@@ -77,7 +77,9 @@ export const App = () => {
         const parsed = JSON.parse(e.data) as { data: CarTelemetry };
         setCar(parsed.data);
       };
-      es.onerror = () => {
+      es.onerror = (error) => {
+        console.log('error', error);
+        console.log('Connection lost, retrying in 10 seconds...');
         es.close();
         setCar(null);
         clearTimeout(retryTimeout);
