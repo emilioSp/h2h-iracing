@@ -34,9 +34,8 @@ rmSync(NODE_MODULES, { recursive: true, force: true });
 rmSync(join(PROJECT_ROOT, 'dist'), { recursive: true, force: true });
 execSync('npm ci', { cwd: PROJECT_ROOT, stdio: 'inherit' });
 
-const cachedVersion =
-  existsSync(CACHED_NODE_VERSION) ?
-    readFileSync(CACHED_NODE_VERSION, 'utf-8').trim()
+const cachedVersion = existsSync(CACHED_NODE_VERSION)
+  ? readFileSync(CACHED_NODE_VERSION, 'utf-8').trim()
   : null;
 
 if (existsSync(CACHED_NODE) && cachedVersion === NODE_VERSION) {

@@ -1,16 +1,18 @@
 import type { Context } from 'hono';
 import { streamSSE } from 'hono/streaming';
-import config from '#config';
-import { isIRacingConnected } from '#repository/irsdk.repository.ts';
-import { debug } from '#server/debug.ts';
-import { computeWeather } from '#service/weather.service.ts';
+import {
+  addClient,
+  dashboardType,
+  removeClient,
+} from '#service/broadcaster.service.ts';
 
 export const weatherRouter = (c: Context) =>
   streamSSE(c, async (stream) => {
-    while ((await isIRacingConnected()) && !stream.aborted) {
-      const weather = await computeWeather();
-      await stream.writeSSE({ data: JSON.stringify({ data: weather }) });
-      await stream.sleep(config.POLL_INTERVAL_MS);
-    }
-    debug('iRacing is not connected, stopping SSE stream');
+    const client = {
+      write: (data: string) => stream.writeSSE({ data }),
+      close: () => stream.close(),
+    };
+    addClient(dashboardType.WEATHER, client);
+    await new Promise<void>((resolve) => stream.onAbort(resolve));
+    removeClient(dashboardType.WEATHER, client);
   });
