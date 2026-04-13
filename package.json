@@ -1,8 +1,8 @@
 {
   "name": "h2h-iracing",
   "version": "1.27.0",
-  "description": "head2head overlay for iRacing",
-  "license": "ISC",
+  "description": "Head 2 Head iRacing dashboards",
+  "license": "MIT",
   "author": "",
   "type": "module",
   "main": "index.js",
