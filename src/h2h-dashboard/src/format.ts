@@ -12,6 +12,9 @@ export const formatGap = (
   if (gap === null) return 'N/A';
   if (gap.unit === 'laps') return `${gap.value}L`;
   if (!Number.isFinite(gap.value)) return 'N/A';
+  if (gap.value > 60) {
+    return formatTime(gap.value);
+  }
   return `${gap.value.toFixed(1)}s`;
 };
 
