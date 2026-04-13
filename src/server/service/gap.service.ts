@@ -3,13 +3,13 @@ import {
   getLapsCompleted,
   getOnPitRoad,
 } from '#repository/irsdk.repository.ts';
-import type { ReferenceLap } from '#repository/reference-lap.repository.ts';
-import type { Car } from '#schema/car.schema.ts';
-import { getClassEstLapTime } from '#service/driver.service.ts';
 import {
   getRefLap,
-  interpolateTimeAtTrackPosition,
-} from '#service/reference-lap.service.ts';
+  type ReferenceLap,
+} from '#repository/reference-lap.repository.ts';
+import type { Car } from '#schema/car.schema.ts';
+import { getClassEstLapTime } from '#service/driver.service.ts';
+import { interpolateTimeAtTrackPosition } from '#service/reference-lap.service.ts';
 
 export type Gap = {
   value: number;

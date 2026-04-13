@@ -6,6 +6,7 @@ import {
   getSessionTime,
   getSessionType,
 } from '#repository/irsdk.repository.ts';
+import { resetReferenceLaps } from '#repository/reference-lap.repository.ts';
 import {
   getSessionBestTime,
   getSessionLapsCompleted,
@@ -20,7 +21,6 @@ import {
 } from '#service/delta.service.ts';
 import { getDriverInfo } from '#service/driver.service.ts';
 import { getGap } from '#service/gap.service.ts';
-import { resetReferenceLaps } from '#service/reference-lap.service.ts';
 import { getStandings, type Standing } from '#service/standings.service.ts';
 import { resetSessionNumber } from '#service/tick.service.ts';
 

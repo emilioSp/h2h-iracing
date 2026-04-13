@@ -17,9 +17,11 @@ import {
 } from '#repository/irsdk.repository.ts';
 import * as referenceLapRepository from '#repository/reference-lap.repository.ts';
 import {
+  getActiveRefLap,
   type ReferenceLap,
   type ReferencePoint,
   resetReferenceLaps,
+  setActiveRefLap,
 } from '#repository/reference-lap.repository.ts';
 import * as referenceLapService from '#service/reference-lap.service.ts';
 
@@ -29,13 +31,11 @@ vi.spyOn(referenceLapService, 'normalizeTrackPct');
 
 import { getCarIdxs } from '#service/driver.service.ts';
 import {
-  getActiveRefLap,
   getMinPointsForValidLap,
   getReferenceInterval,
   initReferenceInterval,
   interpolateTimeAtTrackPosition,
   normalizeTrackPct,
-  setActiveRefLap,
   updateReferenceLaps,
 } from '#service/reference-lap.service.ts';
 

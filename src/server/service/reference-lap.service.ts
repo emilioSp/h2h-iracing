@@ -188,16 +188,3 @@ export const updateReferenceLaps = async (): Promise<void> => {
     );
   }
 };
-
-export const getActiveRefLap = (carIdx: number): ReferenceLap | null =>
-  referenceLapRepository.getActiveRefLap(carIdx);
-
-export const setActiveRefLap = (carIdx: number, lap: ReferenceLap): void => {
-  referenceLapRepository.setActiveRefLap(carIdx, lap);
-};
-
-export const getRefLap = (carIdx: number): ReferenceLap | null =>
-  referenceLapRepository.getRefLap(carIdx);
-
-export const resetReferenceLaps = (): void =>
-  referenceLapRepository.resetReferenceLaps();

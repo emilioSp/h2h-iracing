@@ -3,11 +3,11 @@ import {
   getTrackLengthMeters,
   refreshTelemetry,
 } from '#repository/irsdk.repository.ts';
+import { resetReferenceLaps } from '#repository/reference-lap.repository.ts';
 import { refreshCurrentSessionInfo } from '#repository/session-info.repository.ts';
 import { refreshDriverInfo } from '#service/driver.service.ts';
 import {
   initReferenceInterval,
-  resetReferenceLaps,
   updateReferenceLaps,
 } from '#service/reference-lap.service.ts';
 

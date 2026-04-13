@@ -14,9 +14,6 @@ vi.mock('#service/weather.service.ts', () => ({
 vi.mock('#service/car-telemetry.service.ts', () => ({
   computeCarTelemetry: vi.fn(),
 }));
-vi.mock('#service/reference-lap.service.ts', () => ({
-  resetReferenceLaps: vi.fn(),
-}));
 vi.mock('#repository/irsdk.repository.ts', () => ({
   isIRacingConnected: vi.fn(),
 }));
@@ -33,7 +30,6 @@ import {
 } from '#service/broadcaster.service.ts';
 import * as carService from '#service/car-telemetry.service.ts';
 import * as h2hService from '#service/head2head.service.ts';
-import * as refLapService from '#service/reference-lap.service.ts';
 import * as tickService from '#service/tick.service.ts';
 import * as weatherService from '#service/weather.service.ts';
 
@@ -148,7 +144,7 @@ describe('removeClient', () => {
     addClient(dashboardType.WEATHER, client);
     removeClient(dashboardType.WEATHER, client);
 
-    expect(refLapService.resetReferenceLaps).not.toHaveBeenCalled();
+    expect(h2hService.cleanUpHead2Head).not.toHaveBeenCalled();
     expect(tickService.resetSessionNumber).not.toHaveBeenCalled();
   });
 });
@@ -249,7 +245,7 @@ describe('stopPoller', () => {
 
     stopBroadcasting();
 
-    expect(refLapService.resetReferenceLaps).not.toHaveBeenCalled();
+    expect(h2hService.cleanUpHead2Head).not.toHaveBeenCalled();
     expect(tickService.resetSessionNumber).not.toHaveBeenCalled();
   });
 });
