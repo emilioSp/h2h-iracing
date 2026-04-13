@@ -7,10 +7,11 @@ vi.mock('#repository/irsdk.repository.ts', () => ({
   getLapsCompleted: vi.fn(),
 }));
 
-vi.mock('#service/driver.service.ts', () => ({
+vi.mock('#repository/driver.repository.ts', () => ({
   getClassEstLapTime: vi.fn(),
 }));
 
+import { getClassEstLapTime } from '#repository/driver.repository.ts';
 import {
   getLapDistPct,
   getLapsCompleted,
@@ -22,7 +23,6 @@ import {
   resetReferenceLaps,
 } from '#repository/reference-lap.repository.ts';
 import type { Car } from '#schema/car.schema.ts';
-import { getClassEstLapTime } from '#service/driver.service.ts';
 import {
   getReferenceInterval,
   initReferenceInterval,

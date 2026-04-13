@@ -1,10 +1,10 @@
+import { getCarIdxs } from '#repository/driver.repository.ts';
 import {
   getClassPositions,
   getLapDistPct,
   getLapsCompleted,
 } from '#repository/irsdk.repository.ts';
 import { getSessionLapsCompleted } from '#repository/session-info.repository.ts';
-import { getCarIdxs } from '#service/driver.service.ts';
 
 export type Standing = { pos: number; carIdx: number };
 

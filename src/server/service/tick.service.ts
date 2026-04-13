@@ -1,3 +1,4 @@
+import { refreshDriverInfo } from '#repository/driver.repository.ts';
 import {
   getSessionNum,
   getTrackLengthMeters,
@@ -5,7 +6,6 @@ import {
 } from '#repository/irsdk.repository.ts';
 import { resetReferenceLaps } from '#repository/reference-lap.repository.ts';
 import { refreshCurrentSessionInfo } from '#repository/session-info.repository.ts';
-import { refreshDriverInfo } from '#service/driver.service.ts';
 import {
   initReferenceInterval,
   updateReferenceLaps,

@@ -1,3 +1,4 @@
+import { getDriverInfo } from '#repository/driver.repository.ts';
 import {
   getBestLapTime,
   getLapsCompleted,
@@ -19,7 +20,6 @@ import {
   getDeltaBestLap,
   getDeltaLastLap,
 } from '#service/delta.service.ts';
-import { getDriverInfo } from '#service/driver.service.ts';
 import { getGap } from '#service/gap.service.ts';
 import { getStandings, type Standing } from '#service/standings.service.ts';
 import { resetSessionNumber } from '#service/tick.service.ts';

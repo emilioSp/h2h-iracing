@@ -6,16 +6,16 @@ vi.mock('#repository/irsdk.repository.ts', () => ({
   getClassPositions: vi.fn(),
 }));
 
-vi.mock('#service/driver.service.ts', () => ({
+vi.mock('#repository/driver.repository.ts', () => ({
   getCarIdxs: vi.fn(),
 }));
 
+import { getCarIdxs } from '#repository/driver.repository.ts';
 import {
   getClassPositions,
   getLapDistPct,
   getLapsCompleted,
 } from '#repository/irsdk.repository.ts';
-import { getCarIdxs } from '#service/driver.service.ts';
 import {
   getRaceStandings,
   getSessionStandings,

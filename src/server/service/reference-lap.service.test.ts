@@ -6,7 +6,7 @@ vi.mock('#repository/irsdk.repository.ts', () => ({
   getOnPitRoad: vi.fn(),
 }));
 
-vi.mock('#service/driver.service.ts', () => ({
+vi.mock('#repository/driver.repository.ts', () => ({
   getCarIdxs: vi.fn(),
 }));
 
@@ -29,7 +29,7 @@ vi.spyOn(referenceLapRepository, 'addRecentLap');
 vi.spyOn(referenceLapRepository, 'setActiveRefLap');
 vi.spyOn(referenceLapService, 'normalizeTrackPct');
 
-import { getCarIdxs } from '#service/driver.service.ts';
+import { getCarIdxs } from '#repository/driver.repository.ts';
 import {
   getMinPointsForValidLap,
   getReferenceInterval,

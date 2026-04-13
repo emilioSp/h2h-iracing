@@ -1,3 +1,4 @@
+import { getCarIdxs } from '#repository/driver.repository.ts';
 import {
   getLapDistPct,
   getOnPitRoad,
@@ -5,7 +6,6 @@ import {
 } from '#repository/irsdk.repository.ts';
 import type { ReferenceLap } from '#repository/reference-lap.repository.ts';
 import * as referenceLapRepository from '#repository/reference-lap.repository.ts';
-import { getCarIdxs } from '#service/driver.service.ts';
 
 const REF_POINTS_DISTANCE_METERS = 10;
 const DECIMAL_PLACES = 8;

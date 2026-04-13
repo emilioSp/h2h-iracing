@@ -1,13 +1,13 @@
 import type { Driver as RawDriver } from '@emiliosp/node-iracing-sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import * as irsdkRepo from '#repository/irsdk.repository.ts';
 import {
   getCarIdxs,
   getClassEstLapTime,
   getDriverInfo,
   getFilteredRawDrivers,
   refreshDriverInfo,
-} from '#service/driver.service.ts';
+} from '#repository/driver.repository.ts';
+import * as irsdkRepo from '#repository/irsdk.repository.ts';
 
 const makeRawDriver = (
   overrides: Partial<{
@@ -35,7 +35,7 @@ const makeRawDriver = (
     ...overrides,
   }) as unknown as RawDriver;
 
-describe('driver.service', () => {
+describe('driver.repository', () => {
   describe('getFilteredRawDrivers', () => {
     beforeEach(() => {
       vi.restoreAllMocks();

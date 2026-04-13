@@ -1,3 +1,4 @@
+import { getClassEstLapTime } from '#repository/driver.repository.ts';
 import {
   getLapDistPct,
   getLapsCompleted,
@@ -8,7 +9,6 @@ import {
   type ReferenceLap,
 } from '#repository/reference-lap.repository.ts';
 import type { Car } from '#schema/car.schema.ts';
-import { getClassEstLapTime } from '#service/driver.service.ts';
 import { interpolateTimeAtTrackPosition } from '#service/reference-lap.service.ts';
 
 export type Gap = {
