@@ -2,6 +2,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('#service/head2head.service.ts', () => ({
   computeHead2Head: vi.fn(),
+}));
+vi.mock('#service/tick.service.ts', () => ({
   resetSessionNumber: vi.fn(),
 }));
 vi.mock('#service/weather.service.ts', () => ({
@@ -30,6 +32,7 @@ import {
 import * as carService from '#service/car-telemetry.service.ts';
 import * as h2hService from '#service/head2head.service.ts';
 import * as refLapService from '#service/reference-lap.service.ts';
+import * as tickService from '#service/tick.service.ts';
 import * as weatherService from '#service/weather.service.ts';
 
 const mockClient = () => ({
@@ -136,7 +139,7 @@ describe('removeClient', () => {
     removeClient(dashboardType.H2H, client);
 
     expect(refLapService.resetReferenceLaps).toHaveBeenCalledOnce();
-    expect(h2hService.resetSessionNumber).toHaveBeenCalledOnce();
+    expect(tickService.resetSessionNumber).toHaveBeenCalledOnce();
   });
 
   it('does not call h2h cleanup when non-h2h client disconnects', () => {
@@ -145,7 +148,7 @@ describe('removeClient', () => {
     removeClient(dashboardType.WEATHER, client);
 
     expect(refLapService.resetReferenceLaps).not.toHaveBeenCalled();
-    expect(h2hService.resetSessionNumber).not.toHaveBeenCalled();
+    expect(tickService.resetSessionNumber).not.toHaveBeenCalled();
   });
 });
 
@@ -159,7 +162,7 @@ describe('broadcast tick', () => {
 
     expect(client.write).not.toHaveBeenCalled();
     expect(refLapService.resetReferenceLaps).toHaveBeenCalledOnce();
-    expect(h2hService.resetSessionNumber).toHaveBeenCalledOnce();
+    expect(tickService.resetSessionNumber).toHaveBeenCalledOnce();
   });
 
   it('stops polling when iRacing disconnects', async () => {
@@ -238,7 +241,7 @@ describe('stopPoller', () => {
     stopBroadcasting();
 
     expect(refLapService.resetReferenceLaps).toHaveBeenCalledOnce();
-    expect(h2hService.resetSessionNumber).toHaveBeenCalledOnce();
+    expect(tickService.resetSessionNumber).toHaveBeenCalledOnce();
   });
 
   it('does not call h2h cleanup when no h2h clients are registered', () => {
@@ -248,6 +251,6 @@ describe('stopPoller', () => {
     stopBroadcasting();
 
     expect(refLapService.resetReferenceLaps).not.toHaveBeenCalled();
-    expect(h2hService.resetSessionNumber).not.toHaveBeenCalled();
+    expect(tickService.resetSessionNumber).not.toHaveBeenCalled();
   });
 });

@@ -1,4 +1,9 @@
-import { IRSDK, SESSION_DATA_KEYS, VARS } from '@emiliosp/node-iracing-sdk';
+import {
+  IRSDK,
+  SESSION_DATA_KEYS,
+  type Session,
+  VARS,
+} from '@emiliosp/node-iracing-sdk';
 import config from '#config';
 import { debug } from '../debug.ts';
 
@@ -43,12 +48,12 @@ export const getPlayerCarIdx = withConnect(
 
 export const getLastLapTime = withConnect((carIdx: number): number => {
   const lapTime = ir?.get(VARS.CAR_IDX_LAST_LAP_TIME)[carIdx];
-  return lapTime > 0 ? lapTime : NaN;
+  return lapTime;
 });
 
 export const getBestLapTime = withConnect((carIdx: number): number => {
   const bestLapTime = ir?.get(VARS.CAR_IDX_BEST_LAP_TIME)[carIdx];
-  return bestLapTime > 0 ? bestLapTime : NaN;
+  return bestLapTime;
 });
 
 export const getLapsCompleted = withConnect(
@@ -93,6 +98,17 @@ export const getSessionType = withConnect((): string => {
     throw new Error(`No session found for SessionNum ${sessionNum}`);
   }
   return session.SessionType;
+});
+
+export const getCurrentSessionInfo = withConnect((): Session | null => {
+  const sessionInfo = ir?.getSessionInfo(SESSION_DATA_KEYS.SESSION_INFO);
+  const currentSession = sessionInfo?.Sessions?.find(
+    (s) => s.SessionNum === sessionInfo.CurrentSessionNum,
+  );
+  if (!currentSession) {
+    return null;
+  }
+  return currentSession;
 });
 
 export const getTrackLengthMeters = withConnect((): number => {

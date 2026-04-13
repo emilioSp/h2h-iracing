@@ -3,6 +3,7 @@ import {
   getLapDistPct,
   getLapsCompleted,
 } from '#repository/irsdk.repository.ts';
+import { getSessionLapsCompleted } from '#repository/session-info.repository.ts';
 import { getCarIdxs } from '#service/driver.service.ts';
 
 export type Standing = { pos: number; carIdx: number };
@@ -15,8 +16,12 @@ export const getRaceStandings = async (): Promise<Standing[]> => {
   const standings: Standing[] = carIdxs.map((carIdx) => ({ pos: 0, carIdx }));
 
   standings.sort((a, b) => {
-    const distA = (lapsCompleted[a.carIdx] ?? 0) + (lapDistPct[a.carIdx] ?? 0);
-    const distB = (lapsCompleted[b.carIdx] ?? 0) + (lapDistPct[b.carIdx] ?? 0);
+    const distA =
+      (lapsCompleted[a.carIdx] ?? getSessionLapsCompleted(a.carIdx) ?? 0) +
+      (lapDistPct[a.carIdx] ?? 0);
+    const distB =
+      (lapsCompleted[b.carIdx] ?? getSessionLapsCompleted(b.carIdx) ?? 0) +
+      (lapDistPct[b.carIdx] ?? 0);
     return distB - distA;
   });
 

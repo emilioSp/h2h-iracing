@@ -1,11 +1,9 @@
 import config from '#config';
 import { isIRacingConnected } from '#repository/irsdk.repository.ts';
 import { computeCarTelemetry } from '#service/car-telemetry.service.ts';
-import {
-  computeHead2Head,
-  resetSessionNumber,
-} from '#service/head2head.service.ts';
+import { computeHead2Head } from '#service/head2head.service.ts';
 import { resetReferenceLaps } from '#service/reference-lap.service.ts';
+import { resetSessionNumber } from '#service/tick.service.ts';
 import { computeWeather } from '#service/weather.service.ts';
 
 export const dashboardType = {
@@ -58,6 +56,7 @@ const writeToClients = async (
 };
 
 const broadcastH2H = async () => {
+  // biome-ignore lint/style/noNonNullAssertion: clients map is defined above
   const h2hClients = clients.get(dashboardType.H2H)!;
   if (h2hClients.size > 0) {
     const result = await computeHead2Head();
@@ -71,6 +70,7 @@ const broadcastH2H = async () => {
 };
 
 const broadcastWeather = async () => {
+  // biome-ignore lint/style/noNonNullAssertion: clients map is defined above
   const weatherClients = clients.get(dashboardType.WEATHER)!;
   if (weatherClients.size > 0) {
     await writeToClients(weatherClients, await computeWeather());
@@ -78,6 +78,7 @@ const broadcastWeather = async () => {
 };
 
 const broadcastCar = async () => {
+  // biome-ignore lint/style/noNonNullAssertion: clients map is defined above
   const carClients = clients.get(dashboardType.CAR)!;
   if (carClients.size > 0) {
     await writeToClients(carClients, await computeCarTelemetry());
@@ -114,6 +115,8 @@ export const stopBroadcasting = () => {
     clearTimeout(timer);
     timer = null;
   }
+
+  // biome-ignore lint/style/noNonNullAssertion: clients map is defined above
   const h2hSet = clients.get(dashboardType.H2H)!;
   if (h2hSet.size > 0) cleanupH2h();
   for (const set of clients.values()) {
