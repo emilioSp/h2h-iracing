@@ -8,6 +8,7 @@ import type { Weather } from '#schema/weather.schema.ts';
 import { computeCarTelemetry } from '#service/car-telemetry.service.ts';
 import type { Gap } from '#service/gap.service.ts';
 import { computeHead2Head } from '#service/head2head.service.ts';
+import { tick } from '#service/tick.service.ts';
 import { computeWeather } from '#service/weather.service.ts';
 
 const W = 64;
@@ -214,6 +215,7 @@ while (true) {
   if (!(await isIRacingConnected())) {
     continue;
   }
+  await tick();
   const [head2Head, weather, carTelemetry] = await Promise.all([
     computeHead2Head(),
     computeWeather(),

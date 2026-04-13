@@ -5,6 +5,7 @@ vi.mock('#service/head2head.service.ts', () => ({
 }));
 vi.mock('#service/tick.service.ts', () => ({
   resetSessionNumber: vi.fn(),
+  tick: vi.fn(),
 }));
 vi.mock('#service/weather.service.ts', () => ({
   computeWeather: vi.fn(),

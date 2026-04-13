@@ -1,10 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import * as iracingRepository from '#repository/irsdk.repository.ts';
 import { computeHead2Head } from '#service/head2head.service.ts';
+import { tick } from '#service/tick.service.ts';
 
 describe('head2head.service (race session - dump)', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.restoreAllMocks();
+    await tick();
     vi.spyOn(iracingRepository, 'getSessionType').mockResolvedValue('Race');
   });
 

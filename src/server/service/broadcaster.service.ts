@@ -1,9 +1,12 @@
 import config from '#config';
 import { isIRacingConnected } from '#repository/irsdk.repository.ts';
 import { computeCarTelemetry } from '#service/car-telemetry.service.ts';
-import { computeHead2Head } from '#service/head2head.service.ts';
+import {
+  cleanUpHead2Head,
+  computeHead2Head,
+} from '#service/head2head.service.ts';
 import { resetReferenceLaps } from '#service/reference-lap.service.ts';
-import { resetSessionNumber } from '#service/tick.service.ts';
+import { resetSessionNumber, tick } from '#service/tick.service.ts';
 import { computeWeather } from '#service/weather.service.ts';
 
 export const dashboardType = {
@@ -26,11 +29,6 @@ const clients: Map<DashboardType, Set<SSEClient>> = new Map([
 ]);
 
 let timer: ReturnType<typeof setTimeout> | null = null;
-
-const cleanupH2h = () => {
-  resetReferenceLaps();
-  resetSessionNumber();
-};
 
 const closeSSEStream = (set: Set<SSEClient>) => {
   for (const client of set) {
@@ -62,7 +60,7 @@ const broadcastH2H = async () => {
     const result = await computeHead2Head();
     if (result === null) {
       closeSSEStream(h2hClients);
-      cleanupH2h();
+      cleanUpHead2Head();
     } else {
       await writeToClients(h2hClients, result);
     }
@@ -91,6 +89,8 @@ const broadcast = async (): Promise<void> => {
     return;
   }
 
+  await tick();
+
   await Promise.all([broadcastH2H(), broadcastWeather(), broadcastCar()]);
 
   if (
@@ -118,7 +118,9 @@ export const stopBroadcasting = () => {
 
   // biome-ignore lint/style/noNonNullAssertion: clients map is defined above
   const h2hSet = clients.get(dashboardType.H2H)!;
-  if (h2hSet.size > 0) cleanupH2h();
+  if (h2hSet.size > 0) {
+    cleanUpHead2Head();
+  }
   for (const set of clients.values()) {
     closeSSEStream(set);
   }
@@ -135,6 +137,6 @@ export const removeClient = (event: DashboardType, client: SSEClient) => {
 
   // TODO: add a common interface to always call cleanup method for each dashboard (noop if not needed)
   if (event === dashboardType.H2H && clientSet.size === 0) {
-    cleanupH2h();
+    cleanUpHead2Head();
   }
 };

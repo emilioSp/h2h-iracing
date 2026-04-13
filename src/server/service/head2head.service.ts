@@ -20,8 +20,9 @@ import {
 } from '#service/delta.service.ts';
 import { getDriverInfo } from '#service/driver.service.ts';
 import { getGap } from '#service/gap.service.ts';
+import { resetReferenceLaps } from '#service/reference-lap.service.ts';
 import { getStandings, type Standing } from '#service/standings.service.ts';
-import { tick } from '#service/tick.service.ts';
+import { resetSessionNumber } from '#service/tick.service.ts';
 
 export const computeLastLapTime = async (carIdx: number) => {
   let lastLapTime = await getLastLapTime(carIdx);
@@ -66,8 +67,6 @@ export const computeCar = async (
 };
 
 export const computeHead2Head = async (): Promise<Head2Head | null> => {
-  await tick();
-
   const playerIdx =
     process.env.DATA_MODE === 'mock' ? 4 : await getPlayerCarIdx();
   if (playerIdx < 0) return null;
@@ -123,4 +122,9 @@ export const computeHead2Head = async (): Promise<Head2Head | null> => {
     deltaAhead: delta.deltaAhead,
     deltaBehind: delta.deltaBehind,
   };
+};
+
+export const cleanUpHead2Head = async (): Promise<void> => {
+  resetReferenceLaps();
+  resetSessionNumber();
 };
