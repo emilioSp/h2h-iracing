@@ -72,10 +72,6 @@ export const getOnPitRoad = withConnect(
   (): number[] => ir?.get(VARS.CAR_IDX_ON_PIT_ROAD) ?? [],
 );
 
-export const getEstTime = withConnect(
-  (): number[] => ir?.get(VARS.CAR_IDX_EST_TIME) ?? [],
-);
-
 export const getSessionNum = withConnect(
   (): number => ir?.get(VARS.SESSION_NUM)[0] ?? -1,
 );
@@ -87,18 +83,6 @@ export const getRawDrivers = withConnect(
 export const getClassPositions = withConnect(
   (): number[] => ir?.get(VARS.CAR_IDX_CLASS_POSITION) ?? [],
 );
-
-export const getSessionType = withConnect((): string => {
-  const sessionNum = ir?.get(VARS.SESSION_NUM)[0] ?? -1;
-  const sessionInfo = ir?.getSessionInfo(SESSION_DATA_KEYS.SESSION_INFO);
-  const session = sessionInfo?.Sessions?.find(
-    (s) => s.SessionNum === sessionNum,
-  );
-  if (!session) {
-    throw new Error(`No session found for SessionNum ${sessionNum}`);
-  }
-  return session.SessionType;
-});
 
 export const getCurrentSessionInfo = withConnect((): Session | null => {
   const sessionInfo = ir?.getSessionInfo(SESSION_DATA_KEYS.SESSION_INFO);

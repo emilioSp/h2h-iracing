@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import * as iracingRepository from '#repository/irsdk.repository.ts';
+import * as sessionInfoRepository from '#repository/session-info.repository.ts';
 import { computeHead2Head } from '#service/head2head.service.ts';
 import { tick } from '#service/tick.service.ts';
 
@@ -7,7 +8,7 @@ describe('head2head.service (race session - dump)', () => {
   beforeEach(async () => {
     vi.restoreAllMocks();
     await tick();
-    vi.spyOn(iracingRepository, 'getSessionType').mockResolvedValue('Race');
+    vi.spyOn(sessionInfoRepository, 'getSessionType').mockReturnValue('Race');
   });
 
   it('returns a valid Head2Head from dump', async () => {
@@ -53,7 +54,9 @@ describe('head2head.service (non-race session)', () => {
   });
 
   it('gaps are null during practice/qualify', async () => {
-    vi.spyOn(iracingRepository, 'getSessionType').mockResolvedValue('Practice');
+    vi.spyOn(sessionInfoRepository, 'getSessionType').mockReturnValue(
+      'Practice',
+    );
 
     const head2Head = await computeHead2Head();
 
@@ -62,7 +65,7 @@ describe('head2head.service (non-race session)', () => {
   });
 
   it('delta uses best lap times during qualify', async () => {
-    vi.spyOn(iracingRepository, 'getSessionType').mockResolvedValue(
+    vi.spyOn(sessionInfoRepository, 'getSessionType').mockReturnValue(
       'Lone Qualify',
     );
     vi.spyOn(iracingRepository, 'getBestLapTime').mockImplementation(
@@ -85,7 +88,9 @@ describe('head2head.service (non-race session)', () => {
   });
 
   it('delta is null when a neighbor has no best lap time', async () => {
-    vi.spyOn(iracingRepository, 'getSessionType').mockResolvedValue('Practice');
+    vi.spyOn(sessionInfoRepository, 'getSessionType').mockReturnValue(
+      'Practice',
+    );
     vi.spyOn(iracingRepository, 'getBestLapTime').mockResolvedValue(NaN);
     vi.spyOn(iracingRepository, 'getClassPositions').mockResolvedValue(
       Array(64)

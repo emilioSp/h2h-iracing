@@ -5,13 +5,13 @@ import {
   getLastLapTime,
   getPlayerCarIdx,
   getSessionTime,
-  getSessionType,
 } from '#repository/irsdk.repository.ts';
 import { resetReferenceLaps } from '#repository/reference-lap.repository.ts';
 import {
   getSessionBestTime,
   getSessionLapsCompleted,
   getSessionLastLapTime,
+  getSessionType,
 } from '#repository/session-info.repository.ts';
 import type { Car } from '#schema/car.schema.ts';
 import type { Head2Head } from '#schema/head2head.schema.ts';
@@ -71,8 +71,8 @@ export const computeHead2Head = async (): Promise<Head2Head | null> => {
     process.env.DATA_MODE === 'mock' ? 4 : await getPlayerCarIdx();
   if (playerIdx < 0) return null;
 
-  const sessionType = await getSessionType();
-  const isRace = sessionType.includes('Race');
+  const sessionType = getSessionType();
+  const isRace = sessionType.toLowerCase() === 'race';
   const standings = await getStandings(isRace);
   const sessionTime = await getSessionTime();
 
