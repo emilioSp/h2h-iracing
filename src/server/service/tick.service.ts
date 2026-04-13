@@ -17,6 +17,11 @@ export const resetSessionNumber = (): void => {
   previousSessionNum = -1;
 };
 
+const initTrackLengthMeters = async (): Promise<void> => {
+  const trackLength = await getTrackLengthMeters();
+  initReferenceInterval(trackLength);
+};
+
 export const tick = async (): Promise<void> => {
   await refreshTelemetry();
 
@@ -31,9 +36,4 @@ export const tick = async (): Promise<void> => {
   await refreshDriverInfo();
   await refreshCurrentSessionInfo();
   await updateReferenceLaps();
-};
-
-export const initTrackLengthMeters = async (): Promise<void> => {
-  const trackLength = await getTrackLengthMeters();
-  initReferenceInterval(trackLength);
 };
