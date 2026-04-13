@@ -5,8 +5,7 @@ import {
   cleanUpHead2Head,
   computeHead2Head,
 } from '#service/head2head.service.ts';
-import { resetReferenceLaps } from '#service/reference-lap.service.ts';
-import { resetSessionNumber, tick } from '#service/tick.service.ts';
+import { tick } from '#service/tick.service.ts';
 import { computeWeather } from '#service/weather.service.ts';
 
 export const dashboardType = {

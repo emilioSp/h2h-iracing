@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('#service/head2head.service.ts', () => ({
   computeHead2Head: vi.fn(),
+  cleanUpHead2Head: vi.fn(),
 }));
 vi.mock('#service/tick.service.ts', () => ({
   resetSessionNumber: vi.fn(),
@@ -32,6 +33,7 @@ import {
 } from '#service/broadcaster.service.ts';
 import * as carService from '#service/car-telemetry.service.ts';
 import * as h2hService from '#service/head2head.service.ts';
+import { cleanUpHead2Head } from '#service/head2head.service.ts';
 import * as refLapService from '#service/reference-lap.service.ts';
 import * as tickService from '#service/tick.service.ts';
 import * as weatherService from '#service/weather.service.ts';
@@ -139,8 +141,7 @@ describe('removeClient', () => {
     addClient(dashboardType.H2H, client);
     removeClient(dashboardType.H2H, client);
 
-    expect(refLapService.resetReferenceLaps).toHaveBeenCalledOnce();
-    expect(tickService.resetSessionNumber).toHaveBeenCalledOnce();
+    expect(h2hService.cleanUpHead2Head).toHaveBeenCalledOnce();
   });
 
   it('does not call h2h cleanup when non-h2h client disconnects', () => {
@@ -162,8 +163,7 @@ describe('broadcast tick', () => {
     await vi.advanceTimersByTimeAsync(100);
 
     expect(client.write).not.toHaveBeenCalled();
-    expect(refLapService.resetReferenceLaps).toHaveBeenCalledOnce();
-    expect(tickService.resetSessionNumber).toHaveBeenCalledOnce();
+    expect(h2hService.cleanUpHead2Head).toHaveBeenCalledOnce();
   });
 
   it('stops polling when iRacing disconnects', async () => {
@@ -241,8 +241,7 @@ describe('stopPoller', () => {
 
     stopBroadcasting();
 
-    expect(refLapService.resetReferenceLaps).toHaveBeenCalledOnce();
-    expect(tickService.resetSessionNumber).toHaveBeenCalledOnce();
+    expect(h2hService.cleanUpHead2Head).toHaveBeenCalledOnce();
   });
 
   it('does not call h2h cleanup when no h2h clients are registered', () => {
