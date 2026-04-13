@@ -3,7 +3,10 @@ import { getCurrentSessionInfo } from '#repository/irsdk.repository.ts';
 
 type SessionInfo = {
   sessionType: string;
-  resultsPosition: Map<number, Session['ResultsPositions'][number]>;
+  resultsPosition: Map<
+    number,
+    Exclude<Session['ResultsPositions'], null>[number]
+  >;
 };
 
 const sessionInfo: SessionInfo = {
@@ -14,6 +17,10 @@ const sessionInfo: SessionInfo = {
 export const refreshCurrentSessionInfo = async (): Promise<SessionInfo> => {
   const currentSessionInfo = await getCurrentSessionInfo();
   if (!currentSessionInfo) {
+    return sessionInfo;
+  }
+
+  if (!Array.isArray(currentSessionInfo.ResultsPositions)) {
     return sessionInfo;
   }
 
