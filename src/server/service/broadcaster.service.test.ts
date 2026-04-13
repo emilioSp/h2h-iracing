@@ -33,7 +33,6 @@ import {
 } from '#service/broadcaster.service.ts';
 import * as carService from '#service/car-telemetry.service.ts';
 import * as h2hService from '#service/head2head.service.ts';
-import { cleanUpHead2Head } from '#service/head2head.service.ts';
 import * as refLapService from '#service/reference-lap.service.ts';
 import * as tickService from '#service/tick.service.ts';
 import * as weatherService from '#service/weather.service.ts';
