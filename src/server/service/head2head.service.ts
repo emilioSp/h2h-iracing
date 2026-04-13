@@ -3,12 +3,14 @@ import {
   getLapsCompleted,
   getLastLapTime,
   getPlayerCarIdx,
-  getSessionNum,
   getSessionTime,
   getSessionType,
-  getTrackLengthMeters,
-  refreshTelemetry,
 } from '#repository/irsdk.repository.ts';
+import {
+  getSessionBestTime,
+  getSessionLapsCompleted,
+  getSessionLastLapTime,
+} from '#repository/session-info.repository.ts';
 import type { Car } from '#schema/car.schema.ts';
 import type { Head2Head } from '#schema/head2head.schema.ts';
 import {
@@ -16,39 +18,29 @@ import {
   getDeltaBestLap,
   getDeltaLastLap,
 } from '#service/delta.service.ts';
-import { getDriverInfo, refreshDriverInfo } from '#service/driver.service.ts';
+import { getDriverInfo } from '#service/driver.service.ts';
 import { getGap } from '#service/gap.service.ts';
-import {
-  initReferenceInterval,
-  resetReferenceLaps,
-  updateReferenceLaps,
-} from '#service/reference-lap.service.ts';
 import { getStandings, type Standing } from '#service/standings.service.ts';
+import { tick } from '#service/tick.service.ts';
 
-let previousSessionNum = -1;
+export const computeLastLapTime = async (carIdx: number) => {
+  let lastLapTime = await getLastLapTime(carIdx);
+  if (lastLapTime > 0) return lastLapTime;
 
-export const resetSessionNumber = (): void => {
-  previousSessionNum = -1;
+  lastLapTime = getSessionLastLapTime(carIdx);
+  if (lastLapTime > 0) return lastLapTime;
+
+  return NaN;
 };
 
-export const initTrackLengthMeters = async (): Promise<void> => {
-  const trackLength = await getTrackLengthMeters();
-  initReferenceInterval(trackLength);
-};
+export const computeBestLapTime = async (carIdx: number) => {
+  let bestLapTime = await getBestLapTime(carIdx);
+  if (bestLapTime > 0) return bestLapTime;
 
-const tick = async (): Promise<void> => {
-  await refreshTelemetry();
+  bestLapTime = getSessionBestTime(carIdx);
+  if (bestLapTime > 0) return bestLapTime;
 
-  // Reset reference laps if session changed (practice, qualify, race)
-  const currentSessionNum = await getSessionNum();
-  if (currentSessionNum !== previousSessionNum) {
-    resetReferenceLaps();
-    await initTrackLengthMeters();
-    previousSessionNum = currentSessionNum;
-  }
-
-  await refreshDriverInfo();
-  await updateReferenceLaps();
+  return NaN;
 };
 
 export const computeCar = async (
@@ -65,9 +57,9 @@ export const computeCar = async (
   const car = {
     driver,
     position: carStanding?.pos ?? 0,
-    lastLapTime: await getLastLapTime(carIdx),
-    bestLapTime: await getBestLapTime(carIdx),
-    lap: lapsCompleted[carIdx] ?? 0, // TODO: use lapNumber
+    lastLapTime: await computeLastLapTime(carIdx),
+    bestLapTime: await computeBestLapTime(carIdx),
+    lap: lapsCompleted[carIdx] ?? getSessionLapsCompleted(carIdx) ?? 0, // TODO: use lapNumber
   };
 
   return car;
