@@ -70,6 +70,20 @@ npm run h2h:start
 npm run cli:start
 ```
 
+## Folder Structure
+
+```
+src/
+└── server/
+    ├── router/       # Handles incoming client requests and SSE endpoints
+    ├── service/      # Business logic (gap/delta calculations, telemetry, standings…)
+    └── repository/   # Data access — iRacing SDK integration and file persistence
+```
+
+- **router** — entry point for HTTP/SSE requests; delegates work to services
+- **service** — pure business logic, no I/O concerns
+- **repository** — wraps external resources (iRacing SDK, file system)
+
 ## API
 
 All endpoints use Server-Sent Events (SSE) and push updates at every poll interval.
