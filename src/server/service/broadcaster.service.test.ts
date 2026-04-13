@@ -2,9 +2,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('#service/head2head.service.ts', () => ({
   computeHead2Head: vi.fn(),
+  cleanUpHead2Head: vi.fn(),
 }));
 vi.mock('#service/tick.service.ts', () => ({
   resetSessionNumber: vi.fn(),
+  tick: vi.fn(),
 }));
 vi.mock('#service/weather.service.ts', () => ({
   computeWeather: vi.fn(),
@@ -138,8 +140,7 @@ describe('removeClient', () => {
     addClient(dashboardType.H2H, client);
     removeClient(dashboardType.H2H, client);
 
-    expect(refLapService.resetReferenceLaps).toHaveBeenCalledOnce();
-    expect(tickService.resetSessionNumber).toHaveBeenCalledOnce();
+    expect(h2hService.cleanUpHead2Head).toHaveBeenCalledOnce();
   });
 
   it('does not call h2h cleanup when non-h2h client disconnects', () => {
@@ -161,8 +162,7 @@ describe('broadcast tick', () => {
     await vi.advanceTimersByTimeAsync(100);
 
     expect(client.write).not.toHaveBeenCalled();
-    expect(refLapService.resetReferenceLaps).toHaveBeenCalledOnce();
-    expect(tickService.resetSessionNumber).toHaveBeenCalledOnce();
+    expect(h2hService.cleanUpHead2Head).toHaveBeenCalledOnce();
   });
 
   it('stops polling when iRacing disconnects', async () => {
@@ -240,8 +240,7 @@ describe('stopPoller', () => {
 
     stopBroadcasting();
 
-    expect(refLapService.resetReferenceLaps).toHaveBeenCalledOnce();
-    expect(tickService.resetSessionNumber).toHaveBeenCalledOnce();
+    expect(h2hService.cleanUpHead2Head).toHaveBeenCalledOnce();
   });
 
   it('does not call h2h cleanup when no h2h clients are registered', () => {
