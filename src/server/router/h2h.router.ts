@@ -1,10 +1,6 @@
 import type { Context } from 'hono';
 import { streamSSE } from 'hono/streaming';
-import {
-  addClient,
-  dashboardType,
-  removeClient,
-} from '#service/broadcaster.service.ts';
+import { addClient, dashboardType, removeClient } from '#server/broadcaster.ts';
 
 export const h2hRouter = (c: Context) =>
   streamSSE(c, async (stream) => {

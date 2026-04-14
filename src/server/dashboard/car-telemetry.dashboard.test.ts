@@ -21,7 +21,7 @@ vi.mock('@emiliosp/node-iracing-sdk', async (importOriginal) => {
 });
 
 import { VARS } from '@emiliosp/node-iracing-sdk';
-import { computeCarTelemetry } from '#service/car-telemetry.service.ts';
+import { computeCarTelemetry } from '#server/dashboard/car-telemetry.dashboard.ts';
 
 beforeEach(() => {
   vi.clearAllMocks();

@@ -85,11 +85,12 @@ const computeGap = async (ahead: Car, behind: Car): Promise<Gap> => {
   };
 };
 
+export type GetGapOutput = { gapAhead: Gap | null; gapBehind: Gap | null };
 export const getGap = async (
   ahead: Car | null,
   player: Car,
   behind: Car | null,
-): Promise<{ gapAhead: Gap | null; gapBehind: Gap | null }> => {
+): Promise<GetGapOutput> => {
   const gapAhead = ahead !== null ? await computeGap(ahead, player) : null;
   const gapBehind = behind !== null ? await computeGap(player, behind) : null;
   return { gapAhead, gapBehind };

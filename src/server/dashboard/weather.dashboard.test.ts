@@ -21,7 +21,7 @@ vi.mock('@emiliosp/node-iracing-sdk', async (importOriginal) => {
 });
 
 import { VARS } from '@emiliosp/node-iracing-sdk';
-import { computeWeather } from '#service/weather.service.ts';
+import { computeWeather } from '#dashboard/weather.dashboard.ts';
 
 beforeEach(() => {
   vi.clearAllMocks();

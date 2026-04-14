@@ -1,12 +1,12 @@
 import config from '#config';
-import { isIRacingConnected } from '#repository/irsdk.repository.ts';
-import { computeCarTelemetry } from '#service/car-telemetry.service.ts';
+import { computeCarTelemetry } from '#dashboard/car-telemetry.dashboard.ts';
 import {
   cleanUpHead2Head,
   computeHead2Head,
-} from '#service/head2head.service.ts';
-import { tick } from '#service/tick.service.ts';
-import { computeWeather } from '#service/weather.service.ts';
+} from '#dashboard/head2head.dashboard.ts';
+import { computeWeather } from '#dashboard/weather.dashboard.ts';
+import { isIRacingConnected } from '#repository/irsdk.repository.ts';
+import { tick } from '#server/tick.ts';
 
 export const dashboardType = {
   H2H: 'H2H',
