@@ -3,7 +3,7 @@
   "version": "1.28.0",
   "description": "Head 2 Head iRacing dashboards",
   "license": "MIT",
-  "author": "",
+  "author": "Emilio Spatola",
   "type": "module",
   "main": "index.js",
   "scripts": {
