@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { computeHead2Head } from '#dashboard/head2head.dashboard.ts';
 import * as iracingRepository from '#repository/irsdk.repository.ts';
 import * as sessionInfoRepository from '#repository/session-info.repository.ts';
-import { computeHead2Head } from '#service/head2head.service.ts';
-import { tick } from '#service/tick.service.ts';
+import { tick } from '#server/tick.ts';
 
 describe('head2head.service (race session - dump)', () => {
   beforeEach(async () => {

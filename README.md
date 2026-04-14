@@ -75,9 +75,12 @@ npm run cli:start
 ```
 src/
 └── server/
+    ├── ticker        # Main loop: polls iRacing SDK, refreshes data
+    ├── broadcaster   # SSE broadcaster for pushing updates to clients
     ├── router/       # Handles incoming client requests and SSE endpoints
-    ├── service/      # Business logic (gap/delta calculations, telemetry, standings…)
-    └── repository/   # Data access — iRacing SDK integration and file persistence
+    ├── dashboard/    # Entry points and orchestration for dashboards
+    ├── service/      # Business logic (gap/delta calculations, lap times, standings...)
+    └── repository/   # Data layer — iRacing SDK integration and in memory data storage
 ```
 
 - **router** — entry point for HTTP/SSE requests; delegates work to services

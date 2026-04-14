@@ -6,7 +6,7 @@ import { shutdown } from '#repository/irsdk.repository.ts';
 import { carTelemetryRouter } from '#router/car-telemetry.router.ts';
 import { h2hRouter } from '#router/h2h.router.ts';
 import { weatherRouter } from '#router/weather.router.ts';
-import { stopBroadcasting } from '#service/broadcaster.service.ts';
+import { stopBroadcasting } from '#server/broadcaster.ts';
 
 const app = new Hono();
 

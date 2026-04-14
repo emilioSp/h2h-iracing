@@ -1,17 +1,17 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('#service/head2head.service.ts', () => ({
+vi.mock('#dashboard/head2head.dashboard.ts', () => ({
   computeHead2Head: vi.fn(),
   cleanUpHead2Head: vi.fn(),
 }));
-vi.mock('#service/tick.service.ts', () => ({
+vi.mock('#server/tick.ts', () => ({
   resetSessionNumber: vi.fn(),
   tick: vi.fn(),
 }));
-vi.mock('#service/weather.service.ts', () => ({
+vi.mock('#dashboard/weather.dashboard.ts', () => ({
   computeWeather: vi.fn(),
 }));
-vi.mock('#service/car-telemetry.service.ts', () => ({
+vi.mock('#dashboard/car-telemetry.dashboard.ts', () => ({
   computeCarTelemetry: vi.fn(),
 }));
 vi.mock('#repository/irsdk.repository.ts', () => ({
@@ -21,17 +21,17 @@ vi.mock('#config', () => ({
   default: { POLL_INTERVAL_MS: 100 },
 }));
 
+import * as carService from '#dashboard/car-telemetry.dashboard.ts';
+import * as h2hService from '#dashboard/head2head.dashboard.ts';
+import * as weatherService from '#dashboard/weather.dashboard.ts';
 import * as iracingRepo from '#repository/irsdk.repository.ts';
 import {
   addClient,
   dashboardType,
   removeClient,
   stopBroadcasting,
-} from '#service/broadcaster.service.ts';
-import * as carService from '#service/car-telemetry.service.ts';
-import * as h2hService from '#service/head2head.service.ts';
-import * as tickService from '#service/tick.service.ts';
-import * as weatherService from '#service/weather.service.ts';
+} from '#server/broadcaster.ts';
+import * as tickService from '#server/tick.ts';
 
 const mockClient = () => ({
   write: vi.fn().mockResolvedValue(undefined),

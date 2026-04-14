@@ -25,6 +25,7 @@
   },
   "imports": {
     "#server/*": "./src/server/*",
+    "#dashboard/*": "./src/server/dashboard/*",
     "#service/*": "./src/server/service/*",
     "#repository/*": "./src/server/repository/*",
     "#schema/*": "./src/schema/*",

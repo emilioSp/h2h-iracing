@@ -1,11 +1,11 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import * as broadcasterService from '#service/broadcaster.service.ts';
-import { dashboardType } from '#service/broadcaster.service.ts';
+import * as broadcasterService from '#server/broadcaster.ts';
+import { dashboardType } from '#server/broadcaster.ts';
 import { h2hRouter } from './h2h.router.ts';
 
 vi.mock('hono/streaming');
 
-vi.mock(import('#service/broadcaster.service.ts'), async (importOriginal) => {
+vi.mock(import('#server/broadcaster.ts'), async (importOriginal) => {
   const actual = await importOriginal();
   return {
     ...actual,

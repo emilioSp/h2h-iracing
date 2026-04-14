@@ -1,70 +1,20 @@
-import { getDriverInfo } from '#repository/driver.repository.ts';
 import {
-  getBestLapTime,
-  getLapsCompleted,
-  getLastLapTime,
   getPlayerCarIdx,
   getSessionTime,
 } from '#repository/irsdk.repository.ts';
 import { resetReferenceLaps } from '#repository/reference-lap.repository.ts';
-import {
-  getSessionBestTime,
-  getSessionLapsCompleted,
-  getSessionLastLapTime,
-  getSessionType,
-} from '#repository/session-info.repository.ts';
+import { getSessionType } from '#repository/session-info.repository.ts';
 import type { Car } from '#schema/car.schema.ts';
 import type { Head2Head } from '#schema/head2head.schema.ts';
+import { resetSessionNumber } from '#server/tick.ts';
+import { computeCar } from '#service/car.service.ts';
 import {
   type Delta,
   getDeltaBestLap,
   getDeltaLastLap,
 } from '#service/delta.service.ts';
 import { getGap } from '#service/gap.service.ts';
-import { getStandings, type Standing } from '#service/standings.service.ts';
-import { resetSessionNumber } from '#service/tick.service.ts';
-
-export const computeLastLapTime = async (carIdx: number) => {
-  let lastLapTime = await getLastLapTime(carIdx);
-  if (lastLapTime > 0) return lastLapTime;
-
-  lastLapTime = getSessionLastLapTime(carIdx);
-  if (lastLapTime > 0) return lastLapTime;
-
-  return NaN;
-};
-
-export const computeBestLapTime = async (carIdx: number) => {
-  let bestLapTime = await getBestLapTime(carIdx);
-  if (bestLapTime > 0) return bestLapTime;
-
-  bestLapTime = getSessionBestTime(carIdx);
-  if (bestLapTime > 0) return bestLapTime;
-
-  return NaN;
-};
-
-export const computeCar = async (
-  carIdx: number,
-  standings: Standing[],
-): Promise<Car> => {
-  const carStanding = standings.find((s) => s.carIdx === carIdx);
-
-  // biome-ignore lint/style/noNonNullAssertion: we assume the driver info is always available for valid carIdx
-  const driver = getDriverInfo(carIdx)!;
-
-  const lapsCompleted = await getLapsCompleted();
-
-  const car = {
-    driver,
-    position: carStanding?.pos ?? 0,
-    lastLapTime: await computeLastLapTime(carIdx),
-    bestLapTime: await computeBestLapTime(carIdx),
-    lap: lapsCompleted[carIdx] ?? getSessionLapsCompleted(carIdx) ?? 0, // TODO: use lapNumber
-  };
-
-  return car;
-};
+import { getStandings } from '#service/standings.service.ts';
 
 export const computeHead2Head = async (): Promise<Head2Head | null> => {
   const playerIdx =
