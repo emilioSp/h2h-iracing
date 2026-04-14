@@ -168,4 +168,5 @@ npm test
 
 ## Documentation
 
+- [Architecture](docs/architecture.md)
 - [How the gap is calculated](docs/gap-calculation.md)
