@@ -5,7 +5,6 @@ vi.mock('#dashboard/head2head.dashboard.ts', () => ({
   cleanUpHead2Head: vi.fn(),
 }));
 vi.mock('#server/tick.ts', () => ({
-  resetSessionNumber: vi.fn(),
   tick: vi.fn(),
 }));
 vi.mock('#dashboard/weather.dashboard.ts', () => ({
@@ -31,7 +30,6 @@ import {
   removeClient,
   stopBroadcasting,
 } from '#server/broadcaster.ts';
-import * as tickService from '#server/tick.ts';
 
 const mockClient = () => ({
   write: vi.fn().mockResolvedValue(undefined),
@@ -145,7 +143,6 @@ describe('removeClient', () => {
     removeClient(dashboardType.WEATHER, client);
 
     expect(h2hService.cleanUpHead2Head).not.toHaveBeenCalled();
-    expect(tickService.resetSessionNumber).not.toHaveBeenCalled();
   });
 });
 
@@ -246,6 +243,5 @@ describe('stopPoller', () => {
     stopBroadcasting();
 
     expect(h2hService.cleanUpHead2Head).not.toHaveBeenCalled();
-    expect(tickService.resetSessionNumber).not.toHaveBeenCalled();
   });
 });

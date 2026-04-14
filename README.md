@@ -74,18 +74,19 @@ npm run cli:start
 
 ```
 src/
+├── h2h-dashboard/    # React overlay — head-to-head battle
+├── weather-dashboard/# React overlay — weather conditions
+├── car-dashboard/    # React overlay — car telemetry
+├── common/           # Shared React components (e.g. WelcomePage)
+├── schema/           # Zod schemas shared across layers
 └── server/
-    ├── ticker        # Main loop: polls iRacing SDK, refreshes data
-    ├── broadcaster   # SSE broadcaster for pushing updates to clients
-    ├── router/       # Handles incoming client requests and SSE endpoints
+    ├── tick.ts       # Main loop: polls iRacing SDK, refreshes data
+    ├── broadcaster.ts# SSE broadcaster for pushing updates to clients
+    ├── router/       # Route handlers, request/response validation
     ├── dashboard/    # Entry points and orchestration for dashboards
     ├── service/      # Business logic (gap/delta calculations, lap times, standings...)
-    └── repository/   # Data layer — iRacing SDK integration and in memory data storage
+    └── repository/   # Data layer — iRacing SDK integration and in-memory storage
 ```
-
-- **router** — entry point for HTTP/SSE requests; delegates work to services
-- **service** — pure business logic, no I/O concerns
-- **repository** — wraps external resources (iRacing SDK, file system)
 
 ## API
 
