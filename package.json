@@ -35,7 +35,7 @@
   "dependencies": {
     "@emiliosp/node-iracing-sdk": "1.3.1",
     "@hono/node-server": "1.19.12",
-    "hono": "4.12.9",
+    "hono": "4.12.14",
     "lucide-react": "1.7.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
