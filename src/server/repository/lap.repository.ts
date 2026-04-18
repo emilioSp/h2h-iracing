@@ -29,7 +29,10 @@ export const updateLapTimeTracking = async (
 
     const samples = lapTimeSamples.get(carIdx) ?? [];
     samples.push({ lapNumber: lapCompleted, lapTime });
-    if (samples.length > LAP_TIME_SAMPLE_WINDOW) samples.shift();
+
+    if (samples.length > LAP_TIME_SAMPLE_WINDOW) {
+      samples.shift();
+    }
     lapTimeSamples.set(carIdx, samples);
   }
 
@@ -38,7 +41,10 @@ export const updateLapTimeTracking = async (
 
 export const getMedianLapTime = (carIdx: number): number | null => {
   const samples = lapTimeSamples.get(carIdx);
-  if (!samples || samples.length < LAP_TIME_SAMPLE_WINDOW) return null;
+
+  if (!samples || samples.length < LAP_TIME_SAMPLE_WINDOW) {
+    return null;
+  }
 
   const sorted = [...samples].sort((a, b) => a.lapTime - b.lapTime);
   const mid = Math.floor(sorted.length / 2);

@@ -21,7 +21,7 @@ export const updateFuelTracking = (
     fuelAtLapStart: fuelLevel,
   });
 
-  if (fuelSamples.length > FUEL_SAMPLE_WINDOW + 1) {
+  if (fuelSamples.length > FUEL_SAMPLE_WINDOW) {
     fuelSamples.shift();
   }
 };

@@ -87,6 +87,7 @@ export const computeFuel = async (): Promise<FuelRefill | null> => {
   //
   // Let lapDistance = estimatedDurationRaceEnd / playerMedianLapTime
   // Correct lapsRemaining = ceil(playerLapDistPct + lapDistance) - playerLapDistPct
+  // LapsRemaining is intentionally fractional: it's the lap-distance the player still has to cover, used directly by the fuel calculation.
   const lapsRemaining =
     estimatedDurationRaceEnd === null || playerMedianLapTime === null
       ? null
@@ -100,7 +101,8 @@ export const computeFuel = async (): Promise<FuelRefill | null> => {
   return {
     ...computeFuelRefill(fuelLevel, medianFuelPerLap, lapsRemaining),
     estimatedDurationRaceEnd,
-    lapsRemaining,
+    lapsRemaining:
+      lapsRemaining === null ? null : parseFloat(lapsRemaining.toFixed(2)),
     medianFuelPerLap,
     fuelLevel,
     fuelLastLap,
