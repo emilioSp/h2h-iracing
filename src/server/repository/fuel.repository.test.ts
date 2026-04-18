@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import {
+  getFuelSamples,
   getLastLapFuelDelta,
   getMedianFuelPerLap,
   resetFuelTracking,
@@ -52,6 +53,27 @@ describe('getMedianFuelPerLap', () => {
     tick(4, 42); // delta 2
     tick(5, 32); // delta 10 (outlier)
     expect(getMedianFuelPerLap()).toBe(2);
+  });
+});
+
+describe('getFuelSamples', () => {
+  it('returns empty array initially', () => {
+    expect(getFuelSamples()).toEqual([]);
+  });
+
+  it('returns current samples after tracking', () => {
+    tick(0, 50);
+    tick(1, 48);
+    expect(getFuelSamples()).toEqual([
+      { lapNumber: 0, fuelAtLapStart: 50 },
+      { lapNumber: 1, fuelAtLapStart: 48 },
+    ]);
+  });
+
+  it('clears after reset', () => {
+    tick(0, 50);
+    resetFuelTracking();
+    expect(getFuelSamples()).toEqual([]);
   });
 });
 

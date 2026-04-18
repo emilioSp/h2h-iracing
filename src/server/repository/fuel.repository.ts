@@ -1,6 +1,6 @@
 export const FUEL_SAMPLE_WINDOW = 5;
 
-type FuelSample = {
+export type FuelSample = {
   lapNumber: number;
   fuelAtLapStart: number;
 };
@@ -25,6 +25,8 @@ export const updateFuelTracking = (
     fuelSamples.shift();
   }
 };
+
+export const getFuelSamples = (): readonly FuelSample[] => fuelSamples;
 
 export const resetFuelTracking = () => {
   fuelSamples = [];
