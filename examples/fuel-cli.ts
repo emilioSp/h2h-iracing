@@ -1,12 +1,12 @@
 import { setTimeout } from 'node:timers/promises';
 import config from '#config';
-import { computeFuel } from '#dashboard/fuel.dashboard.ts';
+import { computeFuel, type FuelDebug } from '#dashboard/fuel.dashboard.ts';
 import {
   type FuelSample,
   getFuelSamples,
 } from '#repository/fuel.repository.ts';
 import { isIRacingConnected } from '#repository/irsdk.repository.ts';
-import type { FuelRefill } from '#schema/fuel.schema.ts';
+import { getLapTimeSamples } from '#repository/lap.repository.ts';
 import { tick } from '#server/tick.ts';
 
 const formatTime = (s: number): string => {
@@ -28,9 +28,16 @@ const row = (label: string, value: string) =>
 export const formatFuel = (n: number | null): string =>
   n === null ? '--' : `${n.toFixed(2)} L`;
 
+const formatLapTime = (s: number): string => {
+  const m = Math.floor(s / 60);
+  const sec = (s % 60).toFixed(3);
+  return `${m}:${sec.padStart(6, '0')}`;
+};
+
 export const printFuel = (
-  fuel: FuelRefill | null,
+  fuel: FuelDebug | null,
   samples: readonly FuelSample[],
+  lapTimeSamples: ReadonlyMap<number, readonly { lapNumber: number; lapTime: number }[]>,
 ): void => {
   console.clear();
 
@@ -59,6 +66,10 @@ export const printFuel = (
       : formatTime(fuel.estimatedDurationRaceEnd),
   );
   row('Last Lap #    : ', String(fuel.lastLapNumber));
+  row(
+    'Leader Car    : ',
+    fuel.leaderCarIdx === null ? '--' : String(fuel.leaderCarIdx),
+  );
   console.log(`╠${LINE}╣`);
   console.log(
     `║  ${pad(`INTERNAL STATE — fuel samples (window=${samples.length})`, W)}║`,
@@ -83,6 +94,23 @@ export const printFuel = (
     }
   }
 
+  console.log(`╠${LINE}╣`);
+  console.log(
+    `║  ${pad(`INTERNAL STATE — lap time samples (${lapTimeSamples.size} cars)`, W)}║`,
+  );
+  console.log(`╠${LINE}╣`);
+
+  if (lapTimeSamples.size === 0) {
+    console.log(`║    ${pad('no samples yet', W - 2)}║`);
+  } else {
+    for (const [carIdx, carSamples] of lapTimeSamples) {
+      row(`Car ${String(carIdx).padStart(2)}`, '');
+      for (const s of carSamples) {
+        row(`  Lap ${String(s.lapNumber).padStart(3)}  `, formatLapTime(s.lapTime));
+      }
+    }
+  }
+
   console.log(`╚${LINE}╝`);
 };
 
@@ -94,7 +122,7 @@ while (true) {
   const fuel = await computeFuel();
   const samples = getFuelSamples();
 
-  printFuel(fuel, samples);
+  printFuel(fuel, samples, getLapTimeSamples());
 
   if (config.DATA_MODE === 'mock') break;
   await setTimeout(config.POLL_INTERVAL_MS);

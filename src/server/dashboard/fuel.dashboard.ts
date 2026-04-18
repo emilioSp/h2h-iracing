@@ -24,7 +24,9 @@ import {
   getOverallLeaderCarIdx,
 } from '#service/fuel.service.ts';
 
-export const computeFuel = async (): Promise<FuelRefill | null> => {
+export type FuelDebug = FuelRefill & { leaderCarIdx: number | null };
+
+export const computeFuel = async (): Promise<FuelDebug | null> => {
   const playerCarIdx = await getPlayerCarIdx();
   if (playerCarIdx < 0) return null;
 
@@ -64,6 +66,7 @@ export const computeFuel = async (): Promise<FuelRefill | null> => {
       fuelLevel,
       lastLapNumber: playerLastLapNumber,
       estimatedDurationRaceEnd: null,
+      leaderCarIdx: null,
     };
   }
 
@@ -107,5 +110,6 @@ export const computeFuel = async (): Promise<FuelRefill | null> => {
     fuelLevel,
     fuelLastLap,
     lastLapNumber: playerLastLapNumber,
+    leaderCarIdx,
   };
 };

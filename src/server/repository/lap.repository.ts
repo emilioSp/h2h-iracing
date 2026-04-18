@@ -54,6 +54,9 @@ export const getMedianLapTime = (carIdx: number): number | null => {
     : sorted[mid].lapTime;
 };
 
+export const getLapTimeSamples = (): ReadonlyMap<number, readonly { lapNumber: number; lapTime: number }[]> =>
+  lapTimeSamples;
+
 export const resetLapTimeTracking = () => {
   lapTimeSamples = new Map();
   prevLapCompleted = [];
