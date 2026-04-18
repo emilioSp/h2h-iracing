@@ -1,42 +1,15 @@
 import {
   getPlayerCarIdx,
-  getSessionNum,
   getSessionTime,
-  getTrackLengthMeters,
 } from '#repository/irsdk.repository.ts';
-import { resetReferenceLaps } from '#repository/reference-lap.repository.ts';
-import { getSessionType } from '#repository/session-info.repository.ts';
+import { isRaceSession } from '#repository/session-info.repository.ts';
 import type { Car } from '#schema/car.schema.ts';
 import type { Head2Head } from '#schema/head2head.schema.ts';
 import { computeCar } from '#service/car.service.ts';
 import * as DeltaService from '#service/delta.service.ts';
 import * as GapService from '#service/gap.service.ts';
-import {
-  initReferenceInterval,
-  updateReferenceLaps,
-} from '#service/reference-lap.service.ts';
+import { updateReferenceLaps } from '#service/reference-lap.service.ts';
 import { getStandings, type Standing } from '#service/standings.service.ts';
-
-let previousSessionNum = -1;
-
-const initTrackLengthMeters = async (): Promise<void> => {
-  const trackLength = await getTrackLengthMeters();
-  initReferenceInterval(trackLength);
-};
-
-const initReferenceLapsModule = async () => {
-  const currentSessionNum = await getSessionNum();
-  if (currentSessionNum !== previousSessionNum) {
-    resetReferenceLaps();
-    await initTrackLengthMeters();
-    previousSessionNum = currentSessionNum;
-  }
-};
-
-const isRaceSession = (): boolean => {
-  const sessionType = getSessionType();
-  return sessionType.toLowerCase() === 'race';
-};
 
 const getGapAndDelta = async (
   player: Car,
@@ -81,8 +54,6 @@ const computeAheadAndBehindCar = async (
 };
 
 export const computeHead2Head = async (): Promise<Head2Head | null> => {
-  await initReferenceLapsModule();
-
   const isRace = isRaceSession();
   if (isRace) {
     await updateReferenceLaps();
@@ -130,9 +101,4 @@ export const computeHead2Head = async (): Promise<Head2Head | null> => {
     deltaAhead: delta.deltaAhead,
     deltaBehind: delta.deltaBehind,
   };
-};
-
-export const cleanUpHead2Head = async (): Promise<void> => {
-  resetReferenceLaps();
-  previousSessionNum = -1;
 };

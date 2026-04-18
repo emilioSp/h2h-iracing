@@ -46,10 +46,15 @@ export const getPlayerCarIdx = withConnect(
   (): number => ir?.get(VARS.PLAYER_CAR_IDX)[0] ?? -1,
 );
 
-export const getLastLapTime = withConnect((carIdx: number): number => {
-  const lapTime = ir?.get(VARS.CAR_IDX_LAST_LAP_TIME)[carIdx];
-  return lapTime;
-});
+export const getLastLapTime = withConnect(
+  (carIdx?: number): number | number[] => {
+    const lapTimes: number[] = ir?.get(VARS.CAR_IDX_LAST_LAP_TIME) as number[];
+    return carIdx === undefined ? lapTimes : lapTimes[carIdx];
+  },
+) as {
+  (): Promise<number[]>;
+  (carIdx: number): Promise<number>;
+};
 
 export const getBestLapTime = withConnect((carIdx: number): number => {
   const bestLapTime = ir?.get(VARS.CAR_IDX_BEST_LAP_TIME)[carIdx];
@@ -82,6 +87,10 @@ export const getRawDrivers = withConnect(
 
 export const getClassPositions = withConnect(
   (): number[] => ir?.get(VARS.CAR_IDX_CLASS_POSITION) ?? [],
+);
+
+export const getOverallPositions = withConnect(
+  (): number[] => ir?.get(VARS.CAR_IDX_POSITION) ?? [],
 );
 
 export const getCurrentSessionInfo = withConnect((): Session | null => {
@@ -173,4 +182,12 @@ export const getBrakeBias = withConnect(
 
 export const getIsPitSpeedLimiterActive = withConnect(
   (): boolean => ir?.get(VARS.DC_PIT_SPEED_LIMITER_TOGGLE)[0] ?? false,
+);
+
+export const getFuelLevel = withConnect(
+  (): number => ir?.get(VARS.FUEL_LEVEL)[0] ?? 0,
+);
+
+export const getSessionTimeRemain = withConnect(
+  (): number => ir?.get(VARS.SESSION_TIME_REMAIN)[0] ?? 0,
 );

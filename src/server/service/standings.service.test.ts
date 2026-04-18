@@ -7,10 +7,10 @@ vi.mock('#repository/irsdk.repository.ts', () => ({
 }));
 
 vi.mock('#repository/driver.repository.ts', () => ({
-  getCarIdxs: vi.fn(),
+  getPlayerClassCarIdx: vi.fn(),
 }));
 
-import { getCarIdxs } from '#repository/driver.repository.ts';
+import { getPlayerClassCarIdx } from '#repository/driver.repository.ts';
 import {
   getClassPositions,
   getLapDistPct,
@@ -25,7 +25,7 @@ import {
 const mockGetLapDistPct = vi.mocked(getLapDistPct);
 const mockGetLapsCompleted = vi.mocked(getLapsCompleted);
 const mockGetClassPositions = vi.mocked(getClassPositions);
-const mockGetCarIdxs = vi.mocked(getCarIdxs);
+const mockGetCarIdxs = vi.mocked(getPlayerClassCarIdx);
 
 beforeEach(() => {
   vi.clearAllMocks();

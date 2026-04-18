@@ -1,4 +1,4 @@
-import { getCarIdxs } from '#repository/driver.repository.ts';
+import { getPlayerClassCarIdx } from '#repository/driver.repository.ts';
 import {
   getClassPositions,
   getLapDistPct,
@@ -9,7 +9,7 @@ import { getSessionLapsCompleted } from '#repository/session-info.repository.ts'
 export type Standing = { pos: number; carIdx: number };
 
 export const getRaceStandings = async (): Promise<Standing[]> => {
-  const carIdxs = await getCarIdxs();
+  const carIdxs = await getPlayerClassCarIdx();
   const lapDistPct = await getLapDistPct();
   const lapsCompleted = await getLapsCompleted();
 
@@ -33,7 +33,7 @@ export const getRaceStandings = async (): Promise<Standing[]> => {
 };
 
 export const getSessionStandings = async (): Promise<Standing[]> => {
-  const carIdxs = await getCarIdxs();
+  const carIdxs = await getPlayerClassCarIdx();
   const classPositions = await getClassPositions();
 
   return carIdxs

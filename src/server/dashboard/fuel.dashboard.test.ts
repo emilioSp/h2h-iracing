@@ -1,0 +1,83 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { computeFuel } from '#dashboard/fuel.dashboard.ts';
+import { FUEL_SAMPLE_WINDOW } from '#repository/fuel.repository.ts';
+import * as iracingRepository from '#repository/irsdk.repository.ts';
+import * as sessionInfoRepository from '#repository/session-info.repository.ts';
+import { resetInMemoryStorage, tick } from '#server/tick.ts';
+
+beforeEach(async () => {
+  vi.restoreAllMocks();
+  await tick();
+  resetInMemoryStorage();
+  vi.spyOn(sessionInfoRepository, 'isRaceSession').mockReturnValue(true);
+});
+
+describe('computeFuel — race session', () => {
+  it('returns partial result before enough samples accumulate', async () => {
+    const result = await computeFuel();
+    expect(result).not.toBeNull();
+    expect(result?.fuelRefillNoMarginLap).toBeNull();
+    expect(result?.fuelRefillForHalfMarginLap).toBeNull();
+    expect(result?.fuelRefillFor1MarginLap).toBeNull();
+  });
+
+  it('returns values once samples accumulate and preserves ordering', async () => {
+    let lap = 0;
+    vi.spyOn(iracingRepository, 'getPlayerCarIdx').mockResolvedValue(0);
+    vi.spyOn(iracingRepository, 'getLapsCompleted').mockImplementation(
+      async () => {
+        const arr = Array(64).fill(lap);
+        lap++;
+        return arr;
+      },
+    );
+    vi.spyOn(iracingRepository, 'getFuelLevel').mockImplementation(
+      async () => 50 - lap * 2,
+    );
+    vi.spyOn(iracingRepository, 'getSessionTimeRemain').mockResolvedValue(
+      14_400,
+    ); // 4 hours
+    vi.spyOn(iracingRepository, 'getOverallPositions').mockResolvedValue([
+      1,
+      ...Array(63).fill(0),
+    ]);
+    vi.spyOn(iracingRepository, 'getLapDistPct').mockResolvedValue(
+      Array(64).fill(0.5),
+    );
+    // biome-ignore lint/suspicious/noExplicitAny: overloaded spy requires any to accept number[]
+    (vi.spyOn(iracingRepository, 'getLastLapTime') as any).mockResolvedValue(
+      Array(64).fill(90),
+    );
+
+    // Calls 1–>(FUEL_SAMPLE_WINDOW - 1): fewer than (FUEL_SAMPLE_WINDOW - 1) samples → medians still null → refill null
+    for (let i = 0; i < FUEL_SAMPLE_WINDOW - 1; i++) {
+      const result = await computeFuel();
+      expect(result?.fuelRefillNoMarginLap).toBeNull();
+    }
+
+    // Call FUEL_SAMPLE_WINDOW: FUEL_SAMPLE_WINDOW fuel samples + FUEL_SAMPLE_WINDOW lap time samples → values available
+    const result = await computeFuel();
+    expect(result?.fuelRefillNoMarginLap).toBe(283);
+    expect(result?.fuelRefillForHalfMarginLap).toBe(284);
+    expect(result?.fuelRefillFor1MarginLap).toBe(285);
+  });
+});
+
+describe('computeFuel — non-race session', () => {
+  it('returns partial result with null refills', async () => {
+    vi.spyOn(sessionInfoRepository, 'isRaceSession').mockReturnValue(false);
+    const result = await computeFuel();
+    expect(result).not.toBeNull();
+    expect(result?.fuelRefillNoMarginLap).toBeNull();
+    expect(result?.fuelRefillForHalfMarginLap).toBeNull();
+    expect(result?.fuelRefillFor1MarginLap).toBeNull();
+  });
+});
+
+describe('computeFuel — no player', () => {
+  it('returns null when playerCarIdx < 0', async () => {
+    vi.spyOn(iracingRepository, 'getPlayerCarIdx').mockResolvedValue(-1);
+    const result = await computeFuel();
+    expect(result).toBeNull();
+  });
+});
