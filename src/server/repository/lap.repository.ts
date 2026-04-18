@@ -33,6 +33,7 @@ export const updateLapTimeTracking = async (
     if (samples.length > LAP_TIME_SAMPLE_WINDOW) {
       samples.shift();
     }
+
     lapTimeSamples.set(carIdx, samples);
   }
 
@@ -42,7 +43,7 @@ export const updateLapTimeTracking = async (
 export const getMedianLapTime = (carIdx: number): number | null => {
   const samples = lapTimeSamples.get(carIdx);
 
-  if (!samples || samples.length < LAP_TIME_SAMPLE_WINDOW) {
+  if (!samples || samples.length < 2) {
     return null;
   }
 

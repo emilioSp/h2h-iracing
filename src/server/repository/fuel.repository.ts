@@ -34,7 +34,7 @@ export const resetFuelTracking = () => {
 };
 
 export const getMedianFuelPerLap = (): number | null => {
-  if (fuelSamples.length < FUEL_SAMPLE_WINDOW) return null;
+  if (fuelSamples.length < 2) return null;
 
   const fuelDeltas: number[] = [];
   for (let i = 0; i < fuelSamples.length - 1; i++) {
