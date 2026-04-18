@@ -19,13 +19,8 @@ export const updateLapTimeTracking = async (
     const lapCompleted = lapsCompleted[carIdx];
     const lapTime = lastLapTimes[carIdx];
 
-    if (
-      prevLapCompleted[carIdx] === lapsCompleted[carIdx] ||
-      !Number.isFinite(lapTime) ||
-      lapTime <= 0
-    ) {
-      continue;
-    }
+    if (prevLapCompleted[carIdx] === lapCompleted) continue;
+    if (!Number.isFinite(lapTime) || lapTime <= 0) continue;
 
     const samples = lapTimeSamples.get(carIdx) ?? [];
     samples.push({ lapNumber: lapCompleted, lapTime });
@@ -33,11 +28,10 @@ export const updateLapTimeTracking = async (
     if (samples.length > LAP_TIME_SAMPLE_WINDOW) {
       samples.shift();
     }
-
     lapTimeSamples.set(carIdx, samples);
-  }
 
-  prevLapCompleted = [...lapsCompleted];
+    prevLapCompleted[carIdx] = lapCompleted;
+  }
 };
 
 export const getMedianLapTime = (carIdx: number): number | null => {
@@ -54,8 +48,10 @@ export const getMedianLapTime = (carIdx: number): number | null => {
     : sorted[mid].lapTime;
 };
 
-export const getLapTimeSamples = (): ReadonlyMap<number, readonly { lapNumber: number; lapTime: number }[]> =>
-  lapTimeSamples;
+export const getLapTimeSamples = (): ReadonlyMap<
+  number,
+  readonly { lapNumber: number; lapTime: number }[]
+> => lapTimeSamples;
 
 export const resetLapTimeTracking = () => {
   lapTimeSamples = new Map();
