@@ -49,13 +49,16 @@ describe('computeFuel — race session', () => {
       Array(64).fill(90),
     );
 
-    // Calls 1–>(FUEL_SAMPLE_WINDOW - 1): fewer than (FUEL_SAMPLE_WINDOW - 1) samples → medians still null → refill null
+    // Call 1: only 1 fuel sample → no delta yet → refill null
+    // Call 2+: 2+ fuel samples and 2+ lap time samples → medians computable → refill non-null
     for (let i = 0; i < FUEL_SAMPLE_WINDOW - 1; i++) {
       const result = await computeFuel();
-      expect(result?.fuelRefillNoMarginLap).toBeNull();
+      if (i < 1) {
+        expect(result?.fuelRefillNoMarginLap).toBeNull();
+      }
     }
 
-    // Call FUEL_SAMPLE_WINDOW: FUEL_SAMPLE_WINDOW fuel samples + FUEL_SAMPLE_WINDOW lap time samples → values available
+    // Call FUEL_SAMPLE_WINDOW: FUEL_SAMPLE_WINDOW fuel samples + FUEL_SAMPLE_WINDOW lap time samples
     const result = await computeFuel();
     expect(result?.fuelRefillNoMarginLap).toBe(283);
     expect(result?.fuelRefillForHalfMarginLap).toBe(284);

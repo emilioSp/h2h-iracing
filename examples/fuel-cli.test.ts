@@ -11,7 +11,7 @@ const makeFuel = (overrides: Partial<FuelRefill> = {}): FuelRefill => ({
   fuelRefillNoMarginLap: 2.84,
   fuelRefillForHalfMarginLap: 4.33,
   fuelRefillFor1MarginLap: 5.82,
-  estimatedDurationRaceEnd: 1525,
+  estimatedTimeRemaining: 1525,
   lastLapNumber: 12,
   ...overrides,
 });

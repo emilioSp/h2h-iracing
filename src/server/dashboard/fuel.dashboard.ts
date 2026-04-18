@@ -63,7 +63,8 @@ export const computeFuel = async (): Promise<FuelRefill | null> => {
       fuelLastLap: null,
       fuelLevel,
       lastLapNumber: playerLastLapNumber,
-      estimatedDurationRaceEnd: null,
+      estimatedTimeRemaining: null,
+      timeRemaining,
     };
   }
 
@@ -71,7 +72,7 @@ export const computeFuel = async (): Promise<FuelRefill | null> => {
   const playerMedianLapTime = getMedianLapTime(playerCarIdx);
   const medianFuelPerLap = getMedianFuelPerLap();
 
-  const estimatedDurationRaceEnd =
+  const estimatedTimeRemaining =
     leaderMedianLapTime === null
       ? null
       : computeEstimatedDurationRaceEnd(
@@ -82,30 +83,31 @@ export const computeFuel = async (): Promise<FuelRefill | null> => {
 
   // lapsRemaining accounts for the player's current lap progress: the player's
   // checkered is on their next S/F crossing AFTER the leader takes checkered,
-  // so the naive `estimatedDurationRaceEnd / playerMedianLapTime` understates
+  // so the naive `estimatedTimeRemaining / playerMedianLapTime` understates
   // the lap-distance the player actually covers.
   //
-  // Let lapDistance = estimatedDurationRaceEnd / playerMedianLapTime
+  // Let lapDistance = estimatedTimeRemaining / playerMedianLapTime
   // Correct lapsRemaining = ceil(playerLapDistPct + lapDistance) - playerLapDistPct
   // LapsRemaining is intentionally fractional: it's the lap-distance the player still has to cover, used directly by the fuel calculation.
   const lapsRemaining =
-    estimatedDurationRaceEnd === null || playerMedianLapTime === null
+    estimatedTimeRemaining === null || playerMedianLapTime === null
       ? null
       : Math.ceil(
           lapDistPct[playerCarIdx] +
-            estimatedDurationRaceEnd / playerMedianLapTime,
+            estimatedTimeRemaining / playerMedianLapTime,
         ) - lapDistPct[playerCarIdx];
 
   const fuelLastLap = getLastLapFuelDelta();
 
   return {
     ...computeFuelRefill(fuelLevel, medianFuelPerLap, lapsRemaining),
-    estimatedDurationRaceEnd,
+    estimatedTimeRemaining,
     lapsRemaining:
       lapsRemaining === null ? null : parseFloat(lapsRemaining.toFixed(2)),
     medianFuelPerLap,
     fuelLevel,
     fuelLastLap,
     lastLapNumber: playerLastLapNumber,
+    timeRemaining,
   };
 };

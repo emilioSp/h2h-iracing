@@ -53,10 +53,14 @@ export const printFuel = (
   row('Refill (+0.5) : ', formatFuel(fuel.fuelRefillForHalfMarginLap));
   row('Refill (+1)   : ', formatFuel(fuel.fuelRefillFor1MarginLap));
   row(
+    'Time Remaining: ',
+    fuel.timeRemaining === null ? '--' : formatTime(fuel.timeRemaining),
+  );
+  row(
     'Race End ETA  : ',
-    fuel.estimatedDurationRaceEnd === null
+    fuel.estimatedTimeRemaining === null
       ? '--'
-      : formatTime(fuel.estimatedDurationRaceEnd),
+      : formatTime(fuel.estimatedTimeRemaining),
   );
   row('Last Lap #    : ', String(fuel.lastLapNumber));
   console.log(`╠${LINE}╣`);
