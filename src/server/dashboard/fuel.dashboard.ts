@@ -35,6 +35,31 @@ const getLeaderCarIdx = (positions: number[], playerCarIdx: number): number => {
   return playerCarIdx;
 };
 
+const computeLapsRemaining = (
+  estimatedTimeRemaining: number | null,
+  playerMedianLapTime: number | null,
+  playerLapDistPct: number,
+): number | null => {
+  // lapsRemaining accounts for the player's current lap progress: the player's
+  // checkered is on their next S/F crossing AFTER the leader takes checkered,
+  // so the naive `estimatedTimeRemaining / playerMedianLapTime` understates
+  // the lap-distance the player actually covers.
+  //
+  // Let lapDistance = estimatedTimeRemaining / playerMedianLapTime
+  // Correct lapsRemaining = ceil(playerLapDistPct + lapDistance) - playerLapDistPct
+  // LapsRemaining is intentionally fractional: it's the lap-distance the player still has to cover, used directly by the fuel calculation.
+  if (estimatedTimeRemaining === null || playerMedianLapTime === null) {
+    return null;
+  }
+  const lapsRemaining =
+    estimatedTimeRemaining === null || playerMedianLapTime === null
+      ? null
+      : Math.ceil(
+          playerLapDistPct + estimatedTimeRemaining / playerMedianLapTime,
+        ) - playerLapDistPct;
+  return lapsRemaining;
+};
+
 export const computeFuel = async (): Promise<FuelRefill | null> => {
   const playerCarIdx = await getPlayerCarIdx();
   if (playerCarIdx < 0) return null;
@@ -75,32 +100,20 @@ export const computeFuel = async (): Promise<FuelRefill | null> => {
     leaderMedianLapTime,
     playerMedianLapTime,
     lapDistPct[leaderCarIdx],
-    lapDistPct[playerCarIdx],
   );
 
-  // lapsRemaining accounts for the player's current lap progress: the player's
-  // checkered is on their next S/F crossing AFTER the leader takes checkered,
-  // so the naive `estimatedTimeRemaining / playerMedianLapTime` understates
-  // the lap-distance the player actually covers.
-  //
-  // Let lapDistance = estimatedTimeRemaining / playerMedianLapTime
-  // Correct lapsRemaining = ceil(playerLapDistPct + lapDistance) - playerLapDistPct
-  // LapsRemaining is intentionally fractional: it's the lap-distance the player still has to cover, used directly by the fuel calculation.
-  const lapsRemaining =
-    estimatedTimeRemaining === null || playerMedianLapTime === null
-      ? null
-      : Math.ceil(
-          lapDistPct[playerCarIdx] +
-            estimatedTimeRemaining / playerMedianLapTime,
-        ) - lapDistPct[playerCarIdx];
+  const lapsRemaining = computeLapsRemaining(
+    estimatedTimeRemaining,
+    playerMedianLapTime,
+    lapDistPct[playerCarIdx],
+  );
 
   const fuelLastLap = getLastLapFuelDelta();
 
   return {
     ...computeFuelRefill(fuelLevel, medianFuelPerLap, lapsRemaining),
     estimatedTimeRemaining,
-    lapsRemaining:
-      lapsRemaining === null ? null : parseFloat(lapsRemaining.toFixed(2)),
+    lapsRemaining,
     medianFuelPerLap,
     fuelLevel,
     fuelLastLap,

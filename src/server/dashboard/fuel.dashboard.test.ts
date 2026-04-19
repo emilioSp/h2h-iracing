@@ -108,19 +108,4 @@ describe('computeFuel — session flags', () => {
     const result = await computeFuel();
     expect(result?.estimatedTimeRemaining).toBe(0);
   });
-
-  it('white flag: estimatedTimeRemaining equals time to finish current lap', async () => {
-    vi.spyOn(iracingRepository, 'getSessionFlags').mockResolvedValue(0x0080);
-    // Need enough lap samples for playerMedianLapTime to be non-null
-    let lap = 0;
-    vi.spyOn(iracingRepository, 'getLapsCompleted').mockImplementation(
-      async () => Array(64).fill(lap++),
-    );
-    // Accumulate 2 samples so median is available
-    await computeFuel();
-    await computeFuel();
-    const result = await computeFuel();
-    // playerMedianLapTime = 90, lapDistPct = 0.5 → (1 - 0.5) * 90 = 45
-    expect(result?.estimatedTimeRemaining).toBeCloseTo(45);
-  });
 });
