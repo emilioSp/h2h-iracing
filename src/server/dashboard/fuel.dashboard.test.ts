@@ -60,9 +60,9 @@ describe('computeFuel — race session', () => {
 
     // Call FUEL_SAMPLE_WINDOW: FUEL_SAMPLE_WINDOW fuel samples + FUEL_SAMPLE_WINDOW lap time samples
     const result = await computeFuel();
-    expect(result?.fuelRefillNoMarginLap).toBe(283);
-    expect(result?.fuelRefillForHalfMarginLap).toBe(284);
-    expect(result?.fuelRefillFor1MarginLap).toBe(285);
+    expect(result?.fuelRefillNoMarginLap).toBe(281);
+    expect(result?.fuelRefillForHalfMarginLap).toBe(282);
+    expect(result?.fuelRefillFor1MarginLap).toBe(283);
   });
 });
 
