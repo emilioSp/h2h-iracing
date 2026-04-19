@@ -19,21 +19,21 @@ describe('computeEstimatedTimeRemaining', () => {
   const checkeredFlag = 0x0100;
 
   it('leader at distPct=0: rounds partial lap up to the next S/F crossing', () => {
-    expect(
-      computeEstimatedTimeRemaining(120, noFlag, 60, 60, 0),
-    ).toBeCloseTo(180);
+    expect(computeEstimatedTimeRemaining(120, noFlag, 60, 60, 0)).toBeCloseTo(
+      180,
+    );
   });
 
   it('timeRemaining=0 (timer already expired): race ends at next S/F', () => {
-    expect(
-      computeEstimatedTimeRemaining(0, noFlag, 60, 60, 0.5),
-    ).toBeCloseTo(30);
+    expect(computeEstimatedTimeRemaining(0, noFlag, 60, 60, 0.5)).toBeCloseTo(
+      30,
+    );
   });
 
   it('timeRemaining < timeToNextSF: race ends at current crossing', () => {
-    expect(
-      computeEstimatedTimeRemaining(30, noFlag, 60, 60, 0),
-    ).toBeCloseTo(60);
+    expect(computeEstimatedTimeRemaining(30, noFlag, 60, 60, 0)).toBeCloseTo(
+      60,
+    );
   });
 
   it('leader mid-lap with multiple laps remaining', () => {
@@ -43,9 +43,9 @@ describe('computeEstimatedTimeRemaining', () => {
   });
 
   it('checkered flag: returns 0 regardless of time remaining', () => {
-    expect(
-      computeEstimatedTimeRemaining(600, checkeredFlag, 60, 60, 0.5),
-    ).toBe(0);
+    expect(computeEstimatedTimeRemaining(600, checkeredFlag, 60, 60, 0.5)).toBe(
+      0,
+    );
   });
 
   it('null lap times: returns null', () => {
