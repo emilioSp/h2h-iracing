@@ -5,16 +5,28 @@ export const getOverallLeaderCarIdx = (positions: number[]): number | null => {
   return idx === -1 ? null : idx;
 };
 
-export const computeEstimatedDurationRaceEnd = (
+export const computeEstimatedTimeRemaining = (
   timeRemaining: number,
   leaderMedianLapTime: number,
   leaderLapDistPct: number,
 ): number => {
-  const leaderTimeToFinishLap = (1 - leaderLapDistPct) * leaderMedianLapTime;
+  const leaderTimeToFinishCurrentLap =
+    (1 - leaderLapDistPct) * leaderMedianLapTime;
 
-  return timeRemaining < leaderMedianLapTime
-    ? leaderTimeToFinishLap
-    : leaderTimeToFinishLap + timeRemaining;
+  // What will the official race clock read when the leader crosses the SF line?
+  const leaderTimeRemainingAtNextSFCrossing =
+    timeRemaining - leaderTimeToFinishCurrentLap;
+
+  let remainingLaps = 0;
+
+  // If timeRemainingAtNextCrossing < 0, time expires during the current lap.
+  // This means the current lap is the white flag lap, so 0 additional laps.
+  if (leaderTimeRemainingAtNextSFCrossing >= 0) {
+    remainingLaps =
+      Math.floor(leaderTimeRemainingAtNextSFCrossing / leaderMedianLapTime) + 1; // Add 1 is the white flag lap
+  }
+
+  return leaderTimeToFinishCurrentLap + remainingLaps * leaderMedianLapTime;
 };
 
 type FuelRefillFields = Pick<

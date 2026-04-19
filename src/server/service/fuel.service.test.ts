@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  computeEstimatedDurationRaceEnd,
+  computeEstimatedTimeRemaining,
   computeFuelRefill,
   getOverallLeaderCarIdx,
 } from '#service/fuel.service.ts';
@@ -14,21 +14,21 @@ describe('getOverallLeaderCarIdx', () => {
   });
 });
 
-describe('computeEstimatedDurationRaceEnd', () => {
+describe('computeEstimatedTimeRemaining', () => {
   it('leader at distPct=0: rounds partial lap up to the next S/F crossing', () => {
-    expect(computeEstimatedDurationRaceEnd(120, 60, 0)).toBeCloseTo(180);
+    expect(computeEstimatedTimeRemaining(120, 60, 0)).toBeCloseTo(180);
   });
 
   it('timeRemaining=0 (timer already expired): race ends at next S/F', () => {
-    expect(computeEstimatedDurationRaceEnd(0, 60, 0.5)).toBeCloseTo(30);
+    expect(computeEstimatedTimeRemaining(0, 60, 0.5)).toBeCloseTo(30);
   });
 
   it('timeRemaining < timeToNextSF: race ends at current crossing', () => {
-    expect(computeEstimatedDurationRaceEnd(30, 60, 0)).toBeCloseTo(60);
+    expect(computeEstimatedTimeRemaining(30, 60, 0)).toBeCloseTo(60);
   });
 
   it('leader mid-lap with multiple laps remaining', () => {
-    expect(computeEstimatedDurationRaceEnd(1140, 105, 0.5)).toBeCloseTo(1192.5);
+    expect(computeEstimatedTimeRemaining(1140, 105, 0.5)).toBeCloseTo(1207.5);
   });
 });
 

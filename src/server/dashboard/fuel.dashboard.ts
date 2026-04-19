@@ -19,10 +19,19 @@ import {
 import { isRaceSession } from '#repository/session-info.repository.ts';
 import type { FuelRefill } from '#schema/fuel.schema.ts';
 import {
-  computeEstimatedDurationRaceEnd,
+  computeEstimatedTimeRemaining,
   computeFuelRefill,
   getOverallLeaderCarIdx,
 } from '#service/fuel.service.ts';
+
+const getLeaderCarIdx = (positions: number[], playerCarIdx: number): number => {
+  if (isRaceSession()) {
+    const leaderCarIdx = getOverallLeaderCarIdx(positions);
+    return leaderCarIdx === null ? playerCarIdx : leaderCarIdx;
+  }
+
+  return playerCarIdx;
+};
 
 export const computeFuel = async (): Promise<FuelRefill | null> => {
   const playerCarIdx = await getPlayerCarIdx();
@@ -48,25 +57,7 @@ export const computeFuel = async (): Promise<FuelRefill | null> => {
   updateFuelTracking(fuelLevel, playerLastLapNumber);
   await updateLapTimeTracking(lapsCompleted, lastLapTimes);
 
-  const leaderCarIdx = isRaceSession()
-    ? getOverallLeaderCarIdx(positions)
-    : playerCarIdx;
-
-  // TODO: maybe we can fallback to playerCarIdx?
-  if (leaderCarIdx === null) {
-    return {
-      fuelRefillNoMarginLap: null,
-      fuelRefillForHalfMarginLap: null,
-      fuelRefillFor1MarginLap: null,
-      lapsRemaining: null,
-      medianFuelPerLap: null,
-      fuelLastLap: null,
-      fuelLevel,
-      lastLapNumber: playerLastLapNumber,
-      estimatedTimeRemaining: null,
-      timeRemaining,
-    };
-  }
+  const leaderCarIdx = getLeaderCarIdx(positions, playerCarIdx);
 
   const leaderMedianLapTime = getMedianLapTime(leaderCarIdx);
   const playerMedianLapTime = getMedianLapTime(playerCarIdx);
@@ -75,7 +66,7 @@ export const computeFuel = async (): Promise<FuelRefill | null> => {
   const estimatedTimeRemaining =
     leaderMedianLapTime === null
       ? null
-      : computeEstimatedDurationRaceEnd(
+      : computeEstimatedTimeRemaining(
           timeRemaining,
           leaderMedianLapTime,
           lapDistPct[leaderCarIdx],
