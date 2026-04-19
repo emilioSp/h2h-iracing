@@ -40,24 +40,17 @@ const computeLapsRemaining = (
   playerMedianLapTime: number | null,
   playerLapDistPct: number,
 ): number | null => {
-  // lapsRemaining accounts for the player's current lap progress: the player's
-  // checkered is on their next S/F crossing AFTER the leader takes checkered,
-  // so the naive `estimatedTimeRemaining / playerMedianLapTime` understates
-  // the lap-distance the player actually covers.
-  //
   // Let lapDistance = estimatedTimeRemaining / playerMedianLapTime
   // Correct lapsRemaining = ceil(playerLapDistPct + lapDistance) - playerLapDistPct
   // LapsRemaining is intentionally fractional: it's the lap-distance the player still has to cover, used directly by the fuel calculation.
   if (estimatedTimeRemaining === null || playerMedianLapTime === null) {
     return null;
   }
-  const lapsRemaining =
-    estimatedTimeRemaining === null || playerMedianLapTime === null
-      ? null
-      : Math.ceil(
-          playerLapDistPct + estimatedTimeRemaining / playerMedianLapTime,
-        ) - playerLapDistPct;
-  return lapsRemaining;
+
+  return (
+    Math.ceil(playerLapDistPct + estimatedTimeRemaining / playerMedianLapTime) -
+    playerLapDistPct
+  );
 };
 
 export const computeFuel = async (): Promise<FuelRefill | null> => {
