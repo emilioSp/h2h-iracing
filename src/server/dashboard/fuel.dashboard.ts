@@ -1,3 +1,4 @@
+import { getCarsIdx } from '#repository/driver.repository.ts';
 import {
   getLastLapFuelDelta,
   getMedianFuelPerLap,
@@ -38,6 +39,7 @@ export const computeFuel = async (): Promise<FuelRefill | null> => {
   if (playerCarIdx < 0) return null;
 
   const [
+    carsIdx,
     lapsCompleted,
     fuelLevel,
     lastLapTimes,
@@ -45,6 +47,7 @@ export const computeFuel = async (): Promise<FuelRefill | null> => {
     positions,
     timeRemaining,
   ] = await Promise.all([
+    getCarsIdx(),
     getLapsCompleted(),
     getFuelLevel(),
     getLastLapTime(),
@@ -55,7 +58,7 @@ export const computeFuel = async (): Promise<FuelRefill | null> => {
 
   const playerLastLapNumber = lapsCompleted[playerCarIdx];
   updateFuelTracking(fuelLevel, playerLastLapNumber);
-  await updateLapTimeTracking(lapsCompleted, lastLapTimes);
+  updateLapTimeTracking(carsIdx, lapsCompleted, lastLapTimes);
 
   const leaderCarIdx = getLeaderCarIdx(positions, playerCarIdx);
 
