@@ -9,7 +9,7 @@ const fmt1 = (v: number | null) => (v == null ? '--.-' : v.toFixed(1));
 const fmt2 = (v: number | null) => (v == null ? '--.--' : v.toFixed(2));
 
 const fmtTime = (secs: number | null): string => {
-  if (secs == null) return '--:--:--';
+  if (secs == null || secs < 0) return '--:--:--';
   const h = Math.floor(secs / 3600);
   const m = Math.floor((secs % 3600) / 60);
   const s = Math.floor(secs % 60);
@@ -77,12 +77,15 @@ const FuelConsumptionCell = ({
 );
 
 type LapsCellProps = {
-  done: number;
+  done: number | null;
   remaining: number | null;
 };
 
 const LapsCell = ({ done, remaining }: LapsCellProps) => {
-  const total = remaining != null ? done + remaining.toFixed(2) : null;
+  const total =
+    done != null && remaining != null
+      ? done + parseFloat(remaining.toFixed(2))
+      : null;
 
   return (
     <div className="grid place-items-center p-4 bg-card">
@@ -96,7 +99,7 @@ const LapsCell = ({ done, remaining }: LapsCellProps) => {
       </div>
       <div className="flex items-baseline">
         <span className="text-3xl font-black leading-none tabular-nums text-white">
-          {done}
+          {done != null ? done : '--'}
         </span>
         <span className="text-3xl text-white mx-1.5 leading-[1.6]">/</span>
         <span className="text-3xl font-black leading-none tabular-nums text-white">
@@ -200,7 +203,7 @@ export const App = () => {
           <div className="flex items-center gap-2 mb-1.5">
             <Clock size={22} className="text-white" />
             <span className="text-xl tracking-[3px] text-white uppercase">
-              Time Left
+              remaining
             </span>
           </div>
           <span className="text-4xl font-black tabular-nums tracking-[2px]">

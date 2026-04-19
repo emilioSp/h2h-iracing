@@ -110,7 +110,7 @@ export const computeFuel = async (): Promise<FuelRefill | null> => {
     medianFuelPerLap,
     fuelLevel,
     fuelLastLap,
-    lastLapNumber: playerLastLapNumber,
+    lastLapNumber: playerLastLapNumber === -1 ? null : playerLastLapNumber,
     timeRemaining,
   };
 };

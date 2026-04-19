@@ -9,7 +9,7 @@ export const fuelSchema = z.object({
   medianFuelPerLap: z.number().nullable(),
   fuelLastLap: z.number().nullable(),
   fuelLevel: z.number(),
-  lastLapNumber: z.number(),
+  lastLapNumber: z.number().nullable(),
   timeRemaining: z.number().nullable(),
 });
 
