@@ -17,6 +17,7 @@ app.get('/sse/car', carTelemetryRouter);
 app.get('/sse/fuel', fuelRouter);
 app.get('/h2h', serveStatic({ path: './dist/h2h-dashboard/index.html' }));
 app.get('/car', serveStatic({ path: './dist/car-dashboard/index.html' }));
+app.get('/fuel', serveStatic({ path: './dist/fuel-dashboard/index.html' }));
 app.use('/*', serveStatic({ root: './dist' }));
 
 const server = serve(
@@ -29,6 +30,9 @@ const server = serve(
       'Head to Head': { URL: `http://localhost:${info.port}/h2h-dashboard` },
       'Car Telemetry': { URL: `http://localhost:${info.port}/car-dashboard` },
       Weather: { URL: `http://localhost:${info.port}/weather-dashboard` },
+      'Fuel Calculator': {
+        URL: `http://localhost:${info.port}/fuel-dashboard`,
+      },
     });
 
     console.log(
