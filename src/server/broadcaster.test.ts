@@ -6,6 +6,7 @@ vi.mock('#dashboard/head2head.dashboard.ts', () => ({
 }));
 vi.mock('#server/tick.ts', () => ({
   tick: vi.fn(),
+  resetInMemoryStorage: vi.fn(),
 }));
 vi.mock('#dashboard/weather.dashboard.ts', () => ({
   computeWeather: vi.fn(),
@@ -30,6 +31,7 @@ import {
   removeClient,
   stopBroadcasting,
 } from '#server/broadcaster.ts';
+import * as tickService from '#server/tick.ts';
 
 const mockClient = () => ({
   write: vi.fn().mockResolvedValue(undefined),
@@ -128,22 +130,6 @@ describe('removeClient', () => {
     expect(client2.write).toHaveBeenCalledOnce();
     expect(client1.write).not.toHaveBeenCalled();
   });
-
-  it('calls h2h cleanup when the last h2h client disconnects', () => {
-    const client = mockClient();
-    addClient(dashboardType.H2H, client);
-    removeClient(dashboardType.H2H, client);
-
-    expect(h2hService.cleanUpHead2Head).toHaveBeenCalledOnce();
-  });
-
-  it('does not call h2h cleanup when non-h2h client disconnects', () => {
-    const client = mockClient();
-    addClient(dashboardType.WEATHER, client);
-    removeClient(dashboardType.WEATHER, client);
-
-    expect(h2hService.cleanUpHead2Head).not.toHaveBeenCalled();
-  });
 });
 
 describe('broadcast tick', () => {
@@ -155,7 +141,6 @@ describe('broadcast tick', () => {
     await vi.advanceTimersByTimeAsync(100);
 
     expect(client.write).not.toHaveBeenCalled();
-    expect(h2hService.cleanUpHead2Head).toHaveBeenCalledOnce();
   });
 
   it('stops polling when iRacing disconnects', async () => {
@@ -169,6 +154,8 @@ describe('broadcast tick', () => {
 
     await vi.advanceTimersByTimeAsync(100);
     expect(weatherService.computeWeather).not.toHaveBeenCalled();
+
+    expect(tickService.resetInMemoryStorage).toHaveBeenCalledOnce();
   });
 
   it('removes client and continues broadcasting when a write fails', async () => {
@@ -225,23 +212,6 @@ describe('stopPoller', () => {
 
     expect(weatherClient.close).toHaveBeenCalledOnce();
     expect(h2hClient.close).toHaveBeenCalledOnce();
-  });
-
-  it('calls h2h cleanup when h2h clients are registered', () => {
-    const client = mockClient();
-    addClient(dashboardType.H2H, client);
-
-    stopBroadcasting();
-
-    expect(h2hService.cleanUpHead2Head).toHaveBeenCalledOnce();
-  });
-
-  it('does not call h2h cleanup when no h2h clients are registered', () => {
-    const client = mockClient();
-    addClient(dashboardType.WEATHER, client);
-
-    stopBroadcasting();
-
-    expect(h2hService.cleanUpHead2Head).not.toHaveBeenCalled();
+    expect(tickService.resetInMemoryStorage).toHaveBeenCalledOnce();
   });
 });

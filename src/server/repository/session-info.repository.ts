@@ -32,8 +32,6 @@ export const refreshCurrentSessionInfo = async (): Promise<SessionInfo> => {
   return sessionInfo;
 };
 
-export const getSessionInfo = () => sessionInfo;
-
 export const getSessionLapsCompleted = (carIdx: number) =>
   sessionInfo.resultsPosition.get(carIdx)?.LapsComplete ?? -1;
 
@@ -44,3 +42,8 @@ export const getSessionBestTime = (carIdx: number) =>
   sessionInfo.resultsPosition.get(carIdx)?.FastestTime ?? -1;
 
 export const getSessionType = () => sessionInfo.sessionType;
+
+export const isRaceSession = (): boolean => {
+  const sessionType = getSessionType();
+  return sessionType.toLowerCase() === 'race';
+};

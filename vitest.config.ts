@@ -8,11 +8,7 @@ export default defineConfig({
       DATA_MODE: 'mock',
     },
     coverage: {
-      include: [
-        'src/server/**/*.ts',
-        'examples/**/*.ts',
-        'src/h2h-dashboard/src/**/*.ts',
-      ],
+      include: ['src/server/**/*.ts', 'src/h2h-dashboard/src/**/*.ts'],
       exclude: [
         'src/server/**/*.test.ts',
         'src/h2h-dashboard/src/**/*.test.ts',

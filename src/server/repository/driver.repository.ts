@@ -44,5 +44,12 @@ export const getDriverInfo = (carIdx: number): Driver | null =>
 export const getClassEstLapTime = (carIdx: number): number =>
   driverMap.get(carIdx)?.classEstLapTime ?? 0;
 
-export const getCarIdxs = async (): Promise<number[]> =>
+export const getPlayerClassCarIdx = async (): Promise<number[]> =>
   (await getFilteredRawDrivers()).map((d) => d.CarIdx);
+
+export const getCarsIdx = async (): Promise<number[]> => {
+  const rawDrivers = await getRawDrivers();
+  return rawDrivers
+    .filter((d) => d.CarIdx > -1 && !d.CarIsPaceCar)
+    .map((d) => d.CarIdx);
+};

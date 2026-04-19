@@ -7,7 +7,7 @@ vi.mock('#repository/irsdk.repository.ts', () => ({
 }));
 
 vi.mock('#repository/driver.repository.ts', () => ({
-  getCarIdxs: vi.fn(),
+  getPlayerClassCarIdx: vi.fn(),
 }));
 
 import {
@@ -29,7 +29,7 @@ vi.spyOn(referenceLapRepository, 'addRecentLap');
 vi.spyOn(referenceLapRepository, 'setActiveRefLap');
 vi.spyOn(referenceLapService, 'normalizeTrackPct');
 
-import { getCarIdxs } from '#repository/driver.repository.ts';
+import { getPlayerClassCarIdx } from '#repository/driver.repository.ts';
 import {
   getMinPointsForValidLap,
   getReferenceInterval,
@@ -44,7 +44,7 @@ const TEST_TRACK_LENGTH_METERS = 5000;
 const mockGetLapDistPct = vi.mocked(getLapDistPct);
 const mockGetSessionTime = vi.mocked(getSessionTime);
 const mockGetOnPitRoad = vi.mocked(getOnPitRoad);
-const mockGetCarIdxs = vi.mocked(getCarIdxs);
+const mockGetCarIdxs = vi.mocked(getPlayerClassCarIdx);
 
 const PAST_FINISH_LINE_PCT = 0.01;
 const DEFAULT_TRACK_PCT = 0.5;
