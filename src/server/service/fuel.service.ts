@@ -19,12 +19,11 @@ export const computeEstimatedDurationRaceEnd = (
     return leaderTimeToCompleteCurrentLap;
   }
 
-  const fullLeaderLapsUntilEnd = Math.ceil(
+  const leaderRemainingLaps = Math.ceil(
     leaderTimeRemaining / leaderMedianLapTime,
   );
   return (
-    leaderTimeToCompleteCurrentLap +
-    fullLeaderLapsUntilEnd * leaderMedianLapTime
+    leaderTimeToCompleteCurrentLap + leaderRemainingLaps * leaderMedianLapTime
   );
 };
 
