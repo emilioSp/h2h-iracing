@@ -84,7 +84,7 @@ type LapsCellProps = {
 const LapsCell = ({ done, remaining }: LapsCellProps) => {
   const total =
     done != null && remaining != null
-      ? done + parseFloat(remaining.toFixed(2))
+      ? (Number(done) + Number(remaining)).toFixed(2)
       : null;
 
   return (
