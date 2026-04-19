@@ -10,13 +10,11 @@ export const computeEstimatedDurationRaceEnd = (
   leaderMedianLapTime: number,
   leaderLapDistPct: number,
 ): number => {
-  const leaderCurrentLapRemaining = 1 - leaderLapDistPct;
-  if (timeRemaining < leaderMedianLapTime) {
-    return leaderCurrentLapRemaining * leaderMedianLapTime;
-  }
-  const leaderRemainingLaps =
-    leaderCurrentLapRemaining + timeRemaining / leaderMedianLapTime;
-  return leaderRemainingLaps * leaderMedianLapTime;
+  const leaderTimeToFinishLap = (1 - leaderLapDistPct) * leaderMedianLapTime;
+
+  return timeRemaining < leaderMedianLapTime
+    ? leaderTimeToFinishLap
+    : leaderTimeToFinishLap + timeRemaining;
 };
 
 type FuelRefillFields = Pick<
