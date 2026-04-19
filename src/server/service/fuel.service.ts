@@ -19,7 +19,7 @@ export const computeEstimatedTimeRemaining = (
 
   let remainingLaps = 0;
 
-  // If timeRemainingAtNextCrossing < 0, time expires during the current lap.
+  // If leaderTimeRemainingAtNextSFCrossing < 0, time expires during the current lap.
   // This means the current lap is the white flag lap, so 0 additional laps.
   if (leaderTimeRemainingAtNextSFCrossing >= 0) {
     remainingLaps =
