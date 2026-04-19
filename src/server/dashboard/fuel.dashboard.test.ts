@@ -10,6 +10,7 @@ beforeEach(async () => {
   await tick();
   resetInMemoryStorage();
   vi.spyOn(sessionInfoRepository, 'isRaceSession').mockReturnValue(true);
+  vi.spyOn(iracingRepository, 'getSessionFlags').mockResolvedValue(0);
 });
 
 describe('computeFuel — race session', () => {
@@ -82,5 +83,44 @@ describe('computeFuel — no player', () => {
     vi.spyOn(iracingRepository, 'getPlayerCarIdx').mockResolvedValue(-1);
     const result = await computeFuel();
     expect(result).toBeNull();
+  });
+});
+
+describe('computeFuel — session flags', () => {
+  beforeEach(() => {
+    vi.spyOn(iracingRepository, 'getPlayerCarIdx').mockResolvedValue(0);
+    vi.spyOn(iracingRepository, 'getLapDistPct').mockResolvedValue(
+      Array(64).fill(0.5),
+    );
+    vi.spyOn(iracingRepository, 'getSessionTimeRemain').mockResolvedValue(600);
+    vi.spyOn(iracingRepository, 'getOverallPositions').mockResolvedValue([
+      1,
+      ...Array(63).fill(0),
+    ]);
+    // biome-ignore lint/suspicious/noExplicitAny: overloaded spy requires any to accept number[]
+    (vi.spyOn(iracingRepository, 'getLastLapTime') as any).mockResolvedValue(
+      Array(64).fill(90),
+    );
+  });
+
+  it('checkered flag: estimatedTimeRemaining is 0', async () => {
+    vi.spyOn(iracingRepository, 'getSessionFlags').mockResolvedValue(0x0100);
+    const result = await computeFuel();
+    expect(result?.estimatedTimeRemaining).toBe(0);
+  });
+
+  it('white flag: estimatedTimeRemaining equals time to finish current lap', async () => {
+    vi.spyOn(iracingRepository, 'getSessionFlags').mockResolvedValue(0x0080);
+    // Need enough lap samples for playerMedianLapTime to be non-null
+    let lap = 0;
+    vi.spyOn(iracingRepository, 'getLapsCompleted').mockImplementation(
+      async () => Array(64).fill(lap++),
+    );
+    // Accumulate 2 samples so median is available
+    await computeFuel();
+    await computeFuel();
+    const result = await computeFuel();
+    // playerMedianLapTime = 90, lapDistPct = 0.5 → (1 - 0.5) * 90 = 45
+    expect(result?.estimatedTimeRemaining).toBeCloseTo(45);
   });
 });

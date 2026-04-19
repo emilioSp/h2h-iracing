@@ -191,3 +191,7 @@ export const getFuelLevel = withConnect(
 export const getSessionTimeRemain = withConnect(
   (): number => ir?.get(VARS.SESSION_TIME_REMAIN)[0] ?? 0,
 );
+
+export const getSessionFlags = withConnect(
+  (): number => ir?.get(VARS.SESSION_FLAGS)[0] ?? 0,
+);

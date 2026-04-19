@@ -1,5 +1,3 @@
-import { getCarsIdx } from '#repository/driver.repository.ts';
-
 export const LAP_TIME_SAMPLE_WINDOW = 5;
 
 type LapTimeSample = {

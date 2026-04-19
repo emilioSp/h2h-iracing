@@ -5,11 +5,25 @@ export const getOverallLeaderCarIdx = (positions: number[]): number | null => {
   return idx === -1 ? null : idx;
 };
 
+const SESSION_FLAG_WHITE = 0x0080;
+const SESSION_FLAG_CHECKERED = 0x0100;
+
 export const computeEstimatedTimeRemaining = (
   timeRemaining: number,
-  leaderMedianLapTime: number,
+  flags: number,
+  leaderMedianLapTime: number | null,
+  playerMedianLapTime: number | null,
   leaderLapDistPct: number,
+  playerLapDistPct: number,
 ): number => {
+  if (playerMedianLapTime === null || leaderMedianLapTime === null) return 0;
+
+  if ((flags & SESSION_FLAG_CHECKERED) !== 0) return 0;
+
+  if ((flags & SESSION_FLAG_WHITE) !== 0) {
+    return (1 - playerLapDistPct) * playerMedianLapTime;
+  }
+
   const leaderTimeToFinishCurrentLap =
     (1 - leaderLapDistPct) * leaderMedianLapTime;
 

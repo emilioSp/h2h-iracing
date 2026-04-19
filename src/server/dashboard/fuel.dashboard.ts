@@ -11,6 +11,7 @@ import {
   getLastLapTime,
   getOverallPositions,
   getPlayerCarIdx,
+  getSessionFlags,
   getSessionTimeRemain,
 } from '#repository/irsdk.repository.ts';
 import {
@@ -46,6 +47,7 @@ export const computeFuel = async (): Promise<FuelRefill | null> => {
     lapDistPct,
     positions,
     timeRemaining,
+    flags,
   ] = await Promise.all([
     getCarsIdx(),
     getLapsCompleted(),
@@ -54,6 +56,7 @@ export const computeFuel = async (): Promise<FuelRefill | null> => {
     getLapDistPct(),
     getOverallPositions(),
     getSessionTimeRemain(),
+    getSessionFlags(),
   ]);
 
   const playerLastLapNumber = lapsCompleted[playerCarIdx];
@@ -66,14 +69,14 @@ export const computeFuel = async (): Promise<FuelRefill | null> => {
   const playerMedianLapTime = getMedianLapTime(playerCarIdx);
   const medianFuelPerLap = getMedianFuelPerLap();
 
-  const estimatedTimeRemaining =
-    leaderMedianLapTime === null
-      ? null
-      : computeEstimatedTimeRemaining(
-          timeRemaining,
-          leaderMedianLapTime,
-          lapDistPct[leaderCarIdx],
-        );
+  const estimatedTimeRemaining = computeEstimatedTimeRemaining(
+    timeRemaining,
+    flags,
+    leaderMedianLapTime,
+    playerMedianLapTime,
+    lapDistPct[leaderCarIdx],
+    lapDistPct[playerCarIdx],
+  );
 
   // lapsRemaining accounts for the player's current lap progress: the player's
   // checkered is on their next S/F crossing AFTER the leader takes checkered,
