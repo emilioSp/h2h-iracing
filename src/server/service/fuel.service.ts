@@ -5,28 +5,18 @@ export const getOverallLeaderCarIdx = (positions: number[]): number | null => {
   return idx === -1 ? null : idx;
 };
 
-// NOTE: this function never returns 0. It assumes that when timeRemainingAtLeaderNextSF <= 0, the leader will complete at least one more lap after crossing the SF line, which is a reasonable assumption in most cases.
 export const computeEstimatedDurationRaceEnd = (
   timeRemaining: number,
   leaderMedianLapTime: number,
   leaderLapDistPct: number,
 ): number => {
-  const timeToLeaderNextSF = (1 - leaderLapDistPct) * leaderMedianLapTime;
-  const timeRemainingAtLeaderNextSF = timeRemaining - timeToLeaderNextSF;
-
-  if (timeRemainingAtLeaderNextSF <= 0) {
-    // white flag when the leader crosses the SF line. The next lap is the last
-    return timeToLeaderNextSF + leaderMedianLapTime;
+  const leaderCurrentLapRemaining = 1 - leaderLapDistPct;
+  if (timeRemaining < leaderMedianLapTime) {
+    return leaderCurrentLapRemaining * leaderMedianLapTime;
   }
-
-  const fullLeaderLapsUntilWhiteFlag = Math.ceil(
-    timeRemainingAtLeaderNextSF / leaderMedianLapTime,
-  );
-  return (
-    timeToLeaderNextSF +
-    fullLeaderLapsUntilWhiteFlag * leaderMedianLapTime +
-    leaderMedianLapTime
-  );
+  const leaderRemainingLaps =
+    leaderCurrentLapRemaining + timeRemaining / leaderMedianLapTime;
+  return leaderRemainingLaps * leaderMedianLapTime;
 };
 
 type FuelRefillFields = Pick<

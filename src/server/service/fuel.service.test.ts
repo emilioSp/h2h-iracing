@@ -15,20 +15,20 @@ describe('getOverallLeaderCarIdx', () => {
 });
 
 describe('computeEstimatedDurationRaceEnd', () => {
-  it('leader at distPct=0: timeToNextSF=lapTime, adds white-flag lap', () => {
-    // timeRemaining=120, lapTime=60, distPct=0 → timeToNextSF=60, timeAtNextSF=60
-    // fullLaps=ceil(60/60)=1 → 60 + 60 + 60 = 180
+  it('leader at distPct=0: rounds partial lap up to the next S/F crossing', () => {
     expect(computeEstimatedDurationRaceEnd(120, 60, 0)).toBeCloseTo(180);
   });
 
-  it('timeRemaining=0 (post-checkered): returns timeToNextSF + one lap', () => {
-    // distPct=0.5 → timeToNextSF=30, timeAtNextSF=-30 ≤ 0 → 30 + 60 = 90
-    expect(computeEstimatedDurationRaceEnd(0, 60, 0.5)).toBeCloseTo(90);
+  it('timeRemaining=0 (timer already expired): race ends at next S/F', () => {
+    expect(computeEstimatedDurationRaceEnd(0, 60, 0.5)).toBeCloseTo(30);
   });
 
-  it('timeRemaining < lapTime: one more lap after current crossing', () => {
-    // distPct=0 → timeToNextSF=60, timeAtNextSF=30-60=-30 ≤ 0 → 60 + 60 = 120
-    expect(computeEstimatedDurationRaceEnd(30, 60, 0)).toBeCloseTo(120);
+  it('timeRemaining < timeToNextSF: race ends at current crossing', () => {
+    expect(computeEstimatedDurationRaceEnd(30, 60, 0)).toBeCloseTo(60);
+  });
+
+  it('leader mid-lap with multiple laps remaining', () => {
+    expect(computeEstimatedDurationRaceEnd(1140, 105, 0.5)).toBeCloseTo(1192.5);
   });
 });
 
