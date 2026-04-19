@@ -104,7 +104,9 @@ describe('computeFuel — session flags', () => {
   });
 
   it('checkered flag: estimatedTimeRemaining is 0', async () => {
-    vi.spyOn(iracingRepository, 'getSessionFlags').mockResolvedValue(0x0100);
+    vi.spyOn(iracingRepository, 'getSessionFlags').mockResolvedValue(
+      0x00000001,
+    );
     const result = await computeFuel();
     expect(result?.estimatedTimeRemaining).toBe(0);
   });

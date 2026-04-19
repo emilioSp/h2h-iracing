@@ -5,7 +5,9 @@ export const getOverallLeaderCarIdx = (positions: number[]): number | null => {
   return idx === -1 ? null : idx;
 };
 
-const SESSION_FLAG_CHECKERED = 0x0100;
+const SESSION_FLAG_CHECKERED = 0x00000001;
+const isCheckeredFlag = (flags: number): boolean =>
+  (flags & SESSION_FLAG_CHECKERED) !== 0;
 
 export const computeEstimatedTimeRemaining = (
   timeRemaining: number,
@@ -14,7 +16,7 @@ export const computeEstimatedTimeRemaining = (
   playerMedianLapTime: number | null,
   leaderLapDistPct: number,
 ): number | null => {
-  if ((flags & SESSION_FLAG_CHECKERED) !== 0) return 0;
+  if (isCheckeredFlag(flags)) return 0;
   if (playerMedianLapTime === null || leaderMedianLapTime === null) return null;
 
   const leaderTimeToFinishCurrentLap =

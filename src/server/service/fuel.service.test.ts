@@ -16,7 +16,7 @@ describe('getOverallLeaderCarIdx', () => {
 
 describe('computeEstimatedTimeRemaining', () => {
   const noFlag = 0;
-  const checkeredFlag = 0x0100;
+  const checkeredFlag = 0x00000001;
 
   it('leader at distPct=0: rounds partial lap up to the next S/F crossing', () => {
     expect(computeEstimatedTimeRemaining(120, noFlag, 60, 60, 0)).toBeCloseTo(

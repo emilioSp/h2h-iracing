@@ -144,6 +144,10 @@ cpSync(
   join(SIMHUB_DASHIES_DIR, 'H2H-Weather_dashboard.simhubdash'),
   join(DIST_DIR, 'H2H-Weather_dashboard.simhubdash'),
 );
+cpSync(
+  join(SIMHUB_DASHIES_DIR, 'H2H-Fuel_dashboard.simhubdash'),
+  join(DIST_DIR, 'H2H-Fuel_dashboard.simhubdash'),
+);
 cpSync(join(PROJECT_ROOT, '.env'), join(DIST_DIR, '.env'));
 cpSync(join(PROJECT_ROOT, 'package.json'), join(DIST_DIR, 'package.json'));
 cpSync(join(PROJECT_ROOT, 'src/server'), join(DIST_DIR, 'src/server'), {
