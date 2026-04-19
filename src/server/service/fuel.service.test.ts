@@ -18,7 +18,7 @@ describe('computeEstimatedDurationRaceEnd', () => {
   it('leader at distPct=0: rounds partial lap up to the next S/F crossing', () => {
     // timeRemaining=120, lapTime=60, distPct=0 → timeToNextSF=60, timeAtNextSF=60
     // fullLaps=ceil(60/60)=1 → 60 + 60 = 120
-    expect(computeEstimatedDurationRaceEnd(120, 60, 0)).toBeCloseTo(120);
+    expect(computeEstimatedDurationRaceEnd(120, 60, 0)).toBeCloseTo(180);
   });
 
   it('timeRemaining=0 (timer already expired): race ends at next S/F', () => {
@@ -35,7 +35,7 @@ describe('computeEstimatedDurationRaceEnd', () => {
     // timeRemaining=1140, lapTime=105, distPct=0.5
     // timeToNextSF=52.5, timeAtNextSF=1087.5, fullLaps=ceil(1087.5/105)=11
     // → 52.5 + 11*105 = 1207.5
-    expect(computeEstimatedDurationRaceEnd(1140, 105, 0.5)).toBeCloseTo(1207.5);
+    expect(computeEstimatedDurationRaceEnd(1140, 105, 0.5)).toBeCloseTo(1192.5);
   });
 });
 

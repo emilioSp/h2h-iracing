@@ -5,26 +5,18 @@ export const getOverallLeaderCarIdx = (positions: number[]): number | null => {
   return idx === -1 ? null : idx;
 };
 
-// The race ends on the leader's first S/F crossing after the session timer reaches 0. If that moment falls mid-lap, the leader still has to complete the current lap, so we round the remaining laps up to the next integer.
 export const computeEstimatedDurationRaceEnd = (
   timeRemaining: number,
   leaderMedianLapTime: number,
   leaderLapDistPct: number,
 ): number => {
-  const leaderTimeToCompleteCurrentLap =
-    (1 - leaderLapDistPct) * leaderMedianLapTime;
-  const leaderTimeRemaining = timeRemaining - leaderTimeToCompleteCurrentLap;
-
-  if (leaderTimeRemaining <= 0) {
-    return leaderTimeToCompleteCurrentLap;
+  const leaderCurrentLapRemaining = 1 - leaderLapDistPct;
+  if (timeRemaining < leaderMedianLapTime) {
+    return leaderCurrentLapRemaining * leaderMedianLapTime;
   }
-
-  const leaderRemainingLaps = Math.ceil(
-    leaderTimeRemaining / leaderMedianLapTime,
-  );
-  return (
-    leaderTimeToCompleteCurrentLap + leaderRemainingLaps * leaderMedianLapTime
-  );
+  const leaderRemainingLaps =
+    leaderCurrentLapRemaining + timeRemaining / leaderMedianLapTime;
+  return leaderRemainingLaps * leaderMedianLapTime;
 };
 
 type FuelRefillFields = Pick<
