@@ -7,7 +7,7 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "server:start:dev": "npm run h2h:build & npm run weather:build & npm run car:build & DATA_MODE=mock node --env-file=.env --watch src/server/server.ts",
+    "server:start:dev": "npm run h2h:build & npm run weather:build & npm run car:build & npm run fuel:build & DATA_MODE=mock node --env-file=.env --watch src/server/server.ts",
     "server:start": "node --env-file=.env src/server/server.ts",
     "cli:start:dev": "DATA_MODE=mock node --env-file=.env examples/cli.ts",
     "cli:start": "node --env-file=.env examples/cli.ts",
@@ -19,6 +19,8 @@
     "weather:build": "vite build --config vite.weather.config.ts",
     "car:start:dev": "vite --config vite.car.config.ts",
     "car:build": "vite build --config vite.car.config.ts",
+    "fuel:start:dev": "vite --config vite.fuel.config.ts",
+    "fuel:build": "vite build --config vite.fuel.config.ts",
     "test": "vitest run --coverage --config vitest.config.ts",
     "lint": "biome check --write .",
     "build": "tsc",
