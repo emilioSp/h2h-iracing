@@ -1,10 +1,10 @@
 import type { Driver as RawDriver } from '@emiliosp/node-iracing-sdk';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
-  getCarIdxs,
   getClassEstLapTime,
   getDriverInfo,
   getFilteredRawDrivers,
+  getPlayerClassCarIdx,
   refreshDriverInfo,
 } from '#repository/driver.repository.ts';
 import * as irsdkRepo from '#repository/irsdk.repository.ts';
@@ -166,7 +166,7 @@ describe('driver.repository', () => {
         makeRawDriver({ CarIdx: 4, CarClassID: 200 }), // other class
       ]);
 
-      expect(await getCarIdxs()).toEqual([1, 2, 3]);
+      expect(await getPlayerClassCarIdx()).toEqual([1, 2, 3]);
     });
   });
 

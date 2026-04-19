@@ -1,17 +1,16 @@
 import config from '#config';
 import { computeCarTelemetry } from '#dashboard/car-telemetry.dashboard.ts';
-import {
-  cleanUpHead2Head,
-  computeHead2Head,
-} from '#dashboard/head2head.dashboard.ts';
+import { computeFuel } from '#dashboard/fuel.dashboard.ts';
+import { computeHead2Head } from '#dashboard/head2head.dashboard.ts';
 import { computeWeather } from '#dashboard/weather.dashboard.ts';
 import { isIRacingConnected } from '#repository/irsdk.repository.ts';
-import { tick } from '#server/tick.ts';
+import { resetInMemoryStorage, tick } from '#server/tick.ts';
 
 export const dashboardType = {
   H2H: 'H2H',
   WEATHER: 'WEATHER',
   CAR: 'CAR',
+  FUEL: 'FUEL',
 } as const;
 
 export type DashboardType = keyof typeof dashboardType;
@@ -25,6 +24,7 @@ const clients: Map<DashboardType, Set<SSEClient>> = new Map([
   [dashboardType.H2H, new Set()],
   [dashboardType.WEATHER, new Set()],
   [dashboardType.CAR, new Set()],
+  [dashboardType.FUEL, new Set()],
 ]);
 
 let timer: ReturnType<typeof setTimeout> | null = null;
@@ -59,7 +59,6 @@ const broadcastH2H = async () => {
     const result = await computeHead2Head();
     if (result === null) {
       closeSSEStream(h2hClients);
-      cleanUpHead2Head();
     } else {
       await writeToClients(h2hClients, result);
     }
@@ -82,6 +81,19 @@ const broadcastCar = async () => {
   }
 };
 
+const broadcastFuel = async () => {
+  // biome-ignore lint/style/noNonNullAssertion: clients map is defined above
+  const fuelClients = clients.get(dashboardType.FUEL)!;
+  if (fuelClients.size > 0) {
+    const result = await computeFuel();
+    if (result === null) {
+      closeSSEStream(fuelClients);
+    } else {
+      await writeToClients(fuelClients, result);
+    }
+  }
+};
+
 const broadcast = async (): Promise<void> => {
   if (!(await isIRacingConnected())) {
     stopBroadcasting();
@@ -90,12 +102,18 @@ const broadcast = async (): Promise<void> => {
 
   await tick();
 
-  await Promise.all([broadcastH2H(), broadcastWeather(), broadcastCar()]);
+  await Promise.all([
+    broadcastH2H(),
+    broadcastWeather(),
+    broadcastCar(),
+    broadcastFuel(),
+  ]);
 
   if (
     clients.get(dashboardType.H2H)?.size === 0 &&
     clients.get(dashboardType.WEATHER)?.size === 0 &&
-    clients.get(dashboardType.CAR)?.size === 0
+    clients.get(dashboardType.CAR)?.size === 0 &&
+    clients.get(dashboardType.FUEL)?.size === 0
   ) {
     stopBroadcasting();
     return;
@@ -115,11 +133,8 @@ export const stopBroadcasting = () => {
     timer = null;
   }
 
-  // biome-ignore lint/style/noNonNullAssertion: clients map is defined above
-  const h2hSet = clients.get(dashboardType.H2H)!;
-  if (h2hSet.size > 0) {
-    cleanUpHead2Head();
-  }
+  resetInMemoryStorage();
+
   for (const set of clients.values()) {
     closeSSEStream(set);
   }
@@ -133,9 +148,4 @@ export const addClient = (event: DashboardType, client: SSEClient) => {
 export const removeClient = (event: DashboardType, client: SSEClient) => {
   const clientSet = clients.get(event) ?? new Set<SSEClient>();
   clientSet.delete(client);
-
-  // TODO: add a common interface to always call cleanup method for each dashboard (noop if not needed)
-  if (event === dashboardType.H2H && clientSet.size === 0) {
-    cleanUpHead2Head();
-  }
 };
