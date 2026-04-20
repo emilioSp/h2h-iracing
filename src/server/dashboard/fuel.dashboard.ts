@@ -47,7 +47,7 @@ const getLeaderCarIdx = (
   return leaderIdx;
 };
 
-const computeLapsRemaining = (
+export const computeLapsRemaining = (
   estimatedTimeRemaining: number | null,
   playerMedianLapTime: number | null,
   playerLapDistPct: number,
@@ -59,10 +59,14 @@ const computeLapsRemaining = (
     return null;
   }
 
-  return (
-    Math.ceil(playerLapDistPct + estimatedTimeRemaining / playerMedianLapTime) -
-    playerLapDistPct
-  );
+  // Round to the 8th decimal digit to remove precision error
+  const projectedTotalLaps =
+    Math.round(
+      (playerLapDistPct + estimatedTimeRemaining / playerMedianLapTime) * 1e8,
+    ) / 1e8;
+
+  // final lap minus the position where I am
+  return Math.ceil(projectedTotalLaps) - playerLapDistPct;
 };
 
 export const computeFuel = async (): Promise<FuelRefill | null> => {
