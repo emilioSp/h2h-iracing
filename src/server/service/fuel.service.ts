@@ -1,8 +1,5 @@
+import { isCheckeredFlag } from '#repository/session-info.repository.ts';
 import type { FuelRefill } from '#schema/fuel.schema.ts';
-
-const SESSION_FLAG_CHECKERED = 0x00000001;
-const isCheckeredFlag = (flags: number): boolean =>
-  (flags & SESSION_FLAG_CHECKERED) !== 0;
 
 export const computeEstimatedTimeRemaining = (
   timeRemaining: number,

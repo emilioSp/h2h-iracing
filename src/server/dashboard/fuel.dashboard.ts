@@ -17,7 +17,10 @@ import {
   getMedianLapTime,
   updateLapTimeTracking,
 } from '#repository/lap.repository.ts';
-import { isRaceSession } from '#repository/session-info.repository.ts';
+import {
+  isCheckeredFlag,
+  isRaceSession,
+} from '#repository/session-info.repository.ts';
 import type { FuelRefill } from '#schema/fuel.schema.ts';
 import {
   computeEstimatedTimeRemaining,
@@ -123,6 +126,6 @@ export const computeFuel = async (): Promise<FuelRefill | null> => {
     fuelLevel,
     fuelLastLap,
     lastLapNumber: playerLastLapNumber === -1 ? null : playerLastLapNumber,
-    timeRemaining,
+    timeRemaining: isCheckeredFlag(flags) ? 0 : timeRemaining,
   };
 };
