@@ -69,6 +69,8 @@ export const computeFuel = async (): Promise<FuelRefill | null> => {
   const playerCarIdx = await getPlayerCarIdx();
   if (playerCarIdx < 0) return null;
 
+  console.log('playerCarIdx', playerCarIdx);
+
   const [
     carsIdx,
     lapsCompleted,
@@ -98,9 +100,15 @@ export const computeFuel = async (): Promise<FuelRefill | null> => {
     playerCarIdx,
   );
 
+  console.log('leaderCarIdx', leaderCarIdx);
+
   const leaderMedianLapTime = getMedianLapTime(leaderCarIdx);
+  console.log('leaderMedianLapTime', leaderMedianLapTime);
   const playerMedianLapTime = getMedianLapTime(playerCarIdx);
+  console.log('playerMedianLapTime', playerMedianLapTime);
   const medianFuelPerLap = getMedianFuelPerLap();
+  console.log('lapDistPctLeader', lapDistPct[leaderCarIdx]);
+  console.log('lapDistPctPlayer', lapDistPct[playerCarIdx]);
 
   const estimatedTimeRemaining = computeEstimatedTimeRemaining(
     timeRemaining,
@@ -109,6 +117,8 @@ export const computeFuel = async (): Promise<FuelRefill | null> => {
     playerMedianLapTime,
     lapDistPct[leaderCarIdx],
   );
+
+  console.log('estimatedTimeRemaining', estimatedTimeRemaining);
 
   const lapsRemaining = computeLapsRemaining(
     estimatedTimeRemaining,
