@@ -80,6 +80,7 @@ src/
 ├── h2h-dashboard/    # React overlay — head-to-head battle
 ├── weather-dashboard/# React overlay — weather conditions
 ├── car-dashboard/    # React overlay — car telemetry
+├── fuel-dashboard/   # React overlay — fuel calculator
 ├── common/           # Shared React components (e.g. WelcomePage)
 ├── schema/           # Zod schemas shared across layers
 └── server/
@@ -162,6 +163,29 @@ Key car telemetry data.
   }
 }
 ```
+
+### `GET /sse/fuel`
+
+Fuel consumption and pit stop refill amounts.
+
+```json
+{
+  "data": {
+    "fuelLevel": 12.5,
+    "medianFuelPerLap": 1.83,
+    "fuelLastLap": 1.79,
+    "lapsRemaining": 6.4,
+    "estimatedTimeRemaining": 540.2,
+    "timeRemaining": 498.1,
+    "lastLapNumber": 14,
+    "fuelRefillNoMarginLap": 1.2,
+    "fuelRefillForHalfMarginLap": 2.1,
+    "fuelRefillFor1MarginLap": 3.0
+  }
+}
+```
+
+All `fuelRefill*` fields are `null` in practice/qualifying sessions or before enough laps have been completed to compute a median. `lapsRemaining` is fractional — it represents the exact lap-distance still to cover.
 
 ## Testing
 
