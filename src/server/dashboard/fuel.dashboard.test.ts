@@ -1,5 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { computeFuel } from '#dashboard/fuel.dashboard.ts';
+import {
+  computeFuel,
+  computeLapsRemaining,
+} from '#dashboard/fuel.dashboard.ts';
 import { FUEL_SAMPLE_WINDOW } from '#repository/fuel.repository.ts';
 import * as iracingRepository from '#repository/irsdk.repository.ts';
 import * as sessionInfoRepository from '#repository/session-info.repository.ts';
@@ -11,6 +14,10 @@ beforeEach(async () => {
   resetInMemoryStorage();
   vi.spyOn(sessionInfoRepository, 'isRaceSession').mockReturnValue(true);
   vi.spyOn(iracingRepository, 'getSessionFlags').mockResolvedValue(0);
+  vi.spyOn(iracingRepository, 'getOverallPositions').mockResolvedValue([
+    1,
+    ...Array(63).fill(2),
+  ]);
 });
 
 describe('computeFuel — race session', () => {
@@ -102,5 +109,31 @@ describe('computeFuel — session flags', () => {
     );
     const result = await computeFuel();
     expect(result?.estimatedTimeRemaining).toBe(0);
+  });
+});
+
+describe('computeFuel - laps remaining (bug in prod due to floating point error)', () => {
+  it('compute laps remaining without floating-point error - case 1', () => {
+    const estimatedTimeRemaining = 604855.0473280733;
+    const playerMedianLapTime = 109.93440246582031;
+    const playerLapDistPct = 0.036704059690237045;
+    const lapsRemaining = computeLapsRemaining(
+      estimatedTimeRemaining,
+      playerMedianLapTime,
+      playerLapDistPct,
+    );
+    expect(lapsRemaining).toBe(5501.96329594031);
+  });
+
+  it('compute laps remaining without floating point error - case 2', () => {
+    const estimatedTimeRemaining = 604854.9782329433;
+    const playerMedianLapTime = 109.93440246582031;
+    const playerLapDistPct = 0.03733257204294205;
+    const lapsRemaining = computeLapsRemaining(
+      estimatedTimeRemaining,
+      playerMedianLapTime,
+      playerLapDistPct,
+    );
+    expect(lapsRemaining).toBe(5501.962667427957);
   });
 });
