@@ -6,6 +6,7 @@ Ready to be used within SimHub or OBS for live streaming.
 - Real-time head-to-head battle overlay for iRacing: Tracks your position relative to the cars immediately ahead and behind you, showing gaps, deltas, and driver info.
 - Weather overlay: Displays current track weather conditions and wind direction/speed relative to the car direction.
 - Car telemetry overlay: Shows key car telemetry data (ABS, TC, brake bias, pit limiter)
+- Fuel dashboard: Tracks fuel consumption and calculates how much to add at the next pit stop
 
 ## Download & Installation
 
@@ -15,15 +16,17 @@ Ready to be used within SimHub or OBS for live streaming.
 
 ## Screenshots
 
-![Welcome page](docs/H2H_welcome_page.jpg)
+<img src="docs/H2H_welcome_page.jpg" alt="Welcome page" width="800" />
 
-![Head-to-Head overlay](docs/H2H_dashboard.jpg)
+<img src="docs/H2H_dashboard.jpg" alt="Head-to-Head overlay" width="800" />
 
-![Weather overlay](docs/H2H_weather_dashboard.jpg)
+<img src="docs/H2H_weather_dashboard.jpg" alt="Weather overlay" width="800" />
 
-![Car telemetry overlay](docs/H2H_car_telemetry_dashboard.jpg)
+<img src="docs/H2H_car_telemetry_dashboard.jpg" alt="Car telemetry overlay" width="800" />
 
-## Youtube video demonstration
+<img src="docs/H2H_fuel_dashboard.png" alt="Fuel dashboard" width="800" />
+
+## Video demonstration
 
 [![YT clip](https://img.youtube.com/vi/PTLM69iB8SU/0.jpg)](https://www.youtube.com/watch?v=PTLM69iB8SU)
 
@@ -170,3 +173,4 @@ npm test
 
 - [Architecture](docs/architecture.md)
 - [How the gap is calculated](docs/gap-calculation.md)
+- [How fuel is computed](docs/fuel-computation.md)
