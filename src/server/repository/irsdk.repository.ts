@@ -89,10 +89,6 @@ export const getClassPositions = withConnect(
   (): number[] => ir?.get(VARS.CAR_IDX_CLASS_POSITION) ?? [],
 );
 
-export const getOverallPositions = withConnect(
-  (): number[] => ir?.get(VARS.CAR_IDX_POSITION) ?? [],
-);
-
 export const getCurrentSessionInfo = withConnect((): Session | null => {
   const sessionInfo = ir?.getSessionInfo(SESSION_DATA_KEYS.SESSION_INFO);
   const currentSession = sessionInfo?.Sessions?.find(

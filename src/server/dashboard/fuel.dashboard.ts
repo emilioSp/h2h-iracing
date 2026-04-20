@@ -9,7 +9,6 @@ import {
   getLapDistPct,
   getLapsCompleted,
   getLastLapTime,
-  getOverallPositions,
   getPlayerCarIdx,
   getSessionFlags,
   getSessionTimeRemain,
@@ -23,16 +22,26 @@ import type { FuelRefill } from '#schema/fuel.schema.ts';
 import {
   computeEstimatedTimeRemaining,
   computeFuelRefill,
-  getOverallLeaderCarIdx,
 } from '#service/fuel.service.ts';
 
-const getLeaderCarIdx = (positions: number[], playerCarIdx: number): number => {
-  if (isRaceSession()) {
-    const leaderCarIdx = getOverallLeaderCarIdx(positions);
-    return leaderCarIdx === null ? playerCarIdx : leaderCarIdx;
-  }
+const getLeaderCarIdx = (
+  carsIdx: number[],
+  lapsCompleted: number[],
+  lapDistPct: number[],
+  playerCarIdx: number,
+): number => {
+  if (!isRaceSession()) return playerCarIdx;
 
-  return playerCarIdx;
+  let leaderIdx = playerCarIdx;
+  let leaderProgress = -Infinity;
+  for (const carIdx of carsIdx) {
+    const progress = lapsCompleted[carIdx] + lapDistPct[carIdx];
+    if (progress > leaderProgress) {
+      leaderProgress = progress;
+      leaderIdx = carIdx;
+    }
+  }
+  return leaderIdx;
 };
 
 const computeLapsRemaining = (
@@ -63,7 +72,6 @@ export const computeFuel = async (): Promise<FuelRefill | null> => {
     fuelLevel,
     lastLapTimes,
     lapDistPct,
-    positions,
     timeRemaining,
     flags,
   ] = await Promise.all([
@@ -72,7 +80,6 @@ export const computeFuel = async (): Promise<FuelRefill | null> => {
     getFuelLevel(),
     getLastLapTime(),
     getLapDistPct(),
-    getOverallPositions(),
     getSessionTimeRemain(),
     getSessionFlags(),
   ]);
@@ -81,7 +88,12 @@ export const computeFuel = async (): Promise<FuelRefill | null> => {
   updateFuelTracking(fuelLevel, playerLastLapNumber);
   updateLapTimeTracking(carsIdx, lapsCompleted, lastLapTimes);
 
-  const leaderCarIdx = getLeaderCarIdx(positions, playerCarIdx);
+  const leaderCarIdx = getLeaderCarIdx(
+    carsIdx,
+    lapsCompleted,
+    lapDistPct,
+    playerCarIdx,
+  );
 
   const leaderMedianLapTime = getMedianLapTime(leaderCarIdx);
   const playerMedianLapTime = getMedianLapTime(playerCarIdx);
