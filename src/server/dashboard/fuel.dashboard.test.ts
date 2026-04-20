@@ -38,13 +38,10 @@ describe('computeFuel — race session', () => {
     vi.spyOn(iracingRepository, 'getSessionTimeRemain').mockResolvedValue(
       14_400,
     ); // 4 hours
-    vi.spyOn(iracingRepository, 'getOverallPositions').mockResolvedValue([
-      1,
-      ...Array(63).fill(0),
+    vi.spyOn(iracingRepository, 'getLapDistPct').mockResolvedValue([
+      0.6,
+      ...Array(63).fill(0.5),
     ]);
-    vi.spyOn(iracingRepository, 'getLapDistPct').mockResolvedValue(
-      Array(64).fill(0.5),
-    );
     // biome-ignore lint/suspicious/noExplicitAny: overloaded spy requires any to accept number[]
     (vi.spyOn(iracingRepository, 'getLastLapTime') as any).mockResolvedValue(
       Array(64).fill(90),
@@ -61,9 +58,9 @@ describe('computeFuel — race session', () => {
 
     // Call FUEL_SAMPLE_WINDOW: FUEL_SAMPLE_WINDOW fuel samples + FUEL_SAMPLE_WINDOW lap time samples
     const result = await computeFuel();
-    expect(result?.fuelRefillNoMarginLap).toBe(281);
-    expect(result?.fuelRefillForHalfMarginLap).toBe(282);
-    expect(result?.fuelRefillFor1MarginLap).toBe(283);
+    expect(result?.fuelRefillNoMarginLap).toBe(280.8);
+    expect(result?.fuelRefillForHalfMarginLap).toBe(281.8);
+    expect(result?.fuelRefillFor1MarginLap).toBe(282.8);
   });
 });
 
@@ -93,10 +90,6 @@ describe('computeFuel — session flags', () => {
       Array(64).fill(0.5),
     );
     vi.spyOn(iracingRepository, 'getSessionTimeRemain').mockResolvedValue(600);
-    vi.spyOn(iracingRepository, 'getOverallPositions').mockResolvedValue([
-      1,
-      ...Array(63).fill(0),
-    ]);
     // biome-ignore lint/suspicious/noExplicitAny: overloaded spy requires any to accept number[]
     (vi.spyOn(iracingRepository, 'getLastLapTime') as any).mockResolvedValue(
       Array(64).fill(90),

@@ -2,17 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   computeEstimatedTimeRemaining,
   computeFuelRefill,
-  getOverallLeaderCarIdx,
 } from '#service/fuel.service.ts';
-
-describe('getOverallLeaderCarIdx', () => {
-  it('returns index of car with position 1', () => {
-    expect(getOverallLeaderCarIdx([0, 0, 1, 2])).toBe(2);
-  });
-  it('returns null when no car has position 1', () => {
-    expect(getOverallLeaderCarIdx([0, 2, 3])).toBeNull();
-  });
-});
 
 describe('computeEstimatedTimeRemaining', () => {
   const noFlag = 0;

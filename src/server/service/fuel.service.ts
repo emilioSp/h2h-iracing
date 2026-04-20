@@ -1,10 +1,5 @@
 import type { FuelRefill } from '#schema/fuel.schema.ts';
 
-export const getOverallLeaderCarIdx = (positions: number[]): number | null => {
-  const idx = positions.indexOf(1);
-  return idx === -1 ? null : idx;
-};
-
 const SESSION_FLAG_CHECKERED = 0x00000001;
 const isCheckeredFlag = (flags: number): boolean =>
   (flags & SESSION_FLAG_CHECKERED) !== 0;
