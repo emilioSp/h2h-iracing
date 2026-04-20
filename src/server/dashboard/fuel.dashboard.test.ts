@@ -14,6 +14,10 @@ beforeEach(async () => {
   resetInMemoryStorage();
   vi.spyOn(sessionInfoRepository, 'isRaceSession').mockReturnValue(true);
   vi.spyOn(iracingRepository, 'getSessionFlags').mockResolvedValue(0);
+  vi.spyOn(iracingRepository, 'getOverallPositions').mockResolvedValue([
+    1,
+    ...Array(63).fill(2),
+  ]);
 });
 
 describe('computeFuel — race session', () => {

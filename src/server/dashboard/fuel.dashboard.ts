@@ -9,6 +9,7 @@ import {
   getLapDistPct,
   getLapsCompleted,
   getLastLapTime,
+  getOverallPositions,
   getPlayerCarIdx,
   getSessionFlags,
   getSessionTimeRemain,
@@ -27,24 +28,9 @@ import {
   computeFuelRefill,
 } from '#service/fuel.service.ts';
 
-const getLeaderCarIdx = (
-  carsIdx: number[],
-  lapsCompleted: number[],
-  lapDistPct: number[],
-  playerCarIdx: number,
-): number => {
-  if (!isRaceSession()) return playerCarIdx;
-
-  let leaderIdx = playerCarIdx;
-  let leaderProgress = -Infinity;
-  for (const carIdx of carsIdx) {
-    const progress = lapsCompleted[carIdx] + lapDistPct[carIdx];
-    if (progress > leaderProgress) {
-      leaderProgress = progress;
-      leaderIdx = carIdx;
-    }
-  }
-  return leaderIdx;
+const getLeaderCarIdx = async (): Promise<number> => {
+  const overallPositions = await getOverallPositions();
+  return overallPositions.indexOf(1);
 };
 
 export const computeLapsRemaining = (
@@ -95,12 +81,7 @@ export const computeFuel = async (): Promise<FuelRefill | null> => {
   updateFuelTracking(fuelLevel, playerLastLapNumber);
   updateLapTimeTracking(carsIdx, lapsCompleted, lastLapTimes);
 
-  const leaderCarIdx = getLeaderCarIdx(
-    carsIdx,
-    lapsCompleted,
-    lapDistPct,
-    playerCarIdx,
-  );
+  const leaderCarIdx = isRaceSession() ? await getLeaderCarIdx() : playerCarIdx;
 
   const leaderMedianLapTime = getMedianLapTime(leaderCarIdx);
   const playerMedianLapTime = getMedianLapTime(playerCarIdx);
