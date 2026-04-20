@@ -122,7 +122,7 @@ describe('computeFuel - laps remaining (bug in prod due to floating point error)
       playerMedianLapTime,
       playerLapDistPct,
     );
-    expect(lapsRemaining).toBe(5501.96329594031);
+    expect(lapsRemaining).toBe(5501.96329594);
   });
 
   it('compute laps remaining without floating point error - case 2', () => {
@@ -134,6 +134,6 @@ describe('computeFuel - laps remaining (bug in prod due to floating point error)
       playerMedianLapTime,
       playerLapDistPct,
     );
-    expect(lapsRemaining).toBe(5501.962667427957);
+    expect(lapsRemaining).toBe(5501.96266743);
   });
 });

@@ -52,7 +52,8 @@ export const computeLapsRemaining = (
     ) / 1e8;
 
   // final lap minus the position where I am
-  return Math.ceil(projectedTotalLaps) - playerLapDistPct;
+  const rawRemaining = Math.ceil(projectedTotalLaps) - playerLapDistPct;
+  return Math.round(rawRemaining * 1e8) / 1e8;
 };
 
 export const computeFuel = async (): Promise<FuelRefill | null> => {
