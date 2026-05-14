@@ -6,44 +6,35 @@ Real-time racing overlay for iRacing. A local Node.js server reads telemetry fro
 
 ## System Diagram
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        iRacing (Simulator)                      │
-│                       Windows Shared Memory                     │
-└───────────────────────────────┬─────────────────────────────────┘
-                                │ @emiliosp/node-iracing-sdk
-                                ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    Node.js Server  (Hono)                       │
-│                                                                 │
-│   ┌─────────────┐   ┌──────────────┐   ┌────────────────────┐   │
-│   │ Repository  │   │   Service    │   │     Dashboard      │   │
-│   └─────────────┘   └──────────────┘   └──────────┬─────────┘   │
-│                                                   │             │
-│                         tick.ts (33 ms poll) ───▶ │             │
-│                                                   ▼             │
-│                                          ┌─────────────────┐    │
-│                                          │  Broadcaster    │    │
-│                                          │  (SSE clients)  │    │
-│                                          └────────┬────────┘    │
-│                                                   │             │
-│              ┌────────────────────────────────────┤             │
-│              │                │                   │             │
-│   GET /sse/h2h  GET /sse/weather  GET /sse/car  GET /sse/fuel   │
-│              │                │                   │             │
-│             (serves static React builds from /dist/)            │
-└──────────────┼────────────────┼───────────────────┼───────────────┼──┘
-               │                │                   │               │
-               │         SSE (Server-Sent Events)                   │
-               │                │                   │               │
-┌──────────────▼────────────────▼───────────────────▼───────────────▼──┐
-│                    OBS Browser Source / SimHub                       │
-│                                                                      │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────┐  ┌─────────┐  │
-│  │ H2H Overlay │  │   Weather   │  │  Car Telemetry  │  │  Fuel   │  │
-│  │  (React)    │  │   (React)   │  │    (React)      │  │ (React) │  │
-│  └─────────────┘  └─────────────┘  └─────────────────┘  └─────────┘  │
-└──────────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    iRacing["iRacing (Simulator)<br/>Windows Shared Memory"]
+
+    iRacing -->|"@emiliosp/node-iracing-sdk"| Repo
+
+    subgraph Server["Node.js Server (Hono)"]
+        Repo["Repository (data layer)"]
+        Service["Service (business logic / algorithms)"]
+        Dashboard["Dashboard (orchestrators)"]
+        Broadcaster["Broadcaster (SSE clients)"]
+
+        Repo --> Dashboard
+        Repo --> Service
+        Service --> Dashboard
+        Dashboard --> Broadcaster
+    end
+
+    subgraph OBS["OBS Browser Source / SimHub"]
+        H2H["H2H Overlay (React)"]
+        Weather["Weather (React)"]
+        Car["Car Telemetry (React)"]
+        Fuel["Fuel (React)"]
+    end
+
+    Broadcaster -->|"GET /sse/h2h"| H2H
+    Broadcaster -->|"GET /sse/weather"| Weather
+    Broadcaster -->|"GET /sse/car"| Car
+    Broadcaster -->|"GET /sse/fuel"| Fuel
 ```
 
 ---
@@ -69,9 +60,8 @@ Wraps the iRacing SDK. Reads raw telemetry values from shared memory (speed, lap
 
 ## Data Flow
 
-1. **tick.ts** fires every 33 ms and refreshes in-memory telemetry from the iRacing SDK.
-2. **Broadcaster** calls each dashboard to compute the latest payload.
-3. **Payloads** are serialized as JSON and written to all connected SSE clients.
-4. **React overlays** receive the event, parse the JSON, and re-render.
+1. **Broadcaster** calls each dashboard to compute the latest payload.
+2. **Payloads** are serialized as JSON and written to all connected SSE clients.
+3. **React overlays** receive the event, parse the JSON, and re-render.
 
 ---
