@@ -33,11 +33,17 @@ const getLeaderCarIdx = async (): Promise<number> => {
   return overallPositions.indexOf(1);
 };
 
-export const computeLapsRemaining = (
-  estimatedTimeRemaining: number | null,
-  playerMedianLapTime: number | null,
-  playerLapDistPct: number,
-): number | null => {
+export type ComputeLapsRemainingInput = {
+  estimatedTimeRemaining: number | null;
+  playerMedianLapTime: number | null;
+  playerLapDistPct: number;
+};
+
+export const computeLapsRemaining = ({
+  estimatedTimeRemaining,
+  playerMedianLapTime,
+  playerLapDistPct,
+}: ComputeLapsRemainingInput): number | null => {
   // Let lapDistance = estimatedTimeRemaining / playerMedianLapTime
   // Correct lapsRemaining = ceil(playerLapDistPct + lapDistance) - playerLapDistPct
   // LapsRemaining is intentionally fractional: it's the lap-distance the player still has to cover, used directly by the fuel calculation.
@@ -96,11 +102,11 @@ export const computeFuel = async (): Promise<FuelRefill | null> => {
     leaderLapDistPct: lapDistPct[leaderCarIdx],
   });
 
-  const lapsRemaining = computeLapsRemaining(
+  const lapsRemaining = computeLapsRemaining({
     estimatedTimeRemaining,
     playerMedianLapTime,
-    lapDistPct[playerCarIdx],
-  );
+    playerLapDistPct: lapDistPct[playerCarIdx],
+  });
 
   const fuelLastLap = getLastLapFuelDelta();
 

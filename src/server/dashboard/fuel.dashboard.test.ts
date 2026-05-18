@@ -117,11 +117,11 @@ describe('computeFuel - laps remaining (bug in prod due to floating point error)
     const estimatedTimeRemaining = 604855.0473280733;
     const playerMedianLapTime = 109.93440246582031;
     const playerLapDistPct = 0.036704059690237045;
-    const lapsRemaining = computeLapsRemaining(
+    const lapsRemaining = computeLapsRemaining({
       estimatedTimeRemaining,
       playerMedianLapTime,
       playerLapDistPct,
-    );
+    });
     expect(lapsRemaining).toBe(5501.96329594);
   });
 
@@ -129,11 +129,11 @@ describe('computeFuel - laps remaining (bug in prod due to floating point error)
     const estimatedTimeRemaining = 604854.9782329433;
     const playerMedianLapTime = 109.93440246582031;
     const playerLapDistPct = 0.03733257204294205;
-    const lapsRemaining = computeLapsRemaining(
+    const lapsRemaining = computeLapsRemaining({
       estimatedTimeRemaining,
       playerMedianLapTime,
       playerLapDistPct,
-    );
+    });
     expect(lapsRemaining).toBe(5501.96266743);
   });
 });
