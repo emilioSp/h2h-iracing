@@ -239,7 +239,9 @@ describe('interpolateTimeAtTrackPosition', () => {
 
   it('returns null when no refPoint exists at the target position', () => {
     const lap = makeLap([[0.5, makePoint(0.5, 50)]]);
-    expect(interpolateTimeAtTrackPosition({ lap, currentTrackPositionPct: 0.3 })).toBeNull();
+    expect(
+      interpolateTimeAtTrackPosition({ lap, currentTrackPositionPct: 0.3 }),
+    ).toBeNull();
   });
 
   it('returns the p0 time when no next point exists', () => {
@@ -247,7 +249,9 @@ describe('interpolateTimeAtTrackPosition', () => {
     const key = normalizeTrackPct(rawPct);
     const time = 50;
     const lap = makeLap([[key, makePoint(key, time)]]);
-    expect(interpolateTimeAtTrackPosition({ lap, currentTrackPositionPct: rawPct })).toBe(time);
+    expect(
+      interpolateTimeAtTrackPosition({ lap, currentTrackPositionPct: rawPct }),
+    ).toBe(time);
   });
 
   it('linearly interpolates between two points', () => {
@@ -256,10 +260,12 @@ describe('interpolateTimeAtTrackPosition', () => {
       [0.0, makePoint(0.0, 0)],
       [interval, makePoint(interval, 10)],
     ]);
-    expect(interpolateTimeAtTrackPosition({ lap, currentTrackPositionPct: interval / 2 })).toBeCloseTo(
-      5,
-      10,
-    );
+    expect(
+      interpolateTimeAtTrackPosition({
+        lap,
+        currentTrackPositionPct: interval / 2,
+      }),
+    ).toBeCloseTo(5, 10);
   });
 
   it('returns the stored time at an exact key', () => {
@@ -273,10 +279,12 @@ describe('interpolateTimeAtTrackPosition', () => {
     }
     const lap = makeLap(entries, 0, lapTime);
     const storedPct = Math.floor(buckets / 2) * interval;
-    expect(interpolateTimeAtTrackPosition({ lap, currentTrackPositionPct: storedPct })).toBeCloseTo(
-      storedPct * lapTime,
-      5,
-    );
+    expect(
+      interpolateTimeAtTrackPosition({
+        lap,
+        currentTrackPositionPct: storedPct,
+      }),
+    ).toBeCloseTo(storedPct * lapTime, 5);
   });
 
   it('wraps time correctly when interpolating across the finish line', () => {

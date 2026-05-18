@@ -72,9 +72,13 @@ const computeAheadAndBehindCar = async ({
     standings.find((s) => s.pos === playerCar.position + 1)?.carIdx ?? null;
 
   const aheadCar: Car | null =
-    aheadIdx !== null ? await computeCar({ carIdx: aheadIdx, standings }) : null;
+    aheadIdx !== null
+      ? await computeCar({ carIdx: aheadIdx, standings })
+      : null;
   const behindCar: Car | null =
-    behindIdx !== null ? await computeCar({ carIdx: behindIdx, standings }) : null;
+    behindIdx !== null
+      ? await computeCar({ carIdx: behindIdx, standings })
+      : null;
 
   return { aheadCar, behindCar };
 };

@@ -24,7 +24,10 @@ export type SetActiveRefLapInput = {
   lap: ReferenceLap;
 };
 
-export const setActiveRefLap = ({ carIdx, lap }: SetActiveRefLapInput): void => {
+export const setActiveRefLap = ({
+  carIdx,
+  lap,
+}: SetActiveRefLapInput): void => {
   activeLaps.set(carIdx, lap);
 };
 

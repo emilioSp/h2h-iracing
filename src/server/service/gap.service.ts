@@ -44,9 +44,15 @@ const referenceDelta = ({
   behindPct,
 }: ReferenceDeltaInput): number => {
   const timeAhead =
-    interpolateTimeAtTrackPosition({ lap: refLap, currentTrackPositionPct: aheadPct }) ?? 0;
+    interpolateTimeAtTrackPosition({
+      lap: refLap,
+      currentTrackPositionPct: aheadPct,
+    }) ?? 0;
   const timeBehind =
-    interpolateTimeAtTrackPosition({ lap: refLap, currentTrackPositionPct: behindPct }) ?? 0;
+    interpolateTimeAtTrackPosition({
+      lap: refLap,
+      currentTrackPositionPct: behindPct,
+    }) ?? 0;
   let delta = timeAhead - timeBehind;
   const lapTime = refLap.finishTime - refLap.startTime;
   if (aheadPct < behindPct) delta += lapTime;
@@ -117,7 +123,9 @@ export const getGap = async ({
   player,
   behind,
 }: GetGapInput): Promise<GetGapOutput> => {
-  const gapAhead = ahead !== null ? await computeGap({ ahead, behind: player }) : null;
-  const gapBehind = behind !== null ? await computeGap({ ahead: player, behind }) : null;
+  const gapAhead =
+    ahead !== null ? await computeGap({ ahead, behind: player }) : null;
+  const gapBehind =
+    behind !== null ? await computeGap({ ahead: player, behind }) : null;
   return { gapAhead, gapBehind };
 };

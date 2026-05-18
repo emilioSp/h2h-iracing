@@ -131,7 +131,11 @@ beforeEach(() => {
 
 describe('getGap', () => {
   it('returns 0 seconds when both cars are the same', async () => {
-    const { gapAhead, gapBehind } = await getGap({ ahead: makeCar(0), player: makeCar(0), behind: null });
+    const { gapAhead, gapBehind } = await getGap({
+      ahead: makeCar(0),
+      player: makeCar(0),
+      behind: null,
+    });
     expect(gapAhead).toEqual({ value: 0, unit: 'seconds' });
     expect(gapBehind).toBeNull();
   });
@@ -158,7 +162,11 @@ describe('getGap', () => {
     mockGetOnPitRoad.mockResolvedValue([0, 1]);
     mockGetClassEstLapTime.mockReturnValue(90);
 
-    const { gapAhead, gapBehind } = await getGap({ ahead: makeCar(1), player: makeCar(0), behind: null });
+    const { gapAhead, gapBehind } = await getGap({
+      ahead: makeCar(1),
+      player: makeCar(0),
+      behind: null,
+    });
     expect(gapAhead).toEqual({ value: 18, unit: 'seconds' });
     expect(gapBehind).toBeNull();
   });
@@ -189,7 +197,11 @@ describe('getGap', () => {
     mockGetOnPitRoad.mockResolvedValue([0, 0]);
     addRecentLap({ carIdx: 0, lap: makeReferenceLap() });
 
-    const { gapAhead, gapBehind } = await getGap({ ahead: makeCar(1), player: makeCar(0), behind: null });
+    const { gapAhead, gapBehind } = await getGap({
+      ahead: makeCar(1),
+      player: makeCar(0),
+      behind: null,
+    });
     expect(gapAhead?.unit).toBe('seconds');
     expect(gapAhead?.value).toBeCloseTo(54);
     expect(gapBehind).toBeNull();
@@ -203,7 +215,11 @@ describe('getGap', () => {
     addRecentLap({ carIdx: 0, lap: makeReferenceLap() });
     mockGetClassEstLapTime.mockReturnValue(90);
 
-    const { gapAhead, gapBehind } = await getGap({ ahead: makeCar(1), player: makeCar(0), behind: null });
+    const { gapAhead, gapBehind } = await getGap({
+      ahead: makeCar(1),
+      player: makeCar(0),
+      behind: null,
+    });
     expect(gapAhead).toEqual({ value: 18, unit: 'seconds' });
     expect(gapBehind).toBeNull();
   });
@@ -216,7 +232,11 @@ describe('getGap', () => {
     mockGetLapsCompleted.mockResolvedValue([1, 0]);
     mockGetClassEstLapTime.mockReturnValue(90);
 
-    const { gapAhead, gapBehind } = await getGap({ ahead: makeCar(0), player: makeCar(1), behind: null });
+    const { gapAhead, gapBehind } = await getGap({
+      ahead: makeCar(0),
+      player: makeCar(1),
+      behind: null,
+    });
     expect(gapAhead?.unit).toBe('seconds');
     expect(gapAhead?.value).toBeCloseTo(3.6);
     expect(gapBehind).toBeNull();
@@ -232,7 +252,11 @@ describe('getGap', () => {
     addRecentLap({ carIdx: 0, lap: makeReferenceLap() });
     addRecentLap({ carIdx: 1, lap: makeReferenceLap() });
 
-    const { gapAhead, gapBehind } = await getGap({ ahead: null, player: makeCar(0), behind: makeCar(1) });
+    const { gapAhead, gapBehind } = await getGap({
+      ahead: null,
+      player: makeCar(0),
+      behind: makeCar(1),
+    });
     expect(gapBehind?.unit).toBe('seconds');
     expect(gapBehind?.value).toBeCloseTo(3.6);
     expect(gapAhead).toBeNull();

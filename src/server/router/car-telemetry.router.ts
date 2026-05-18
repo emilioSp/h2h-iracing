@@ -8,7 +8,7 @@ export const carTelemetryRouter = (c: Context) =>
       write: (data: string) => stream.writeSSE({ data }),
       close: () => stream.close(),
     };
-    addClient(dashboardType.CAR, client);
+    addClient({ event: dashboardType.CAR, client });
     await new Promise<void>((resolve) => stream.onAbort(resolve));
-    removeClient(dashboardType.CAR, client);
+    removeClient({ event: dashboardType.CAR, client });
   });
