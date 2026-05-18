@@ -8,7 +8,7 @@ import {
 } from '#repository/fuel.repository.ts';
 
 const tick = (lap: number, fuel: number) => {
-  updateFuelTracking(fuel, lap);
+  updateFuelTracking({ fuelLevel: fuel, playerLapCompleted: lap });
 };
 
 beforeEach(() => {

@@ -129,14 +129,17 @@ const collectLapData = (
 
   // init ref lap
   if (!activeRefLap) {
-    referenceLapRepository.setActiveRefLap(carIdx, {
-      startTime: sessionTime,
-      finishTime: -1,
-      refPoints: new Map([
-        [refPointKey, { trackPct, timeElapsedSinceStart: 0 }],
-      ]),
-      lastTrackedPct: trackPct,
-      isOnPitRoad,
+    referenceLapRepository.setActiveRefLap({
+      carIdx,
+      lap: {
+        startTime: sessionTime,
+        finishTime: -1,
+        refPoints: new Map([
+          [refPointKey, { trackPct, timeElapsedSinceStart: 0 }],
+        ]),
+        lastTrackedPct: trackPct,
+        isOnPitRoad,
+      },
     });
     return;
   }
@@ -147,17 +150,20 @@ const collectLapData = (
     activeRefLap.finishTime = sessionTime;
 
     if (isLapValid(activeRefLap)) {
-      referenceLapRepository.addRecentLap(carIdx, activeRefLap);
+      referenceLapRepository.addRecentLap({ carIdx, lap: activeRefLap });
     }
 
-    referenceLapRepository.setActiveRefLap(carIdx, {
-      startTime: sessionTime,
-      finishTime: -1,
-      refPoints: new Map([
-        [refPointKey, { trackPct, timeElapsedSinceStart: 0 }],
-      ]),
-      lastTrackedPct: trackPct,
-      isOnPitRoad,
+    referenceLapRepository.setActiveRefLap({
+      carIdx,
+      lap: {
+        startTime: sessionTime,
+        finishTime: -1,
+        refPoints: new Map([
+          [refPointKey, { trackPct, timeElapsedSinceStart: 0 }],
+        ]),
+        lastTrackedPct: trackPct,
+        isOnPitRoad,
+      },
     });
 
     return;

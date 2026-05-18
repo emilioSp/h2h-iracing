@@ -64,13 +64,16 @@ const seedActiveLap = (
       timeElapsedSinceStart: i,
     });
   }
-  setActiveRefLap(carIdx, {
-    startTime: 0,
-    finishTime: -1,
-    refPoints,
-    lastTrackedPct: 0.97,
-    isOnPitRoad: false,
-    ...opts,
+  setActiveRefLap({
+    carIdx,
+    lap: {
+      startTime: 0,
+      finishTime: -1,
+      refPoints,
+      lastTrackedPct: 0.97,
+      isOnPitRoad: false,
+      ...opts,
+    },
   });
 };
 

@@ -79,8 +79,8 @@ export const computeFuel = async (): Promise<FuelRefill | null> => {
   ]);
 
   const playerLastLapNumber = lapsCompleted[playerCarIdx];
-  updateFuelTracking(fuelLevel, playerLastLapNumber);
-  updateLapTimeTracking(carsIdx, lapsCompleted, lastLapTimes);
+  updateFuelTracking({ fuelLevel, playerLapCompleted: playerLastLapNumber });
+  updateLapTimeTracking({ carsIdx, lapsCompleted, lastLapTimes });
 
   const leaderCarIdx = isRaceSession() ? await getLeaderCarIdx() : playerCarIdx;
 

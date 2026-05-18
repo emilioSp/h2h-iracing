@@ -8,10 +8,15 @@ export type FuelSample = {
 let fuelSamples: FuelSample[] = [];
 let prevPlayerLapCompleted = -1;
 
-export const updateFuelTracking = (
-  fuelLevel: number,
-  playerLapCompleted: number,
-): void => {
+export type UpdateFuelTrackingInput = {
+  fuelLevel: number;
+  playerLapCompleted: number;
+};
+
+export const updateFuelTracking = ({
+  fuelLevel,
+  playerLapCompleted,
+}: UpdateFuelTrackingInput): void => {
   if (playerLapCompleted === prevPlayerLapCompleted) return;
 
   prevPlayerLapCompleted = playerLapCompleted;

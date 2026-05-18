@@ -8,11 +8,17 @@ type LapTimeSample = {
 let lapTimeSamples = new Map<number, LapTimeSample[]>();
 let prevLapCompleted: number[] = [];
 
-export const updateLapTimeTracking = (
-  carsIdx: number[],
-  lapsCompleted: number[],
-  lastLapTimes: number[],
-) => {
+export type UpdateLapTimeTrackingInput = {
+  carsIdx: number[];
+  lapsCompleted: number[];
+  lastLapTimes: number[];
+};
+
+export const updateLapTimeTracking = ({
+  carsIdx,
+  lapsCompleted,
+  lastLapTimes,
+}: UpdateLapTimeTrackingInput) => {
   for (const carIdx of carsIdx) {
     const lapCompleted = lapsCompleted[carIdx];
     const lapTime = lastLapTimes[carIdx];
