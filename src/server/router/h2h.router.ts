@@ -8,7 +8,7 @@ export const h2hRouter = (c: Context) =>
       write: (data: string) => stream.writeSSE({ data }),
       close: () => stream.close(),
     };
-    addClient(dashboardType.H2H, client);
+    addClient({ event: dashboardType.H2H, client });
     await new Promise<void>((resolve) => stream.onAbort(resolve));
-    removeClient(dashboardType.H2H, client);
+    removeClient({ event: dashboardType.H2H, client });
   });

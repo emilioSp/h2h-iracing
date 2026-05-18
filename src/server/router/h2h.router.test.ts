@@ -44,10 +44,10 @@ describe('h2hRouter', () => {
     h2hRouter({} as never);
     await run();
 
-    expect(broadcasterService.addClient).toHaveBeenCalledWith(
-      dashboardType.H2H,
-      expect.objectContaining({ write: expect.any(Function) }),
-    );
+    expect(broadcasterService.addClient).toHaveBeenCalledWith({
+      event: dashboardType.H2H,
+      client: expect.objectContaining({ write: expect.any(Function) }),
+    });
   });
 
   it('deregisters client from broadcaster on abort', async () => {
@@ -57,10 +57,10 @@ describe('h2hRouter', () => {
     h2hRouter({} as never);
     await run();
 
-    expect(broadcasterService.removeClient).toHaveBeenCalledWith(
-      dashboardType.H2H,
-      expect.objectContaining({ write: expect.any(Function) }),
-    );
+    expect(broadcasterService.removeClient).toHaveBeenCalledWith({
+      event: dashboardType.H2H,
+      client: expect.objectContaining({ write: expect.any(Function) }),
+    });
   });
 
   it('passes write function that calls stream.writeSSE', async () => {
@@ -70,7 +70,8 @@ describe('h2hRouter', () => {
     h2hRouter({} as never);
     await run();
 
-    const client = vi.mocked(broadcasterService.addClient).mock.calls[0][1];
+    const client = vi.mocked(broadcasterService.addClient).mock.calls[0][0]
+      .client;
     await client.write('test-data');
 
     expect(stream.writeSSE).toHaveBeenCalledWith({ data: 'test-data' });

@@ -12,7 +12,7 @@ const carsIdx = Array.from({ length: 64 }, (_, i) => i);
 const tick = (lap: number, lapTimes: number[] = []) => {
   const lapsCompleted = Array(64).fill(lap);
   const lastLapTimes = lapTimes.length > 0 ? lapTimes : Array(64).fill(0);
-  updateLapTimeTracking(carsIdx, lapsCompleted, lastLapTimes);
+  updateLapTimeTracking({ carsIdx, lapsCompleted, lastLapTimes });
 };
 
 beforeEach(() => {

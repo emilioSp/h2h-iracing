@@ -8,7 +8,7 @@ export const fuelRouter = (c: Context) =>
       write: (data: string) => stream.writeSSE({ data }),
       close: () => stream.close(),
     };
-    addClient(dashboardType.FUEL, client);
+    addClient({ event: dashboardType.FUEL, client });
     await new Promise<void>((resolve) => stream.onAbort(resolve));
-    removeClient(dashboardType.FUEL, client);
+    removeClient({ event: dashboardType.FUEL, client });
   });

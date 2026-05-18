@@ -74,10 +74,15 @@ export const normalizeTrackPct = (trackPct: number): number => {
  At position 50.03% of the track, the car would be 45.03 seconds into the lap.
  */
 
-export const interpolateTimeAtTrackPosition = (
-  lap: ReferenceLap,
-  currentTrackPositionPct: number,
-): number | null => {
+export type InterpolateTimeAtTrackPositionInput = {
+  lap: ReferenceLap;
+  currentTrackPositionPct: number;
+};
+
+export const interpolateTimeAtTrackPosition = ({
+  lap,
+  currentTrackPositionPct,
+}: InterpolateTimeAtTrackPositionInput): number | null => {
   const refPointKey0 = normalizeTrackPct(currentTrackPositionPct);
   const refPointKey1 = normalizeTrackPct(
     currentTrackPositionPct + referenceInterval,
@@ -118,25 +123,35 @@ const isLapValid = (lap: ReferenceLap) => {
   );
 };
 
-const collectLapData = (
-  carIdx: number,
-  trackPct: number,
-  sessionTime: number,
-  isOnPitRoad: boolean,
-): void => {
+type CollectLapDataInput = {
+  carIdx: number;
+  trackPct: number;
+  sessionTime: number;
+  isOnPitRoad: boolean;
+};
+
+const collectLapData = ({
+  carIdx,
+  trackPct,
+  sessionTime,
+  isOnPitRoad,
+}: CollectLapDataInput): void => {
   const refPointKey = normalizeTrackPct(trackPct);
   const activeRefLap = referenceLapRepository.getActiveRefLap(carIdx);
 
   // init ref lap
   if (!activeRefLap) {
-    referenceLapRepository.setActiveRefLap(carIdx, {
-      startTime: sessionTime,
-      finishTime: -1,
-      refPoints: new Map([
-        [refPointKey, { trackPct, timeElapsedSinceStart: 0 }],
-      ]),
-      lastTrackedPct: trackPct,
-      isOnPitRoad,
+    referenceLapRepository.setActiveRefLap({
+      carIdx,
+      lap: {
+        startTime: sessionTime,
+        finishTime: -1,
+        refPoints: new Map([
+          [refPointKey, { trackPct, timeElapsedSinceStart: 0 }],
+        ]),
+        lastTrackedPct: trackPct,
+        isOnPitRoad,
+      },
     });
     return;
   }
@@ -147,17 +162,20 @@ const collectLapData = (
     activeRefLap.finishTime = sessionTime;
 
     if (isLapValid(activeRefLap)) {
-      referenceLapRepository.addRecentLap(carIdx, activeRefLap);
+      referenceLapRepository.addRecentLap({ carIdx, lap: activeRefLap });
     }
 
-    referenceLapRepository.setActiveRefLap(carIdx, {
-      startTime: sessionTime,
-      finishTime: -1,
-      refPoints: new Map([
-        [refPointKey, { trackPct, timeElapsedSinceStart: 0 }],
-      ]),
-      lastTrackedPct: trackPct,
-      isOnPitRoad,
+    referenceLapRepository.setActiveRefLap({
+      carIdx,
+      lap: {
+        startTime: sessionTime,
+        finishTime: -1,
+        refPoints: new Map([
+          [refPointKey, { trackPct, timeElapsedSinceStart: 0 }],
+        ]),
+        lastTrackedPct: trackPct,
+        isOnPitRoad,
+      },
     });
 
     return;
@@ -180,11 +198,11 @@ export const updateReferenceLaps = async (): Promise<void> => {
 
   for (const carIdx of carIdxs) {
     if ((lapDistPct[carIdx] ?? -1) < 0) continue;
-    collectLapData(
+    collectLapData({
       carIdx,
-      lapDistPct[carIdx],
+      trackPct: lapDistPct[carIdx],
       sessionTime,
-      onPitRoad[carIdx] === 1,
-    );
+      isOnPitRoad: onPitRoad[carIdx] === 1,
+    });
   }
 };

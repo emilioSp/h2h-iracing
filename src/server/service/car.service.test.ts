@@ -80,7 +80,7 @@ describe('computeCar', () => {
   });
 
   it('assembles a Car from standing and repositories', async () => {
-    const car = await computeCar(7, standings);
+    const car = await computeCar({ carIdx: 7, standings });
 
     expect(car).toEqual({
       driver: expect.objectContaining({ name: 'Test Driver' }),
@@ -92,7 +92,7 @@ describe('computeCar', () => {
   });
 
   it('uses position 0 when carIdx is not in standings', async () => {
-    const car = await computeCar(99, standings);
+    const car = await computeCar({ carIdx: 99, standings });
 
     expect(car.position).toBe(0);
   });
@@ -103,7 +103,7 @@ describe('computeCar', () => {
       5,
     );
 
-    const car = await computeCar(7, standings);
+    const car = await computeCar({ carIdx: 7, standings });
 
     expect(car.lap).toBe(5);
   });

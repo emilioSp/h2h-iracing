@@ -1,13 +1,21 @@
 import { isCheckeredFlag } from '#repository/session-info.repository.ts';
 import type { FuelRefill } from '#schema/fuel.schema.ts';
 
-export const computeEstimatedTimeRemaining = (
-  timeRemaining: number,
-  flags: number,
-  leaderMedianLapTime: number | null,
-  playerMedianLapTime: number | null,
-  leaderLapDistPct: number,
-): number | null => {
+export type ComputeEstimatedTimeRemainingInput = {
+  timeRemaining: number;
+  flags: number;
+  leaderMedianLapTime: number | null;
+  playerMedianLapTime: number | null;
+  leaderLapDistPct: number;
+};
+
+export const computeEstimatedTimeRemaining = ({
+  timeRemaining,
+  flags,
+  leaderMedianLapTime,
+  playerMedianLapTime,
+  leaderLapDistPct,
+}: ComputeEstimatedTimeRemainingInput): number | null => {
   if (isCheckeredFlag(flags)) return 0;
   if (playerMedianLapTime === null || leaderMedianLapTime === null) return null;
 
@@ -37,11 +45,17 @@ type FuelRefillFields = Pick<
   | 'fuelRefillFor1MarginLap'
 >;
 
-export const computeFuelRefill = (
-  fuelLevel: number,
-  medianFuelPerLap: number | null,
-  lapsRemaining: number | null,
-): FuelRefillFields => {
+export type ComputeFuelRefillInput = {
+  fuelLevel: number;
+  medianFuelPerLap: number | null;
+  lapsRemaining: number | null;
+};
+
+export const computeFuelRefill = ({
+  fuelLevel,
+  medianFuelPerLap,
+  lapsRemaining,
+}: ComputeFuelRefillInput): FuelRefillFields => {
   if (medianFuelPerLap === null || lapsRemaining === null) {
     return {
       fuelRefillNoMarginLap: null,

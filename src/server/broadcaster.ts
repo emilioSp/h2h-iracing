@@ -36,10 +36,15 @@ const closeSSEStream = (set: Set<SSEClient>) => {
   set.clear();
 };
 
-const writeToClients = async (
-  clientSet: Set<SSEClient>,
-  data: unknown,
-): Promise<void> => {
+type WriteToClientsInput = {
+  clientSet: Set<SSEClient>;
+  data: unknown;
+};
+
+const writeToClients = async ({
+  clientSet,
+  data,
+}: WriteToClientsInput): Promise<void> => {
   const json = JSON.stringify({ data });
   await Promise.all(
     [...clientSet].map(async (client) => {
@@ -60,7 +65,7 @@ const broadcastH2H = async () => {
     if (result === null) {
       closeSSEStream(h2hClients);
     } else {
-      await writeToClients(h2hClients, result);
+      await writeToClients({ clientSet: h2hClients, data: result });
     }
   }
 };
@@ -69,7 +74,10 @@ const broadcastWeather = async () => {
   // biome-ignore lint/style/noNonNullAssertion: clients map is defined above
   const weatherClients = clients.get(dashboardType.WEATHER)!;
   if (weatherClients.size > 0) {
-    await writeToClients(weatherClients, await computeWeather());
+    await writeToClients({
+      clientSet: weatherClients,
+      data: await computeWeather(),
+    });
   }
 };
 
@@ -77,7 +85,10 @@ const broadcastCar = async () => {
   // biome-ignore lint/style/noNonNullAssertion: clients map is defined above
   const carClients = clients.get(dashboardType.CAR)!;
   if (carClients.size > 0) {
-    await writeToClients(carClients, await computeCarTelemetry());
+    await writeToClients({
+      clientSet: carClients,
+      data: await computeCarTelemetry(),
+    });
   }
 };
 
@@ -89,7 +100,7 @@ const broadcastFuel = async () => {
     if (result === null) {
       closeSSEStream(fuelClients);
     } else {
-      await writeToClients(fuelClients, result);
+      await writeToClients({ clientSet: fuelClients, data: result });
     }
   }
 };
@@ -140,12 +151,22 @@ export const stopBroadcasting = () => {
   }
 };
 
-export const addClient = (event: DashboardType, client: SSEClient) => {
+export type AddClientInput = {
+  event: DashboardType;
+  client: SSEClient;
+};
+
+export const addClient = ({ event, client }: AddClientInput) => {
   clients.get(event)?.add(client);
   startBroadcasting();
 };
 
-export const removeClient = (event: DashboardType, client: SSEClient) => {
+export type RemoveClientInput = {
+  event: DashboardType;
+  client: SSEClient;
+};
+
+export const removeClient = ({ event, client }: RemoveClientInput) => {
   const clientSet = clients.get(event) ?? new Set<SSEClient>();
   clientSet.delete(client);
 };
