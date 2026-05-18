@@ -40,18 +40,6 @@ const getGapAndDelta = async ({
   return { gap, delta };
 };
 
-type ComputePlayerCarInput = {
-  playerIdx: number;
-  standings: Standing[];
-};
-
-const computePlayerCar = async ({
-  playerIdx,
-  standings,
-}: ComputePlayerCarInput): Promise<Car> => {
-  return computeCar({ carIdx: playerIdx, standings });
-};
-
 type ComputeAheadAndBehindCarInput = {
   playerCar: Car;
   standings: Standing[];
@@ -96,7 +84,7 @@ export const computeHead2Head = async (): Promise<Head2Head | null> => {
   const standings = await getStandings(isRace);
   const sessionTime = await getSessionTime();
 
-  const playerCar = await computePlayerCar({ playerIdx, standings });
+  const playerCar = await computeCar({ carIdx: playerIdx, standings });
   if (playerCar.position === 0) {
     return {
       sessionTime,
