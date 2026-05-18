@@ -88,13 +88,13 @@ export const computeFuel = async (): Promise<FuelRefill | null> => {
   const playerMedianLapTime = getMedianLapTime(playerCarIdx);
   const medianFuelPerLap = getMedianFuelPerLap();
 
-  const estimatedTimeRemaining = computeEstimatedTimeRemaining(
+  const estimatedTimeRemaining = computeEstimatedTimeRemaining({
     timeRemaining,
     flags,
     leaderMedianLapTime,
     playerMedianLapTime,
-    lapDistPct[leaderCarIdx],
-  );
+    leaderLapDistPct: lapDistPct[leaderCarIdx],
+  });
 
   const lapsRemaining = computeLapsRemaining(
     estimatedTimeRemaining,
@@ -105,7 +105,7 @@ export const computeFuel = async (): Promise<FuelRefill | null> => {
   const fuelLastLap = getLastLapFuelDelta();
 
   return {
-    ...computeFuelRefill(fuelLevel, medianFuelPerLap, lapsRemaining),
+    ...computeFuelRefill({ fuelLevel, medianFuelPerLap, lapsRemaining }),
     estimatedTimeRemaining,
     lapsRemaining,
     medianFuelPerLap,

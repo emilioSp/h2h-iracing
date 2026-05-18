@@ -74,10 +74,15 @@ export const normalizeTrackPct = (trackPct: number): number => {
  At position 50.03% of the track, the car would be 45.03 seconds into the lap.
  */
 
-export const interpolateTimeAtTrackPosition = (
-  lap: ReferenceLap,
-  currentTrackPositionPct: number,
-): number | null => {
+export type InterpolateTimeAtTrackPositionInput = {
+  lap: ReferenceLap;
+  currentTrackPositionPct: number;
+};
+
+export const interpolateTimeAtTrackPosition = ({
+  lap,
+  currentTrackPositionPct,
+}: InterpolateTimeAtTrackPositionInput): number | null => {
   const refPointKey0 = normalizeTrackPct(currentTrackPositionPct);
   const refPointKey1 = normalizeTrackPct(
     currentTrackPositionPct + referenceInterval,
@@ -118,12 +123,19 @@ const isLapValid = (lap: ReferenceLap) => {
   );
 };
 
-const collectLapData = (
-  carIdx: number,
-  trackPct: number,
-  sessionTime: number,
-  isOnPitRoad: boolean,
-): void => {
+type CollectLapDataInput = {
+  carIdx: number;
+  trackPct: number;
+  sessionTime: number;
+  isOnPitRoad: boolean;
+};
+
+const collectLapData = ({
+  carIdx,
+  trackPct,
+  sessionTime,
+  isOnPitRoad,
+}: CollectLapDataInput): void => {
   const refPointKey = normalizeTrackPct(trackPct);
   const activeRefLap = referenceLapRepository.getActiveRefLap(carIdx);
 
@@ -186,11 +198,11 @@ export const updateReferenceLaps = async (): Promise<void> => {
 
   for (const carIdx of carIdxs) {
     if ((lapDistPct[carIdx] ?? -1) < 0) continue;
-    collectLapData(
+    collectLapData({
       carIdx,
-      lapDistPct[carIdx],
+      trackPct: lapDistPct[carIdx],
       sessionTime,
-      onPitRoad[carIdx] === 1,
-    );
+      isOnPitRoad: onPitRoad[carIdx] === 1,
+    });
   }
 };
