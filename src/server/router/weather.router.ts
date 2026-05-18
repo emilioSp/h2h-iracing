@@ -8,7 +8,7 @@ export const weatherRouter = (c: Context) =>
       write: (data: string) => stream.writeSSE({ data }),
       close: () => stream.close(),
     };
-    addClient(dashboardType.WEATHER, client);
+    addClient({ event: dashboardType.WEATHER, client });
     await new Promise<void>((resolve) => stream.onAbort(resolve));
-    removeClient(dashboardType.WEATHER, client);
+    removeClient({ event: dashboardType.WEATHER, client });
   });

@@ -58,28 +58,28 @@ describe('getRefLap', () => {
   });
 
   it('returns the fastest lap in the rolling window even if the window is not full', () => {
-    addRecentLap(0, lap1);
-    addRecentLap(0, lap2);
-    addRecentLap(0, lap3);
+    addRecentLap({ carIdx: 0, lap: lap1 });
+    addRecentLap({ carIdx: 0, lap: lap2 });
+    addRecentLap({ carIdx: 0, lap: lap3 });
     expect(getRefLap(0)).toBe(lap1);
   });
 
   it('returns the fastest lap in the rolling window', () => {
-    addRecentLap(0, lap1);
-    addRecentLap(0, lap2);
-    addRecentLap(0, lap3);
-    addRecentLap(0, lap4);
-    addRecentLap(0, lap5);
+    addRecentLap({ carIdx: 0, lap: lap1 });
+    addRecentLap({ carIdx: 0, lap: lap2 });
+    addRecentLap({ carIdx: 0, lap: lap3 });
+    addRecentLap({ carIdx: 0, lap: lap4 });
+    addRecentLap({ carIdx: 0, lap: lap5 });
     expect(getRefLap(0)).toBe(lap1);
   });
 
   it('should not return lap1 even if it is the fastest (due to rolling window size)', () => {
-    addRecentLap(0, lap1);
-    addRecentLap(0, lap2);
-    addRecentLap(0, lap3);
-    addRecentLap(0, lap4);
-    addRecentLap(0, lap5);
-    addRecentLap(0, lap6);
+    addRecentLap({ carIdx: 0, lap: lap1 });
+    addRecentLap({ carIdx: 0, lap: lap2 });
+    addRecentLap({ carIdx: 0, lap: lap3 });
+    addRecentLap({ carIdx: 0, lap: lap4 });
+    addRecentLap({ carIdx: 0, lap: lap5 });
+    addRecentLap({ carIdx: 0, lap: lap6 });
     expect(getRefLap(0)).toBe(lap5);
   });
 });

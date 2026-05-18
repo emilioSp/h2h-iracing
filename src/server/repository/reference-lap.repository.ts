@@ -19,11 +19,24 @@ const recentLaps = new Map<number, ReferenceLap[]>();
 export const getActiveRefLap = (carIdx: number): ReferenceLap | null =>
   activeLaps.get(carIdx) ?? null;
 
-export const setActiveRefLap = (carIdx: number, lap: ReferenceLap): void => {
+export type SetActiveRefLapInput = {
+  carIdx: number;
+  lap: ReferenceLap;
+};
+
+export const setActiveRefLap = ({
+  carIdx,
+  lap,
+}: SetActiveRefLapInput): void => {
   activeLaps.set(carIdx, lap);
 };
 
-export const addRecentLap = (carIdx: number, lap: ReferenceLap): void => {
+export type AddRecentLapInput = {
+  carIdx: number;
+  lap: ReferenceLap;
+};
+
+export const addRecentLap = ({ carIdx, lap }: AddRecentLapInput): void => {
   const rollingWindow = recentLaps.get(carIdx) ?? [];
   rollingWindow.push(lap);
   if (rollingWindow.length > ROLLING_WINDOW_LAPS_SIZE) rollingWindow.shift();

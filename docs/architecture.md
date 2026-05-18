@@ -6,44 +6,35 @@ Real-time racing overlay for iRacing. A local Node.js server reads telemetry fro
 
 ## System Diagram
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        iRacing (Simulator)                      │
-│                       Windows Shared Memory                     │
-└───────────────────────────────┬─────────────────────────────────┘
-                                │ @emiliosp/node-iracing-sdk
-                                ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    Node.js Server  (Hono)                       │
-│                                                                 │
-│   ┌─────────────┐   ┌──────────────┐   ┌────────────────────┐   │
-│   │ Repository  │   │   Service    │   │     Dashboard      │   │
-│   └─────────────┘   └──────────────┘   └──────────┬─────────┘   │
-│                                                   │             │
-│                         tick.ts (33 ms poll) ───▶ │             │
-│                                                   ▼             │
-│                                          ┌─────────────────┐    │
-│                                          │  Broadcaster    │    │
-│                                          │  (SSE clients)  │    │
-│                                          └────────┬────────┘    │
-│                                                   │             │
-│              ┌────────────────────────────────────┤             │
-│              │                │                   │             │
-│         GET /sse/h2h    GET /sse/weather   GET /sse/car         │
-│              │                │                   │             │
-│             (serves static React builds from /dist/)            │
-└──────────────┼────────────────┼───────────────────┼─────────────┘
-               │                │                   │
-               │      SSE (Server-Sent Events)      │
-               │                │                   │
-┌──────────────▼────────────────▼───────────────────▼────────────┐
-│                   OBS Browser Source / SimHub                  │
-│                                                                │
-│     ┌──────────────┐  ┌──────────────┐  ┌──────────────────┐   │
-│     │ H2H Overlay  │  │   Weather    │  │  Car Telemetry   │   │
-│     │  (React)     │  │   (React)    │  │    (React)       │   │
-│     └──────────────┘  └──────────────┘  └──────────────────┘   │
-└────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    iRacing["iRacing (Simulator)<br/>Windows Shared Memory"]
+
+    iRacing -->|"@emiliosp/node-iracing-sdk"| Repo
+
+    subgraph Server["Node.js Server (Hono)"]
+        Repo["Repository (data layer)"]
+        Service["Service (business logic / algorithms)"]
+        Dashboard["Dashboard (orchestrators)"]
+        Broadcaster["Broadcaster (SSE clients)"]
+
+        Repo --> Dashboard
+        Repo --> Service
+        Service --> Dashboard
+        Dashboard --> Broadcaster
+    end
+
+    subgraph OBS["OBS Browser Source / SimHub"]
+        H2H["H2H Overlay (React)"]
+        Weather["Weather (React)"]
+        Car["Car Telemetry (React)"]
+        Fuel["Fuel (React)"]
+    end
+
+    Broadcaster -->|"GET /sse/h2h"| H2H
+    Broadcaster -->|"GET /sse/weather"| Weather
+    Broadcaster -->|"GET /sse/car"| Car
+    Broadcaster -->|"GET /sse/fuel"| Fuel
 ```
 
 ---
@@ -51,13 +42,13 @@ Real-time racing overlay for iRacing. A local Node.js server reads telemetry fro
 ## Layers
 
 ### Router
-Thin Hono route handlers. Each route (`/sse/h2h`, `/sse/weather`, `/sse/car`) opens an SSE stream and registers the client with the broadcaster.
+Thin Hono route handlers. Each route (`/sse/h2h`, `/sse/weather`, `/sse/car`, `/sse/fuel`) opens an SSE stream and registers the client with the broadcaster.
 
 ### Broadcaster
 Manages the set of connected SSE clients. On each tick (~33 ms), it calls all three dashboards and writes the results to every subscribed client. The loop only runs while at least one client is connected.
 
 ### Dashboard (service orchestrator)
-Aggregates repository + service output into a typed payload per overlay. One dashboard per overlay type: `head2head`, `weather`, `car-telemetry`.
+Aggregates repository + service output into a typed payload per overlay. One dashboard per overlay type: `head2head`, `weather`, `car-telemetry`, `fuel`.
 
 ### Service
 Pure business logic. Computes standings from track position, calculates time/lap gaps between cars using a reference lap, and derives delta times.
@@ -69,9 +60,8 @@ Wraps the iRacing SDK. Reads raw telemetry values from shared memory (speed, lap
 
 ## Data Flow
 
-1. **tick.ts** fires every 33 ms and refreshes in-memory telemetry from the iRacing SDK.
-2. **Broadcaster** calls each dashboard to compute the latest payload.
-3. **Payloads** are serialized as JSON and written to all connected SSE clients.
-4. **React overlays** receive the event, parse the JSON, and re-render.
+1. **Broadcaster** calls each dashboard to compute the latest payload.
+2. **Payloads** are serialized as JSON and written to all connected SSE clients.
+3. **React overlays** receive the event, parse the JSON, and re-render.
 
 ---

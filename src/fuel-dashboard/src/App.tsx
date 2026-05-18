@@ -83,9 +83,7 @@ type LapsCellProps = {
 
 const LapsCell = ({ done, remaining }: LapsCellProps) => {
   const total =
-    done != null && remaining != null
-      ? (Number(done) + Number(remaining)).toFixed(2)
-      : null;
+    done != null && remaining != null ? done + Math.ceil(remaining) : null;
 
   return (
     <div className="grid place-items-center p-4 bg-card">

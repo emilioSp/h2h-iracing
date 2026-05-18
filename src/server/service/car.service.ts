@@ -32,10 +32,15 @@ export const computeBestLapTime = async (carIdx: number): Promise<number> => {
   return NaN;
 };
 
-export const computeCar = async (
-  carIdx: number,
-  standings: Standing[],
-): Promise<Car> => {
+export type ComputeCarInput = {
+  carIdx: number;
+  standings: Standing[];
+};
+
+export const computeCar = async ({
+  carIdx,
+  standings,
+}: ComputeCarInput): Promise<Car> => {
   const carStanding = standings.find((s) => s.carIdx === carIdx);
 
   // biome-ignore lint/style/noNonNullAssertion: we assume the driver info is always available for valid carIdx

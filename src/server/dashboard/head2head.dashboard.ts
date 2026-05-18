@@ -11,44 +11,62 @@ import * as GapService from '#service/gap.service.ts';
 import { updateReferenceLaps } from '#service/reference-lap.service.ts';
 import { getStandings, type Standing } from '#service/standings.service.ts';
 
-const getGapAndDelta = async (
-  player: Car,
-  ahead: Car | null,
-  behind: Car | null,
-  isRace: boolean,
-): Promise<{ gap: GapService.GetGapOutput; delta: DeltaService.Delta }> => {
+type GetGapAndDeltaInput = {
+  player: Car;
+  ahead: Car | null;
+  behind: Car | null;
+  isRace: boolean;
+};
+
+type GetGapAndDeltaOutput = {
+  gap: GapService.GetGapOutput;
+  delta: DeltaService.Delta;
+};
+
+const getGapAndDelta = async ({
+  player,
+  ahead,
+  behind,
+  isRace,
+}: GetGapAndDeltaInput): Promise<GetGapAndDeltaOutput> => {
   const gap = isRace
-    ? await GapService.getGap(ahead, player, behind)
+    ? await GapService.getGap({ ahead, player, behind })
     : { gapAhead: null, gapBehind: null };
 
   const delta = isRace
-    ? DeltaService.getDeltaLastLap(player, ahead, behind)
-    : DeltaService.getDeltaBestLap(player, ahead, behind);
+    ? DeltaService.getDeltaLastLap({ player, ahead, behind })
+    : DeltaService.getDeltaBestLap({ player, ahead, behind });
 
-  return {
-    gap,
-    delta,
-  };
+  return { gap, delta };
 };
 
-const computePlayerCar = async (playerIdx: number, standings: Standing[]) => {
-  const player = await computeCar(playerIdx, standings);
-  return player;
+type ComputeAheadAndBehindCarInput = {
+  playerCar: Car;
+  standings: Standing[];
 };
 
-const computeAheadAndBehindCar = async (
-  playerCar: Car,
-  standings: Standing[],
-) => {
+type ComputeAheadAndBehindCarOutput = {
+  aheadCar: Car | null;
+  behindCar: Car | null;
+};
+
+const computeAheadAndBehindCar = async ({
+  playerCar,
+  standings,
+}: ComputeAheadAndBehindCarInput): Promise<ComputeAheadAndBehindCarOutput> => {
   const aheadIdx =
     standings.find((s) => s.pos === playerCar.position - 1)?.carIdx ?? null;
   const behindIdx =
     standings.find((s) => s.pos === playerCar.position + 1)?.carIdx ?? null;
 
   const aheadCar: Car | null =
-    aheadIdx !== null ? await computeCar(aheadIdx, standings) : null;
+    aheadIdx !== null
+      ? await computeCar({ carIdx: aheadIdx, standings })
+      : null;
   const behindCar: Car | null =
-    behindIdx !== null ? await computeCar(behindIdx, standings) : null;
+    behindIdx !== null
+      ? await computeCar({ carIdx: behindIdx, standings })
+      : null;
 
   return { aheadCar, behindCar };
 };
@@ -66,7 +84,7 @@ export const computeHead2Head = async (): Promise<Head2Head | null> => {
   const standings = await getStandings(isRace);
   const sessionTime = await getSessionTime();
 
-  const playerCar = await computePlayerCar(playerIdx, standings);
+  const playerCar = await computeCar({ carIdx: playerIdx, standings });
   if (playerCar.position === 0) {
     return {
       sessionTime,
@@ -80,16 +98,16 @@ export const computeHead2Head = async (): Promise<Head2Head | null> => {
     };
   }
 
-  const { aheadCar, behindCar } = await computeAheadAndBehindCar(
+  const { aheadCar, behindCar } = await computeAheadAndBehindCar({
     playerCar,
     standings,
-  );
-  const { gap, delta } = await getGapAndDelta(
-    playerCar,
-    aheadCar,
-    behindCar,
+  });
+  const { gap, delta } = await getGapAndDelta({
+    player: playerCar,
+    ahead: aheadCar,
+    behind: behindCar,
     isRace,
-  );
+  });
 
   return {
     sessionTime,

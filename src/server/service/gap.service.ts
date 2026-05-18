@@ -16,30 +16,55 @@ export type Gap = {
   unit: 'seconds' | 'laps';
 };
 
-const estimatedDelta = (
-  classLapTime: number,
-  aheadPct: number,
-  behindPct: number,
-): number => {
+type EstimatedDeltaInput = {
+  classLapTime: number;
+  aheadPct: number;
+  behindPct: number;
+};
+
+const estimatedDelta = ({
+  classLapTime,
+  aheadPct,
+  behindPct,
+}: EstimatedDeltaInput): number => {
   let delta = aheadPct * classLapTime - behindPct * classLapTime;
   if (aheadPct < behindPct) delta += classLapTime;
   return Math.abs(delta);
 };
 
-const referenceDelta = (
-  refLap: ReferenceLap,
-  aheadPct: number,
-  behindPct: number,
-): number => {
-  const timeAhead = interpolateTimeAtTrackPosition(refLap, aheadPct) ?? 0;
-  const timeBehind = interpolateTimeAtTrackPosition(refLap, behindPct) ?? 0;
+type ReferenceDeltaInput = {
+  refLap: ReferenceLap;
+  aheadPct: number;
+  behindPct: number;
+};
+
+const referenceDelta = ({
+  refLap,
+  aheadPct,
+  behindPct,
+}: ReferenceDeltaInput): number => {
+  const timeAhead =
+    interpolateTimeAtTrackPosition({
+      lap: refLap,
+      currentTrackPositionPct: aheadPct,
+    }) ?? 0;
+  const timeBehind =
+    interpolateTimeAtTrackPosition({
+      lap: refLap,
+      currentTrackPositionPct: behindPct,
+    }) ?? 0;
   let delta = timeAhead - timeBehind;
   const lapTime = refLap.finishTime - refLap.startTime;
   if (aheadPct < behindPct) delta += lapTime;
   return Math.abs(delta);
 };
 
-const computeGap = async (ahead: Car, behind: Car): Promise<Gap> => {
+type ComputeGapInput = {
+  ahead: Car;
+  behind: Car;
+};
+
+const computeGap = async ({ ahead, behind }: ComputeGapInput): Promise<Gap> => {
   if (ahead.driver.carIdx === behind.driver.carIdx)
     return { value: 0, unit: 'seconds' };
 
@@ -62,7 +87,7 @@ const computeGap = async (ahead: Car, behind: Car): Promise<Gap> => {
   const classLapTime = getClassEstLapTime(behindIdx);
   if ((lapsCompleted[behindIdx] ?? 0) < 2) {
     return {
-      value: estimatedDelta(classLapTime, aheadPct, behindPct),
+      value: estimatedDelta({ classLapTime, aheadPct, behindPct }),
       unit: 'seconds',
     };
   }
@@ -74,24 +99,33 @@ const computeGap = async (ahead: Car, behind: Car): Promise<Gap> => {
 
   if (!anyOnPit && hasRefData) {
     return {
-      value: referenceDelta(refLap, aheadPct, behindPct),
+      value: referenceDelta({ refLap, aheadPct, behindPct }),
       unit: 'seconds',
     };
   }
 
   return {
-    value: estimatedDelta(classLapTime, aheadPct, behindPct),
+    value: estimatedDelta({ classLapTime, aheadPct, behindPct }),
     unit: 'seconds',
   };
 };
 
 export type GetGapOutput = { gapAhead: Gap | null; gapBehind: Gap | null };
-export const getGap = async (
-  ahead: Car | null,
-  player: Car,
-  behind: Car | null,
-): Promise<GetGapOutput> => {
-  const gapAhead = ahead !== null ? await computeGap(ahead, player) : null;
-  const gapBehind = behind !== null ? await computeGap(player, behind) : null;
+
+export type GetGapInput = {
+  ahead: Car | null;
+  player: Car;
+  behind: Car | null;
+};
+
+export const getGap = async ({
+  ahead,
+  player,
+  behind,
+}: GetGapInput): Promise<GetGapOutput> => {
+  const gapAhead =
+    ahead !== null ? await computeGap({ ahead, behind: player }) : null;
+  const gapBehind =
+    behind !== null ? await computeGap({ ahead: player, behind }) : null;
   return { gapAhead, gapBehind };
 };

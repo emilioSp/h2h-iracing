@@ -5,11 +5,17 @@ export type Delta = {
   deltaBehind: number | null;
 };
 
-export const getDeltaLastLap = (
-  player: Car,
-  ahead: Car | null,
-  behind: Car | null,
-): Delta => {
+export type GetDeltaInput = {
+  player: Car;
+  ahead: Car | null;
+  behind: Car | null;
+};
+
+export const getDeltaLastLap = ({
+  player,
+  ahead,
+  behind,
+}: GetDeltaInput): Delta => {
   let deltaAhead: number | null = null;
   if (ahead && player.lastLapTime > 1 && ahead.lastLapTime > 1) {
     deltaAhead = player.lastLapTime - ahead.lastLapTime;
@@ -26,11 +32,11 @@ export const getDeltaLastLap = (
   };
 };
 
-export const getDeltaBestLap = (
-  player: Car,
-  ahead: Car | null,
-  behind: Car | null,
-): Delta => {
+export const getDeltaBestLap = ({
+  player,
+  ahead,
+  behind,
+}: GetDeltaInput): Delta => {
   let deltaAhead: number | null = null;
   if (ahead && player.bestLapTime > 1 && ahead.bestLapTime > 1) {
     deltaAhead = player.bestLapTime - ahead.bestLapTime;
