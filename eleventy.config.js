@@ -1,5 +1,7 @@
 export default function (eleventyConfig) {
-  eleventyConfig.addPassthroughCopy({ docs: 'images' });
+  eleventyConfig.addPassthroughCopy({
+    'docs/*.{jpg,jpeg,png,webp,gif,svg}': 'images',
+  });
   eleventyConfig.addPassthroughCopy('site/assets');
   eleventyConfig.addWatchTarget('./site/assets/css/style.css');
 
