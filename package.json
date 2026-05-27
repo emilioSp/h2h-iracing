@@ -26,9 +26,9 @@
     "build": "tsc",
     "package": "node scripts/package.ts",
     "release": "npm run package && gh release create v${npm_package_version} \"./h2h-iracing-${npm_package_version}.zip\" --generate-notes",
-    "site:css": "tailwindcss -i site/_css/input.css -o site/assets/css/style.css",
+    "site:css": "tailwindcss -i site/_css/site.css -o site/assets/css/style.css",
     "site:build": "npm run site:css && eleventy",
-    "site:dev": "npm run site:css && (tailwindcss -i site/_css/input.css -o site/assets/css/style.css --watch &) && eleventy --serve"
+    "site:dev": "npm run site:css && (tailwindcss -i site/_css/site.css -o site/assets/css/style.css --watch &) && eleventy --serve"
   },
   "imports": {
     "#server/*": "./src/server/*",

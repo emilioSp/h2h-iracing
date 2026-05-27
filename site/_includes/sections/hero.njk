@@ -1,43 +1,50 @@
 {# ─── HERO ──────────────────────────────────────────────── #}
-<section class="hero-bg relative min-h-screen grid items-end overflow-hidden">
+<section class="pw-hero">
+  <div class="pw-wrap">
 
-  <div class="relative z-10 px-6 md:px-12 pb-12 md:pb-16 pt-24">
-    <div class="grid grid-cols-1 md:grid-cols-[1fr_auto] md:items-end gap-10 max-w-7xl mx-auto w-full">
+    <div class="pw-session-strip">
+      <div class="pw-session-tag">Real-time race overlays</div>
+      <div class="pw-session-mid">
+        For iRacing<em>·</em>Four overlays<em>·</em>Drop into <b>SimHub</b> or <b>OBS</b><em>·</em>Open source
+      </div>
+    </div>
 
+    <div class="pw-hero-grid">
       <div>
-        <p class="font-mono text-accent text-xs uppercase tracking-[0.3em] mb-4">
-          Real-time race overlays for iRacing
+        <div class="pw-hero-kicker">Your iRacing companion</div>
+        <h1 class="pw-h1">
+          Know the <em>gap.</em>
+          <span>Catch the car ahead.</span>
+        </h1>
+        <p class="text-sm tracking-[0.12em] uppercase text-dim max-w-xl leading-loose mt-8">
+          Four real-time overlays for iRacing. Head-to-head gaps and deltas.
+          Fuel maths in the cockpit. Weather and car telemetry, always at a glance.
         </p>
-        <h1 class="hero-title font-display font-extrabold uppercase text-white">H2H</h1>
-        <div class="grid grid-flow-col auto-cols-auto items-center gap-4 mt-3">
-          <div class="h-0.5 w-10 bg-accent"></div>
-          <p class="font-display font-bold uppercase text-2xl md:text-4xl text-zinc-300 tracking-wide leading-tight">
-            iRacing Overlays
-          </p>
+        <div class="pw-hero-cta-row">
+          <a
+            href="{{ site.releaseUrl }}"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="pw-cta-btn"
+          >
+            Download
+          </a>
+          <div class="pw-hero-cta-meta">
+            iRacing<br />
+            <b>SimHub &amp; OBS</b>
+          </div>
         </div>
       </div>
 
-      <div class="grid justify-items-start md:justify-items-end gap-4">
-        <a
-          href="{{ site.releaseUrl }}"
-          class="inline-block bg-accent hover:bg-white hover:text-zinc-950 transition-colors duration-150 px-6 py-4 font-display font-extrabold text-xl md:text-2xl uppercase tracking-wide"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          DOWNLOAD v{{ site.version }} ↗
-        </a>
-        <p class="font-mono text-xs text-zinc-500 uppercase tracking-[0.25em]">
-          SIMHUB &middot; OBS &middot; WINDOWS ONLY
-        </p>
-      </div>
-
+      <figure class="pw-hero-shot">
+        <img
+          src="{{ '/images/H2H_welcome_page.jpg' | url }}"
+          alt="H2H welcome page — iRacing overlays"
+        />
+      </figure>
     </div>
-  </div>
 
+  </div>
 </section>
 
-<div
-  class="h-3 w-full"
-  aria-hidden="true"
-  style="background-image: repeating-conic-gradient(#161616 0% 25%, rgba(227,0,0,0.35) 0% 50%); background-size: 12px 12px;"
-></div>
+<div class="pw-stripe" aria-hidden="true"></div>
