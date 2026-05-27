@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: 'Bricolage Grotesque', sans-serif;
+  --font-sans:    'Plus Jakarta Sans', ui-sans-serif, system-ui;
+  --font-mono:    'JetBrains Mono', ui-monospace, monospace;
+  --color-accent: #e30000;
+}
+
+/* Fluid hero title */
+.hero-title {
+  font-size: clamp(5rem, 14vw, 13rem);
+  line-height: 0.9;
+}
+
+/* Large decorative section counter — subtle on light bg */
+.section-number {
+  font-size: clamp(4rem, 10vw, 7rem);
+  color: #e4e4e7;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Hero: CSS gradient mesh — no image needed */
+.hero-bg {
+  background:
+    radial-gradient(ellipse 120% 70% at 20% 110%, rgba(227, 0, 0, 0.32) 0%, transparent 52%),
+    radial-gradient(ellipse 70% 45% at 85% -5%, rgba(255, 60, 0, 0.12) 0%, transparent 48%),
+    linear-gradient(155deg, #0e0c0c 0%, #1a1515 50%, #0b0b0b 100%);
+}
+
+.hero-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  opacity: 0.04;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Scroll reveal */
+[data-reveal] {
+  opacity: 0;
+}
+
+[data-reveal].revealed {
+  animation: fadeSlideUp 0.55s ease-out both;
+  opacity: 1;
+}
+
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
