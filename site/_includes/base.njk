@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ title or site.title }}</title>
+    <meta name="description" content="{{ site.description }}" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="{{ site.title }}" />
+    <meta property="og:description" content="{{ site.description }}" />
+    <meta property="og:image" content="{{ '/images/H2H_dashboard.jpg' | url }}" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;700&family=Geist+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="{{ '/assets/css/style.css' | url }}" />
+  </head>
+  <body class="bg-bg text-fg font-sans antialiased">
+    <header class="pw-nav" id="top">
+      <div class="pw-wrap pw-nav-inner">
+        <a href="#top" class="pw-mark">H2H · iRacing</a>
+        <nav class="pw-nav-links">
+          <a href="#overlays">Overlays</a>
+          <a href="#video">Demo</a>
+          <a href="#install">Install</a>
+          <a href="{{ site.githubUrl }}" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+        </nav>
+        <div class="pw-nav-end">
+          <span class="pw-led"></span>
+          <span>V{{ site.version }}</span>
+        </div>
+      </div>
+    </header>
+    {{ content | safe }}
+    <script src="{{ '/assets/js/main.js' | url }}" defer></script>
+  </body>
+</html>

@@ -37,3 +37,7 @@ test-gap.ts
 h2h-iracing-*.zip
 
 /docs/superpowers
+
+# Static site output and generated CSS
+/_site
+/site/assets/css/style.css

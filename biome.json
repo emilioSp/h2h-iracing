@@ -12,7 +12,9 @@
       "!!**/node_modules",
       "!!**/dist",
       "!!**/coverage",
-      "!!**/build"
+      "!!**/build",
+      "!!**/*.css",
+      "!!_site"
     ]
   },
   "formatter": {
