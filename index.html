@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>H2H iRacing — Real-time race overlays</title>
+    <meta name="description" content="Real-time race overlays for iRacing" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="H2H iRacing" />
+    <meta property="og:description" content="Real-time race overlays for iRacing" />
+    <meta property="og:image" content="/h2h-iracing/images/H2H_dashboard.jpg" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;700&family=Geist+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="/h2h-iracing/assets/css/style.css" />
+  </head>
+  <body class="bg-bg text-fg font-sans antialiased">
+    <header class="pw-nav" id="top">
+      <div class="pw-wrap pw-nav-inner">
+        <a href="#top" class="pw-mark">H2H · iRacing</a>
+        <nav class="pw-nav-links">
+          <a href="#overlays">Overlays</a>
+          <a href="#video">Demo</a>
+          <a href="#install">Install</a>
+          <a href="https://github.com/emilioSp/h2h-iracing" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+        </nav>
+        <div class="pw-nav-end">
+          <span class="pw-led"></span>
+          <span>V1.32.2</span>
+        </div>
+      </div>
+    </header>
+    
+
+<section class="pw-hero">
+  <div class="pw-wrap">
+
+    <div class="pw-session-strip">
+      <div class="pw-session-tag">Real-time race overlays</div>
+      <div class="pw-session-mid">
+        For iRacing<em>·</em>Four overlays<em>·</em>Drop into <b>SimHub</b> or <b>OBS</b><em>·</em>Open source
+      </div>
+    </div>
+
+    <div class="pw-hero-grid">
+      <div>
+        <div class="pw-hero-kicker">Your iRacing companion</div>
+        <h1 class="pw-h1">
+          Know the <em>gap.</em>
+          <span>Catch the car ahead.</span>
+        </h1>
+        <p class="text-sm tracking-[0.12em] uppercase text-dim max-w-xl leading-loose mt-8">
+          Four real-time overlays for iRacing. Head-to-head gaps and deltas.
+          Fuel maths in the cockpit. Weather and car telemetry, always at a glance.
+        </p>
+        <div class="pw-hero-cta-row">
+          <a
+            href="https://github.com/emilioSp/h2h-iracing/releases"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="pw-cta-btn"
+          >
+            Download
+          </a>
+          <div class="pw-hero-cta-meta">
+            iRacing<br />
+            <b>SimHub &amp; OBS</b>
+          </div>
+        </div>
+      </div>
+
+      <figure class="pw-hero-shot">
+        <img
+          src="/h2h-iracing/images/H2H_welcome_page.jpg"
+          alt="H2H welcome page — iRacing overlays"
+        />
+      </figure>
+    </div>
+
+  </div>
+</section>
+
+<div class="pw-stripe" aria-hidden="true"></div>
+
+
+<section class="pw-section" id="what">
+  <div class="pw-wrap">
+
+    <div class="pw-section-head" data-reveal>
+      <div class="pw-secnum">/ 01<b>What it is</b></div>
+      <h2 class="pw-sectitle">A pit wall <b>on your screen.</b></h2>
+    </div>
+
+    <div class="pw-what" data-reveal>
+      <div></div>
+      <div class="pw-what-col">
+        <h3>Always know where you stand.</h3>
+        <p>
+          H2H puts four real-time overlays on your screen while you race.
+          See the gap to the car ahead and behind, know if you're catching or
+          losing time, and pit at the right lap.
+        </p>
+        <p>
+          Designed to be scannable in a glance, with the same colour language
+          you already see on the broadcast. Read your race without taking your
+          eyes off it.
+        </p>
+      </div>
+      <div class="pw-what-col">
+        <h3>Drop into SimHub or OBS.</h3>
+        <p>
+          Bundled SimHub dashboards are included in the download. Import them
+          and you're done. Or paste each overlay's URL as a Browser Source in
+          OBS for your stream.
+        </p>
+        <p>
+          No account, no cloud, no subscription. It all runs on your machine,
+          and it's free and open source.
+        </p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<section class="pw-section" id="overlays">
+  <div class="pw-wrap">
+
+    <div class="pw-section-head" data-reveal>
+      <div class="pw-secnum">/ 02<b>The overlays</b></div>
+      <h2 class="pw-sectitle">Many overlays. <b>One download.</b></h2>
+    </div>
+
+    <div class="pw-overlays-grid" data-reveal>
+      <div></div>
+      <div class="pw-overlays-list">
+
+        <div class="pw-overlay-row">
+          <div class="pw-overlay-num">01</div>
+          <div class="pw-overlay-name">Head-to-Head</div>
+          <div class="pw-overlay-desc">
+            See the cars ahead and behind in real time — live gap, delta per
+            lap, and lap times for every battle.
+          </div>
+        </div>
+
+        <div class="pw-overlay-row">
+          <div class="pw-overlay-num">02</div>
+          <div class="pw-overlay-name">Fuel</div>
+          <div class="pw-overlay-desc">
+            Know exactly how much fuel to add at your next pit stop, with zero,
+            half and full-lap safety margins.
+          </div>
+        </div>
+
+        <div class="pw-overlay-row">
+          <div class="pw-overlay-num">03</div>
+          <div class="pw-overlay-name">Weather</div>
+          <div class="pw-overlay-desc">
+            Air and track temperature, track wetness, plus a wind rose that
+            orients itself to the car.
+          </div>
+        </div>
+
+        <div class="pw-overlay-row">
+          <div class="pw-overlay-num">04</div>
+          <div class="pw-overlay-name">Car Telemetry</div>
+          <div class="pw-overlay-desc">
+            ABS, traction control, brake bias and pit limiter.
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="pw-gallery" data-reveal>
+      <figure>
+        <img
+          src="/h2h-iracing/images/H2H_dashboard.jpg"
+          alt="Head-to-Head overlay"
+        />
+        <figcaption><b>H2H Battle</b></figcaption>
+      </figure>
+      <figure>
+        <img
+          src="/h2h-iracing/images/H2H_fuel_dashboard.png"
+          alt="Fuel overlay"
+        />
+        <figcaption><b>Fuel</b></figcaption>
+      </figure>
+      <figure>
+        <img
+          src="/h2h-iracing/images/H2H_weather_dashboard.jpg"
+          alt="Weather overlay"
+        />
+        <figcaption><b>Weather</b></figcaption>
+      </figure>
+      <figure>
+        <img
+          src="/h2h-iracing/images/H2H_car_telemetry_dashboard.jpg"
+          alt="Car Telemetry overlay"
+        />
+        <figcaption><b>Car</b></figcaption>
+      </figure>
+    </div>
+
+  </div>
+</section>
+
+
+<section class="pw-section" id="video">
+  <div class="pw-wrap">
+
+    <div class="pw-section-head" data-reveal>
+      <div class="pw-secnum">/ 03<b>In action</b></div>
+      <h2 class="pw-sectitle">See the gap, <b>close the gap.</b></h2>
+    </div>
+
+    <div class="pw-video-wrap" data-reveal>
+      <div></div>
+      <div
+        id="yt-container"
+        class="pw-video"
+        data-video-id="PTLM69iB8SU"
+      >
+        <img
+          id="yt-poster"
+          src="https://img.youtube.com/vi/PTLM69iB8SU/maxresdefault.jpg"
+          alt="H2H iRacing demo"
+        />
+        <button class="pw-video-play" aria-label="Play demo">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M8 5v14l11-7z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<section class="pw-section" id="install">
+  <div class="pw-wrap">
+
+    <div class="pw-section-head" data-reveal>
+      <div class="pw-secnum">/ 04<b>Setup</b></div>
+      <h2 class="pw-sectitle">Up and running in <b>under a minute.</b></h2>
+    </div>
+
+    <div class="pw-install" data-reveal>
+      <div></div>
+      <div class="pw-steps">
+
+        <div class="pw-step">
+          <div class="pw-stepn">01</div>
+          <h3 class="pw-step-title">Download the zip</h3>
+          <p class="pw-step-desc">
+            Grab the latest release from
+            <a
+              href="https://github.com/emilioSp/h2h-iracing/releases"
+              class="text-fg underline underline-offset-4 hover:text-accent transition-colors"
+              target="_blank"
+              rel="noopener noreferrer"
+            >GitHub</a>.
+            Unzip it anywhere on your Windows machine — no installer required.
+          </p>
+        </div>
+
+        <div class="pw-step">
+          <div class="pw-stepn">02</div>
+          <h3 class="pw-step-title">Run <code>h2h-iracing.exe</code></h3>
+          <p class="pw-step-desc">
+            A welcome page opens in your browser with one-click links to every
+            overlay, ready to use.
+          </p>
+        </div>
+
+        <div class="pw-step">
+          <div class="pw-stepn">03</div>
+          <h3 class="pw-step-title">Add to SimHub or OBS</h3>
+          <p class="pw-step-desc">
+            Import the bundled SimHub dashboards, or paste the overlay URLs as
+            Browser Sources in OBS. Start iRacing and race.
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+    <a
+      href="https://github.com/emilioSp/h2h-iracing/releases"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="pw-install-cta"
+      data-reveal
+    >
+      <span>Get the latest release</span>
+      <small>↗ v1.32.2</small>
+    </a>
+
+  </div>
+</section>
+
+<div class="pw-stripe" aria-hidden="true"></div>
+
+
+<footer class="py-8">
+  <div class="pw-wrap flex justify-between flex-wrap gap-4 text-[11px] font-mono tracking-[0.18em] uppercase text-dim2">
+    <span class="font-sans font-medium text-fg tracking-[0.3em]">H2H · iRacing</span>
+    <span>v1.32.2 · MIT licence · Open source</span>
+    <a
+      href="https://github.com/emilioSp/h2h-iracing"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="hover:text-fg transition-colors"
+    >
+      github.com/emilioSp/h2h-iracing ↗
+    </a>
+  </div>
+</footer>
+
+
+    <script src="/h2h-iracing/assets/js/main.js" defer></script>
+  </body>
+</html>
