@@ -49,7 +49,6 @@ describe('computeCarTelemetry', () => {
       abs: 4,
       tc: 2,
       isAbsActive: true,
-      isTcActive: false,
       brakeBias: 0.543,
       isPitSpeedLimiterActive: false,
     });
@@ -64,7 +63,6 @@ describe('computeCarTelemetry', () => {
       abs: 0,
       tc: 0,
       isAbsActive: false,
-      isTcActive: false,
       brakeBias: 0,
       isPitSpeedLimiterActive: false,
     });

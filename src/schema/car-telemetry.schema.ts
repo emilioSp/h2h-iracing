@@ -4,7 +4,6 @@ export const carTelemetrySchema = z.object({
   abs: z.number(),
   tc: z.number(),
   isAbsActive: z.boolean(),
-  isTcActive: z.boolean(),
   brakeBias: z.number(),
   isPitSpeedLimiterActive: z.boolean(),
 });

@@ -172,10 +172,6 @@ export const getIsAbsActive = withConnect(
   (): boolean => ir?.get(VARS.BRAKE_ABS_ACTIVE)[0] ?? false,
 );
 
-export const getIsTcActive = withConnect(
-  (): boolean => ir?.get(VARS.DC_TRACTION_CONTROL_TOGGLE)[0] ?? false,
-);
-
 export const getBrakeBias = withConnect(
   (): number => ir?.get(VARS.DC_BRAKE_BIAS)[0] ?? 0,
 );

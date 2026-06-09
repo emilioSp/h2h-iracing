@@ -111,7 +111,6 @@ export const App = () => {
         value={String(car.tc)}
         icon={<Banana size={56} />}
         color="blue"
-        activeBg={car.isTcActive}
       />
       <MetricCell
         label="BB"

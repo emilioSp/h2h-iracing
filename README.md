@@ -157,7 +157,6 @@ Key car telemetry data.
     "abs": 4,
     "tc": 3,
     "isAbsActive": false,
-    "isTcActive": false,
     "brakeBias": 54.2,
     "isPitSpeedLimiterActive": false
   }

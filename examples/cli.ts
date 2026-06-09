@@ -202,10 +202,7 @@ export const printCarTelemetry = (car: CarTelemetry): void => {
     'ABS:        ',
     `${car.abs.toFixed(0).padEnd(4)} [${flag(car.isAbsActive)}]`,
   );
-  row(
-    'TC:         ',
-    `${car.tc.toFixed(0).padEnd(4)} [${flag(car.isTcActive)}]`,
-  );
+  row('TC:         ', `${car.tc.toFixed(0).padEnd(4)}`);
   row('Brake Bias: ', `${(car.brakeBias).toFixed(2)}%`);
   row('Pit Limiter:', flag(car.isPitSpeedLimiterActive));
   console.log(`╚${LINE}╝`);
