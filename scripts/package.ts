@@ -78,6 +78,11 @@ execSync('npm run fuel:build', {
   stdio: 'inherit',
 });
 
+execSync('npm run spotter:build', {
+  cwd: PROJECT_ROOT,
+  stdio: 'inherit',
+});
+
 console.log('Building launcher exe...');
 execSync(
   `node_modules/.bin/pkg scripts/launcher.cjs --targets node24-win-x64 --output ${join(BUILD_DIR, 'h2h-iracing.exe')}`,
@@ -178,6 +183,13 @@ cpSync(
 cpSync(
   join(PROJECT_ROOT, 'dist/fuel-dashboard'),
   join(DIST_DIR, 'dist/fuel-dashboard'),
+  {
+    recursive: true,
+  },
+);
+cpSync(
+  join(PROJECT_ROOT, 'dist/spotter-dashboard'),
+  join(DIST_DIR, 'dist/spotter-dashboard'),
   {
     recursive: true,
   },
