@@ -36,7 +36,6 @@ describe('computeCarTelemetry', () => {
         [VARS.DC_ABS]: [4],
         [VARS.DC_TRACTION_CONTROL]: [2],
         [VARS.BRAKE_ABS_ACTIVE]: [true],
-        [VARS.DC_TRACTION_CONTROL_TOGGLE]: [false],
         [VARS.DC_BRAKE_BIAS]: [0.543],
         [VARS.DC_PIT_SPEED_LIMITER_TOGGLE]: [false],
       };
