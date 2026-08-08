@@ -42,10 +42,10 @@ Call this `delta`. Positive means the other car is ahead of you.
 
 ### The start/finish line
 
-Lap position is a loop: `0%` and `100%` are the same point on track. Two cars side by side across
-the line read `0.999` and `0.001`, and plain subtraction reports `-0.998` — about 5 km apart
-instead of the real 10 m. Any difference larger than half a lap has wrapped, so the code shifts
-it by one lap and takes the short way round:
+Lap position is a loop: `0%` and `100%` are the same point on track. Two cars straddling the line
+read something like `0.9999` and `0.0001`, and plain subtraction reports `-0.9998` — nearly a full
+lap apart instead of the real 1 m. Any difference larger than half a lap has wrapped, so the code
+shifts it by one lap and takes the short way round:
 
 ```ts
 let diff = otherDriverPct - playerPct;
