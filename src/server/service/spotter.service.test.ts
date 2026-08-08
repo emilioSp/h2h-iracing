@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   CAR_LENGTH_METERS,
   computeOverlap,
-  findNearestDelta,
+  findNearestDeltaMeters,
   getDeltaMeters,
 } from '#service/spotter.service.ts';
 
@@ -31,22 +31,22 @@ describe('getDeltaMeters', () => {
 
   it('takes the short way round when the other car just crossed the line', () => {
     const delta = getDeltaMeters({
-      playerPct: 0.999,
-      otherDriverPct: 0.001,
+      playerPct: 0.9999,
+      otherDriverPct: 0.0001,
       trackLengthMeters: TRACK_LENGTH_METERS,
     });
 
-    expect(delta).toBeCloseTo(10, 5);
+    expect(delta).toBeCloseTo(1, 5);
   });
 
   it('takes the short way round when the player just crossed the line', () => {
     const delta = getDeltaMeters({
-      playerPct: 0.001,
-      otherDriverPct: 0.999,
+      playerPct: 0.0001,
+      otherDriverPct: 0.9999,
       trackLengthMeters: TRACK_LENGTH_METERS,
     });
 
-    expect(delta).toBeCloseTo(-10, 5);
+    expect(delta).toBeCloseTo(-1, 5);
   });
 });
 
@@ -102,7 +102,7 @@ describe('computeOverlap', () => {
   });
 });
 
-describe('findNearestDelta', () => {
+describe('findNearestDeltaMeters', () => {
   const baseInput = {
     playerCarIdx: 0,
     carsIdx: [0, 1, 2],
@@ -111,7 +111,7 @@ describe('findNearestDelta', () => {
   };
 
   it('returns the closest car', () => {
-    const delta = findNearestDelta({
+    const delta = findNearestDeltaMeters({
       ...baseInput,
       lapDistPct: [0.5, 0.5008, 0.5002],
     });
@@ -120,7 +120,7 @@ describe('findNearestDelta', () => {
   });
 
   it('ignores the player own car', () => {
-    const delta = findNearestDelta({
+    const delta = findNearestDeltaMeters({
       ...baseInput,
       carsIdx: [0],
       lapDistPct: [0.5, 0.5002, 0.5002],
@@ -130,7 +130,7 @@ describe('findNearestDelta', () => {
   });
 
   it('ignores cars on pit road', () => {
-    const delta = findNearestDelta({
+    const delta = findNearestDeltaMeters({
       ...baseInput,
       carsIdx: [0, 1],
       onPitRoad: [0, 1, 0],
@@ -141,7 +141,7 @@ describe('findNearestDelta', () => {
   });
 
   it('returns a distant car — CarLeftRight decides whether one is alongside', () => {
-    const delta = findNearestDelta({
+    const delta = findNearestDeltaMeters({
       ...baseInput,
       lapDistPct: [0.5, 0.52, 0.49],
     });
@@ -150,7 +150,7 @@ describe('findNearestDelta', () => {
   });
 
   it('ignores cars that are not on track', () => {
-    const delta = findNearestDelta({
+    const delta = findNearestDeltaMeters({
       ...baseInput,
       lapDistPct: [0.5, -1, -1],
     });
@@ -159,7 +159,7 @@ describe('findNearestDelta', () => {
   });
 
   it('returns null when the player is not on track', () => {
-    const delta = findNearestDelta({
+    const delta = findNearestDeltaMeters({
       ...baseInput,
       lapDistPct: [-1, 0.5, 0.5],
     });
@@ -168,7 +168,7 @@ describe('findNearestDelta', () => {
   });
 
   it('returns null when the track length is unknown', () => {
-    const delta = findNearestDelta({
+    const delta = findNearestDeltaMeters({
       ...baseInput,
       trackLengthMeters: 0,
       lapDistPct: [0.5, 0.5002, 0.5008],
@@ -178,7 +178,7 @@ describe('findNearestDelta', () => {
   });
 
   it('finds a neighbour across the start finish line', () => {
-    const delta = findNearestDelta({
+    const delta = findNearestDeltaMeters({
       ...baseInput,
       lapDistPct: [0.9998, 0.0002, 0.4],
     });

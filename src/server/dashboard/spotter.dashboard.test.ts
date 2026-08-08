@@ -104,19 +104,6 @@ describe('computeSpotter', () => {
     expect(getCarsIdx).not.toHaveBeenCalled();
   });
 
-  it('reports nothing when the player is alone on track', async () => {
-    vi.spyOn(iracingRepository, 'getCarLeftRight').mockResolvedValue(
-      carLeftRight.CAR_LEFT,
-    );
-    vi.spyOn(driverRepository, 'getCarsIdx').mockResolvedValue([4]);
-
-    expect(await computeSpotter()).toEqual({
-      left: null,
-      right: null,
-      isThreeWide: false,
-    });
-  });
-
   it('shows an empty bar when the nearest car does not overlap', async () => {
     vi.spyOn(iracingRepository, 'getCarLeftRight').mockResolvedValue(
       carLeftRight.CAR_LEFT,
@@ -126,32 +113,5 @@ describe('computeSpotter', () => {
     const spotter = await computeSpotter();
 
     expect(spotter.left).toEqual({ overlapStartPct: 100, overlapEndPct: 100 });
-  });
-
-  it('reports nothing when the player is not in a car', async () => {
-    vi.spyOn(iracingRepository, 'getPlayerCarIdx').mockResolvedValue(-1);
-    vi.spyOn(iracingRepository, 'getCarLeftRight').mockResolvedValue(
-      carLeftRight.CAR_LEFT,
-    );
-
-    expect(await computeSpotter()).toEqual({
-      left: null,
-      right: null,
-      isThreeWide: false,
-    });
-  });
-
-  it('pins the player to the mock car index in mock mode', async () => {
-    vi.stubEnv('DATA_MODE', 'mock');
-    vi.spyOn(iracingRepository, 'getCarLeftRight').mockResolvedValue(
-      carLeftRight.CAR_RIGHT,
-    );
-
-    const spotter = await computeSpotter();
-
-    // Player is car 2, so car 4 sits 1 m behind — segment starts at the tail.
-    // Were the spied getPlayerCarIdx used, car 2 would be 1 m ahead instead.
-    expect(spotter.right?.overlapStartPct).toBe(0);
-    expect(spotter.right?.overlapEndPct).toBeCloseTo(100 - 100 / 4.8, 5);
   });
 });

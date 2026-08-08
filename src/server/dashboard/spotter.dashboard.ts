@@ -7,7 +7,10 @@ import {
   getTrackLengthMeters,
 } from '#repository/irsdk.repository.ts';
 import { carLeftRight, type Spotter } from '#schema/spotter.schema.ts';
-import { computeOverlap, findNearestDelta } from '#service/spotter.service.ts';
+import {
+  computeOverlap,
+  findNearestDeltaMeters,
+} from '#service/spotter.service.ts';
 
 const CLEAR: Spotter = { left: null, right: null, isThreeWide: false };
 const THREE_WIDE: Spotter = { left: null, right: null, isThreeWide: true };
@@ -36,7 +39,7 @@ export const computeSpotter = async (): Promise<Spotter> => {
   // cannot be attributed. Skip the search and let the overlay flag the danger.
   if (side === carLeftRight.CAR_LEFT_AND_RIGHT) return THREE_WIDE;
 
-  const deltaMeters = findNearestDelta({
+  const deltaMeters = findNearestDeltaMeters({
     playerCarIdx,
     carsIdx: await getCarsIdx(),
     lapDistPct: await getLapDistPct(),

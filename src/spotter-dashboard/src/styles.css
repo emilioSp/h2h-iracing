@@ -11,7 +11,7 @@
   --color-border: #2a2a2a;
   --color-border-player: #3a3a6a;
   --font-mono: "Courier New", Courier, monospace;
-  --animate-three-wide: three-wide 0.6s infinite;
+  --animate-three-wide: three-wide 0.4s infinite;
 }
 
 @keyframes three-wide {

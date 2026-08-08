@@ -14,9 +14,9 @@ export const getDeltaMeters = ({
   trackLengthMeters,
 }: GetDeltaMetersInput): number => {
   // Lap position is a loop: 0% and 100% are the same point on track.
-  // Two cars side by side across the line read 0.999 and 0.001 -> a raw
-  // diff of -0.998 (~5 km) instead of the real ~10 m. Any diff over half
-  // a lap wrapped, so take the short way round.
+  // Two cars are side by side across the line read 0.9999 and 0.0001 -> a raw diff of
+  // -0.9998, nearly a full lap, instead of the real ~1 m. Any diff over
+  // half a lap wrapped, so take the short way round.
   let diff = otherDriverPct - playerPct;
   if (diff > 0.5) diff -= 1;
   if (diff < -0.5) diff += 1;
@@ -34,7 +34,7 @@ export const computeOverlap = (deltaMeters: number): SpotterSide => {
   };
 };
 
-type FindNearestDeltaInput = {
+type FindNearestDeltaMetersInput = {
   playerCarIdx: number;
   carsIdx: number[];
   lapDistPct: number[];
@@ -42,13 +42,13 @@ type FindNearestDeltaInput = {
   trackLengthMeters: number;
 };
 
-export const findNearestDelta = ({
+export const findNearestDeltaMeters = ({
   playerCarIdx,
   carsIdx,
   lapDistPct,
   onPitRoad,
   trackLengthMeters,
-}: FindNearestDeltaInput): number | null => {
+}: FindNearestDeltaMetersInput): number | null => {
   const playerPct = lapDistPct[playerCarIdx];
   if (playerPct === undefined || playerPct < 0 || trackLengthMeters <= 0) {
     return null;
