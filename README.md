@@ -7,6 +7,7 @@ Ready to be used within SimHub or OBS for live streaming.
 - Weather overlay: Displays current track weather conditions and wind direction/speed relative to the car direction.
 - Car telemetry overlay: Shows key car telemetry data (ABS, TC, brake bias, pit limiter)
 - Fuel dashboard: Tracks fuel consumption and calculates how much to add at the next pit stop
+- Spotter overlay: Appears only when a car is alongside, showing how much it overlaps your car on that side
 
 ## Download & Installation
 
@@ -81,6 +82,7 @@ src/
 ├── weather-dashboard/# React overlay — weather conditions
 ├── car-dashboard/    # React overlay — car telemetry
 ├── fuel-dashboard/   # React overlay — fuel calculator
+├── spotter-dashboard/# React overlay — cars alongside
 ├── common/           # Shared React components (e.g. WelcomePage)
 ├── schema/           # Zod schemas shared across layers
 └── server/
@@ -186,6 +188,22 @@ Fuel consumption and pit stop refill amounts.
 
 All `fuelRefill*` fields are `null` in practice/qualifying sessions or before enough laps have been completed to compute a median. `lapsRemaining` is fractional — it represents the exact lap-distance still to cover.
 
+### `GET /sse/spotter`
+
+Cars alongside, and how much they overlap your car.
+
+```json
+{
+  "data": {
+    "left": null,
+    "right": { "overlapStartPct": 42, "overlapEndPct": 100 },
+    "isThreeWide": false
+  }
+}
+```
+
+`left` and `right` are `null` when no car is on that side. `overlapStartPct` and `overlapEndPct` are percentages of your own car length, `0` at the rear and `100` at the nose. `isThreeWide` is `true` when iRacing reports cars on both sides at once; both sides are then `null`, because iRacing does not say which car is on which side, and the overlay fills both bars full height, blinking red/yellow, instead. The overlay renders nothing only when both sides are `null` and `isThreeWide` is `false`. See [How the spotter overlap is computed](docs/spotter-overlap.md).
+
 ## Testing
 
 ```bash
@@ -197,3 +215,4 @@ npm test
 - [Architecture](docs/architecture.md)
 - [How the gap is calculated](docs/gap-calculation.md)
 - [How fuel is computed](docs/fuel-computation.md)
+- [How the spotter overlap is computed](docs/spotter-overlap.md)

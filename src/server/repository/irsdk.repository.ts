@@ -5,6 +5,7 @@ import {
   VARS,
 } from '@emiliosp/node-iracing-sdk';
 import config from '#config';
+import { carLeftRight } from '#schema/spotter.schema.ts';
 import { debug } from '../debug.ts';
 
 let ir: IRSDK | null = null;
@@ -190,4 +191,12 @@ export const getSessionTimeRemain = withConnect(
 
 export const getSessionFlags = withConnect(
   (): number => ir?.get(VARS.SESSION_FLAGS)[0] ?? 0,
+);
+
+// The dump always reports a clear track, so mock mode forces a car on the
+// right. Without it the spotter overlay never renders in dev.
+export const getCarLeftRight = withConnect((): number =>
+  config.DATA_MODE === 'mock'
+    ? carLeftRight.CAR_RIGHT
+    : (ir?.get(VARS.CAR_LEFT_RIGHT)[0] ?? 0),
 );

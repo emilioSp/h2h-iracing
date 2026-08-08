@@ -13,6 +13,12 @@ export default defineConfig({
         'src/server/**/*.test.ts',
         'src/h2h-dashboard/src/**/*.test.ts',
       ],
+      thresholds: {
+        statements: 80,
+        lines: 80,
+        branches: 75,
+        functions: 75,
+      },
     },
   },
 });
