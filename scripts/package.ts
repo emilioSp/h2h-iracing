@@ -30,7 +30,6 @@ console.log('\n=== H2H iRacing Packager ===\n');
 
 mkdirSync(CACHE_DIR, { recursive: true });
 
-rmSync(NODE_MODULES, { recursive: true, force: true });
 rmSync(join(PROJECT_ROOT, 'dist'), { recursive: true, force: true });
 execSync('npm ci', { cwd: PROJECT_ROOT, stdio: 'inherit' });
 
@@ -183,7 +182,7 @@ cpSync(
 );
 
 console.log('Copying node_modules (production)...');
-cpSync(join(PROJECT_ROOT, 'node_modules'), join(DIST_DIR, 'node_modules'), {
+cpSync(NODE_MODULES, join(DIST_DIR, 'node_modules'), {
   recursive: true,
 });
 

@@ -72,9 +72,19 @@ are mandatory (`.service.ts`, `.repository.ts`, `.dashboard.ts`, `.router.ts`).
 
 ### `src/schema/<name>.schema.ts`
 
-Zod schema plus inferred types. Shared enums that both the repository and the service need go
-here too — **the repository must not import from the service**, so a var enum placed in the
-service layer will force an illegal import later.
+Zod schema and the inferred payload types. **Types only** — server code must never import a
+runtime *value* from `#schema`.
+
+`scripts/package.ts` copies `src/server` into the release bundle and nothing else, so
+`src/schema` does not exist at runtime in a packaged install. Type-only imports erase at build
+time and are fine; a value import resolves at runtime and kills the packaged server with
+`ERR_MODULE_NOT_FOUND`. Because the shared `irsdk.repository.ts` is loaded by every dashboard,
+one bad import there takes down *all* the overlays, not just yours — and dev mode never shows it,
+because in dev `src/schema` is right there on disk.
+
+Shared enums of raw iRacing values belong in `irsdk.repository.ts` alongside `TRACK_WETNESS_LABELS`
+and `CAR_LEFT_RIGHT`. That is the layer that wraps the SDK, and both services and dashboards may
+import from it.
 
 ### `src/server/repository/irsdk.repository.ts` (edit)
 
@@ -213,7 +223,8 @@ State both explicitly when handing over; the PR is **not mergeable to main** wit
 |---|---|
 | `Pct` means 0–100 | Not a 0–1 fraction. `weather.dashboard.ts` multiplies by 100 before setting `relativeHumidityPct`. |
 | Unit suffixes on names | `trackLengthMeters`, `windDirectionRad`, `airTemperatureC`, `windVelocityMs`. Plural `Meters`, not `Meter`. |
-| Layering direction | repository → schema is fine; repository → service is not. |
+| Layering direction | repository → service is not allowed. Put shared SDK enums in `irsdk.repository.ts`, which both services and dashboards may import. |
+| `#schema` is types only | Only `src/server` ships in the release bundle. A runtime value import from `#schema` breaks the packaged app while working perfectly in dev. |
 | Named parameters | Object destructuring with a named `Input` type, except for single-primitive functions. |
 | API shape | `{ data: T }` for success, `{ error: { code, message } }` for errors. |
 | Coverage gate | Enforced in `vitest.config.ts`: 80% statements/lines, 75% branches/functions. A new dashboard must not push it under. |
@@ -258,6 +269,33 @@ Open `http://localhost:3000/<name>-dashboard/` and confirm the payload reaches t
 transparent overlays, check the background really is transparent by injecting a coloured backdrop
 in devtools rather than trusting a screenshot against a dark page.
 
+### Then verify the packaged bundle, not just dev
+
+Dev runs against the whole repo, so it cannot catch anything that fails purely because a file was
+left out of the zip. `npm run package` exiting cleanly proves the build ran, not that the result
+works. Extract it and boot it:
+
+```bash
+npm run package
+cd $(mktemp -d) && unzip -q <repo>/h2h-iracing-<version>.zip && cd h2h-iracing
+node --env-file=.env src/server/server.ts &
+for ep in h2h weather car fuel <name>; do
+  printf "  /sse/%s -> %s\n" "$ep" \
+    "$(curl -s -o /dev/null -w '%{http_code}' --max-time 2 http://localhost:3000/sse/$ep)"
+done
+```
+
+Every endpoint should return `200`, and the startup banner should list your dashboard. Check the
+zip actually contains your dashie and bundle too:
+
+```bash
+unzip -l <zip> | grep -iE "simhubdash|<name>-dashboard"
+```
+
+This is not paranoia. The spotter release shipped a zip whose server died on startup with
+`ERR_MODULE_NOT_FOUND` — a single runtime import of `#schema` that dev mode resolved happily and
+the packager silently omitted. Every overlay was broken and every dev-mode check had passed.
+
 ## Common mistakes
 
 | Mistake | Fix |
@@ -266,7 +304,8 @@ in devtools rather than trusting a screenshot against a dark page.
 | Forgetting `scripts/package.ts` | Dashboard works in dev, missing from the released zip. |
 | Forgetting the `console.table` entry | Users never learn the URL exists. |
 | Leaving the website overlay count stale | "Four overlays" in three places while five ship. |
-| Putting a shared var enum in the service | The repository cannot import it. Put it in `#schema/`. |
+| Putting a shared SDK enum in the service or in `#schema` | The repository cannot import from the service, and `#schema` is not in the release bundle. Define it in `irsdk.repository.ts`. |
+| Only testing in dev mode | `src/schema` and the test fixtures exist on disk in dev. Extract the zip and start the packaged server before calling it done. |
 | Trusting a green Stop hook | `tsc` errors go to stdout; read the build output. |
 | Committing the work | The user commits. Leave the tree dirty and summarise what changed. |
 

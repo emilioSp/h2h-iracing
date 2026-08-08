@@ -5,8 +5,17 @@ import {
   VARS,
 } from '@emiliosp/node-iracing-sdk';
 import config from '#config';
-import { carLeftRight } from '#schema/spotter.schema.ts';
 import { debug } from '../debug.ts';
+
+export const CAR_LEFT_RIGHT = {
+  OFF: 0,
+  CLEAR: 1,
+  CAR_LEFT: 2,
+  CAR_RIGHT: 3,
+  CAR_LEFT_AND_RIGHT: 4,
+  TWO_CARS_LEFT: 5,
+  TWO_CARS_RIGHT: 6,
+} as const;
 
 let ir: IRSDK | null = null;
 
@@ -197,6 +206,6 @@ export const getSessionFlags = withConnect(
 // right. Without it the spotter overlay never renders in dev.
 export const getCarLeftRight = withConnect((): number =>
   config.DATA_MODE === 'mock'
-    ? carLeftRight.CAR_RIGHT
+    ? CAR_LEFT_RIGHT.CAR_RIGHT
     : (ir?.get(VARS.CAR_LEFT_RIGHT)[0] ?? 0),
 );

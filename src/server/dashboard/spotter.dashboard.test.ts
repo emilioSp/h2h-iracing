@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import * as driverRepository from '#repository/driver.repository.ts';
 import * as iracingRepository from '#repository/irsdk.repository.ts';
-import { carLeftRight } from '#schema/spotter.schema.ts';
+import { CAR_LEFT_RIGHT } from '#repository/irsdk.repository.ts';
 import { computeSpotter } from '#server/dashboard/spotter.dashboard.ts';
 
 const TRACK_LENGTH_METERS = 5000;
@@ -34,7 +34,7 @@ afterEach(() => {
 describe('computeSpotter', () => {
   it('reports nothing when the track is clear', async () => {
     vi.spyOn(iracingRepository, 'getCarLeftRight').mockResolvedValue(
-      carLeftRight.CLEAR,
+      CAR_LEFT_RIGHT.CLEAR,
     );
 
     expect(await computeSpotter()).toEqual({
@@ -46,7 +46,7 @@ describe('computeSpotter', () => {
 
   it('reports nothing when the spotter is off', async () => {
     vi.spyOn(iracingRepository, 'getCarLeftRight').mockResolvedValue(
-      carLeftRight.OFF,
+      CAR_LEFT_RIGHT.OFF,
     );
 
     expect(await computeSpotter()).toEqual({
@@ -58,7 +58,7 @@ describe('computeSpotter', () => {
 
   it('fills only the left bar when a car is on the left', async () => {
     vi.spyOn(iracingRepository, 'getCarLeftRight').mockResolvedValue(
-      carLeftRight.CAR_LEFT,
+      CAR_LEFT_RIGHT.CAR_LEFT,
     );
 
     const spotter = await computeSpotter();
@@ -71,7 +71,7 @@ describe('computeSpotter', () => {
 
   it('fills only the right bar when a car is on the right', async () => {
     vi.spyOn(iracingRepository, 'getCarLeftRight').mockResolvedValue(
-      carLeftRight.CAR_RIGHT,
+      CAR_LEFT_RIGHT.CAR_RIGHT,
     );
 
     const spotter = await computeSpotter();
@@ -82,7 +82,7 @@ describe('computeSpotter', () => {
 
   it('treats two cars on one side as that side', async () => {
     vi.spyOn(iracingRepository, 'getCarLeftRight').mockResolvedValue(
-      carLeftRight.TWO_CARS_LEFT,
+      CAR_LEFT_RIGHT.TWO_CARS_LEFT,
     );
 
     const spotter = await computeSpotter();
@@ -93,7 +93,7 @@ describe('computeSpotter', () => {
 
   it('flags three wide without a per-side overlap when cars are on both sides', async () => {
     vi.spyOn(iracingRepository, 'getCarLeftRight').mockResolvedValue(
-      carLeftRight.CAR_LEFT_AND_RIGHT,
+      CAR_LEFT_RIGHT.CAR_LEFT_AND_RIGHT,
     );
 
     expect(await computeSpotter()).toEqual({
@@ -106,7 +106,7 @@ describe('computeSpotter', () => {
 
   it('shows an empty bar when the nearest car does not overlap', async () => {
     vi.spyOn(iracingRepository, 'getCarLeftRight').mockResolvedValue(
-      carLeftRight.CAR_LEFT,
+      CAR_LEFT_RIGHT.CAR_LEFT,
     );
     vi.spyOn(driverRepository, 'getCarsIdx').mockResolvedValue([4, 7]);
 
