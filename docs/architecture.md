@@ -30,6 +30,7 @@ flowchart TD
         Car["Car Telemetry (React)"]
         Fuel["Fuel (React)"]
         Spotter["Spotter (React)"]
+        Traffic["Traffic (React)"]
     end
 
     Broadcaster -->|"GET /sse/h2h"| H2H
@@ -37,6 +38,7 @@ flowchart TD
     Broadcaster -->|"GET /sse/car"| Car
     Broadcaster -->|"GET /sse/fuel"| Fuel
     Broadcaster -->|"GET /sse/spotter"| Spotter
+    Broadcaster -->|"GET /sse/traffic"| Traffic
 ```
 
 ---
@@ -44,16 +46,16 @@ flowchart TD
 ## Layers
 
 ### Router
-Thin Hono route handlers. Each route (`/sse/h2h`, `/sse/weather`, `/sse/car`, `/sse/fuel`, `/sse/spotter`) opens an SSE stream and registers the client with the broadcaster.
+Thin Hono route handlers. Each route (`/sse/h2h`, `/sse/weather`, `/sse/car`, `/sse/fuel`, `/sse/spotter`, `/sse/traffic`) opens an SSE stream and registers the client with the broadcaster.
 
 ### Broadcaster
 Manages the set of connected SSE clients. On each tick (~33 ms), it calls every dashboard and writes the results to every subscribed client. The loop only runs while at least one client is connected.
 
 ### Dashboard (service orchestrator)
-Aggregates repository + service output into a typed payload per overlay. One dashboard per overlay type: `head2head`, `weather`, `car-telemetry`, `fuel`, `spotter`.
+Aggregates repository + service output into a typed payload per overlay. One dashboard per overlay type: `head2head`, `weather`, `car-telemetry`, `fuel`, `spotter`, `traffic`.
 
 ### Service
-Pure business logic. Computes standings from track position, calculates time/lap gaps between cars using a reference lap, derives delta times, and works out how much a neighbouring car overlaps the player's car.
+Pure business logic. Computes standings from track position, calculates time/lap gaps between cars using a reference lap, derives delta times, works out how much a neighbouring car overlaps the player's car, and picks out the faster-class cars closing from behind.
 
 ### Repository
 Wraps the iRacing SDK. Reads raw telemetry values from shared memory (speed, lap times, positions, weather, car settings). Also supports a mock mode for development without the simulator running.

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { Spotter, SpotterSide } from '#schema/spotter.schema.ts';
+import { WelcomePage } from '../../common/WelcomePage.js';
 import './styles.css';
 
 type BarProps = {
@@ -64,7 +65,18 @@ export const App = () => {
     };
   }, []);
 
-  if (!spotter) return null;
+  // WelcomePage is a fixed 800x480 panel. Scale it to the 200px height of this
+  // overlay and centre the resulting 333px width by hand: the transform does
+  // not change the layout box, so the parent cannot centre it for us.
+  if (!spotter)
+    return (
+      <div className="relative h-50 w-200">
+        <div className="absolute top-0 left-[233px] origin-top-left scale-[0.4167]">
+          <WelcomePage subtitle="Spotter" />
+        </div>
+      </div>
+    );
+
   if (!spotter.left && !spotter.right && !spotter.isThreeWide) return null;
 
   return (

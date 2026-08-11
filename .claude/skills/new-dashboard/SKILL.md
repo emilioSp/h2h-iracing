@@ -58,7 +58,9 @@ past dashboards and tend to matter again:
 - **Degenerate cases.** Player not in a car, alone on track, in the pits, session not started,
   track length unknown. What should the payload be?
 - **Visibility.** Always on, or does it appear only when relevant? The spotter renders nothing
-  until a car is alongside, which changed the whole frontend shape.
+  until a car is alongside, which changed the whole frontend shape. This only governs behaviour
+  *after* the stream connects — before a session starts every overlay shows the welcome page, even
+  a transparent one. See Phase 2.
 - **Canvas.** Transparent strip floating over gameplay, or an opaque panel? What size? Existing
   panels are 800×480; the spotter is a transparent 800×200 strip.
 - **Scope.** All cars, or only the player's class? Multiclass racing usually means all cars —
@@ -143,10 +145,36 @@ overlay), whichever matches what Phase 0 decided.
 
 - `styles.css` copies the `@theme` colour block, then sets `html, body, #root` to the agreed size.
   Transparent overlays set `background-color: transparent`; panels use `var(--color-bg)`.
+- `styles.css` also needs `@source "../../common";` on the line after `@import "tailwindcss";`.
+  `WelcomePage` lives outside the dashboard's Vite root, so Tailwind never scans it otherwise and
+  the welcome screen renders as unstyled grey text on no background. Every dashboard except
+  `spotter-dashboard` has this line — do not copy the spotter's `styles.css` and forget it.
 - `App.tsx` copies the `EventSource` + 10s-retry effect from `car-dashboard/src/App.tsx` and
   points it at `/sse/<name>`.
-- Panels render `<WelcomePage subtitle="..." />` while disconnected. Conditional overlays return
-  `null` instead — a permanent welcome screen defeats an overlay that is meant to stay hidden.
+- **Every dashboard shows `<WelcomePage subtitle="..." />` while disconnected, transparent overlays
+  included.** The user asked for this explicitly: an overlay that is invisible before the sim is
+  running looks broken, and there is no way to tell a working overlay from a dead one. Hiding is
+  for *after* the stream connects, so the two states are separate checks:
+
+  ```tsx
+  if (!payload) return <WelcomePage subtitle="Traffic" />;  // no session yet
+  if (payload.cars.length === 0) return null;               // live, nothing to show
+  ```
+
+- `WelcomePage` is a hardcoded 800x480 panel. On a smaller overlay it must be scaled, and a
+  transform does not change the layout box — centring the oversized box with a grid lets it
+  overflow and get clipped. Anchor it instead, with the left offset worked out by hand:
+
+  ```tsx
+  <div className="relative h-50 w-125">
+    <div className="absolute top-0 left-[83px] origin-top-left scale-[0.4167]">
+      <WelcomePage subtitle="Traffic" />
+    </div>
+  </div>
+  ```
+
+  `0.4167` is `200/480`, and `83px` is `(500 - 800 * 0.4167) / 2`.
+
 - Types come from `#schema/<name>.schema.ts` as type-only imports, so they erase at build time.
 - Tailwind utilities only; prefer grid over flexbox. Register keyframe animations as a
   `--animate-*` token in `@theme` rather than hand-writing a CSS class.
@@ -312,6 +340,8 @@ the packager silently omitted. Every overlay was broken and every dev-mode check
 | Putting a shared SDK enum in the service or in `#schema` | The repository cannot import from the service, and `#schema` is not in the release bundle. Define it in `irsdk.repository.ts`. |
 | Only testing in dev mode | `src/schema` and the test fixtures exist on disk in dev. Extract the zip and start the packaged server before calling it done. |
 | Trusting a green Stop hook | `tsc` errors go to stdout; read the build output. |
+| A transparent overlay that returns `null` while disconnected | It looks broken and cannot be told apart from a dead one. Show `WelcomePage` until the stream connects; hide only after. |
+| Copying `spotter-dashboard/src/styles.css` verbatim | It is the one dashboard with no `@source "../../common";`, so `WelcomePage` renders unstyled. |
 | Committing the work | The user commits. Leave the tree dirty and summarise what changed. |
 
 ## File inventory

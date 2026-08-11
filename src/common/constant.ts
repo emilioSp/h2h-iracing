@@ -1,0 +1,1 @@
+export const TRAFFIC_WINDOW_SECONDS = 2;
