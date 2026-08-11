@@ -16,6 +16,18 @@ Ready to be used within SimHub or OBS for live streaming.
 2. Run the executable file (h2h-iracing.exe) to start the server. You should see a welcome page with instructions and a link to the dashboard.
 3. SimHub dashboards are included in the release, but you can also find them in the `simhub_dashies` folder. Import them into SimHub.
 
+## Troubleshooting
+
+### The dashboards are not visible in SimHub
+
+Switch SimHub to the HTML render engine. This is a SimHub setting, not an H2H one:
+
+1. In SimHub, open the **Settings** tab at the top of the window.
+2. Scroll to the **Performance** section.
+3. Under **Default desktop renderer**, select **HTML render engine (WebView2)** instead of **WPF render engine**.
+
+The overlays are web pages, so the WPF renderer cannot display them.
+
 ## Screenshots
 
 <img src="docs/H2H_welcome_page.jpg" alt="Welcome page" width="800" />
@@ -27,6 +39,13 @@ Ready to be used within SimHub or OBS for live streaming.
 <img src="docs/H2H_car_telemetry_dashboard.jpg" alt="Car telemetry overlay" width="800" />
 
 <img src="docs/H2H_fuel_dashboard.png" alt="Fuel dashboard" width="800" />
+
+<img src="docs/H2H_multiclass_traffic_dashboard.png" alt="Multiclass traffic overlay" width="800" />
+
+Overlays stack, because each one is a separate transparent browser source. Here the traffic overlay
+runs on top of the spotter:
+
+<img src="docs/H2H_multiclass_traffic_spotter_combined_dashboard.png" alt="Traffic and spotter overlays running together" width="800" />
 
 ## Video demonstration
 
