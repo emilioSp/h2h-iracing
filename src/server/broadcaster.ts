@@ -3,6 +3,7 @@ import { computeCarTelemetry } from '#dashboard/car-telemetry.dashboard.ts';
 import { computeFuel } from '#dashboard/fuel.dashboard.ts';
 import { computeHead2Head } from '#dashboard/head2head.dashboard.ts';
 import { computeSpotter } from '#dashboard/spotter.dashboard.ts';
+import { computeTraffic } from '#dashboard/traffic.dashboard.ts';
 import { computeWeather } from '#dashboard/weather.dashboard.ts';
 import { isIRacingConnected } from '#repository/irsdk.repository.ts';
 import { resetInMemoryStorage, tick } from '#server/tick.ts';
@@ -13,6 +14,7 @@ export const dashboardType = {
   CAR: 'CAR',
   FUEL: 'FUEL',
   SPOTTER: 'SPOTTER',
+  TRAFFIC: 'TRAFFIC',
 } as const;
 
 export type DashboardType = keyof typeof dashboardType;
@@ -28,6 +30,7 @@ const clients: Map<DashboardType, Set<SSEClient>> = new Map([
   [dashboardType.CAR, new Set()],
   [dashboardType.FUEL, new Set()],
   [dashboardType.SPOTTER, new Set()],
+  [dashboardType.TRAFFIC, new Set()],
 ]);
 
 let timer: ReturnType<typeof setTimeout> | null = null;
@@ -119,6 +122,17 @@ const broadcastSpotter = async () => {
   }
 };
 
+const broadcastTraffic = async () => {
+  // biome-ignore lint/style/noNonNullAssertion: clients map is defined above
+  const trafficClients = clients.get(dashboardType.TRAFFIC)!;
+  if (trafficClients.size > 0) {
+    await writeToClients({
+      clientSet: trafficClients,
+      data: await computeTraffic(),
+    });
+  }
+};
+
 const broadcast = async (): Promise<void> => {
   if (!(await isIRacingConnected())) {
     stopBroadcasting();
@@ -133,6 +147,7 @@ const broadcast = async (): Promise<void> => {
     broadcastCar(),
     broadcastFuel(),
     broadcastSpotter(),
+    broadcastTraffic(),
   ]);
 
   if ([...clients.values()].every((clientSet) => clientSet.size === 0)) {

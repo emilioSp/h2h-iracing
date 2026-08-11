@@ -19,10 +19,15 @@ export const getFilteredRawDrivers = async () => {
   );
 };
 
+const getRacingRawDrivers = async () => {
+  const rawDrivers = await getRawDrivers();
+  return rawDrivers.filter((d) => d.CarIdx > -1 && !d.CarIsPaceCar);
+};
+
 export const refreshDriverInfo = async () => {
   driverMap = new Map<number, Driver>();
 
-  for (const driver of await getFilteredRawDrivers()) {
+  for (const driver of await getRacingRawDrivers()) {
     driverMap.set(driver.CarIdx, {
       carIdx: driver.CarIdx,
       name: driver.UserName,
@@ -47,9 +52,5 @@ export const getClassEstLapTime = (carIdx: number): number =>
 export const getPlayerClassCarIdx = async (): Promise<number[]> =>
   (await getFilteredRawDrivers()).map((d) => d.CarIdx);
 
-export const getCarsIdx = async (): Promise<number[]> => {
-  const rawDrivers = await getRawDrivers();
-  return rawDrivers
-    .filter((d) => d.CarIdx > -1 && !d.CarIsPaceCar)
-    .map((d) => d.CarIdx);
-};
+export const getCarsIdx = async (): Promise<number[]> =>
+  (await getRacingRawDrivers()).map((d) => d.CarIdx);

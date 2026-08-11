@@ -7,6 +7,7 @@ import { carTelemetryRouter } from '#router/car-telemetry.router.ts';
 import { fuelRouter } from '#router/fuel.router.ts';
 import { h2hRouter } from '#router/h2h.router.ts';
 import { spotterRouter } from '#router/spotter.router.ts';
+import { trafficRouter } from '#router/traffic.router.ts';
 import { weatherRouter } from '#router/weather.router.ts';
 import { stopBroadcasting } from '#server/broadcaster.ts';
 
@@ -17,12 +18,17 @@ app.get('/sse/weather', weatherRouter);
 app.get('/sse/car', carTelemetryRouter);
 app.get('/sse/fuel', fuelRouter);
 app.get('/sse/spotter', spotterRouter);
+app.get('/sse/traffic', trafficRouter);
 app.get('/h2h', serveStatic({ path: './dist/h2h-dashboard/index.html' }));
 app.get('/car', serveStatic({ path: './dist/car-dashboard/index.html' }));
 app.get('/fuel', serveStatic({ path: './dist/fuel-dashboard/index.html' }));
 app.get(
   '/spotter',
   serveStatic({ path: './dist/spotter-dashboard/index.html' }),
+);
+app.get(
+  '/traffic',
+  serveStatic({ path: './dist/traffic-dashboard/index.html' }),
 );
 app.use('/*', serveStatic({ root: './dist' }));
 
@@ -40,6 +46,7 @@ const server = serve(
         URL: `http://localhost:${info.port}/fuel-dashboard`,
       },
       Spotter: { URL: `http://localhost:${info.port}/spotter-dashboard` },
+      Traffic: { URL: `http://localhost:${info.port}/traffic-dashboard` },
     });
 
     console.log(

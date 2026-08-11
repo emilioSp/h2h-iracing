@@ -1,7 +1,7 @@
 import { Banana, Gauge, ShieldCog, Snail } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import type { CarTelemetry } from '#schema/car-telemetry.schema.ts';
-import { WelcomePage } from '../../common/WelcomePage.js';
+import { WelcomePage800x480 } from '../../common/WelcomePage800x480.js';
 import './styles.css';
 
 type CellColor = 'red' | 'blue' | 'yellow';
@@ -95,10 +95,10 @@ export const App = () => {
     };
   }, []);
 
-  if (!car) return <WelcomePage subtitle="Car Telemetry" />;
+  if (!car) return <WelcomePage800x480 subtitle="Car Telemetry" />;
 
   return (
-    <div className="grid grid-cols-2 grid-rows-2 w-200 h-120 bg-bg text-white font-mono">
+    <div className="grid grid-cols-2 grid-rows-2 h-full bg-bg text-white font-mono">
       <MetricCell
         label="ABS"
         value={String(car.abs)}

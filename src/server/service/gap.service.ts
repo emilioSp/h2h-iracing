@@ -22,7 +22,7 @@ type EstimatedDeltaInput = {
   behindPct: number;
 };
 
-const estimatedDelta = ({
+export const estimatedDelta = ({
   classLapTime,
   aheadPct,
   behindPct,
@@ -38,7 +38,7 @@ type ReferenceDeltaInput = {
   behindPct: number;
 };
 
-const referenceDelta = ({
+export const referenceDelta = ({
   refLap,
   aheadPct,
   behindPct,

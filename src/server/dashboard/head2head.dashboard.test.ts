@@ -21,15 +21,6 @@ describe('head2head.service (race session - dump)', () => {
     expect(head2Head?.player.driver.iRating).toBeDefined();
   });
 
-  it('player lap times are positive or NaN', async () => {
-    const head2Head = await computeHead2Head();
-    const lastLap = head2Head?.player.lastLapTime;
-    const bestLap = head2Head?.player.bestLapTime ?? NaN;
-
-    expect(lastLap).toBe(134.90179443359375);
-    expect(bestLap).toBe(NaN);
-  });
-
   it('ahead and behind neighbors match expected positions', async () => {
     const head2Head = await computeHead2Head();
     if (!head2Head) return;

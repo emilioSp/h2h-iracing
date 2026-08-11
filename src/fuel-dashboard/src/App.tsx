@@ -2,7 +2,7 @@ import { Activity, Clock, Fuel, Gauge, RotateCw } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import type { FuelRefill } from '#schema/fuel.schema.ts';
-import { WelcomePage } from '../../common/WelcomePage.js';
+import { WelcomePage800x480 } from '../../common/WelcomePage800x480.js';
 import './styles.css';
 
 const fmt1 = (v: number | null) => (v == null ? '--.-' : v.toFixed(1));
@@ -176,10 +176,10 @@ export const App = () => {
     };
   }, []);
 
-  if (!fuel) return <WelcomePage subtitle="Fuel Calculator" />;
+  if (!fuel) return <WelcomePage800x480 subtitle="Fuel Calculator" />;
 
   return (
-    <div className="grid grid-rows-[140px_1fr_1fr] w-200 h-120 bg-bg text-white font-mono">
+    <div className="grid grid-rows-[140px_1fr_1fr] h-full bg-bg text-white font-mono">
       {/* Row 1: Fuel level + Time left */}
       <div className="grid grid-cols-[2fr_1fr] border-b border-border">
         <div className="grid place-items-center px-7 py-4">

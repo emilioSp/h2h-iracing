@@ -82,6 +82,11 @@ execSync('npm run spotter:build', {
   stdio: 'inherit',
 });
 
+execSync('npm run traffic:build', {
+  cwd: PROJECT_ROOT,
+  stdio: 'inherit',
+});
+
 console.log('Building launcher exe...');
 execSync(
   `node_modules/.bin/pkg scripts/launcher.cjs --targets node24-win-x64 --output ${join(BUILD_DIR, 'h2h-iracing.exe')}`,
@@ -145,6 +150,12 @@ cpSync(join(PROJECT_ROOT, 'src/server'), join(DIST_DIR, 'src/server'), {
   recursive: true,
   filter: (src) => !src.endsWith('.test.ts'),
 });
+// The server imports #common/constant.ts at runtime, so it has to ship. Only
+// the .ts files: the React components in there belong to the dashboards.
+cpSync(join(PROJECT_ROOT, 'src/common'), join(DIST_DIR, 'src/common'), {
+  recursive: true,
+  filter: (src) => statSync(src).isDirectory() || src.endsWith('.ts'),
+});
 cpSync(
   join(PROJECT_ROOT, 'dist/h2h-dashboard'),
   join(DIST_DIR, 'dist/h2h-dashboard'),
@@ -176,6 +187,13 @@ cpSync(
 cpSync(
   join(PROJECT_ROOT, 'dist/spotter-dashboard'),
   join(DIST_DIR, 'dist/spotter-dashboard'),
+  {
+    recursive: true,
+  },
+);
+cpSync(
+  join(PROJECT_ROOT, 'dist/traffic-dashboard'),
+  join(DIST_DIR, 'dist/traffic-dashboard'),
   {
     recursive: true,
   },

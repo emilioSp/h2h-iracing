@@ -30,12 +30,16 @@ turned out not to exist anywhere in shared memory — the whole algorithm had to
 lap-distance deltas instead. Ten minutes of probing saves a rewrite.
 
 ```bash
-# List every var whose name matches a keyword
-node .claude/skills/new-dashboard/scripts/probe-sdk.mjs --search tire
-
-# Print live values from the mock dump
-node .claude/skills/new-dashboard/scripts/probe-sdk.mjs CAR_IDX_LAP_DIST_PCT SPEED
+npm run inspect-memory-dump
 ```
+
+This reads the dump at `DUMP_FILE_PATH` and writes `examples/dump-report.html` — every telemetry
+variable with all of its values, plus drivers, cars, car classes and all seven session-info
+sections. Open it and search the page for your keyword. Point `DUMP_FILE_PATH` at a different
+fixture to inspect another session.
+
+The report shows what a given dump actually contains, which is the question that matters: a
+variable declared in `VARS` is not proof that the sim fills it in your session.
 
 Also read the doc comments in
 `node_modules/@emiliosp/node-iracing-sdk/dist/vars.d.ts` — they carry units and semantics that
@@ -54,7 +58,9 @@ past dashboards and tend to matter again:
 - **Degenerate cases.** Player not in a car, alone on track, in the pits, session not started,
   track length unknown. What should the payload be?
 - **Visibility.** Always on, or does it appear only when relevant? The spotter renders nothing
-  until a car is alongside, which changed the whole frontend shape.
+  until a car is alongside, which changed the whole frontend shape. This only governs behaviour
+  *after* the stream connects — before a session starts every overlay shows the welcome page, even
+  a transparent one. See Phase 2.
 - **Canvas.** Transparent strip floating over gameplay, or an opaque panel? What size? Existing
   panels are 800×480; the spotter is a transparent 800×200 strip.
 - **Scope.** All cars, or only the player's class? Multiclass racing usually means all cars —
@@ -139,10 +145,38 @@ overlay), whichever matches what Phase 0 decided.
 
 - `styles.css` copies the `@theme` colour block, then sets `html, body, #root` to the agreed size.
   Transparent overlays set `background-color: transparent`; panels use `var(--color-bg)`.
+- `styles.css` also needs `@source "../../common";` on the line after `@import "tailwindcss";`.
+  The welcome pages live outside the dashboard's Vite root, so Tailwind never scans them otherwise
+  and the welcome screen renders as unstyled grey text on no background. All six dashboards have
+  this line; keep it when you copy one.
 - `App.tsx` copies the `EventSource` + 10s-retry effect from `car-dashboard/src/App.tsx` and
   points it at `/sse/<name>`.
-- Panels render `<WelcomePage subtitle="..." />` while disconnected. Conditional overlays return
-  `null` instead — a permanent welcome screen defeats an overlay that is meant to stay hidden.
+- **Every dashboard shows a welcome page while disconnected, transparent overlays included.** The
+  user asked for this explicitly: an overlay that is invisible before the sim is running looks
+  broken, and there is no way to tell a working overlay from a dead one. Hiding is for *after* the
+  stream connects, so the two states are separate checks:
+
+  ```tsx
+  if (!payload) return <WelcomePage500x200 subtitle="Traffic" />;  // no session yet
+  if (payload.cars.length === 0) return null;                     // live, nothing to show
+  ```
+
+- **`src/common/` holds one welcome page per overlay size.** Import the one that matches your
+  canvas — do not scale a different one with a CSS transform:
+
+  | Component | Canvas | Used by |
+  |---|---|---|
+  | `WelcomePage800x480` | 800x480 | h2h, weather, car, fuel |
+  | `WelcomePage800x200` | 800x200 | spotter |
+  | `WelcomePage500x200` | 500x200 | traffic |
+
+  A new canvas size needs a new file following the same name pattern, designed for that shape
+  rather than scaled. One design does not survive both: the 800x480 content column is 294px tall
+  and simply does not fit a 200px strip, which is why the tall layout stacks the logo above the
+  text and the short ones put it beside.
+
+  The size comes from `styles.css` alone, never from the component.
+
 - Types come from `#schema/<name>.schema.ts` as type-only imports, so they erase at build time.
 - Tailwind utilities only; prefer grid over flexbox. Register keyframe animations as a
   `--animate-*` token in `@theme` rather than hand-writing a CSS class.
@@ -247,7 +281,8 @@ export const getCarLeftRight = withConnect((): number =>
 
 Keeping the fake here rather than in the dashboard keeps the orchestrator's real/mock code paths
 identical, so what you see in dev is what runs live. Check whether the dump contains a usable
-scenario at all — the probe script prints per-car values so you can pick a car index that does.
+scenario at all — the report's Cars table lists every car index side by side, so you can pick one
+that does.
 
 ## Verify
 
@@ -307,6 +342,9 @@ the packager silently omitted. Every overlay was broken and every dev-mode check
 | Putting a shared SDK enum in the service or in `#schema` | The repository cannot import from the service, and `#schema` is not in the release bundle. Define it in `irsdk.repository.ts`. |
 | Only testing in dev mode | `src/schema` and the test fixtures exist on disk in dev. Extract the zip and start the packaged server before calling it done. |
 | Trusting a green Stop hook | `tsc` errors go to stdout; read the build output. |
+| A transparent overlay that returns `null` while disconnected | It looks broken and cannot be told apart from a dead one. Show the welcome page until the stream connects; hide only after. |
+| Dropping `@source "../../common";` from `styles.css` | Tailwind stops scanning the welcome pages and the screen renders as unstyled grey text. |
+| Scaling a welcome page with a CSS transform to fit a smaller canvas | Import the `WelcomePage<W>x<H>` for your canvas, or add one. A transform does not change the layout box, so the parent cannot centre it. |
 | Committing the work | The user commits. Leave the tree dirty and summarise what changed. |
 
 ## File inventory
