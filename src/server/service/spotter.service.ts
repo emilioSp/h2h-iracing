@@ -31,7 +31,7 @@ type FindNearestDeltaMetersInput = {
   playerCarIdx: number;
   carsIdx: number[];
   lapDistPct: number[];
-  onPitRoad: number[];
+  onPitRoad: boolean[];
   trackLengthMeters: number;
 };
 
@@ -51,7 +51,7 @@ export const findNearestDeltaMeters = ({
 
   for (const carIdx of carsIdx) {
     if (carIdx === playerCarIdx) continue;
-    if (onPitRoad[carIdx] === 1) continue;
+    if (onPitRoad[carIdx]) continue;
 
     const otherDriverPct = lapDistPct[carIdx];
     if (otherDriverPct === undefined || otherDriverPct < 0) continue;

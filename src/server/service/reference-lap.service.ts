@@ -202,7 +202,7 @@ export const updateReferenceLaps = async (): Promise<void> => {
       carIdx,
       trackPct: lapDistPct[carIdx],
       sessionTime,
-      isOnPitRoad: onPitRoad[carIdx] === 1,
+      isOnPitRoad: onPitRoad[carIdx],
     });
   }
 };

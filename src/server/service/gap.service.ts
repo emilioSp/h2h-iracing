@@ -93,7 +93,7 @@ const computeGap = async ({ ahead, behind }: ComputeGapInput): Promise<Gap> => {
   }
 
   const onPitRoad = await getOnPitRoad();
-  const anyOnPit = onPitRoad[aheadIdx] === 1 || onPitRoad[behindIdx] === 1;
+  const anyOnPit = onPitRoad[aheadIdx] || onPitRoad[behindIdx];
   const refLap = getRefLap(behindIdx);
   const hasRefData = refLap !== null && refLap.finishTime > 0;
 

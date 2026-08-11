@@ -63,7 +63,7 @@ type FindTrafficBehindInput = {
   drivers: Driver[];
   lapDistPct: number[];
   lapsCompleted: number[];
-  onPitRoad: number[];
+  onPitRoad: boolean[];
 };
 
 export const findTrafficBehind = ({
@@ -103,7 +103,7 @@ export const findTrafficBehind = ({
       playerPct,
       carPct,
       lapsCompleted: lapsCompleted[carIdx] ?? 0,
-      isAnyOnPitRoad: Boolean(onPitRoad[playerCarIdx]),
+      isAnyOnPitRoad: onPitRoad[playerCarIdx],
     });
     if (gapSeconds > TRAFFIC_WINDOW_SECONDS) continue;
 

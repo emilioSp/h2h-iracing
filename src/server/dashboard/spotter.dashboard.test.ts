@@ -17,7 +17,7 @@ beforeEach(() => {
   vi.spyOn(iracingRepository, 'getPlayerCarIdx').mockResolvedValue(4);
   vi.spyOn(iracingRepository, 'getLapDistPct').mockResolvedValue(lapDistPct);
   vi.spyOn(iracingRepository, 'getOnPitRoad').mockResolvedValue(
-    Array(8).fill(0),
+    Array(8).fill(false),
   );
   vi.spyOn(iracingRepository, 'getTrackLengthMeters').mockResolvedValue(
     TRACK_LENGTH_METERS,
