@@ -106,7 +106,7 @@ describe('findNearestDeltaMeters', () => {
   const baseInput = {
     playerCarIdx: 0,
     carsIdx: [0, 1, 2],
-    onPitRoad: [0, 0, 0],
+    onPitRoad: [false, false, false],
     trackLengthMeters: TRACK_LENGTH_METERS,
   };
 
@@ -133,7 +133,7 @@ describe('findNearestDeltaMeters', () => {
     const delta = findNearestDeltaMeters({
       ...baseInput,
       carsIdx: [0, 1],
-      onPitRoad: [0, 1, 0],
+      onPitRoad: [false, true, false],
       lapDistPct: [0.5, 0.5002, 0.9],
     });
 

@@ -84,7 +84,7 @@ export const getLapDistPct = withConnect(
 );
 
 export const getOnPitRoad = withConnect(
-  (): number[] => ir?.get(VARS.CAR_IDX_ON_PIT_ROAD) ?? [],
+  (): boolean[] => ir?.get(VARS.CAR_IDX_ON_PIT_ROAD) ?? [],
 );
 
 export const getSessionNum = withConnect(

@@ -83,7 +83,7 @@ beforeEach(() => {
   initReferenceInterval(TEST_TRACK_LENGTH_METERS);
   mockGetLapDistPct.mockResolvedValue([DEFAULT_TRACK_PCT]);
   mockGetSessionTime.mockResolvedValue(DEFAULT_SESSION_TIME);
-  mockGetOnPitRoad.mockResolvedValue([0]);
+  mockGetOnPitRoad.mockResolvedValue([false]);
   mockGetCarIdxs.mockResolvedValue([0]);
 });
 
@@ -140,7 +140,7 @@ describe('updateReferenceLaps', () => {
       isOnPitRoad: false,
     });
     mockGetLapDistPct.mockResolvedValue([nextPct]);
-    mockGetOnPitRoad.mockResolvedValue([1]);
+    mockGetOnPitRoad.mockResolvedValue([true]);
 
     await updateReferenceLaps();
 
