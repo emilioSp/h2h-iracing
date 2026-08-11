@@ -1,4 +1,4 @@
-import { getPlayerClassCarIdx } from '#repository/driver.repository.ts';
+import { getCarsIdx } from '#repository/driver.repository.ts';
 import {
   getLapDistPct,
   getOnPitRoad,
@@ -194,7 +194,7 @@ export const updateReferenceLaps = async (): Promise<void> => {
   const lapDistPct = await getLapDistPct();
   const sessionTime = await getSessionTime();
   const onPitRoad = await getOnPitRoad();
-  const carIdxs = await getPlayerClassCarIdx();
+  const carIdxs = await getCarsIdx();
 
   for (const carIdx of carIdxs) {
     if ((lapDistPct[carIdx] ?? -1) < 0) continue;

@@ -12,24 +12,12 @@
   --color-border: #2a2a2a;
   --color-border-player: #3a3a6a;
   --font-mono: "Courier New", Courier, monospace;
-  --animate-three-wide: three-wide 0.4s infinite;
-}
-
-@keyframes three-wide {
-  0%,
-  49.9% {
-    background-color: var(--color-red);
-  }
-  50%,
-  100% {
-    background-color: var(--color-yellow);
-  }
 }
 
 html,
 body,
 #root {
-  width: 800px;
+  width: 500px;
   height: 200px;
   overflow: hidden;
   background-color: transparent;

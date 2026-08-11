@@ -8,12 +8,25 @@ Ready to be used within SimHub or OBS for live streaming.
 - Car telemetry overlay: Shows key car telemetry data (ABS, TC, brake bias, pit limiter)
 - Fuel dashboard: Tracks fuel consumption and calculates how much to add at the next pit stop
 - Spotter overlay: Appears only when a car is alongside, showing how much it overlaps your car on that side
+- Traffic overlay: Appears only when faster-class cars are closing from behind, so you can plan where to let them by
 
 ## Download & Installation
 
 1. Go to [Release page](https://github.com/emilioSp/h2h-iracing/releases), download the latest version of H2H and unzip it.
 2. Run the executable file (h2h-iracing.exe) to start the server. You should see a welcome page with instructions and a link to the dashboard.
 3. SimHub dashboards are included in the release, but you can also find them in the `simhub_dashies` folder. Import them into SimHub.
+
+## Troubleshooting
+
+### The dashboards are not visible in SimHub
+
+Switch SimHub to the HTML render engine. This is a SimHub setting, not an H2H one:
+
+1. In SimHub, open the **Settings** tab at the top of the window.
+2. Scroll to the **Performance** section.
+3. Under **Default desktop renderer**, select **HTML render engine (WebView2)** instead of **WPF render engine**.
+
+The overlays are web pages, so the WPF renderer cannot display them.
 
 ## Screenshots
 
@@ -26,6 +39,13 @@ Ready to be used within SimHub or OBS for live streaming.
 <img src="docs/H2H_car_telemetry_dashboard.jpg" alt="Car telemetry overlay" width="800" />
 
 <img src="docs/H2H_fuel_dashboard.png" alt="Fuel dashboard" width="800" />
+
+<img src="docs/H2H_multiclass_traffic_dashboard.png" alt="Multiclass traffic overlay" width="800" />
+
+Overlays stack, because each one is a separate transparent browser source. Here the traffic overlay
+runs on top of the spotter:
+
+<img src="docs/H2H_multiclass_traffic_spotter_combined_dashboard.png" alt="Traffic and spotter overlays running together" width="800" />
 
 ## Video demonstration
 
@@ -83,7 +103,8 @@ src/
 ├── car-dashboard/    # React overlay — car telemetry
 ├── fuel-dashboard/   # React overlay — fuel calculator
 ├── spotter-dashboard/# React overlay — cars alongside
-├── common/           # Shared React components (e.g. WelcomePage)
+├── traffic-dashboard/# React overlay — faster cars closing from behind
+├── common/           # Shared React components and constants
 ├── schema/           # Zod schemas shared across layers
 └── server/
     ├── tick.ts       # Main loop: polls iRacing SDK, refreshes data
@@ -91,7 +112,8 @@ src/
     ├── router/       # Route handlers, request/response validation
     ├── dashboard/    # Entry points and orchestration for dashboards
     ├── service/      # Business logic (gap/delta calculations, lap times, standings...)
-    └── repository/   # Data layer — iRacing SDK integration and in-memory storage
+    ├── repository/   # Data layer — iRacing SDK integration and in-memory storage
+    └── utils/        # Pure helpers with no layer
 ```
 
 ## API
@@ -202,7 +224,31 @@ Cars alongside, and how much they overlap your car.
 }
 ```
 
-`left` and `right` are `null` when no car is on that side. `overlapStartPct` and `overlapEndPct` are percentages of your own car length, `0` at the rear and `100` at the nose. `isThreeWide` is `true` when iRacing reports cars on both sides at once; both sides are then `null`, because iRacing does not say which car is on which side, and the overlay fills both bars full height, blinking red/yellow, instead. The overlay renders nothing only when both sides are `null` and `isThreeWide` is `false`. See [How the spotter overlap is computed](docs/spotter-overlap.md).
+`left` and `right` are `null` when no car is on that side. `overlapStartPct` and `overlapEndPct` are percentages of your own car length, `0` at the rear and `100` at the nose. `isThreeWide` is `true` when iRacing reports cars on both sides at once; both sides are then `null`, because iRacing does not say which car is on which side, and the overlay fills both bars full height, blinking red/yellow, instead. The overlay shows the welcome page until a session starts, then renders nothing while both sides are `null` and `isThreeWide` is `false`. See [How the spotter overlap is computed](docs/spotter-overlap.md).
+
+### `GET /sse/traffic`
+
+Faster-class cars closing from behind, nearest first.
+
+```json
+{
+  "data": {
+    "cars": [
+      {
+        "carIdx": 10,
+        "carNumber": "6",
+        "driverName": "Aussie Greg Hill",
+        "className": "LMP2",
+        "license": "A 3.51",
+        "iRating": 4200,
+        "gapSeconds": 0.14
+      }
+    ]
+  }
+}
+```
+
+`cars` is empty whenever there is nothing to warn about: no faster car within 2 seconds behind, or the player is on pit road. Cars in the pits are always excluded. The overlay shows the welcome page until a session starts, then renders nothing while the list is empty. `className` is derived from the car model name, because iRacing leaves `CarClassShortName` empty in many sessions. `gapSeconds` is the time for that car to reach your position, between `0` and `2`. See [How traffic is detected](docs/traffic-detection.md).
 
 ## Testing
 
@@ -216,3 +262,4 @@ npm test
 - [How the gap is calculated](docs/gap-calculation.md)
 - [How fuel is computed](docs/fuel-computation.md)
 - [How the spotter overlap is computed](docs/spotter-overlap.md)
+- [How traffic is detected](docs/traffic-detection.md)

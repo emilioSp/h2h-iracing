@@ -1,0 +1,1818 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dump inspector — shared-memory_multiclass.bin</title>
+<style>
+  :root { color-scheme: light dark; --bg:#fff; --fg:#161616; --dim:#666; --line:#ddd; --head:#f4f4f4; --me:#fff6d5; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#0d0d0d; --fg:#e8e8e8; --dim:#999; --line:#2a2a2a; --head:#161616; --me:#2a2410; }
+  }
+  body { margin:0; padding:2rem 1.5rem 4rem; background:var(--bg); color:var(--fg);
+         font:14px/1.5 ui-sans-serif, system-ui, sans-serif; }
+  h1 { font-size:1.4rem; margin:0 0 .25rem; }
+  h2 { font-size:1.05rem; margin:2.5rem 0 .75rem; padding-bottom:.35rem; border-bottom:1px solid var(--line); }
+  .sub { color:var(--dim); margin:0 0 1rem; font-family:ui-monospace, monospace; font-size:.85rem; }
+  .scroll { overflow-x:auto; }
+  table { border-collapse:collapse; font-family:ui-monospace, SFMono-Regular, Menlo, monospace; font-size:.8rem; }
+  th, td { border:1px solid var(--line); padding:.3rem .5rem; text-align:left; white-space:nowrap; }
+  th { background:var(--head); position:sticky; top:0; }
+  td.r, th.r { text-align:right; }
+  td.w { white-space:normal; min-width:36rem; }
+  tr.me { background:var(--me); font-weight:600; }
+  details { border:1px solid var(--line); border-radius:4px; margin-bottom:.5rem; }
+  summary { cursor:pointer; padding:.5rem .75rem; font-family:ui-monospace, monospace; }
+  pre { margin:0; padding:.75rem; overflow-x:auto; font-size:.75rem; border-top:1px solid var(--line); }
+</style>
+</head>
+<body>
+<h1>iRacing shared-memory dump</h1>
+<p class="sub">/Users/emiliosp/Workspace/h2h-iracing/fixture/shared-memory_multiclass.bin</p>
+<section><h2>Overview</h2><div class="scroll"><table><thead><tr><th>Field</th><th>Value</th></tr></thead><tbody><tr><td>Dump</td><td>/Users/emiliosp/Workspace/h2h-iracing/fixture/shared-memory_multiclass.bin</td></tr><tr><td>Size</td><td>1.14 MB</td></tr><tr><td>Track</td><td>Autodromo del Mugello</td></tr><tr><td>Track length</td><td>5.1914 km</td></tr><tr><td>Event type</td><td>Race</td></tr><tr><td>Category</td><td>SportsCar</td></tr><tr><td>Sessions</td><td>1</td></tr><tr><td>Player car index</td><td>0</td></tr><tr><td>Drivers</td><td>13</td></tr></tbody></table></div></section>
+<section><h2>Car classes</h2><div class="scroll"><table><thead><tr><th>CarClassID</th><th class="r">Cars</th><th>CarClassShortName</th><th>CarClassRelSpeed</th><th>CarClassEstLapTime</th><th>Car models</th></tr></thead><tbody><tr><td>0</td><td class="r">12</td><td>null</td><td>100</td><td>91.9327, 92.099, 92.2485, 94.5768, 102.5469, 103.1874, 103.1952, 103.2057, 103.4432, 106.3155, 114.5568</td><td>Ferrari 296 GT3, Acura ARX-06, Acura NSX GT3 EVO 22, AMR Vantage GT3 EVO, Ferrari 499P, Mercedes GT3 2020, Porsche 911 Cup (992.2), Porsche 911 GT3 R (992), Porsche 963, Dallara P217 LMP2, Ford Mustang GT4</td></tr><tr><td>11</td><td class="r">1</td><td>null</td><td>0</td><td>111.6202</td><td>safety pcsedan</td></tr></tbody></table></div></section>
+<section><h2>Drivers</h2><div class="scroll"><table><thead><tr><th class="r">CarIdx</th><th>UserName</th><th class="r">CarNumber</th><th class="r">IRating</th><th>LicString</th><th class="r">CarClassID</th><th>CarClassShortName</th><th class="r">CarClassRelSpeed</th><th class="r">CarClassEstLapTime</th><th>CarScreenNameShort</th><th class="r">PaceCar</th><th class="r">AI</th></tr></thead><tbody><tr class="me"><td class="r">0</td><td>Emilio Spatola</td><td class="r">64</td><td class="r">1</td><td>R 0.01</td><td class="r">0</td><td>null</td><td class="r">100</td><td class="r">103.1952</td><td>Ferrari 296 GT3</td><td class="r">0</td><td class="r">0</td></tr><tr><td class="r">1</td><td>Otto Szebeni</td><td class="r">1</td><td class="r">0</td><td>R 0.00</td><td class="r">0</td><td>null</td><td class="r">100</td><td class="r">91.9327</td><td>Acura ARX-06</td><td class="r">0</td><td class="r">1</td></tr><tr><td class="r">2</td><td>John Hughes</td><td class="r">2</td><td class="r">0</td><td>R 0.00</td><td class="r">0</td><td>null</td><td class="r">100</td><td class="r">103.2057</td><td>Acura NSX GT3 EVO 22</td><td class="r">0</td><td class="r">1</td></tr><tr><td class="r">3</td><td>Ian Sudol</td><td class="r">3</td><td class="r">0</td><td>R 0.00</td><td class="r">0</td><td>null</td><td class="r">100</td><td class="r">102.5469</td><td>AMR Vantage GT3 EVO</td><td class="r">0</td><td class="r">1</td></tr><tr><td class="r">4</td><td>Chris Yanchar</td><td class="r">777</td><td class="r">0</td><td>R 0.00</td><td class="r">0</td><td>null</td><td class="r">100</td><td class="r">103.1952</td><td>Ferrari 296 GT3</td><td class="r">0</td><td class="r">1</td></tr><tr><td class="r">5</td><td>Derek Edgerton</td><td class="r">32</td><td class="r">0</td><td>R 0.00</td><td class="r">0</td><td>null</td><td class="r">100</td><td class="r">92.099</td><td>Ferrari 499P</td><td class="r">0</td><td class="r">1</td></tr><tr><td class="r">6</td><td>Richard Jobling</td><td class="r">4</td><td class="r">0</td><td>R 0.00</td><td class="r">0</td><td>null</td><td class="r">100</td><td class="r">103.4432</td><td>Mercedes GT3 2020</td><td class="r">0</td><td class="r">1</td></tr><tr><td class="r">7</td><td>Susan Flint</td><td class="r">8</td><td class="r">0</td><td>R 0.00</td><td class="r">0</td><td>null</td><td class="r">100</td><td class="r">106.3155</td><td>Porsche 911 Cup (992.2)</td><td class="r">0</td><td class="r">1</td></tr><tr><td class="r">8</td><td>Jonas Meyer</td><td class="r">323</td><td class="r">0</td><td>R 0.00</td><td class="r">0</td><td>null</td><td class="r">100</td><td class="r">103.1874</td><td>Porsche 911 GT3 R (992)</td><td class="r">0</td><td class="r">1</td></tr><tr><td class="r">9</td><td>Jeff Rubin</td><td class="r">5</td><td class="r">0</td><td>R 0.00</td><td class="r">0</td><td>null</td><td class="r">100</td><td class="r">92.2485</td><td>Porsche 963</td><td class="r">0</td><td class="r">1</td></tr><tr><td class="r">10</td><td>Aussie Greg Hill</td><td class="r">6</td><td class="r">0</td><td>R 0.00</td><td class="r">0</td><td>null</td><td class="r">100</td><td class="r">94.5768</td><td>Dallara P217 LMP2</td><td class="r">0</td><td class="r">1</td></tr><tr><td class="r">11</td><td>Vicente Maestre</td><td class="r">7</td><td class="r">0</td><td>R 0.00</td><td class="r">0</td><td>null</td><td class="r">100</td><td class="r">114.5568</td><td>Ford Mustang GT4</td><td class="r">0</td><td class="r">1</td></tr><tr><td class="r">64</td><td>Pace Car</td><td class="r">0</td><td class="r">0</td><td>R 0.00</td><td class="r">11</td><td>null</td><td class="r">0</td><td class="r">111.6202</td><td>safety pcsedan</td><td class="r">1</td><td class="r">0</td></tr></tbody></table></div></section>
+<section><h2>Cars</h2><div class="scroll"><table><thead><tr><th class="r">CarIdx</th><th>Driver</th><th class="r">CarIdxClass</th><th class="r">CarIdxLapDistPct</th><th class="r">CarIdxLapCompleted</th><th class="r">CarIdxOnPitRoad</th><th class="r">CarIdxTrackSurface</th><th class="r">CarIdxEstTime</th><th class="r">CarIdxPosition</th><th class="r">CarIdxClassPosition</th><th class="r">CarIdxLastLapTime</th><th class="r">CarIdxBestLapTime</th></tr></thead><tbody><tr class="me"><td class="r">0</td><td>Emilio Spatola</td><td class="r">0</td><td class="r">0.1977776139974594</td><td class="r">0</td><td class="r">false</td><td class="r">3</td><td class="r">19.86119270324707</td><td class="r">1</td><td class="r">1</td><td class="r">-1</td><td class="r">-1</td></tr><tr><td class="r">1</td><td>Otto Szebeni</td><td class="r">0</td><td class="r">0.19855649769306183</td><td class="r">0</td><td class="r">false</td><td class="r">3</td><td class="r">17.693822860717773</td><td class="r">7</td><td class="r">7</td><td class="r">-1</td><td class="r">-1</td></tr><tr><td class="r">2</td><td>John Hughes</td><td class="r">0</td><td class="r">0.19142073392868042</td><td class="r">0</td><td class="r">false</td><td class="r">3</td><td class="r">19.04613494873047</td><td class="r">12</td><td class="r">12</td><td class="r">-1</td><td class="r">-1</td></tr><tr><td class="r">3</td><td>Ian Sudol</td><td class="r">0</td><td class="r">0.19313594698905945</td><td class="r">0</td><td class="r">false</td><td class="r">3</td><td class="r">19.12422752380371</td><td class="r">8</td><td class="r">8</td><td class="r">-1</td><td class="r">-1</td></tr><tr><td class="r">4</td><td>Chris Yanchar</td><td class="r">0</td><td class="r">0.2037658542394638</td><td class="r">0</td><td class="r">false</td><td class="r">3</td><td class="r">20.614892959594727</td><td class="r">4</td><td class="r">4</td><td class="r">-1</td><td class="r">-1</td></tr><tr><td class="r">5</td><td>Derek Edgerton</td><td class="r">0</td><td class="r">0.1932072639465332</td><td class="r">0</td><td class="r">false</td><td class="r">3</td><td class="r">17.020099639892578</td><td class="r">6</td><td class="r">6</td><td class="r">-1</td><td class="r">-1</td></tr><tr><td class="r">6</td><td>Richard Jobling</td><td class="r">0</td><td class="r">0.19135741889476776</td><td class="r">0</td><td class="r">false</td><td class="r">3</td><td class="r">19.035654067993164</td><td class="r">9</td><td class="r">9</td><td class="r">-1</td><td class="r">-1</td></tr><tr><td class="r">7</td><td>Susan Flint</td><td class="r">0</td><td class="r">0.20675240457057953</td><td class="r">0</td><td class="r">false</td><td class="r">3</td><td class="r">21.229204177856445</td><td class="r">2</td><td class="r">2</td><td class="r">-1</td><td class="r">-1</td></tr><tr><td class="r">8</td><td>Jonas Meyer</td><td class="r">0</td><td class="r">0.201091006398201</td><td class="r">0</td><td class="r">false</td><td class="r">3</td><td class="r">20.214813232421875</td><td class="r">3</td><td class="r">3</td><td class="r">-1</td><td class="r">-1</td></tr><tr><td class="r">9</td><td>Jeff Rubin</td><td class="r">0</td><td class="r">0.1946525126695633</td><td class="r">0</td><td class="r">false</td><td class="r">3</td><td class="r">17.290203094482422</td><td class="r">10</td><td class="r">10</td><td class="r">-1</td><td class="r">-1</td></tr><tr><td class="r">10</td><td>Aussie Greg Hill</td><td class="r">0</td><td class="r">0.19629573822021484</td><td class="r">0</td><td class="r">false</td><td class="r">3</td><td class="r">18.317150115966797</td><td class="r">5</td><td class="r">5</td><td class="r">-1</td><td class="r">-1</td></tr><tr><td class="r">11</td><td>Vicente Maestre</td><td class="r">0</td><td class="r">0.18713067471981049</td><td class="r">0</td><td class="r">false</td><td class="r">3</td><td class="r">19.86075782775879</td><td class="r">11</td><td class="r">11</td><td class="r">-1</td><td class="r">-1</td></tr><tr><td class="r">64</td><td>Pace Car</td><td class="r">-1</td><td class="r">0.011691279709339142</td><td class="r">-1</td><td class="r">true</td><td class="r">2</td><td class="r">0.9154882431030273</td><td class="r">-1</td><td class="r">-1</td><td class="r">-1</td><td class="r">-1</td></tr></tbody></table></div></section>
+<section><h2>Telemetry variables (336)</h2><div class="scroll"><table><thead><tr><th>Variable</th><th>VARS constant</th><th class="w">Value</th></tr></thead><tbody><tr><td>AirDensity</td><td>AIR_DENSITY</td><td class="w">1.1543079614639282</td></tr><tr><td>AirPressure</td><td>AIR_PRESSURE</td><td class="w">98095.484375</td></tr><tr><td>AirTemp</td><td>AIR_TEMP</td><td class="w">21.111112594604492</td></tr><tr><td>Brake</td><td>BRAKE</td><td class="w">0</td></tr><tr><td>BrakeABSactive</td><td>BRAKE_ABS_ACTIVE</td><td class="w">false</td></tr><tr><td>BrakeRaw</td><td>BRAKE_RAW</td><td class="w">0</td></tr><tr><td>CamCameraNumber</td><td>CAM_CAMERA_NUMBER</td><td class="w">1</td></tr><tr><td>CamCameraState</td><td>CAM_CAMERA_STATE</td><td class="w">80</td></tr><tr><td>CamCarIdx</td><td>CAM_CAR_IDX</td><td class="w">0</td></tr><tr><td>CamGroupNumber</td><td>CAM_GROUP_NUMBER</td><td class="w">9</td></tr><tr><td>CarDistAhead</td><td>CAR_DIST_AHEAD</td><td class="w">4.0435791015625</td></tr><tr><td>CarDistBehind</td><td>CAR_DIST_BEHIND</td><td class="w">7.69305419921875</td></tr><tr><td>CarIdxBestLapNum</td><td>CAR_IDX_BEST_LAP_NUM</td><td class="w"><b>0</b>:-1  <b>1</b>:-1  <b>2</b>:-1  <b>3</b>:-1  <b>4</b>:-1  <b>5</b>:-1  <b>6</b>:-1  <b>7</b>:-1  <b>8</b>:-1  <b>9</b>:-1  <b>10</b>:-1  <b>11</b>:-1  <b>12</b>:-1  <b>13</b>:-1  <b>14</b>:-1  <b>15</b>:-1  <b>16</b>:-1  <b>17</b>:-1  <b>18</b>:-1  <b>19</b>:-1  <b>20</b>:-1  <b>21</b>:-1  <b>22</b>:-1  <b>23</b>:-1  <b>24</b>:-1  <b>25</b>:-1  <b>26</b>:-1  <b>27</b>:-1  <b>28</b>:-1  <b>29</b>:-1  <b>30</b>:-1  <b>31</b>:-1  <b>32</b>:-1  <b>33</b>:-1  <b>34</b>:-1  <b>35</b>:-1  <b>36</b>:-1  <b>37</b>:-1  <b>38</b>:-1  <b>39</b>:-1  <b>40</b>:-1  <b>41</b>:-1  <b>42</b>:-1  <b>43</b>:-1  <b>44</b>:-1  <b>45</b>:-1  <b>46</b>:-1  <b>47</b>:-1  <b>48</b>:-1  <b>49</b>:-1  <b>50</b>:-1  <b>51</b>:-1  <b>52</b>:-1  <b>53</b>:-1  <b>54</b>:-1  <b>55</b>:-1  <b>56</b>:-1  <b>57</b>:-1  <b>58</b>:-1  <b>59</b>:-1  <b>60</b>:-1  <b>61</b>:-1  <b>62</b>:-1  <b>63</b>:-1  <b>64</b>:-1  <b>65</b>:-1  <b>66</b>:-1  <b>67</b>:-1  <b>68</b>:-1  <b>69</b>:-1  <b>70</b>:-1  <b>71</b>:-1</td></tr><tr><td>CarIdxBestLapTime</td><td>CAR_IDX_BEST_LAP_TIME</td><td class="w"><b>0</b>:-1  <b>1</b>:-1  <b>2</b>:-1  <b>3</b>:-1  <b>4</b>:-1  <b>5</b>:-1  <b>6</b>:-1  <b>7</b>:-1  <b>8</b>:-1  <b>9</b>:-1  <b>10</b>:-1  <b>11</b>:-1  <b>12</b>:-1  <b>13</b>:-1  <b>14</b>:-1  <b>15</b>:-1  <b>16</b>:-1  <b>17</b>:-1  <b>18</b>:-1  <b>19</b>:-1  <b>20</b>:-1  <b>21</b>:-1  <b>22</b>:-1  <b>23</b>:-1  <b>24</b>:-1  <b>25</b>:-1  <b>26</b>:-1  <b>27</b>:-1  <b>28</b>:-1  <b>29</b>:-1  <b>30</b>:-1  <b>31</b>:-1  <b>32</b>:-1  <b>33</b>:-1  <b>34</b>:-1  <b>35</b>:-1  <b>36</b>:-1  <b>37</b>:-1  <b>38</b>:-1  <b>39</b>:-1  <b>40</b>:-1  <b>41</b>:-1  <b>42</b>:-1  <b>43</b>:-1  <b>44</b>:-1  <b>45</b>:-1  <b>46</b>:-1  <b>47</b>:-1  <b>48</b>:-1  <b>49</b>:-1  <b>50</b>:-1  <b>51</b>:-1  <b>52</b>:-1  <b>53</b>:-1  <b>54</b>:-1  <b>55</b>:-1  <b>56</b>:-1  <b>57</b>:-1  <b>58</b>:-1  <b>59</b>:-1  <b>60</b>:-1  <b>61</b>:-1  <b>62</b>:-1  <b>63</b>:-1  <b>64</b>:-1  <b>65</b>:-1  <b>66</b>:-1  <b>67</b>:-1  <b>68</b>:-1  <b>69</b>:-1  <b>70</b>:-1  <b>71</b>:-1</td></tr><tr><td>CarIdxClass</td><td>CAR_IDX_CLASS</td><td class="w"><b>0</b>:0  <b>1</b>:0  <b>2</b>:0  <b>3</b>:0  <b>4</b>:0  <b>5</b>:0  <b>6</b>:0  <b>7</b>:0  <b>8</b>:0  <b>9</b>:0  <b>10</b>:0  <b>11</b>:0  <b>12</b>:-1  <b>13</b>:-1  <b>14</b>:-1  <b>15</b>:-1  <b>16</b>:-1  <b>17</b>:-1  <b>18</b>:-1  <b>19</b>:-1  <b>20</b>:-1  <b>21</b>:-1  <b>22</b>:-1  <b>23</b>:-1  <b>24</b>:-1  <b>25</b>:-1  <b>26</b>:-1  <b>27</b>:-1  <b>28</b>:-1  <b>29</b>:-1  <b>30</b>:-1  <b>31</b>:-1  <b>32</b>:-1  <b>33</b>:-1  <b>34</b>:-1  <b>35</b>:-1  <b>36</b>:-1  <b>37</b>:-1  <b>38</b>:-1  <b>39</b>:-1  <b>40</b>:-1  <b>41</b>:-1  <b>42</b>:-1  <b>43</b>:-1  <b>44</b>:-1  <b>45</b>:-1  <b>46</b>:-1  <b>47</b>:-1  <b>48</b>:-1  <b>49</b>:-1  <b>50</b>:-1  <b>51</b>:-1  <b>52</b>:-1  <b>53</b>:-1  <b>54</b>:-1  <b>55</b>:-1  <b>56</b>:-1  <b>57</b>:-1  <b>58</b>:-1  <b>59</b>:-1  <b>60</b>:-1  <b>61</b>:-1  <b>62</b>:-1  <b>63</b>:0  <b>64</b>:-1  <b>65</b>:-1  <b>66</b>:-1  <b>67</b>:-1  <b>68</b>:-1  <b>69</b>:-1  <b>70</b>:-1  <b>71</b>:-1</td></tr><tr><td>CarIdxClassPosition</td><td>CAR_IDX_CLASS_POSITION</td><td class="w"><b>0</b>:1  <b>1</b>:7  <b>2</b>:12  <b>3</b>:8  <b>4</b>:4  <b>5</b>:6  <b>6</b>:9  <b>7</b>:2  <b>8</b>:3  <b>9</b>:10  <b>10</b>:5  <b>11</b>:11  <b>12</b>:0  <b>13</b>:0  <b>14</b>:0  <b>15</b>:0  <b>16</b>:0  <b>17</b>:0  <b>18</b>:0  <b>19</b>:0  <b>20</b>:0  <b>21</b>:0  <b>22</b>:0  <b>23</b>:0  <b>24</b>:0  <b>25</b>:0  <b>26</b>:0  <b>27</b>:0  <b>28</b>:0  <b>29</b>:0  <b>30</b>:0  <b>31</b>:0  <b>32</b>:0  <b>33</b>:0  <b>34</b>:0  <b>35</b>:0  <b>36</b>:0  <b>37</b>:0  <b>38</b>:0  <b>39</b>:0  <b>40</b>:0  <b>41</b>:0  <b>42</b>:0  <b>43</b>:0  <b>44</b>:0  <b>45</b>:0  <b>46</b>:0  <b>47</b>:0  <b>48</b>:0  <b>49</b>:0  <b>50</b>:0  <b>51</b>:0  <b>52</b>:0  <b>53</b>:0  <b>54</b>:0  <b>55</b>:0  <b>56</b>:0  <b>57</b>:0  <b>58</b>:0  <b>59</b>:0  <b>60</b>:0  <b>61</b>:0  <b>62</b>:0  <b>63</b>:0  <b>64</b>:-1  <b>65</b>:-1  <b>66</b>:-1  <b>67</b>:-1  <b>68</b>:-1  <b>69</b>:-1  <b>70</b>:-1  <b>71</b>:-1</td></tr><tr><td>CarIdxEstTime</td><td>CAR_IDX_EST_TIME</td><td class="w"><b>0</b>:19.86119270324707  <b>1</b>:17.693822860717773  <b>2</b>:19.04613494873047  <b>3</b>:19.12422752380371  <b>4</b>:20.614892959594727  <b>5</b>:17.020099639892578  <b>6</b>:19.035654067993164  <b>7</b>:21.229204177856445  <b>8</b>:20.214813232421875  <b>9</b>:17.290203094482422  <b>10</b>:18.317150115966797  <b>11</b>:19.86075782775879  <b>12</b>:0  <b>13</b>:0  <b>14</b>:0  <b>15</b>:0  <b>16</b>:0  <b>17</b>:0  <b>18</b>:0  <b>19</b>:0  <b>20</b>:0  <b>21</b>:0  <b>22</b>:0  <b>23</b>:0  <b>24</b>:0  <b>25</b>:0  <b>26</b>:0  <b>27</b>:0  <b>28</b>:0  <b>29</b>:0  <b>30</b>:0  <b>31</b>:0  <b>32</b>:0  <b>33</b>:0  <b>34</b>:0  <b>35</b>:0  <b>36</b>:0  <b>37</b>:0  <b>38</b>:0  <b>39</b>:0  <b>40</b>:0  <b>41</b>:0  <b>42</b>:0  <b>43</b>:0  <b>44</b>:0  <b>45</b>:0  <b>46</b>:0  <b>47</b>:0  <b>48</b>:0  <b>49</b>:0  <b>50</b>:0  <b>51</b>:0  <b>52</b>:0  <b>53</b>:0  <b>54</b>:0  <b>55</b>:0  <b>56</b>:0  <b>57</b>:0  <b>58</b>:0  <b>59</b>:0  <b>60</b>:0  <b>61</b>:0  <b>62</b>:0  <b>63</b>:0  <b>64</b>:0.9154882431030273  <b>65</b>:0  <b>66</b>:0  <b>67</b>:0  <b>68</b>:0  <b>69</b>:0  <b>70</b>:0  <b>71</b>:0</td></tr><tr><td>CarIdxF2Time</td><td>CAR_IDX_F2_TIME</td><td class="w"><b>0</b>:0  <b>1</b>:0.006000000052154064  <b>2</b>:0.010999999940395355  <b>3</b>:0.007000000216066837  <b>4</b>:0.003000000026077032  <b>5</b>:0.004999999888241291  <b>6</b>:0.00800000037997961  <b>7</b>:0.0010000000474974513  <b>8</b>:0.0020000000949949026  <b>9</b>:0.008999999612569809  <b>10</b>:0.004000000189989805  <b>11</b>:0.009999999776482582  <b>12</b>:0  <b>13</b>:0  <b>14</b>:0  <b>15</b>:0  <b>16</b>:0  <b>17</b>:0  <b>18</b>:0  <b>19</b>:0  <b>20</b>:0  <b>21</b>:0  <b>22</b>:0  <b>23</b>:0  <b>24</b>:0  <b>25</b>:0  <b>26</b>:0  <b>27</b>:0  <b>28</b>:0  <b>29</b>:0  <b>30</b>:0  <b>31</b>:0  <b>32</b>:0  <b>33</b>:0  <b>34</b>:0  <b>35</b>:0  <b>36</b>:0  <b>37</b>:0  <b>38</b>:0  <b>39</b>:0  <b>40</b>:0  <b>41</b>:0  <b>42</b>:0  <b>43</b>:0  <b>44</b>:0  <b>45</b>:0  <b>46</b>:0  <b>47</b>:0  <b>48</b>:0  <b>49</b>:0  <b>50</b>:0  <b>51</b>:0  <b>52</b>:0  <b>53</b>:0  <b>54</b>:0  <b>55</b>:0  <b>56</b>:0  <b>57</b>:0  <b>58</b>:0  <b>59</b>:0  <b>60</b>:0  <b>61</b>:0  <b>62</b>:0  <b>63</b>:0  <b>64</b>:-1  <b>65</b>:-1  <b>66</b>:-1  <b>67</b>:-1  <b>68</b>:-1  <b>69</b>:-1  <b>70</b>:-1  <b>71</b>:-1</td></tr><tr><td>CarIdxFastRepairsUsed</td><td>CAR_IDX_FAST_REPAIRS_USED</td><td class="w"><b>0</b>:0  <b>1</b>:0  <b>2</b>:0  <b>3</b>:0  <b>4</b>:0  <b>5</b>:0  <b>6</b>:0  <b>7</b>:0  <b>8</b>:0  <b>9</b>:0  <b>10</b>:0  <b>11</b>:0  <b>12</b>:0  <b>13</b>:0  <b>14</b>:0  <b>15</b>:0  <b>16</b>:0  <b>17</b>:0  <b>18</b>:0  <b>19</b>:0  <b>20</b>:0  <b>21</b>:0  <b>22</b>:0  <b>23</b>:0  <b>24</b>:0  <b>25</b>:0  <b>26</b>:0  <b>27</b>:0  <b>28</b>:0  <b>29</b>:0  <b>30</b>:0  <b>31</b>:0  <b>32</b>:0  <b>33</b>:0  <b>34</b>:0  <b>35</b>:0  <b>36</b>:0  <b>37</b>:0  <b>38</b>:0  <b>39</b>:0  <b>40</b>:0  <b>41</b>:0  <b>42</b>:0  <b>43</b>:0  <b>44</b>:0  <b>45</b>:0  <b>46</b>:0  <b>47</b>:0  <b>48</b>:0  <b>49</b>:0  <b>50</b>:0  <b>51</b>:0  <b>52</b>:0  <b>53</b>:0  <b>54</b>:0  <b>55</b>:0  <b>56</b>:0  <b>57</b>:0  <b>58</b>:0  <b>59</b>:0  <b>60</b>:0  <b>61</b>:0  <b>62</b>:0  <b>63</b>:0  <b>64</b>:0  <b>65</b>:0  <b>66</b>:0  <b>67</b>:0  <b>68</b>:0  <b>69</b>:0  <b>70</b>:0  <b>71</b>:0</td></tr><tr><td>CarIdxGear</td><td>CAR_IDX_GEAR</td><td class="w"><b>0</b>:2  <b>1</b>:2  <b>2</b>:1  <b>3</b>:1  <b>4</b>:2  <b>5</b>:1  <b>6</b>:2  <b>7</b>:3  <b>8</b>:2  <b>9</b>:1  <b>10</b>:1  <b>11</b>:1  <b>12</b>:-1  <b>13</b>:-1  <b>14</b>:-1  <b>15</b>:-1  <b>16</b>:-1  <b>17</b>:-1  <b>18</b>:-1  <b>19</b>:-1  <b>20</b>:-1  <b>21</b>:-1  <b>22</b>:-1  <b>23</b>:-1  <b>24</b>:-1  <b>25</b>:-1  <b>26</b>:-1  <b>27</b>:-1  <b>28</b>:-1  <b>29</b>:-1  <b>30</b>:-1  <b>31</b>:-1  <b>32</b>:-1  <b>33</b>:-1  <b>34</b>:-1  <b>35</b>:-1  <b>36</b>:-1  <b>37</b>:-1  <b>38</b>:-1  <b>39</b>:-1  <b>40</b>:-1  <b>41</b>:-1  <b>42</b>:-1  <b>43</b>:-1  <b>44</b>:-1  <b>45</b>:-1  <b>46</b>:-1  <b>47</b>:-1  <b>48</b>:-1  <b>49</b>:-1  <b>50</b>:-1  <b>51</b>:-1  <b>52</b>:-1  <b>53</b>:-1  <b>54</b>:-1  <b>55</b>:-1  <b>56</b>:-1  <b>57</b>:-1  <b>58</b>:-1  <b>59</b>:-1  <b>60</b>:-1  <b>61</b>:-1  <b>62</b>:-1  <b>63</b>:-1  <b>64</b>:1  <b>65</b>:-1  <b>66</b>:-1  <b>67</b>:-1  <b>68</b>:-1  <b>69</b>:-1  <b>70</b>:-1  <b>71</b>:-1</td></tr><tr><td>CarIdxLap</td><td>CAR_IDX_LAP</td><td class="w"><b>0</b>:1  <b>1</b>:1  <b>2</b>:1  <b>3</b>:1  <b>4</b>:1  <b>5</b>:1  <b>6</b>:1  <b>7</b>:1  <b>8</b>:1  <b>9</b>:1  <b>10</b>:1  <b>11</b>:1  <b>12</b>:-1  <b>13</b>:-1  <b>14</b>:-1  <b>15</b>:-1  <b>16</b>:-1  <b>17</b>:-1  <b>18</b>:-1  <b>19</b>:-1  <b>20</b>:-1  <b>21</b>:-1  <b>22</b>:-1  <b>23</b>:-1  <b>24</b>:-1  <b>25</b>:-1  <b>26</b>:-1  <b>27</b>:-1  <b>28</b>:-1  <b>29</b>:-1  <b>30</b>:-1  <b>31</b>:-1  <b>32</b>:-1  <b>33</b>:-1  <b>34</b>:-1  <b>35</b>:-1  <b>36</b>:-1  <b>37</b>:-1  <b>38</b>:-1  <b>39</b>:-1  <b>40</b>:-1  <b>41</b>:-1  <b>42</b>:-1  <b>43</b>:-1  <b>44</b>:-1  <b>45</b>:-1  <b>46</b>:-1  <b>47</b>:-1  <b>48</b>:-1  <b>49</b>:-1  <b>50</b>:-1  <b>51</b>:-1  <b>52</b>:-1  <b>53</b>:-1  <b>54</b>:-1  <b>55</b>:-1  <b>56</b>:-1  <b>57</b>:-1  <b>58</b>:-1  <b>59</b>:-1  <b>60</b>:-1  <b>61</b>:-1  <b>62</b>:-1  <b>63</b>:-1  <b>64</b>:0  <b>65</b>:-1  <b>66</b>:-1  <b>67</b>:-1  <b>68</b>:-1  <b>69</b>:-1  <b>70</b>:-1  <b>71</b>:-1</td></tr><tr><td>CarIdxLapCompleted</td><td>CAR_IDX_LAP_COMPLETED</td><td class="w"><b>0</b>:0  <b>1</b>:0  <b>2</b>:0  <b>3</b>:0  <b>4</b>:0  <b>5</b>:0  <b>6</b>:0  <b>7</b>:0  <b>8</b>:0  <b>9</b>:0  <b>10</b>:0  <b>11</b>:0  <b>12</b>:-1  <b>13</b>:-1  <b>14</b>:-1  <b>15</b>:-1  <b>16</b>:-1  <b>17</b>:-1  <b>18</b>:-1  <b>19</b>:-1  <b>20</b>:-1  <b>21</b>:-1  <b>22</b>:-1  <b>23</b>:-1  <b>24</b>:-1  <b>25</b>:-1  <b>26</b>:-1  <b>27</b>:-1  <b>28</b>:-1  <b>29</b>:-1  <b>30</b>:-1  <b>31</b>:-1  <b>32</b>:-1  <b>33</b>:-1  <b>34</b>:-1  <b>35</b>:-1  <b>36</b>:-1  <b>37</b>:-1  <b>38</b>:-1  <b>39</b>:-1  <b>40</b>:-1  <b>41</b>:-1  <b>42</b>:-1  <b>43</b>:-1  <b>44</b>:-1  <b>45</b>:-1  <b>46</b>:-1  <b>47</b>:-1  <b>48</b>:-1  <b>49</b>:-1  <b>50</b>:-1  <b>51</b>:-1  <b>52</b>:-1  <b>53</b>:-1  <b>54</b>:-1  <b>55</b>:-1  <b>56</b>:-1  <b>57</b>:-1  <b>58</b>:-1  <b>59</b>:-1  <b>60</b>:-1  <b>61</b>:-1  <b>62</b>:-1  <b>63</b>:-1  <b>64</b>:-1  <b>65</b>:-1  <b>66</b>:-1  <b>67</b>:-1  <b>68</b>:-1  <b>69</b>:-1  <b>70</b>:-1  <b>71</b>:-1</td></tr><tr><td>CarIdxLapDistPct</td><td>CAR_IDX_LAP_DIST_PCT</td><td class="w"><b>0</b>:0.1977776139974594  <b>1</b>:0.19855649769306183  <b>2</b>:0.19142073392868042  <b>3</b>:0.19313594698905945  <b>4</b>:0.2037658542394638  <b>5</b>:0.1932072639465332  <b>6</b>:0.19135741889476776  <b>7</b>:0.20675240457057953  <b>8</b>:0.201091006398201  <b>9</b>:0.1946525126695633  <b>10</b>:0.19629573822021484  <b>11</b>:0.18713067471981049  <b>12</b>:-1  <b>13</b>:-1  <b>14</b>:-1  <b>15</b>:-1  <b>16</b>:-1  <b>17</b>:-1  <b>18</b>:-1  <b>19</b>:-1  <b>20</b>:-1  <b>21</b>:-1  <b>22</b>:-1  <b>23</b>:-1  <b>24</b>:-1  <b>25</b>:-1  <b>26</b>:-1  <b>27</b>:-1  <b>28</b>:-1  <b>29</b>:-1  <b>30</b>:-1  <b>31</b>:-1  <b>32</b>:-1  <b>33</b>:-1  <b>34</b>:-1  <b>35</b>:-1  <b>36</b>:-1  <b>37</b>:-1  <b>38</b>:-1  <b>39</b>:-1  <b>40</b>:-1  <b>41</b>:-1  <b>42</b>:-1  <b>43</b>:-1  <b>44</b>:-1  <b>45</b>:-1  <b>46</b>:-1  <b>47</b>:-1  <b>48</b>:-1  <b>49</b>:-1  <b>50</b>:-1  <b>51</b>:-1  <b>52</b>:-1  <b>53</b>:-1  <b>54</b>:-1  <b>55</b>:-1  <b>56</b>:-1  <b>57</b>:-1  <b>58</b>:-1  <b>59</b>:-1  <b>60</b>:-1  <b>61</b>:-1  <b>62</b>:-1  <b>63</b>:-1  <b>64</b>:0.011691279709339142  <b>65</b>:-1  <b>66</b>:-1  <b>67</b>:-1  <b>68</b>:-1  <b>69</b>:-1  <b>70</b>:-1  <b>71</b>:-1</td></tr><tr><td>CarIdxLastLapTime</td><td>CAR_IDX_LAST_LAP_TIME</td><td class="w"><b>0</b>:-1  <b>1</b>:-1  <b>2</b>:-1  <b>3</b>:-1  <b>4</b>:-1  <b>5</b>:-1  <b>6</b>:-1  <b>7</b>:-1  <b>8</b>:-1  <b>9</b>:-1  <b>10</b>:-1  <b>11</b>:-1  <b>12</b>:-1  <b>13</b>:-1  <b>14</b>:-1  <b>15</b>:-1  <b>16</b>:-1  <b>17</b>:-1  <b>18</b>:-1  <b>19</b>:-1  <b>20</b>:-1  <b>21</b>:-1  <b>22</b>:-1  <b>23</b>:-1  <b>24</b>:-1  <b>25</b>:-1  <b>26</b>:-1  <b>27</b>:-1  <b>28</b>:-1  <b>29</b>:-1  <b>30</b>:-1  <b>31</b>:-1  <b>32</b>:-1  <b>33</b>:-1  <b>34</b>:-1  <b>35</b>:-1  <b>36</b>:-1  <b>37</b>:-1  <b>38</b>:-1  <b>39</b>:-1  <b>40</b>:-1  <b>41</b>:-1  <b>42</b>:-1  <b>43</b>:-1  <b>44</b>:-1  <b>45</b>:-1  <b>46</b>:-1  <b>47</b>:-1  <b>48</b>:-1  <b>49</b>:-1  <b>50</b>:-1  <b>51</b>:-1  <b>52</b>:-1  <b>53</b>:-1  <b>54</b>:-1  <b>55</b>:-1  <b>56</b>:-1  <b>57</b>:-1  <b>58</b>:-1  <b>59</b>:-1  <b>60</b>:-1  <b>61</b>:-1  <b>62</b>:-1  <b>63</b>:-1  <b>64</b>:-1  <b>65</b>:-1  <b>66</b>:-1  <b>67</b>:-1  <b>68</b>:-1  <b>69</b>:-1  <b>70</b>:-1  <b>71</b>:-1</td></tr><tr><td>CarIdxOnPitRoad</td><td>CAR_IDX_ON_PIT_ROAD</td><td class="w"><b>0</b>:false  <b>1</b>:false  <b>2</b>:false  <b>3</b>:false  <b>4</b>:false  <b>5</b>:false  <b>6</b>:false  <b>7</b>:false  <b>8</b>:false  <b>9</b>:false  <b>10</b>:false  <b>11</b>:false  <b>12</b>:false  <b>13</b>:false  <b>14</b>:false  <b>15</b>:false  <b>16</b>:false  <b>17</b>:false  <b>18</b>:false  <b>19</b>:false  <b>20</b>:false  <b>21</b>:false  <b>22</b>:false  <b>23</b>:false  <b>24</b>:false  <b>25</b>:false  <b>26</b>:false  <b>27</b>:false  <b>28</b>:false  <b>29</b>:false  <b>30</b>:false  <b>31</b>:false  <b>32</b>:false  <b>33</b>:false  <b>34</b>:false  <b>35</b>:false  <b>36</b>:false  <b>37</b>:false  <b>38</b>:false  <b>39</b>:false  <b>40</b>:false  <b>41</b>:false  <b>42</b>:false  <b>43</b>:false  <b>44</b>:false  <b>45</b>:false  <b>46</b>:false  <b>47</b>:false  <b>48</b>:false  <b>49</b>:false  <b>50</b>:false  <b>51</b>:false  <b>52</b>:false  <b>53</b>:false  <b>54</b>:false  <b>55</b>:false  <b>56</b>:false  <b>57</b>:false  <b>58</b>:false  <b>59</b>:false  <b>60</b>:false  <b>61</b>:false  <b>62</b>:false  <b>63</b>:false  <b>64</b>:true  <b>65</b>:false  <b>66</b>:false  <b>67</b>:false  <b>68</b>:false  <b>69</b>:false  <b>70</b>:false  <b>71</b>:false</td></tr><tr><td>CarIdxP2P_Count</td><td>CAR_IDX_P2_P_COUNT</td><td class="w"><b>0</b>:-1  <b>1</b>:-1  <b>2</b>:-1  <b>3</b>:-1  <b>4</b>:-1  <b>5</b>:-1  <b>6</b>:-1  <b>7</b>:-1  <b>8</b>:-1  <b>9</b>:-1  <b>10</b>:-1  <b>11</b>:-1  <b>12</b>:-1  <b>13</b>:-1  <b>14</b>:-1  <b>15</b>:-1  <b>16</b>:-1  <b>17</b>:-1  <b>18</b>:-1  <b>19</b>:-1  <b>20</b>:-1  <b>21</b>:-1  <b>22</b>:-1  <b>23</b>:-1  <b>24</b>:-1  <b>25</b>:-1  <b>26</b>:-1  <b>27</b>:-1  <b>28</b>:-1  <b>29</b>:-1  <b>30</b>:-1  <b>31</b>:-1  <b>32</b>:-1  <b>33</b>:-1  <b>34</b>:-1  <b>35</b>:-1  <b>36</b>:-1  <b>37</b>:-1  <b>38</b>:-1  <b>39</b>:-1  <b>40</b>:-1  <b>41</b>:-1  <b>42</b>:-1  <b>43</b>:-1  <b>44</b>:-1  <b>45</b>:-1  <b>46</b>:-1  <b>47</b>:-1  <b>48</b>:-1  <b>49</b>:-1  <b>50</b>:-1  <b>51</b>:-1  <b>52</b>:-1  <b>53</b>:-1  <b>54</b>:-1  <b>55</b>:-1  <b>56</b>:-1  <b>57</b>:-1  <b>58</b>:-1  <b>59</b>:-1  <b>60</b>:-1  <b>61</b>:-1  <b>62</b>:-1  <b>63</b>:-1  <b>64</b>:-1  <b>65</b>:-1  <b>66</b>:-1  <b>67</b>:-1  <b>68</b>:-1  <b>69</b>:-1  <b>70</b>:-1  <b>71</b>:-1</td></tr><tr><td>CarIdxP2P_Status</td><td>CAR_IDX_P2_P_STATUS</td><td class="w"><b>0</b>:false  <b>1</b>:false  <b>2</b>:false  <b>3</b>:false  <b>4</b>:false  <b>5</b>:false  <b>6</b>:false  <b>7</b>:false  <b>8</b>:false  <b>9</b>:false  <b>10</b>:false  <b>11</b>:false  <b>12</b>:false  <b>13</b>:false  <b>14</b>:false  <b>15</b>:false  <b>16</b>:false  <b>17</b>:false  <b>18</b>:false  <b>19</b>:false  <b>20</b>:false  <b>21</b>:false  <b>22</b>:false  <b>23</b>:false  <b>24</b>:false  <b>25</b>:false  <b>26</b>:false  <b>27</b>:false  <b>28</b>:false  <b>29</b>:false  <b>30</b>:false  <b>31</b>:false  <b>32</b>:false  <b>33</b>:false  <b>34</b>:false  <b>35</b>:false  <b>36</b>:false  <b>37</b>:false  <b>38</b>:false  <b>39</b>:false  <b>40</b>:false  <b>41</b>:false  <b>42</b>:false  <b>43</b>:false  <b>44</b>:false  <b>45</b>:false  <b>46</b>:false  <b>47</b>:false  <b>48</b>:false  <b>49</b>:false  <b>50</b>:false  <b>51</b>:false  <b>52</b>:false  <b>53</b>:false  <b>54</b>:false  <b>55</b>:false  <b>56</b>:false  <b>57</b>:false  <b>58</b>:false  <b>59</b>:false  <b>60</b>:false  <b>61</b>:false  <b>62</b>:false  <b>63</b>:false  <b>64</b>:false  <b>65</b>:false  <b>66</b>:false  <b>67</b>:false  <b>68</b>:false  <b>69</b>:false  <b>70</b>:false  <b>71</b>:false</td></tr><tr><td>CarIdxPaceFlags</td><td>CAR_IDX_PACE_FLAGS</td><td class="w"><b>0</b>:0  <b>1</b>:0  <b>2</b>:0  <b>3</b>:0  <b>4</b>:0  <b>5</b>:0  <b>6</b>:0  <b>7</b>:0  <b>8</b>:0  <b>9</b>:0  <b>10</b>:0  <b>11</b>:0  <b>12</b>:0  <b>13</b>:0  <b>14</b>:0  <b>15</b>:0  <b>16</b>:0  <b>17</b>:0  <b>18</b>:0  <b>19</b>:0  <b>20</b>:0  <b>21</b>:0  <b>22</b>:0  <b>23</b>:0  <b>24</b>:0  <b>25</b>:0  <b>26</b>:0  <b>27</b>:0  <b>28</b>:0  <b>29</b>:0  <b>30</b>:0  <b>31</b>:0  <b>32</b>:0  <b>33</b>:0  <b>34</b>:0  <b>35</b>:0  <b>36</b>:0  <b>37</b>:0  <b>38</b>:0  <b>39</b>:0  <b>40</b>:0  <b>41</b>:0  <b>42</b>:0  <b>43</b>:0  <b>44</b>:0  <b>45</b>:0  <b>46</b>:0  <b>47</b>:0  <b>48</b>:0  <b>49</b>:0  <b>50</b>:0  <b>51</b>:0  <b>52</b>:0  <b>53</b>:0  <b>54</b>:0  <b>55</b>:0  <b>56</b>:0  <b>57</b>:0  <b>58</b>:0  <b>59</b>:0  <b>60</b>:0  <b>61</b>:0  <b>62</b>:0  <b>63</b>:0  <b>64</b>:0  <b>65</b>:0  <b>66</b>:0  <b>67</b>:0  <b>68</b>:0  <b>69</b>:0  <b>70</b>:0  <b>71</b>:0</td></tr><tr><td>CarIdxPaceLine</td><td>CAR_IDX_PACE_LINE</td><td class="w"><b>0</b>:-1  <b>1</b>:-1  <b>2</b>:-1  <b>3</b>:-1  <b>4</b>:-1  <b>5</b>:-1  <b>6</b>:-1  <b>7</b>:-1  <b>8</b>:-1  <b>9</b>:-1  <b>10</b>:-1  <b>11</b>:-1  <b>12</b>:-1  <b>13</b>:-1  <b>14</b>:-1  <b>15</b>:-1  <b>16</b>:-1  <b>17</b>:-1  <b>18</b>:-1  <b>19</b>:-1  <b>20</b>:-1  <b>21</b>:-1  <b>22</b>:-1  <b>23</b>:-1  <b>24</b>:-1  <b>25</b>:-1  <b>26</b>:-1  <b>27</b>:-1  <b>28</b>:-1  <b>29</b>:-1  <b>30</b>:-1  <b>31</b>:-1  <b>32</b>:-1  <b>33</b>:-1  <b>34</b>:-1  <b>35</b>:-1  <b>36</b>:-1  <b>37</b>:-1  <b>38</b>:-1  <b>39</b>:-1  <b>40</b>:-1  <b>41</b>:-1  <b>42</b>:-1  <b>43</b>:-1  <b>44</b>:-1  <b>45</b>:-1  <b>46</b>:-1  <b>47</b>:-1  <b>48</b>:-1  <b>49</b>:-1  <b>50</b>:-1  <b>51</b>:-1  <b>52</b>:-1  <b>53</b>:-1  <b>54</b>:-1  <b>55</b>:-1  <b>56</b>:-1  <b>57</b>:-1  <b>58</b>:-1  <b>59</b>:-1  <b>60</b>:-1  <b>61</b>:-1  <b>62</b>:-1  <b>63</b>:-1  <b>64</b>:-1  <b>65</b>:-1  <b>66</b>:-1  <b>67</b>:-1  <b>68</b>:-1  <b>69</b>:-1  <b>70</b>:-1  <b>71</b>:-1</td></tr><tr><td>CarIdxPaceRow</td><td>CAR_IDX_PACE_ROW</td><td class="w"><b>0</b>:-1  <b>1</b>:-1  <b>2</b>:-1  <b>3</b>:-1  <b>4</b>:-1  <b>5</b>:-1  <b>6</b>:-1  <b>7</b>:-1  <b>8</b>:-1  <b>9</b>:-1  <b>10</b>:-1  <b>11</b>:-1  <b>12</b>:-1  <b>13</b>:-1  <b>14</b>:-1  <b>15</b>:-1  <b>16</b>:-1  <b>17</b>:-1  <b>18</b>:-1  <b>19</b>:-1  <b>20</b>:-1  <b>21</b>:-1  <b>22</b>:-1  <b>23</b>:-1  <b>24</b>:-1  <b>25</b>:-1  <b>26</b>:-1  <b>27</b>:-1  <b>28</b>:-1  <b>29</b>:-1  <b>30</b>:-1  <b>31</b>:-1  <b>32</b>:-1  <b>33</b>:-1  <b>34</b>:-1  <b>35</b>:-1  <b>36</b>:-1  <b>37</b>:-1  <b>38</b>:-1  <b>39</b>:-1  <b>40</b>:-1  <b>41</b>:-1  <b>42</b>:-1  <b>43</b>:-1  <b>44</b>:-1  <b>45</b>:-1  <b>46</b>:-1  <b>47</b>:-1  <b>48</b>:-1  <b>49</b>:-1  <b>50</b>:-1  <b>51</b>:-1  <b>52</b>:-1  <b>53</b>:-1  <b>54</b>:-1  <b>55</b>:-1  <b>56</b>:-1  <b>57</b>:-1  <b>58</b>:-1  <b>59</b>:-1  <b>60</b>:-1  <b>61</b>:-1  <b>62</b>:-1  <b>63</b>:-1  <b>64</b>:-1  <b>65</b>:-1  <b>66</b>:-1  <b>67</b>:-1  <b>68</b>:-1  <b>69</b>:-1  <b>70</b>:-1  <b>71</b>:-1</td></tr><tr><td>CarIdxPosition</td><td>CAR_IDX_POSITION</td><td class="w"><b>0</b>:1  <b>1</b>:7  <b>2</b>:12  <b>3</b>:8  <b>4</b>:4  <b>5</b>:6  <b>6</b>:9  <b>7</b>:2  <b>8</b>:3  <b>9</b>:10  <b>10</b>:5  <b>11</b>:11  <b>12</b>:0  <b>13</b>:0  <b>14</b>:0  <b>15</b>:0  <b>16</b>:0  <b>17</b>:0  <b>18</b>:0  <b>19</b>:0  <b>20</b>:0  <b>21</b>:0  <b>22</b>:0  <b>23</b>:0  <b>24</b>:0  <b>25</b>:0  <b>26</b>:0  <b>27</b>:0  <b>28</b>:0  <b>29</b>:0  <b>30</b>:0  <b>31</b>:0  <b>32</b>:0  <b>33</b>:0  <b>34</b>:0  <b>35</b>:0  <b>36</b>:0  <b>37</b>:0  <b>38</b>:0  <b>39</b>:0  <b>40</b>:0  <b>41</b>:0  <b>42</b>:0  <b>43</b>:0  <b>44</b>:0  <b>45</b>:0  <b>46</b>:0  <b>47</b>:0  <b>48</b>:0  <b>49</b>:0  <b>50</b>:0  <b>51</b>:0  <b>52</b>:0  <b>53</b>:0  <b>54</b>:0  <b>55</b>:0  <b>56</b>:0  <b>57</b>:0  <b>58</b>:0  <b>59</b>:0  <b>60</b>:0  <b>61</b>:0  <b>62</b>:0  <b>63</b>:0  <b>64</b>:-1  <b>65</b>:-1  <b>66</b>:-1  <b>67</b>:-1  <b>68</b>:-1  <b>69</b>:-1  <b>70</b>:-1  <b>71</b>:-1</td></tr><tr><td>CarIdxQualTireCompound</td><td>CAR_IDX_QUAL_TIRE_COMPOUND</td><td class="w"><b>0</b>:-1  <b>1</b>:-1  <b>2</b>:-1  <b>3</b>:-1  <b>4</b>:-1  <b>5</b>:-1  <b>6</b>:-1  <b>7</b>:-1  <b>8</b>:-1  <b>9</b>:-1  <b>10</b>:-1  <b>11</b>:-1  <b>12</b>:-1  <b>13</b>:-1  <b>14</b>:-1  <b>15</b>:-1  <b>16</b>:-1  <b>17</b>:-1  <b>18</b>:-1  <b>19</b>:-1  <b>20</b>:-1  <b>21</b>:-1  <b>22</b>:-1  <b>23</b>:-1  <b>24</b>:-1  <b>25</b>:-1  <b>26</b>:-1  <b>27</b>:-1  <b>28</b>:-1  <b>29</b>:-1  <b>30</b>:-1  <b>31</b>:-1  <b>32</b>:-1  <b>33</b>:-1  <b>34</b>:-1  <b>35</b>:-1  <b>36</b>:-1  <b>37</b>:-1  <b>38</b>:-1  <b>39</b>:-1  <b>40</b>:-1  <b>41</b>:-1  <b>42</b>:-1  <b>43</b>:-1  <b>44</b>:-1  <b>45</b>:-1  <b>46</b>:-1  <b>47</b>:-1  <b>48</b>:-1  <b>49</b>:-1  <b>50</b>:-1  <b>51</b>:-1  <b>52</b>:-1  <b>53</b>:-1  <b>54</b>:-1  <b>55</b>:-1  <b>56</b>:-1  <b>57</b>:-1  <b>58</b>:-1  <b>59</b>:-1  <b>60</b>:-1  <b>61</b>:-1  <b>62</b>:-1  <b>63</b>:-1  <b>64</b>:-1  <b>65</b>:-1  <b>66</b>:-1  <b>67</b>:-1  <b>68</b>:-1  <b>69</b>:-1  <b>70</b>:-1  <b>71</b>:-1</td></tr><tr><td>CarIdxQualTireCompoundLocked</td><td>CAR_IDX_QUAL_TIRE_COMPOUND_LOCKED</td><td class="w"><b>0</b>:false  <b>1</b>:false  <b>2</b>:false  <b>3</b>:false  <b>4</b>:false  <b>5</b>:false  <b>6</b>:false  <b>7</b>:false  <b>8</b>:false  <b>9</b>:false  <b>10</b>:false  <b>11</b>:false  <b>12</b>:false  <b>13</b>:false  <b>14</b>:false  <b>15</b>:false  <b>16</b>:false  <b>17</b>:false  <b>18</b>:false  <b>19</b>:false  <b>20</b>:false  <b>21</b>:false  <b>22</b>:false  <b>23</b>:false  <b>24</b>:false  <b>25</b>:false  <b>26</b>:false  <b>27</b>:false  <b>28</b>:false  <b>29</b>:false  <b>30</b>:false  <b>31</b>:false  <b>32</b>:false  <b>33</b>:false  <b>34</b>:false  <b>35</b>:false  <b>36</b>:false  <b>37</b>:false  <b>38</b>:false  <b>39</b>:false  <b>40</b>:false  <b>41</b>:false  <b>42</b>:false  <b>43</b>:false  <b>44</b>:false  <b>45</b>:false  <b>46</b>:false  <b>47</b>:false  <b>48</b>:false  <b>49</b>:false  <b>50</b>:false  <b>51</b>:false  <b>52</b>:false  <b>53</b>:false  <b>54</b>:false  <b>55</b>:false  <b>56</b>:false  <b>57</b>:false  <b>58</b>:false  <b>59</b>:false  <b>60</b>:false  <b>61</b>:false  <b>62</b>:false  <b>63</b>:false  <b>64</b>:false  <b>65</b>:false  <b>66</b>:false  <b>67</b>:false  <b>68</b>:false  <b>69</b>:false  <b>70</b>:false  <b>71</b>:false</td></tr><tr><td>CarIdxRPM</td><td>CAR_IDX_RPM</td><td class="w"><b>0</b>:4879.58203125  <b>1</b>:7992.96826171875  <b>2</b>:6929.48681640625  <b>3</b>:6103.23974609375  <b>4</b>:6113.14453125  <b>5</b>:7311.5322265625  <b>6</b>:5493.41552734375  <b>7</b>:6619.43115234375  <b>8</b>:8024.97265625  <b>9</b>:6614.40771484375  <b>10</b>:6337.6875  <b>11</b>:6735.2041015625  <b>12</b>:-1  <b>13</b>:-1  <b>14</b>:-1  <b>15</b>:-1  <b>16</b>:-1  <b>17</b>:-1  <b>18</b>:-1  <b>19</b>:-1  <b>20</b>:-1  <b>21</b>:-1  <b>22</b>:-1  <b>23</b>:-1  <b>24</b>:-1  <b>25</b>:-1  <b>26</b>:-1  <b>27</b>:-1  <b>28</b>:-1  <b>29</b>:-1  <b>30</b>:-1  <b>31</b>:-1  <b>32</b>:-1  <b>33</b>:-1  <b>34</b>:-1  <b>35</b>:-1  <b>36</b>:-1  <b>37</b>:-1  <b>38</b>:-1  <b>39</b>:-1  <b>40</b>:-1  <b>41</b>:-1  <b>42</b>:-1  <b>43</b>:-1  <b>44</b>:-1  <b>45</b>:-1  <b>46</b>:-1  <b>47</b>:-1  <b>48</b>:-1  <b>49</b>:-1  <b>50</b>:-1  <b>51</b>:-1  <b>52</b>:-1  <b>53</b>:-1  <b>54</b>:-1  <b>55</b>:-1  <b>56</b>:-1  <b>57</b>:-1  <b>58</b>:-1  <b>59</b>:-1  <b>60</b>:-1  <b>61</b>:-1  <b>62</b>:-1  <b>63</b>:-1  <b>64</b>:2000  <b>65</b>:-1  <b>66</b>:-1  <b>67</b>:-1  <b>68</b>:-1  <b>69</b>:-1  <b>70</b>:-1  <b>71</b>:-1</td></tr><tr><td>CarIdxSessionFlags</td><td>CAR_IDX_SESSION_FLAGS</td><td class="w"><b>0</b>:262144  <b>1</b>:262144  <b>2</b>:262144  <b>3</b>:262144  <b>4</b>:262144  <b>5</b>:262144  <b>6</b>:262144  <b>7</b>:262144  <b>8</b>:262144  <b>9</b>:262144  <b>10</b>:262144  <b>11</b>:262144  <b>12</b>:0  <b>13</b>:0  <b>14</b>:0  <b>15</b>:0  <b>16</b>:0  <b>17</b>:0  <b>18</b>:0  <b>19</b>:0  <b>20</b>:0  <b>21</b>:0  <b>22</b>:0  <b>23</b>:0  <b>24</b>:0  <b>25</b>:0  <b>26</b>:0  <b>27</b>:0  <b>28</b>:0  <b>29</b>:0  <b>30</b>:0  <b>31</b>:0  <b>32</b>:0  <b>33</b>:0  <b>34</b>:0  <b>35</b>:0  <b>36</b>:0  <b>37</b>:0  <b>38</b>:0  <b>39</b>:0  <b>40</b>:0  <b>41</b>:0  <b>42</b>:0  <b>43</b>:0  <b>44</b>:0  <b>45</b>:0  <b>46</b>:0  <b>47</b>:0  <b>48</b>:0  <b>49</b>:0  <b>50</b>:0  <b>51</b>:0  <b>52</b>:0  <b>53</b>:0  <b>54</b>:0  <b>55</b>:0  <b>56</b>:0  <b>57</b>:0  <b>58</b>:0  <b>59</b>:0  <b>60</b>:0  <b>61</b>:0  <b>62</b>:0  <b>63</b>:0  <b>64</b>:262144  <b>65</b>:0  <b>66</b>:0  <b>67</b>:0  <b>68</b>:0  <b>69</b>:0  <b>70</b>:0  <b>71</b>:0</td></tr><tr><td>CarIdxSteer</td><td>CAR_IDX_STEER</td><td class="w"><b>0</b>:-0.2060852348804474  <b>1</b>:-0.35452985763549805  <b>2</b>:0.28146985173225403  <b>3</b>:0.1606099009513855  <b>4</b>:-0.5222862362861633  <b>5</b>:0.21554066240787506  <b>6</b>:0.41519874334335327  <b>7</b>:-0.3032163083553314  <b>8</b>:-0.16149203479290009  <b>9</b>:0.08299089223146439  <b>10</b>:-0.05406200513243675  <b>11</b>:0.6871069073677063  <b>12</b>:0  <b>13</b>:0  <b>14</b>:0  <b>15</b>:0  <b>16</b>:0  <b>17</b>:0  <b>18</b>:0  <b>19</b>:0  <b>20</b>:0  <b>21</b>:0  <b>22</b>:0  <b>23</b>:0  <b>24</b>:0  <b>25</b>:0  <b>26</b>:0  <b>27</b>:0  <b>28</b>:0  <b>29</b>:0  <b>30</b>:0  <b>31</b>:0  <b>32</b>:0  <b>33</b>:0  <b>34</b>:0  <b>35</b>:0  <b>36</b>:0  <b>37</b>:0  <b>38</b>:0  <b>39</b>:0  <b>40</b>:0  <b>41</b>:0  <b>42</b>:0  <b>43</b>:0  <b>44</b>:0  <b>45</b>:0  <b>46</b>:0  <b>47</b>:0  <b>48</b>:0  <b>49</b>:0  <b>50</b>:0  <b>51</b>:0  <b>52</b>:0  <b>53</b>:0  <b>54</b>:0  <b>55</b>:0  <b>56</b>:0  <b>57</b>:0  <b>58</b>:0  <b>59</b>:0  <b>60</b>:0  <b>61</b>:0  <b>62</b>:0  <b>63</b>:0  <b>64</b>:0.0000055669697758276016  <b>65</b>:0  <b>66</b>:0  <b>67</b>:0  <b>68</b>:0  <b>69</b>:0  <b>70</b>:0  <b>71</b>:0</td></tr><tr><td>CarIdxTireCompound</td><td>CAR_IDX_TIRE_COMPOUND</td><td class="w"><b>0</b>:0  <b>1</b>:0  <b>2</b>:0  <b>3</b>:0  <b>4</b>:0  <b>5</b>:0  <b>6</b>:0  <b>7</b>:0  <b>8</b>:0  <b>9</b>:0  <b>10</b>:0  <b>11</b>:0  <b>12</b>:-1  <b>13</b>:-1  <b>14</b>:-1  <b>15</b>:-1  <b>16</b>:-1  <b>17</b>:-1  <b>18</b>:-1  <b>19</b>:-1  <b>20</b>:-1  <b>21</b>:-1  <b>22</b>:-1  <b>23</b>:-1  <b>24</b>:-1  <b>25</b>:-1  <b>26</b>:-1  <b>27</b>:-1  <b>28</b>:-1  <b>29</b>:-1  <b>30</b>:-1  <b>31</b>:-1  <b>32</b>:-1  <b>33</b>:-1  <b>34</b>:-1  <b>35</b>:-1  <b>36</b>:-1  <b>37</b>:-1  <b>38</b>:-1  <b>39</b>:-1  <b>40</b>:-1  <b>41</b>:-1  <b>42</b>:-1  <b>43</b>:-1  <b>44</b>:-1  <b>45</b>:-1  <b>46</b>:-1  <b>47</b>:-1  <b>48</b>:-1  <b>49</b>:-1  <b>50</b>:-1  <b>51</b>:-1  <b>52</b>:-1  <b>53</b>:-1  <b>54</b>:-1  <b>55</b>:-1  <b>56</b>:-1  <b>57</b>:-1  <b>58</b>:-1  <b>59</b>:-1  <b>60</b>:-1  <b>61</b>:-1  <b>62</b>:-1  <b>63</b>:-1  <b>64</b>:-1  <b>65</b>:-1  <b>66</b>:-1  <b>67</b>:-1  <b>68</b>:-1  <b>69</b>:-1  <b>70</b>:-1  <b>71</b>:-1</td></tr><tr><td>CarIdxTrackSurface</td><td>CAR_IDX_TRACK_SURFACE</td><td class="w"><b>0</b>:3  <b>1</b>:3  <b>2</b>:3  <b>3</b>:3  <b>4</b>:3  <b>5</b>:3  <b>6</b>:3  <b>7</b>:3  <b>8</b>:3  <b>9</b>:3  <b>10</b>:3  <b>11</b>:3  <b>12</b>:-1  <b>13</b>:-1  <b>14</b>:-1  <b>15</b>:-1  <b>16</b>:-1  <b>17</b>:-1  <b>18</b>:-1  <b>19</b>:-1  <b>20</b>:-1  <b>21</b>:-1  <b>22</b>:-1  <b>23</b>:-1  <b>24</b>:-1  <b>25</b>:-1  <b>26</b>:-1  <b>27</b>:-1  <b>28</b>:-1  <b>29</b>:-1  <b>30</b>:-1  <b>31</b>:-1  <b>32</b>:-1  <b>33</b>:-1  <b>34</b>:-1  <b>35</b>:-1  <b>36</b>:-1  <b>37</b>:-1  <b>38</b>:-1  <b>39</b>:-1  <b>40</b>:-1  <b>41</b>:-1  <b>42</b>:-1  <b>43</b>:-1  <b>44</b>:-1  <b>45</b>:-1  <b>46</b>:-1  <b>47</b>:-1  <b>48</b>:-1  <b>49</b>:-1  <b>50</b>:-1  <b>51</b>:-1  <b>52</b>:-1  <b>53</b>:-1  <b>54</b>:-1  <b>55</b>:-1  <b>56</b>:-1  <b>57</b>:-1  <b>58</b>:-1  <b>59</b>:-1  <b>60</b>:-1  <b>61</b>:-1  <b>62</b>:-1  <b>63</b>:-1  <b>64</b>:2  <b>65</b>:-1  <b>66</b>:-1  <b>67</b>:-1  <b>68</b>:-1  <b>69</b>:-1  <b>70</b>:-1  <b>71</b>:-1</td></tr><tr><td>CarIdxTrackSurfaceMaterial</td><td>CAR_IDX_TRACK_SURFACE_MATERIAL</td><td class="w"><b>0</b>:1  <b>1</b>:1  <b>2</b>:1  <b>3</b>:1  <b>4</b>:1  <b>5</b>:1  <b>6</b>:1  <b>7</b>:1  <b>8</b>:1  <b>9</b>:1  <b>10</b>:1  <b>11</b>:1  <b>12</b>:-1  <b>13</b>:-1  <b>14</b>:-1  <b>15</b>:-1  <b>16</b>:-1  <b>17</b>:-1  <b>18</b>:-1  <b>19</b>:-1  <b>20</b>:-1  <b>21</b>:-1  <b>22</b>:-1  <b>23</b>:-1  <b>24</b>:-1  <b>25</b>:-1  <b>26</b>:-1  <b>27</b>:-1  <b>28</b>:-1  <b>29</b>:-1  <b>30</b>:-1  <b>31</b>:-1  <b>32</b>:-1  <b>33</b>:-1  <b>34</b>:-1  <b>35</b>:-1  <b>36</b>:-1  <b>37</b>:-1  <b>38</b>:-1  <b>39</b>:-1  <b>40</b>:-1  <b>41</b>:-1  <b>42</b>:-1  <b>43</b>:-1  <b>44</b>:-1  <b>45</b>:-1  <b>46</b>:-1  <b>47</b>:-1  <b>48</b>:-1  <b>49</b>:-1  <b>50</b>:-1  <b>51</b>:-1  <b>52</b>:-1  <b>53</b>:-1  <b>54</b>:-1  <b>55</b>:-1  <b>56</b>:-1  <b>57</b>:-1  <b>58</b>:-1  <b>59</b>:-1  <b>60</b>:-1  <b>61</b>:-1  <b>62</b>:-1  <b>63</b>:-1  <b>64</b>:1  <b>65</b>:-1  <b>66</b>:-1  <b>67</b>:-1  <b>68</b>:-1  <b>69</b>:-1  <b>70</b>:-1  <b>71</b>:-1</td></tr><tr><td>CarLeftRight</td><td>CAR_LEFT_RIGHT</td><td class="w">2</td></tr><tr><td>ChanAvgLatency</td><td>CHAN_AVG_LATENCY</td><td class="w">0.033333588391542435</td></tr><tr><td>ChanClockSkew</td><td>CHAN_CLOCK_SKEW</td><td class="w">0</td></tr><tr><td>ChanLatency</td><td>CHAN_LATENCY</td><td class="w">0.03333333507180214</td></tr><tr><td>ChanPartnerQuality</td><td>CHAN_PARTNER_QUALITY</td><td class="w">1</td></tr><tr><td>ChanQuality</td><td>CHAN_QUALITY</td><td class="w">1.0003681182861328</td></tr><tr><td>Clutch</td><td>CLUTCH</td><td class="w">1</td></tr><tr><td>ClutchRaw</td><td>CLUTCH_RAW</td><td class="w">1</td></tr><tr><td>CpuUsageBG</td><td>CPU_USAGE_BG</td><td class="w">0.2959994077682495</td></tr><tr><td>CpuUsageFG</td><td>CPU_USAGE_FG</td><td class="w">0.47292560338974</td></tr><tr><td>DCDriversSoFar</td><td>DC_DRIVERS_SO_FAR</td><td class="w">1</td></tr><tr><td>DCLapStatus</td><td>DC_LAP_STATUS</td><td class="w">2</td></tr><tr><td>DisplayUnits</td><td>DISPLAY_UNITS</td><td class="w">1</td></tr><tr><td>DriverMarker</td><td>DRIVER_MARKER</td><td class="w">false</td></tr><tr><td>Engine0_RPM</td><td>ENGINE0_RPM</td><td class="w">4879.583984375</td></tr><tr><td>EngineWarnings</td><td>ENGINE_WARNINGS</td><td class="w">0</td></tr><tr><td>EnterExitReset</td><td>ENTER_EXIT_RESET</td><td class="w">2</td></tr><tr><td>FastRepairAvailable</td><td>FAST_REPAIR_AVAILABLE</td><td class="w">255</td></tr><tr><td>FastRepairUsed</td><td>FAST_REPAIR_USED</td><td class="w">0</td></tr><tr><td>FogLevel</td><td>FOG_LEVEL</td><td class="w">0</td></tr><tr><td>FrameRate</td><td>FRAME_RATE</td><td class="w">103.65486907958984</td></tr><tr><td>FrontTireSetsAvailable</td><td>FRONT_TIRE_SETS_AVAILABLE</td><td class="w">1</td></tr><tr><td>FrontTireSetsUsed</td><td>FRONT_TIRE_SETS_USED</td><td class="w">1</td></tr><tr><td>FuelLevel</td><td>FUEL_LEVEL</td><td class="w">50.818267822265625</td></tr><tr><td>FuelLevelPct</td><td>FUEL_LEVEL_PCT</td><td class="w">0.48863717913627625</td></tr><tr><td>FuelPress</td><td>FUEL_PRESS</td><td class="w">7.900000095367432</td></tr><tr><td>FuelUsePerHour</td><td>FUEL_USE_PER_HOUR</td><td class="w">52.80012893676758</td></tr><tr><td>Gear</td><td>GEAR</td><td class="w">2</td></tr><tr><td>GpuUsage</td><td>GPU_USAGE</td><td class="w">0.4638562500476837</td></tr><tr><td>HandbrakeRaw</td><td>HANDBRAKE_RAW</td><td class="w">0</td></tr><tr><td>IsDiskLoggingActive</td><td>IS_DISK_LOGGING_ACTIVE</td><td class="w">true</td></tr><tr><td>IsDiskLoggingEnabled</td><td>IS_DISK_LOGGING_ENABLED</td><td class="w">true</td></tr><tr><td>IsGarageVisible</td><td>IS_GARAGE_VISIBLE</td><td class="w">false</td></tr><tr><td>IsInGarage</td><td>IS_IN_GARAGE</td><td class="w">false</td></tr><tr><td>IsOnTrack</td><td>IS_ON_TRACK</td><td class="w">true</td></tr><tr><td>IsOnTrackCar</td><td>IS_ON_TRACK_CAR</td><td class="w">true</td></tr><tr><td>IsReplayPlaying</td><td>IS_REPLAY_PLAYING</td><td class="w">false</td></tr><tr><td>LFTiresAvailable</td><td>LF_TIRES_AVAILABLE</td><td class="w">1</td></tr><tr><td>LFTiresUsed</td><td>LF_TIRES_USED</td><td class="w">1</td></tr><tr><td>LFbrakeLinePress</td><td>L_FBRAKE_LINE_PRESS</td><td class="w">0</td></tr><tr><td>LFcoldPressure</td><td>L_FCOLD_PRESSURE</td><td class="w">158.57901000976562</td></tr><tr><td>LFodometer</td><td>L_FODOMETER</td><td class="w">3200</td></tr><tr><td>LFshockDefl</td><td>L_FSHOCK_DEFL</td><td class="w">0.0483357310295105</td></tr><tr><td>LFshockDefl_ST</td><td>L_FSHOCK_DEFL_ST</td><td class="w"><b>0</b>:0.04851958155632019  <b>1</b>:0.04846924543380737  <b>2</b>:0.0484255850315094  <b>3</b>:0.0483909547328949  <b>4</b>:0.04836186766624451  <b>5</b>:0.0483357310295105</td></tr><tr><td>LFshockVel</td><td>L_FSHOCK_VEL</td><td class="w">-0.009128176607191563</td></tr><tr><td>LFshockVel_ST</td><td>L_FSHOCK_VEL_ST</td><td class="w"><b>0</b>:-0.0188225656747818  <b>1</b>:-0.016533134505152702  <b>2</b>:-0.01366147305816412  <b>3</b>:-0.011469054035842419  <b>4</b>:-0.009976019151508808  <b>5</b>:-0.009128176607191563</td></tr><tr><td>LFtempCL</td><td>L_FTEMP_CL</td><td class="w">34.61181640625</td></tr><tr><td>LFtempCM</td><td>L_FTEMP_CM</td><td class="w">34.61181640625</td></tr><tr><td>LFtempCR</td><td>L_FTEMP_CR</td><td class="w">34.61181640625</td></tr><tr><td>LFwearL</td><td>L_FWEAR_L</td><td class="w">1</td></tr><tr><td>LFwearM</td><td>L_FWEAR_M</td><td class="w">1</td></tr><tr><td>LFwearR</td><td>L_FWEAR_R</td><td class="w">1</td></tr><tr><td>LRTiresAvailable</td><td>LR_TIRES_AVAILABLE</td><td class="w">1</td></tr><tr><td>LRTiresUsed</td><td>LR_TIRES_USED</td><td class="w">1</td></tr><tr><td>LRbrakeLinePress</td><td>L_RBRAKE_LINE_PRESS</td><td class="w">0</td></tr><tr><td>LRcoldPressure</td><td>L_RCOLD_PRESSURE</td><td class="w">158.57901000976562</td></tr><tr><td>LRodometer</td><td>L_RODOMETER</td><td class="w">3200</td></tr><tr><td>LRshockDefl</td><td>L_RSHOCK_DEFL</td><td class="w">0.05213356018066406</td></tr><tr><td>LRshockDefl_ST</td><td>L_RSHOCK_DEFL_ST</td><td class="w"><b>0</b>:0.05243447422981262  <b>1</b>:0.05235707759857178  <b>2</b>:0.05228462815284729  <b>3</b>:0.052222639322280884  <b>4</b>:0.05217325687408447  <b>5</b>:0.05213356018066406</td></tr><tr><td>LRshockVel</td><td>L_RSHOCK_VEL</td><td class="w">-0.014304718002676964</td></tr><tr><td>LRshockVel_ST</td><td>L_RSHOCK_VEL_ST</td><td class="w"><b>0</b>:-0.026929784566164017  <b>1</b>:-0.026219891384243965  <b>2</b>:-0.023258786648511887  <b>3</b>:-0.019408252090215683  <b>4</b>:-0.015869339928030968  <b>5</b>:-0.014304718002676964</td></tr><tr><td>LRtempCL</td><td>L_RTEMP_CL</td><td class="w">34.5994873046875</td></tr><tr><td>LRtempCM</td><td>L_RTEMP_CM</td><td class="w">34.5994873046875</td></tr><tr><td>LRtempCR</td><td>L_RTEMP_CR</td><td class="w">34.5994873046875</td></tr><tr><td>LRwearL</td><td>L_RWEAR_L</td><td class="w">1</td></tr><tr><td>LRwearM</td><td>L_RWEAR_M</td><td class="w">1</td></tr><tr><td>LRwearR</td><td>L_RWEAR_R</td><td class="w">1</td></tr><tr><td>Lap</td><td>LAP</td><td class="w">1</td></tr><tr><td>LapBestLap</td><td>LAP_BEST_LAP</td><td class="w">0</td></tr><tr><td>LapBestLapTime</td><td>LAP_BEST_LAP_TIME</td><td class="w">0</td></tr><tr><td>LapBestNLapLap</td><td>LAP_BEST_N_LAP_LAP</td><td class="w">0</td></tr><tr><td>LapBestNLapTime</td><td>LAP_BEST_N_LAP_TIME</td><td class="w">0</td></tr><tr><td>LapCompleted</td><td>LAP_COMPLETED</td><td class="w">0</td></tr><tr><td>LapCurrentLapTime</td><td>LAP_CURRENT_LAP_TIME</td><td class="w">26.75</td></tr><tr><td>LapDeltaToBestLap</td><td>LAP_DELTA_TO_BEST_LAP</td><td class="w">4.031092643737793</td></tr><tr><td>LapDeltaToBestLap_DD</td><td>LAP_DELTA_TO_BEST_LAP_DD</td><td class="w">0.24667811393737793</td></tr><tr><td>LapDeltaToBestLap_OK</td><td>LAP_DELTA_TO_BEST_LAP_OK</td><td class="w">true</td></tr><tr><td>LapDeltaToOptimalLap</td><td>LAP_DELTA_TO_OPTIMAL_LAP</td><td class="w">4.0003228187561035</td></tr><tr><td>LapDeltaToOptimalLap_DD</td><td>LAP_DELTA_TO_OPTIMAL_LAP_DD</td><td class="w">0.26119446754455566</td></tr><tr><td>LapDeltaToOptimalLap_OK</td><td>LAP_DELTA_TO_OPTIMAL_LAP_OK</td><td class="w">true</td></tr><tr><td>LapDeltaToSessionBestLap</td><td>LAP_DELTA_TO_SESSION_BEST_LAP</td><td class="w">0</td></tr><tr><td>LapDeltaToSessionBestLap_DD</td><td>LAP_DELTA_TO_SESSION_BEST_LAP_DD</td><td class="w">0</td></tr><tr><td>LapDeltaToSessionBestLap_OK</td><td>LAP_DELTA_TO_SESSION_BEST_LAP_OK</td><td class="w">false</td></tr><tr><td>LapDeltaToSessionLastlLap</td><td>LAP_DELTA_TO_SESSION_LASTL_LAP</td><td class="w">0</td></tr><tr><td>LapDeltaToSessionLastlLap_DD</td><td>LAP_DELTA_TO_SESSION_LASTL_LAP_DD</td><td class="w">0</td></tr><tr><td>LapDeltaToSessionLastlLap_OK</td><td>LAP_DELTA_TO_SESSION_LASTL_LAP_OK</td><td class="w">false</td></tr><tr><td>LapDeltaToSessionOptimalLap</td><td>LAP_DELTA_TO_SESSION_OPTIMAL_LAP</td><td class="w">0</td></tr><tr><td>LapDeltaToSessionOptimalLap_DD</td><td>LAP_DELTA_TO_SESSION_OPTIMAL_LAP_DD</td><td class="w">0</td></tr><tr><td>LapDeltaToSessionOptimalLap_OK</td><td>LAP_DELTA_TO_SESSION_OPTIMAL_LAP_OK</td><td class="w">false</td></tr><tr><td>LapDist</td><td>LAP_DIST</td><td class="w">1026.75146484375</td></tr><tr><td>LapDistPct</td><td>LAP_DIST_PCT</td><td class="w">0.1977776139974594</td></tr><tr><td>LapLasNLapSeq</td><td>LAP_LAS_N_LAP_SEQ</td><td class="w">0</td></tr><tr><td>LapLastLapTime</td><td>LAP_LAST_LAP_TIME</td><td class="w">0</td></tr><tr><td>LapLastNLapTime</td><td>LAP_LAST_N_LAP_TIME</td><td class="w">0</td></tr><tr><td>LatAccel</td><td>LAT_ACCEL</td><td class="w">-3.0790226459503174</td></tr><tr><td>LatAccel_ST</td><td>LAT_ACCEL_ST</td><td class="w"><b>0</b>:-3.1209864616394043  <b>1</b>:-3.111353635787964  <b>2</b>:-3.0915181636810303  <b>3</b>:-3.0785398483276367  <b>4</b>:-3.074446678161621  <b>5</b>:-3.0790226459503174</td></tr><tr><td>LeftTireSetsAvailable</td><td>LEFT_TIRE_SETS_AVAILABLE</td><td class="w">1</td></tr><tr><td>LeftTireSetsUsed</td><td>LEFT_TIRE_SETS_USED</td><td class="w">1</td></tr><tr><td>LoadNumTextures</td><td>LOAD_NUM_TEXTURES</td><td class="w">false</td></tr><tr><td>LongAccel</td><td>LONG_ACCEL</td><td class="w">2.7274208068847656</td></tr><tr><td>LongAccel_ST</td><td>LONG_ACCEL_ST</td><td class="w"><b>0</b>:2.371302604675293  <b>1</b>:2.4421873092651367  <b>2</b>:2.53666090965271  <b>3</b>:2.6069817543029785  <b>4</b>:2.666893243789673  <b>5</b>:2.7274208068847656</td></tr><tr><td>ManifoldPress</td><td>MANIFOLD_PRESS</td><td class="w">1.2196905612945557</td></tr><tr><td>ManualBoost</td><td>MANUAL_BOOST</td><td class="w">false</td></tr><tr><td>ManualNoBoost</td><td>MANUAL_NO_BOOST</td><td class="w">false</td></tr><tr><td>MemPageFaultSec</td><td>MEM_PAGE_FAULT_SEC</td><td class="w">0</td></tr><tr><td>MemSoftPageFaultSec</td><td>MEM_SOFT_PAGE_FAULT_SEC</td><td class="w">0</td></tr><tr><td>OilLevel</td><td>OIL_LEVEL</td><td class="w">9</td></tr><tr><td>OilPress</td><td>OIL_PRESS</td><td class="w">5.69999885559082</td></tr><tr><td>OilTemp</td><td>OIL_TEMP</td><td class="w">80.91131591796875</td></tr><tr><td>OkToReloadTextures</td><td>OK_TO_RELOAD_TEXTURES</td><td class="w">true</td></tr><tr><td>OnPitRoad</td><td>ON_PIT_ROAD</td><td class="w">false</td></tr><tr><td>P2P_Count</td><td>P2_P_COUNT</td><td class="w">0</td></tr><tr><td>P2P_Status</td><td>P2_P_STATUS</td><td class="w">false</td></tr><tr><td>PaceMode</td><td>PACE_MODE</td><td class="w">1</td></tr><tr><td>PitOptRepairLeft</td><td>PIT_OPT_REPAIR_LEFT</td><td class="w">0</td></tr><tr><td>PitRepairLeft</td><td>PIT_REPAIR_LEFT</td><td class="w">0</td></tr><tr><td>PitSvFlags</td><td>PIT_SV_FLAGS</td><td class="w">111</td></tr><tr><td>PitSvFuel</td><td>PIT_SV_FUEL</td><td class="w">0</td></tr><tr><td>PitSvLFP</td><td>PIT_SV_LFP</td><td class="w">158.57901000976562</td></tr><tr><td>PitSvLRP</td><td>PIT_SV_LRP</td><td class="w">158.57901000976562</td></tr><tr><td>PitSvRFP</td><td>PIT_SV_RFP</td><td class="w">158.57901000976562</td></tr><tr><td>PitSvRRP</td><td>PIT_SV_RRP</td><td class="w">158.57901000976562</td></tr><tr><td>PitSvTireCompound</td><td>PIT_SV_TIRE_COMPOUND</td><td class="w">0</td></tr><tr><td>Pitch</td><td>PITCH</td><td class="w">-0.011399305425584316</td></tr><tr><td>PitchRate</td><td>PITCH_RATE</td><td class="w">-0.0026720117311924696</td></tr><tr><td>PitchRate_ST</td><td>PITCH_RATE_ST</td><td class="w"><b>0</b>:0.00220733555033803  <b>1</b>:0.0012830530758947134  <b>2</b>:0.00031294149812310934  <b>3</b>:-0.000689747859723866  <b>4</b>:-0.0016765317413955927  <b>5</b>:-0.0026720117311924696</td></tr><tr><td>PitsOpen</td><td>PITS_OPEN</td><td class="w">true</td></tr><tr><td>PitstopActive</td><td>PITSTOP_ACTIVE</td><td class="w">false</td></tr><tr><td>PlayerCarClass</td><td>PLAYER_CAR_CLASS</td><td class="w">0</td></tr><tr><td>PlayerCarClassPosition</td><td>PLAYER_CAR_CLASS_POSITION</td><td class="w">1</td></tr><tr><td>PlayerCarDriverIncidentCount</td><td>PLAYER_CAR_DRIVER_INCIDENT_COUNT</td><td class="w">0</td></tr><tr><td>PlayerCarDryTireSetLimit</td><td>PLAYER_CAR_DRY_TIRE_SET_LIMIT</td><td class="w">0</td></tr><tr><td>PlayerCarIdx</td><td>PLAYER_CAR_IDX</td><td class="w">0</td></tr><tr><td>PlayerCarInPitStall</td><td>PLAYER_CAR_IN_PIT_STALL</td><td class="w">false</td></tr><tr><td>PlayerCarMyIncidentCount</td><td>PLAYER_CAR_MY_INCIDENT_COUNT</td><td class="w">0</td></tr><tr><td>PlayerCarPitSvStatus</td><td>PLAYER_CAR_PIT_SV_STATUS</td><td class="w">0</td></tr><tr><td>PlayerCarPosition</td><td>PLAYER_CAR_POSITION</td><td class="w">1</td></tr><tr><td>PlayerCarPowerAdjust</td><td>PLAYER_CAR_POWER_ADJUST</td><td class="w">0</td></tr><tr><td>PlayerCarSLBlinkRPM</td><td>PLAYER_CAR_SL_BLINK_RPM</td><td class="w">7900</td></tr><tr><td>PlayerCarSLFirstRPM</td><td>PLAYER_CAR_SL_FIRST_RPM</td><td class="w">6000</td></tr><tr><td>PlayerCarSLLastRPM</td><td>PLAYER_CAR_SL_LAST_RPM</td><td class="w">7500</td></tr><tr><td>PlayerCarSLShiftRPM</td><td>PLAYER_CAR_SL_SHIFT_RPM</td><td class="w">7300</td></tr><tr><td>PlayerCarTeamIncidentCount</td><td>PLAYER_CAR_TEAM_INCIDENT_COUNT</td><td class="w">0</td></tr><tr><td>PlayerCarTowTime</td><td>PLAYER_CAR_TOW_TIME</td><td class="w">0</td></tr><tr><td>PlayerCarWeightPenalty</td><td>PLAYER_CAR_WEIGHT_PENALTY</td><td class="w">0</td></tr><tr><td>PlayerFastRepairsUsed</td><td>PLAYER_FAST_REPAIRS_USED</td><td class="w">0</td></tr><tr><td>PlayerIncidents</td><td>PLAYER_INCIDENTS</td><td class="w">0</td></tr><tr><td>PlayerTireCompound</td><td>PLAYER_TIRE_COMPOUND</td><td class="w">0</td></tr><tr><td>PlayerTrackSurface</td><td>PLAYER_TRACK_SURFACE</td><td class="w">3</td></tr><tr><td>PlayerTrackSurfaceMaterial</td><td>PLAYER_TRACK_SURFACE_MATERIAL</td><td class="w">1</td></tr><tr><td>Precipitation</td><td>PRECIPITATION</td><td class="w">0</td></tr><tr><td>PushToPass</td><td>PUSH_TO_PASS</td><td class="w">false</td></tr><tr><td>PushToTalk</td><td>PUSH_TO_TALK</td><td class="w">false</td></tr><tr><td>RFTiresAvailable</td><td>RF_TIRES_AVAILABLE</td><td class="w">1</td></tr><tr><td>RFTiresUsed</td><td>RF_TIRES_USED</td><td class="w">1</td></tr><tr><td>RFbrakeLinePress</td><td>R_FBRAKE_LINE_PRESS</td><td class="w">0</td></tr><tr><td>RFcoldPressure</td><td>R_FCOLD_PRESSURE</td><td class="w">158.57901000976562</td></tr><tr><td>RFodometer</td><td>R_FODOMETER</td><td class="w">3200</td></tr><tr><td>RFshockDefl</td><td>R_FSHOCK_DEFL</td><td class="w">0.04504010081291199</td></tr><tr><td>RFshockDefl_ST</td><td>R_FSHOCK_DEFL_ST</td><td class="w"><b>0</b>:0.04492172598838806  <b>1</b>:0.044958263635635376  <b>2</b>:0.04498857259750366  <b>3</b>:0.045011937618255615  <b>4</b>:0.045028358697891235  <b>5</b>:0.04504010081291199</td></tr><tr><td>RFshockVel</td><td>R_FSHOCK_VEL</td><td class="w">0.003285569604486227</td></tr><tr><td>RFshockVel_ST</td><td>R_FSHOCK_VEL_ST</td><td class="w"><b>0</b>:0.01391531527042389  <b>1</b>:0.011826243251562119  <b>2</b>:0.00949969980865717  <b>3</b>:0.0070817978121340275  <b>4</b>:0.005077946465462446  <b>5</b>:0.003285569604486227</td></tr><tr><td>RFtempCL</td><td>R_FTEMP_CL</td><td class="w">34.61181640625</td></tr><tr><td>RFtempCM</td><td>R_FTEMP_CM</td><td class="w">34.61181640625</td></tr><tr><td>RFtempCR</td><td>R_FTEMP_CR</td><td class="w">34.61181640625</td></tr><tr><td>RFwearL</td><td>R_FWEAR_L</td><td class="w">1</td></tr><tr><td>RFwearM</td><td>R_FWEAR_M</td><td class="w">1</td></tr><tr><td>RFwearR</td><td>R_FWEAR_R</td><td class="w">1</td></tr><tr><td>RPM</td><td>RPM</td><td class="w">4879.58203125</td></tr><tr><td>RRTiresAvailable</td><td>RR_TIRES_AVAILABLE</td><td class="w">1</td></tr><tr><td>RRTiresUsed</td><td>RR_TIRES_USED</td><td class="w">1</td></tr><tr><td>RRbrakeLinePress</td><td>R_RBRAKE_LINE_PRESS</td><td class="w">0</td></tr><tr><td>RRcoldPressure</td><td>R_RCOLD_PRESSURE</td><td class="w">158.57901000976562</td></tr><tr><td>RRodometer</td><td>R_RODOMETER</td><td class="w">3200</td></tr><tr><td>RRshockDefl</td><td>R_RSHOCK_DEFL</td><td class="w">0.04872375726699829</td></tr><tr><td>RRshockDefl_ST</td><td>R_RSHOCK_DEFL_ST</td><td class="w"><b>0</b>:0.048584550619125366  <b>1</b>:0.048619210720062256  <b>2</b>:0.0486530065536499  <b>3</b>:0.04868358373641968  <b>4</b>:0.04870772361755371  <b>5</b>:0.04872375726699829</td></tr><tr><td>RRshockVel</td><td>R_RSHOCK_VEL</td><td class="w">0.004447613842785358</td></tr><tr><td>RRshockVel_ST</td><td>R_RSHOCK_VEL_ST</td><td class="w"><b>0</b>:0.01232367567718029  <b>1</b>:0.012214835733175278  <b>2</b>:0.011405183002352715  <b>3</b>:0.009609991684556007  <b>4</b>:0.007060843054205179  <b>5</b>:0.004447613842785358</td></tr><tr><td>RRtempCL</td><td>R_RTEMP_CL</td><td class="w">34.5994873046875</td></tr><tr><td>RRtempCM</td><td>R_RTEMP_CM</td><td class="w">34.5994873046875</td></tr><tr><td>RRtempCR</td><td>R_RTEMP_CR</td><td class="w">34.5994873046875</td></tr><tr><td>RRwearL</td><td>R_RWEAR_L</td><td class="w">1</td></tr><tr><td>RRwearM</td><td>R_RWEAR_M</td><td class="w">1</td></tr><tr><td>RRwearR</td><td>R_RWEAR_R</td><td class="w">1</td></tr><tr><td>RaceLaps</td><td>RACE_LAPS</td><td class="w">1</td></tr><tr><td>RadioTransmitCarIdx</td><td>RADIO_TRANSMIT_CAR_IDX</td><td class="w">-1</td></tr><tr><td>RadioTransmitFrequencyIdx</td><td>RADIO_TRANSMIT_FREQUENCY_IDX</td><td class="w">1</td></tr><tr><td>RadioTransmitRadioIdx</td><td>RADIO_TRANSMIT_RADIO_IDX</td><td class="w">0</td></tr><tr><td>RearTireSetsAvailable</td><td>REAR_TIRE_SETS_AVAILABLE</td><td class="w">1</td></tr><tr><td>RearTireSetsUsed</td><td>REAR_TIRE_SETS_USED</td><td class="w">1</td></tr><tr><td>RelativeHumidity</td><td>RELATIVE_HUMIDITY</td><td class="w">0.6299999356269836</td></tr><tr><td>ReplayFrameNum</td><td>REPLAY_FRAME_NUM</td><td class="w">0</td></tr><tr><td>ReplayFrameNumEnd</td><td>REPLAY_FRAME_NUM_END</td><td class="w">8959</td></tr><tr><td>ReplayPlaySlowMotion</td><td>REPLAY_PLAY_SLOW_MOTION</td><td class="w">false</td></tr><tr><td>ReplayPlaySpeed</td><td>REPLAY_PLAY_SPEED</td><td class="w">1</td></tr><tr><td>ReplaySessionNum</td><td>REPLAY_SESSION_NUM</td><td class="w">-1</td></tr><tr><td>ReplaySessionTime</td><td>REPLAY_SESSION_TIME</td><td class="w">0</td></tr><tr><td>RightTireSetsAvailable</td><td>RIGHT_TIRE_SETS_AVAILABLE</td><td class="w">1</td></tr><tr><td>RightTireSetsUsed</td><td>RIGHT_TIRE_SETS_USED</td><td class="w">1</td></tr><tr><td>Roll</td><td>ROLL</td><td class="w">0.016608115285634995</td></tr><tr><td>RollRate</td><td>ROLL_RATE</td><td class="w">0.03775610029697418</td></tr><tr><td>RollRate_ST</td><td>ROLL_RATE_ST</td><td class="w"><b>0</b>:0.050635453313589096  <b>1</b>:0.04814869910478592  <b>2</b>:0.0455135852098465  <b>3</b>:0.0430559478700161  <b>4</b>:0.040488336235284805  <b>5</b>:0.03775610029697418</td></tr><tr><td>SessionFlags</td><td>SESSION_FLAGS</td><td class="w">268697604</td></tr><tr><td>SessionJokerLapsRemain</td><td>SESSION_JOKER_LAPS_REMAIN</td><td class="w">0</td></tr><tr><td>SessionLapsRemain</td><td>SESSION_LAPS_REMAIN</td><td class="w">32767</td></tr><tr><td>SessionLapsRemainEx</td><td>SESSION_LAPS_REMAIN_EX</td><td class="w">32767</td></tr><tr><td>SessionLapsTotal</td><td>SESSION_LAPS_TOTAL</td><td class="w">32767</td></tr><tr><td>SessionNum</td><td>SESSION_NUM</td><td class="w">0</td></tr><tr><td>SessionOnJokerLap</td><td>SESSION_ON_JOKER_LAP</td><td class="w">false</td></tr><tr><td>SessionState</td><td>SESSION_STATE</td><td class="w">4</td></tr><tr><td>SessionTick</td><td>SESSION_TICK</td><td class="w">14048</td></tr><tr><td>SessionTime</td><td>SESSION_TIME</td><td class="w">228.45000050870334</td></tr><tr><td>SessionTimeOfDay</td><td>SESSION_TIME_OF_DAY</td><td class="w">50400</td></tr><tr><td>SessionTimeRemain</td><td>SESSION_TIME_REMAIN</td><td class="w">453.23333282463005</td></tr><tr><td>SessionTimeTotal</td><td>SESSION_TIME_TOTAL</td><td class="w">480</td></tr><tr><td>SessionUniqueID</td><td>SESSION_UNIQUE_ID</td><td class="w">1</td></tr><tr><td>ShiftGrindRPM</td><td>SHIFT_GRIND_RPM</td><td class="w">0</td></tr><tr><td>ShiftIndicatorPct</td><td>SHIFT_INDICATOR_PCT</td><td class="w">0</td></tr><tr><td>ShiftPowerPct</td><td>SHIFT_POWER_PCT</td><td class="w">0</td></tr><tr><td>Shifter</td><td>SHIFTER</td><td class="w">0</td></tr><tr><td>Skies</td><td>SKIES</td><td class="w">2</td></tr><tr><td>SolarAltitude</td><td>SOLAR_ALTITUDE</td><td class="w">0.5972393751144409</td></tr><tr><td>SolarAzimuth</td><td>SOLAR_AZIMUTH</td><td class="w">3.4569170475006104</td></tr><tr><td>Speed</td><td>SPEED</td><td class="w">27.7471923828125</td></tr><tr><td>SteeringFFBEnabled</td><td>STEERING_FFB_ENABLED</td><td class="w">true</td></tr><tr><td>SteeringWheelAngle</td><td>STEERING_WHEEL_ANGLE</td><td class="w">-0.2060852348804474</td></tr><tr><td>SteeringWheelAngleMax</td><td>STEERING_WHEEL_ANGLE_MAX</td><td class="w">7.866819858551025</td></tr><tr><td>SteeringWheelLimiter</td><td>STEERING_WHEEL_LIMITER</td><td class="w">0</td></tr><tr><td>SteeringWheelMaxForceNm</td><td>STEERING_WHEEL_MAX_FORCE_NM</td><td class="w">84.2209701538086</td></tr><tr><td>SteeringWheelPctDamper</td><td>STEERING_WHEEL_PCT_DAMPER</td><td class="w">0</td></tr><tr><td>SteeringWheelPctIntensity</td><td>STEERING_WHEEL_PCT_INTENSITY</td><td class="w">0.5</td></tr><tr><td>SteeringWheelPctSmoothing</td><td>STEERING_WHEEL_PCT_SMOOTHING</td><td class="w">0</td></tr><tr><td>SteeringWheelPctTorque</td><td>STEERING_WHEEL_PCT_TORQUE</td><td class="w">0.08104612678289413</td></tr><tr><td>SteeringWheelPctTorqueSign</td><td>STEERING_WHEEL_PCT_TORQUE_SIGN</td><td class="w">0.08104612678289413</td></tr><tr><td>SteeringWheelPctTorqueSignStops</td><td>STEERING_WHEEL_PCT_TORQUE_SIGN_STOPS</td><td class="w">0.08104612678289413</td></tr><tr><td>SteeringWheelPeakForceNm</td><td>STEERING_WHEEL_PEAK_FORCE_NM</td><td class="w">-1</td></tr><tr><td>SteeringWheelTorque</td><td>STEERING_WHEEL_TORQUE</td><td class="w">6.8257832527160645</td></tr><tr><td>SteeringWheelTorque_ST</td><td>STEERING_WHEEL_TORQUE_ST</td><td class="w"><b>0</b>:5.400136470794678  <b>1</b>:5.66657829284668  <b>2</b>:6.033151626586914  <b>3</b>:6.36056661605835  <b>4</b>:6.623091220855713  <b>5</b>:6.8257832527160645</td></tr><tr><td>SteeringWheelUseLinear</td><td>STEERING_WHEEL_USE_LINEAR</td><td class="w">true</td></tr><tr><td>Throttle</td><td>THROTTLE</td><td class="w">0.676202118396759</td></tr><tr><td>ThrottleRaw</td><td>THROTTLE_RAW</td><td class="w">0.6762022376060486</td></tr><tr><td>TireLF_RumblePitch</td><td>TIRE_LF_RUMBLE_PITCH</td><td class="w">0</td></tr><tr><td>TireLR_RumblePitch</td><td>TIRE_LR_RUMBLE_PITCH</td><td class="w">0</td></tr><tr><td>TireRF_RumblePitch</td><td>TIRE_RF_RUMBLE_PITCH</td><td class="w">0</td></tr><tr><td>TireRR_RumblePitch</td><td>TIRE_RR_RUMBLE_PITCH</td><td class="w">0</td></tr><tr><td>TireSetsAvailable</td><td>TIRE_SETS_AVAILABLE</td><td class="w">1</td></tr><tr><td>TireSetsUsed</td><td>TIRE_SETS_USED</td><td class="w">1</td></tr><tr><td>TrackTemp</td><td>TRACK_TEMP</td><td class="w">23.888885498046875</td></tr><tr><td>TrackTempCrew</td><td>TRACK_TEMP_CREW</td><td class="w">23.888885498046875</td></tr><tr><td>TrackWetness</td><td>TRACK_WETNESS</td><td class="w">1</td></tr><tr><td>VelocityX</td><td>VELOCITY_X</td><td class="w">27.74710464477539</td></tr><tr><td>VelocityX_ST</td><td>VELOCITY_X_ST</td><td class="w"><b>0</b>:27.712522506713867  <b>1</b>:27.71900749206543  <b>2</b>:27.72576141357422  <b>3</b>:27.732709884643555  <b>4</b>:27.73982048034668  <b>5</b>:27.74710464477539</td></tr><tr><td>VelocityY</td><td>VELOCITY_Y</td><td class="w">-0.06982421875</td></tr><tr><td>VelocityY_ST</td><td>VELOCITY_Y_ST</td><td class="w"><b>0</b>:-0.0608660951256752  <b>1</b>:-0.06285947561264038  <b>2</b>:-0.06475326418876648  <b>3</b>:-0.06653906404972076  <b>4</b>:-0.06822515279054642  <b>5</b>:-0.06982421875</td></tr><tr><td>VelocityZ</td><td>VELOCITY_Z</td><td class="w">0.055179059505462646</td></tr><tr><td>VelocityZ_ST</td><td>VELOCITY_Z_ST</td><td class="w"><b>0</b>:0.052005648612976074  <b>1</b>:0.052500247955322266  <b>2</b>:0.05304381251335144  <b>3</b>:0.05370759963989258  <b>4</b>:0.05444306135177612  <b>5</b>:0.055179059505462646</td></tr><tr><td>VertAccel</td><td>VERT_ACCEL</td><td class="w">10.127328872680664</td></tr><tr><td>VertAccel_ST</td><td>VERT_ACCEL_ST</td><td class="w"><b>0</b>:9.909729957580566  <b>1</b>:9.930655479431152  <b>2</b>:9.9750337600708  <b>3</b>:10.045735359191895  <b>4</b>:10.09935188293457  <b>5</b>:10.127328872680664</td></tr><tr><td>VidCapActive</td><td>VID_CAP_ACTIVE</td><td class="w">false</td></tr><tr><td>VidCapEnabled</td><td>VID_CAP_ENABLED</td><td class="w">false</td></tr><tr><td>Voltage</td><td>VOLTAGE</td><td class="w">14.5</td></tr><tr><td>WaterLevel</td><td>WATER_LEVEL</td><td class="w">13</td></tr><tr><td>WaterTemp</td><td>WATER_TEMP</td><td class="w">65.01363372802734</td></tr><tr><td>WeatherDeclaredWet</td><td>WEATHER_DECLARED_WET</td><td class="w">false</td></tr><tr><td>WindDir</td><td>WIND_DIR</td><td class="w">0</td></tr><tr><td>WindVel</td><td>WIND_VEL</td><td class="w">3.129279851913452</td></tr><tr><td>Yaw</td><td>YAW</td><td class="w">-1.7595096826553345</td></tr><tr><td>YawNorth</td><td>YAW_NORTH</td><td class="w">2.177570343017578</td></tr><tr><td>YawRate</td><td>YAW_RATE</td><td class="w">-0.09674954414367676</td></tr><tr><td>YawRate_ST</td><td>YAW_RATE_ST</td><td class="w"><b>0</b>:-0.09187188744544983  <b>1</b>:-0.09228811413049698  <b>2</b>:-0.09307919442653656  <b>3</b>:-0.09413688629865646  <b>4</b>:-0.09538044035434723  <b>5</b>:-0.09674954414367676</td></tr><tr><td>dcABS</td><td>DC_ABS</td><td class="w">4</td></tr><tr><td>dcBrakeBias</td><td>DC_BRAKE_BIAS</td><td class="w">51.09002685546875</td></tr><tr><td>dcDashPage</td><td></td><td class="w">0</td></tr><tr><td>dcDashPage2</td><td></td><td class="w">0</td></tr><tr><td>dcHeadlightFlash</td><td></td><td class="w">false</td></tr><tr><td>dcLowFuelAccept</td><td></td><td class="w">false</td></tr><tr><td>dcPitSpeedLimiterToggle</td><td>DC_PIT_SPEED_LIMITER_TOGGLE</td><td class="w">false</td></tr><tr><td>dcStarter</td><td>DC_STARTER</td><td class="w">false</td></tr><tr><td>dcThrottleShape</td><td></td><td class="w">1</td></tr><tr><td>dcToggleWindshieldWipers</td><td>DC_TOGGLE_WINDSHIELD_WIPERS</td><td class="w">false</td></tr><tr><td>dcTractionControl</td><td>DC_TRACTION_CONTROL</td><td class="w">3</td></tr><tr><td>dcTractionControlToggle</td><td></td><td class="w">false</td></tr><tr><td>dcTriggerWindshieldWipers</td><td>DC_TRIGGER_WINDSHIELD_WIPERS</td><td class="w">false</td></tr><tr><td>dpFastRepair</td><td>DP_FAST_REPAIR</td><td class="w">1</td></tr><tr><td>dpFuelAddKg</td><td>DP_FUEL_ADD_KG</td><td class="w">0</td></tr><tr><td>dpFuelAutoFillActive</td><td>DP_FUEL_AUTO_FILL_ACTIVE</td><td class="w">1</td></tr><tr><td>dpFuelAutoFillEnabled</td><td>DP_FUEL_AUTO_FILL_ENABLED</td><td class="w">1</td></tr><tr><td>dpFuelFill</td><td>DP_FUEL_FILL</td><td class="w">0</td></tr><tr><td>dpLFTireChange</td><td>DP_LF_TIRE_CHANGE</td><td class="w">1</td></tr><tr><td>dpLFTireColdPress</td><td>DP_LF_TIRE_COLD_PRESS</td><td class="w">158.57899475097656</td></tr><tr><td>dpLRTireChange</td><td>DP_LR_TIRE_CHANGE</td><td class="w">1</td></tr><tr><td>dpLRTireColdPress</td><td>DP_LR_TIRE_COLD_PRESS</td><td class="w">158.57899475097656</td></tr><tr><td>dpRFTireChange</td><td>DP_RF_TIRE_CHANGE</td><td class="w">1</td></tr><tr><td>dpRFTireColdPress</td><td>DP_RF_TIRE_COLD_PRESS</td><td class="w">158.57899475097656</td></tr><tr><td>dpRRTireChange</td><td>DP_RR_TIRE_CHANGE</td><td class="w">1</td></tr><tr><td>dpRRTireColdPress</td><td>DP_RR_TIRE_COLD_PRESS</td><td class="w">158.57899475097656</td></tr><tr><td>dpWindshieldTearoff</td><td>DP_WINDSHIELD_TEAROFF</td><td class="w">1</td></tr></tbody></table></div></section>
+<section><h2>Session info</h2><details><summary>WeekendInfo</summary><pre>{
+  &quot;Encoding&quot;: &quot;ISO_8859_1&quot;,
+  &quot;TrackName&quot;: &quot;mugello gp&quot;,
+  &quot;TrackID&quot;: 498,
+  &quot;TrackLength&quot;: &quot;5.1914 km&quot;,
+  &quot;TrackLengthOfficial&quot;: &quot;5.24 km&quot;,
+  &quot;TrackDisplayName&quot;: &quot;Autodromo del Mugello&quot;,
+  &quot;TrackDisplayShortName&quot;: &quot;Noname&quot;,
+  &quot;TrackConfigName&quot;: &quot;Grand Prix&quot;,
+  &quot;TrackCity&quot;: &quot;Scarperia e San Piero&quot;,
+  &quot;TrackState&quot;: &quot;Tuscany&quot;,
+  &quot;TrackCountry&quot;: &quot;Italy&quot;,
+  &quot;TrackAltitude&quot;: &quot;279.85 m&quot;,
+  &quot;TrackLatitude&quot;: &quot;43.997583 m&quot;,
+  &quot;TrackLongitude&quot;: &quot;11.371492 m&quot;,
+  &quot;TrackNorthOffset&quot;: &quot;0.4181 rad&quot;,
+  &quot;TrackNumTurns&quot;: 15,
+  &quot;TrackPitSpeedLimit&quot;: &quot;60.00 kph&quot;,
+  &quot;TrackPaceSpeed&quot;: &quot;20.83 kph&quot;,
+  &quot;TrackNumPitStalls&quot;: 25,
+  &quot;TrackType&quot;: &quot;road course&quot;,
+  &quot;TrackDirection&quot;: &quot;neutral&quot;,
+  &quot;TrackWeatherType&quot;: &quot;Static&quot;,
+  &quot;TrackSkies&quot;: &quot;Mostly Cloudy&quot;,
+  &quot;TrackSurfaceTemp&quot;: &quot;27.11 C&quot;,
+  &quot;TrackSurfaceTempCrew&quot;: &quot;23.89 C&quot;,
+  &quot;TrackAirTemp&quot;: &quot;21.11 C&quot;,
+  &quot;TrackAirPressure&quot;: &quot;28.97 Hg&quot;,
+  &quot;TrackAirDensity&quot;: &quot;1.15 kg/m^3&quot;,
+  &quot;TrackWindVel&quot;: &quot;3.13 m/s&quot;,
+  &quot;TrackWindDir&quot;: &quot;0.00 rad&quot;,
+  &quot;TrackRelativeHumidity&quot;: &quot;63 %&quot;,
+  &quot;TrackFogLevel&quot;: &quot;0 %&quot;,
+  &quot;TrackPrecipitation&quot;: &quot;0 %&quot;,
+  &quot;TrackCleanup&quot;: 0,
+  &quot;TrackDynamicTrack&quot;: 1,
+  &quot;TrackVersion&quot;: &quot;2026.06.01.01&quot;,
+  &quot;SeriesID&quot;: 0,
+  &quot;SeasonID&quot;: 0,
+  &quot;SessionID&quot;: 0,
+  &quot;SubSessionID&quot;: 0,
+  &quot;LeagueID&quot;: 0,
+  &quot;Official&quot;: 0,
+  &quot;RaceWeek&quot;: 0,
+  &quot;EventType&quot;: &quot;Race&quot;,
+  &quot;Category&quot;: &quot;SportsCar&quot;,
+  &quot;SimMode&quot;: &quot;full&quot;,
+  &quot;TeamRacing&quot;: 0,
+  &quot;MinDrivers&quot;: 0,
+  &quot;MaxDrivers&quot;: 0,
+  &quot;DCRuleSet&quot;: &quot;None&quot;,
+  &quot;QualifierMustStartRace&quot;: 0,
+  &quot;NumCarClasses&quot;: 1,
+  &quot;NumCarTypes&quot;: 12,
+  &quot;AIRosterName&quot;: &quot;IMSA&quot;,
+  &quot;HeatRacing&quot;: 0,
+  &quot;BuildType&quot;: &quot;Release&quot;,
+  &quot;BuildTarget&quot;: &quot;Members&quot;,
+  &quot;BuildVersion&quot;: &quot;2026.07.17.02&quot;,
+  &quot;RaceFarm&quot;: null,
+  &quot;WeekendOptions&quot;: {
+    &quot;NumStarters&quot;: 12,
+    &quot;StartingGrid&quot;: &quot;single file&quot;,
+    &quot;QualifyScoring&quot;: &quot;best lap&quot;,
+    &quot;CourseCautions&quot;: &quot;local&quot;,
+    &quot;StandingStart&quot;: 0,
+    &quot;ShortParadeLap&quot;: 1,
+    &quot;Restarts&quot;: &quot;double file lapped cars behind&quot;,
+    &quot;WeatherType&quot;: &quot;Static&quot;,
+    &quot;Skies&quot;: &quot;Mostly Cloudy&quot;,
+    &quot;WindDirection&quot;: &quot;N&quot;,
+    &quot;WindSpeed&quot;: &quot;11.27 km/h&quot;,
+    &quot;WeatherTemp&quot;: &quot;21.11 C&quot;,
+    &quot;RelativeHumidity&quot;: &quot;63 %&quot;,
+    &quot;FogLevel&quot;: &quot;0 %&quot;,
+    &quot;TimeOfDay&quot;: &quot;2:00 pm&quot;,
+    &quot;Date&quot;: &quot;2025-10-18T00:00:00.000Z&quot;,
+    &quot;EarthRotationSpeedupFactor&quot;: 1,
+    &quot;Unofficial&quot;: 1,
+    &quot;CommercialMode&quot;: &quot;consumer&quot;,
+    &quot;NightMode&quot;: &quot;variable&quot;,
+    &quot;IsFixedSetup&quot;: 0,
+    &quot;StrictLapsChecking&quot;: &quot;default&quot;,
+    &quot;HasOpenRegistration&quot;: 0,
+    &quot;HardcoreLevel&quot;: 1,
+    &quot;NumJokerLaps&quot;: 0,
+    &quot;IncidentLimit&quot;: &quot;unlimited&quot;,
+    &quot;IncidentWarningInitialLimit&quot;: &quot;unlimited&quot;,
+    &quot;IncidentWarningSubsequentLimit&quot;: &quot;unlimited&quot;,
+    &quot;FastRepairsLimit&quot;: &quot;unlimited&quot;,
+    &quot;GreenWhiteCheckeredLimit&quot;: 0
+  },
+  &quot;TelemetryOptions&quot;: {
+    &quot;TelemetryDiskFile&quot;: &quot;C /Users/oppid/OneDrive/Documenti/iRacing/telemetry/ferrari296gt3_mugello gp 2026-08-11 09-42-29.ibt&quot;
+  }
+}</pre></details><details><summary>SessionInfo</summary><pre>{
+  &quot;CurrentSessionNum&quot;: 0,
+  &quot;Sessions&quot;: [
+    {
+      &quot;SessionNum&quot;: 0,
+      &quot;SessionLaps&quot;: &quot;unlimited&quot;,
+      &quot;SessionTime&quot;: &quot;480.0000 sec&quot;,
+      &quot;SessionNumLapsToAvg&quot;: 0,
+      &quot;SessionType&quot;: &quot;Race&quot;,
+      &quot;SessionTrackRubberState&quot;: &quot;low usage&quot;,
+      &quot;SessionName&quot;: &quot;RACE&quot;,
+      &quot;SessionSubType&quot;: null,
+      &quot;SessionSkipped&quot;: 0,
+      &quot;SessionRunGroupsUsed&quot;: 0,
+      &quot;SessionEnforceTireCompoundChange&quot;: 0,
+      &quot;ResultsPositions&quot;: [
+        {
+          &quot;Position&quot;: 1,
+          &quot;ClassPosition&quot;: 0,
+          &quot;CarIdx&quot;: 0,
+          &quot;Lap&quot;: 0,
+          &quot;Time&quot;: 0,
+          &quot;FastestLap&quot;: -1,
+          &quot;FastestTime&quot;: -1,
+          &quot;LastTime&quot;: -1,
+          &quot;LapsLed&quot;: 0,
+          &quot;LapsComplete&quot;: 0,
+          &quot;JokerLapsComplete&quot;: 0,
+          &quot;LapsDriven&quot;: 0,
+          &quot;Incidents&quot;: 0,
+          &quot;ReasonOutId&quot;: 0,
+          &quot;ReasonOutStr&quot;: &quot;Running&quot;
+        },
+        {
+          &quot;Position&quot;: 2,
+          &quot;ClassPosition&quot;: 1,
+          &quot;CarIdx&quot;: 7,
+          &quot;Lap&quot;: 0,
+          &quot;Time&quot;: 0.001,
+          &quot;FastestLap&quot;: -1,
+          &quot;FastestTime&quot;: -1,
+          &quot;LastTime&quot;: -1,
+          &quot;LapsLed&quot;: 0,
+          &quot;LapsComplete&quot;: 0,
+          &quot;JokerLapsComplete&quot;: 0,
+          &quot;LapsDriven&quot;: 0,
+          &quot;Incidents&quot;: 0,
+          &quot;ReasonOutId&quot;: 0,
+          &quot;ReasonOutStr&quot;: &quot;Running&quot;
+        },
+        {
+          &quot;Position&quot;: 3,
+          &quot;ClassPosition&quot;: 2,
+          &quot;CarIdx&quot;: 8,
+          &quot;Lap&quot;: 0,
+          &quot;Time&quot;: 0.002,
+          &quot;FastestLap&quot;: -1,
+          &quot;FastestTime&quot;: -1,
+          &quot;LastTime&quot;: -1,
+          &quot;LapsLed&quot;: 0,
+          &quot;LapsComplete&quot;: 0,
+          &quot;JokerLapsComplete&quot;: 0,
+          &quot;LapsDriven&quot;: 0,
+          &quot;Incidents&quot;: 0,
+          &quot;ReasonOutId&quot;: 0,
+          &quot;ReasonOutStr&quot;: &quot;Running&quot;
+        },
+        {
+          &quot;Position&quot;: 4,
+          &quot;ClassPosition&quot;: 3,
+          &quot;CarIdx&quot;: 4,
+          &quot;Lap&quot;: 0,
+          &quot;Time&quot;: 0.003,
+          &quot;FastestLap&quot;: -1,
+          &quot;FastestTime&quot;: -1,
+          &quot;LastTime&quot;: -1,
+          &quot;LapsLed&quot;: 0,
+          &quot;LapsComplete&quot;: 0,
+          &quot;JokerLapsComplete&quot;: 0,
+          &quot;LapsDriven&quot;: 0,
+          &quot;Incidents&quot;: 0,
+          &quot;ReasonOutId&quot;: 0,
+          &quot;ReasonOutStr&quot;: &quot;Running&quot;
+        },
+        {
+          &quot;Position&quot;: 5,
+          &quot;ClassPosition&quot;: 4,
+          &quot;CarIdx&quot;: 10,
+          &quot;Lap&quot;: 0,
+          &quot;Time&quot;: 0.004,
+          &quot;FastestLap&quot;: -1,
+          &quot;FastestTime&quot;: -1,
+          &quot;LastTime&quot;: -1,
+          &quot;LapsLed&quot;: 0,
+          &quot;LapsComplete&quot;: 0,
+          &quot;JokerLapsComplete&quot;: 0,
+          &quot;LapsDriven&quot;: 0,
+          &quot;Incidents&quot;: 0,
+          &quot;ReasonOutId&quot;: 0,
+          &quot;ReasonOutStr&quot;: &quot;Running&quot;
+        },
+        {
+          &quot;Position&quot;: 6,
+          &quot;ClassPosition&quot;: 5,
+          &quot;CarIdx&quot;: 5,
+          &quot;Lap&quot;: 0,
+          &quot;Time&quot;: 0.005,
+          &quot;FastestLap&quot;: -1,
+          &quot;FastestTime&quot;: -1,
+          &quot;LastTime&quot;: -1,
+          &quot;LapsLed&quot;: 0,
+          &quot;LapsComplete&quot;: 0,
+          &quot;JokerLapsComplete&quot;: 0,
+          &quot;LapsDriven&quot;: 0,
+          &quot;Incidents&quot;: 0,
+          &quot;ReasonOutId&quot;: 0,
+          &quot;ReasonOutStr&quot;: &quot;Running&quot;
+        },
+        {
+          &quot;Position&quot;: 7,
+          &quot;ClassPosition&quot;: 6,
+          &quot;CarIdx&quot;: 1,
+          &quot;Lap&quot;: 0,
+          &quot;Time&quot;: 0.006,
+          &quot;FastestLap&quot;: -1,
+          &quot;FastestTime&quot;: -1,
+          &quot;LastTime&quot;: -1,
+          &quot;LapsLed&quot;: 0,
+          &quot;LapsComplete&quot;: 0,
+          &quot;JokerLapsComplete&quot;: 0,
+          &quot;LapsDriven&quot;: 0,
+          &quot;Incidents&quot;: 0,
+          &quot;ReasonOutId&quot;: 0,
+          &quot;ReasonOutStr&quot;: &quot;Running&quot;
+        },
+        {
+          &quot;Position&quot;: 8,
+          &quot;ClassPosition&quot;: 7,
+          &quot;CarIdx&quot;: 3,
+          &quot;Lap&quot;: 0,
+          &quot;Time&quot;: 0.007,
+          &quot;FastestLap&quot;: -1,
+          &quot;FastestTime&quot;: -1,
+          &quot;LastTime&quot;: -1,
+          &quot;LapsLed&quot;: 0,
+          &quot;LapsComplete&quot;: 0,
+          &quot;JokerLapsComplete&quot;: 0,
+          &quot;LapsDriven&quot;: 0,
+          &quot;Incidents&quot;: 0,
+          &quot;ReasonOutId&quot;: 0,
+          &quot;ReasonOutStr&quot;: &quot;Running&quot;
+        },
+        {
+          &quot;Position&quot;: 9,
+          &quot;ClassPosition&quot;: 8,
+          &quot;CarIdx&quot;: 6,
+          &quot;Lap&quot;: 0,
+          &quot;Time&quot;: 0.008,
+          &quot;FastestLap&quot;: -1,
+          &quot;FastestTime&quot;: -1,
+          &quot;LastTime&quot;: -1,
+          &quot;LapsLed&quot;: 0,
+          &quot;LapsComplete&quot;: 0,
+          &quot;JokerLapsComplete&quot;: 0,
+          &quot;LapsDriven&quot;: 0,
+          &quot;Incidents&quot;: 0,
+          &quot;ReasonOutId&quot;: 0,
+          &quot;ReasonOutStr&quot;: &quot;Running&quot;
+        },
+        {
+          &quot;Position&quot;: 10,
+          &quot;ClassPosition&quot;: 9,
+          &quot;CarIdx&quot;: 9,
+          &quot;Lap&quot;: 0,
+          &quot;Time&quot;: 0.009,
+          &quot;FastestLap&quot;: -1,
+          &quot;FastestTime&quot;: -1,
+          &quot;LastTime&quot;: -1,
+          &quot;LapsLed&quot;: 0,
+          &quot;LapsComplete&quot;: 0,
+          &quot;JokerLapsComplete&quot;: 0,
+          &quot;LapsDriven&quot;: 0,
+          &quot;Incidents&quot;: 0,
+          &quot;ReasonOutId&quot;: 0,
+          &quot;ReasonOutStr&quot;: &quot;Running&quot;
+        },
+        {
+          &quot;Position&quot;: 11,
+          &quot;ClassPosition&quot;: 10,
+          &quot;CarIdx&quot;: 11,
+          &quot;Lap&quot;: 0,
+          &quot;Time&quot;: 0.01,
+          &quot;FastestLap&quot;: -1,
+          &quot;FastestTime&quot;: -1,
+          &quot;LastTime&quot;: -1,
+          &quot;LapsLed&quot;: 0,
+          &quot;LapsComplete&quot;: 0,
+          &quot;JokerLapsComplete&quot;: 0,
+          &quot;LapsDriven&quot;: 0,
+          &quot;Incidents&quot;: 0,
+          &quot;ReasonOutId&quot;: 0,
+          &quot;ReasonOutStr&quot;: &quot;Running&quot;
+        },
+        {
+          &quot;Position&quot;: 12,
+          &quot;ClassPosition&quot;: 11,
+          &quot;CarIdx&quot;: 2,
+          &quot;Lap&quot;: 0,
+          &quot;Time&quot;: 0.011,
+          &quot;FastestLap&quot;: -1,
+          &quot;FastestTime&quot;: -1,
+          &quot;LastTime&quot;: -1,
+          &quot;LapsLed&quot;: 0,
+          &quot;LapsComplete&quot;: 0,
+          &quot;JokerLapsComplete&quot;: 0,
+          &quot;LapsDriven&quot;: 0,
+          &quot;Incidents&quot;: 0,
+          &quot;ReasonOutId&quot;: 0,
+          &quot;ReasonOutStr&quot;: &quot;Running&quot;
+        }
+      ],
+      &quot;ResultsFastestLap&quot;: [
+        {
+          &quot;CarIdx&quot;: 255,
+          &quot;FastestLap&quot;: 0,
+          &quot;FastestTime&quot;: -1
+        }
+      ],
+      &quot;ResultsAverageLapTime&quot;: 0,
+      &quot;ResultsNumCautionFlags&quot;: 0,
+      &quot;ResultsNumCautionLaps&quot;: 0,
+      &quot;ResultsNumLeadChanges&quot;: 0,
+      &quot;ResultsLapsComplete&quot;: 0,
+      &quot;ResultsOfficial&quot;: 0
+    }
+  ]
+}</pre></details><details><summary>CameraInfo</summary><pre>{
+  &quot;Groups&quot;: [
+    {
+      &quot;GroupNum&quot;: 1,
+      &quot;GroupName&quot;: &quot;Nose&quot;,
+      &quot;Cameras&quot;: [
+        {
+          &quot;CameraNum&quot;: 1,
+          &quot;CameraName&quot;: &quot;CamNose&quot;
+        }
+      ]
+    },
+    {
+      &quot;GroupNum&quot;: 2,
+      &quot;GroupName&quot;: &quot;Gearbox&quot;,
+      &quot;Cameras&quot;: [
+        {
+          &quot;CameraNum&quot;: 1,
+          &quot;CameraName&quot;: &quot;CamGearbox&quot;
+        }
+      ]
+    },
+    {
+      &quot;GroupNum&quot;: 3,
+      &quot;GroupName&quot;: &quot;Roll Bar&quot;,
+      &quot;Cameras&quot;: [
+        {
+          &quot;CameraNum&quot;: 1,
+          &quot;CameraName&quot;: &quot;CamRoll Bar&quot;
+        }
+      ]
+    },
+    {
+      &quot;GroupNum&quot;: 4,
+      &quot;GroupName&quot;: &quot;LF Susp&quot;,
+      &quot;Cameras&quot;: [
+        {
+          &quot;CameraNum&quot;: 1,
+          &quot;CameraName&quot;: &quot;CamLF Susp&quot;
+        }
+      ]
+    },
+    {
+      &quot;GroupNum&quot;: 5,
+      &quot;GroupName&quot;: &quot;LR Susp&quot;,
+      &quot;Cameras&quot;: [
+        {
+          &quot;CameraNum&quot;: 1,
+          &quot;CameraName&quot;: &quot;CamLR Susp&quot;
+        }
+      ]
+    },
+    {
+      &quot;GroupNum&quot;: 6,
+      &quot;GroupName&quot;: &quot;Gyro&quot;,
+      &quot;Cameras&quot;: [
+        {
+          &quot;CameraNum&quot;: 1,
+          &quot;CameraName&quot;: &quot;CamGyro&quot;
+        }
+      ]
+    },
+    {
+      &quot;GroupNum&quot;: 7,
+      &quot;GroupName&quot;: &quot;RF Susp&quot;,
+      &quot;Cameras&quot;: [
+        {
+          &quot;CameraNum&quot;: 1,
+          &quot;CameraName&quot;: &quot;CamRF Susp&quot;
+        }
+      ]
+    },
+    {
+      &quot;GroupNum&quot;: 8,
+      &quot;GroupName&quot;: &quot;RR Susp&quot;,
+      &quot;Cameras&quot;: [
+        {
+          &quot;CameraNum&quot;: 1,
+          &quot;CameraName&quot;: &quot;CamRR Susp&quot;
+        }
+      ]
+    },
+    {
+      &quot;GroupNum&quot;: 9,
+      &quot;GroupName&quot;: &quot;Cockpit&quot;,
+      &quot;Cameras&quot;: [
+        {
+          &quot;CameraNum&quot;: 1,
+          &quot;CameraName&quot;: &quot;CamCockpit&quot;
+        }
+      ]
+    },
+    {
+      &quot;GroupNum&quot;: 10,
+      &quot;GroupName&quot;: &quot;Scenic&quot;,
+      &quot;IsScenic&quot;: true,
+      &quot;Cameras&quot;: [
+        {
+          &quot;CameraNum&quot;: 1,
+          &quot;CameraName&quot;: &quot;Scenic_01&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 2,
+          &quot;CameraName&quot;: &quot;Scenic_02&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 3,
+          &quot;CameraName&quot;: &quot;Scenic_03&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 4,
+          &quot;CameraName&quot;: &quot;Scenic_04&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 5,
+          &quot;CameraName&quot;: &quot;Scenic_05&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 6,
+          &quot;CameraName&quot;: &quot;Scenic_06&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 7,
+          &quot;CameraName&quot;: &quot;Scenic_07&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 8,
+          &quot;CameraName&quot;: &quot;Scenic_08&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 9,
+          &quot;CameraName&quot;: &quot;Scenic_09&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 10,
+          &quot;CameraName&quot;: &quot;Scenic_10&quot;
+        }
+      ]
+    },
+    {
+      &quot;GroupNum&quot;: 11,
+      &quot;GroupName&quot;: &quot;TV1&quot;,
+      &quot;Cameras&quot;: [
+        {
+          &quot;CameraNum&quot;: 1,
+          &quot;CameraName&quot;: &quot;CamTV1_00&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 2,
+          &quot;CameraName&quot;: &quot;CamTV1_04&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 3,
+          &quot;CameraName&quot;: &quot;CamTV1_01&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 4,
+          &quot;CameraName&quot;: &quot;CamTV1_02&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 5,
+          &quot;CameraName&quot;: &quot;CamTV1_05&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 6,
+          &quot;CameraName&quot;: &quot;CamTV1_06&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 7,
+          &quot;CameraName&quot;: &quot;CamTV1_07&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 8,
+          &quot;CameraName&quot;: &quot;CamTV1_08&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 9,
+          &quot;CameraName&quot;: &quot;CamTV1_09&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 10,
+          &quot;CameraName&quot;: &quot;CamTV1_10&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 11,
+          &quot;CameraName&quot;: &quot;CamTV1_11&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 12,
+          &quot;CameraName&quot;: &quot;CamTV1_12&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 13,
+          &quot;CameraName&quot;: &quot;CamTV1_03&quot;
+        }
+      ]
+    },
+    {
+      &quot;GroupNum&quot;: 12,
+      &quot;GroupName&quot;: &quot;TV2&quot;,
+      &quot;Cameras&quot;: [
+        {
+          &quot;CameraNum&quot;: 1,
+          &quot;CameraName&quot;: &quot;CamTV2_00&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 2,
+          &quot;CameraName&quot;: &quot;CamTV2_04&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 3,
+          &quot;CameraName&quot;: &quot;CamTV2_01&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 4,
+          &quot;CameraName&quot;: &quot;CamTV2_02&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 5,
+          &quot;CameraName&quot;: &quot;CamTV2_03&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 6,
+          &quot;CameraName&quot;: &quot;CamTV2_05&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 7,
+          &quot;CameraName&quot;: &quot;CamTV2_06&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 8,
+          &quot;CameraName&quot;: &quot;CamTV2_07&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 9,
+          &quot;CameraName&quot;: &quot;CamTV2_08&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 10,
+          &quot;CameraName&quot;: &quot;CamTV2_09&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 11,
+          &quot;CameraName&quot;: &quot;CamTV2_10&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 12,
+          &quot;CameraName&quot;: &quot;CamTV2_11&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 13,
+          &quot;CameraName&quot;: &quot;CamTV2_12&quot;
+        }
+      ]
+    },
+    {
+      &quot;GroupNum&quot;: 13,
+      &quot;GroupName&quot;: &quot;TV3&quot;,
+      &quot;Cameras&quot;: [
+        {
+          &quot;CameraNum&quot;: 1,
+          &quot;CameraName&quot;: &quot;CamTV3_00&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 2,
+          &quot;CameraName&quot;: &quot;CamTV3_12&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 3,
+          &quot;CameraName&quot;: &quot;CamTV3_01&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 4,
+          &quot;CameraName&quot;: &quot;CamTV3_02&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 5,
+          &quot;CameraName&quot;: &quot;CamTV3_03&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 6,
+          &quot;CameraName&quot;: &quot;CamTV3_06&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 7,
+          &quot;CameraName&quot;: &quot;CamTV3_07&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 8,
+          &quot;CameraName&quot;: &quot;CamTV3_08&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 9,
+          &quot;CameraName&quot;: &quot;CamTV3_09&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 10,
+          &quot;CameraName&quot;: &quot;CamTV3_10&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 11,
+          &quot;CameraName&quot;: &quot;CamTV3_11&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 12,
+          &quot;CameraName&quot;: &quot;CamTV3_04&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 13,
+          &quot;CameraName&quot;: &quot;CamTV3_05&quot;
+        }
+      ]
+    },
+    {
+      &quot;GroupNum&quot;: 14,
+      &quot;GroupName&quot;: &quot;TV Static&quot;,
+      &quot;Cameras&quot;: [
+        {
+          &quot;CameraNum&quot;: 1,
+          &quot;CameraName&quot;: &quot;CamTV4_00&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 2,
+          &quot;CameraName&quot;: &quot;CamTV4_01&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 3,
+          &quot;CameraName&quot;: &quot;CamTV4_02&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 4,
+          &quot;CameraName&quot;: &quot;CamTV4_03&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 5,
+          &quot;CameraName&quot;: &quot;CamTV4_04&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 6,
+          &quot;CameraName&quot;: &quot;CamTV4_05&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 7,
+          &quot;CameraName&quot;: &quot;CamTV4_06&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 8,
+          &quot;CameraName&quot;: &quot;CamTV4_07&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 9,
+          &quot;CameraName&quot;: &quot;CamTV4_08&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 10,
+          &quot;CameraName&quot;: &quot;CamTV4_09&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 11,
+          &quot;CameraName&quot;: &quot;CamTV4_10&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 12,
+          &quot;CameraName&quot;: &quot;CamTV4_11&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 13,
+          &quot;CameraName&quot;: &quot;CamTV4_12&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 14,
+          &quot;CameraName&quot;: &quot;CamTV4_13&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 15,
+          &quot;CameraName&quot;: &quot;CamTV4_14&quot;
+        }
+      ]
+    },
+    {
+      &quot;GroupNum&quot;: 15,
+      &quot;GroupName&quot;: &quot;TV Mixed&quot;,
+      &quot;Cameras&quot;: [
+        {
+          &quot;CameraNum&quot;: 1,
+          &quot;CameraName&quot;: &quot;CamTV3_07&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 2,
+          &quot;CameraName&quot;: &quot;CamTV1_00&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 3,
+          &quot;CameraName&quot;: &quot;CamTV1_01&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 4,
+          &quot;CameraName&quot;: &quot;CamTV1_02&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 5,
+          &quot;CameraName&quot;: &quot;CamTV1_03&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 6,
+          &quot;CameraName&quot;: &quot;CamTV1_04&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 7,
+          &quot;CameraName&quot;: &quot;CamTV1_05&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 8,
+          &quot;CameraName&quot;: &quot;CamTV1_06&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 9,
+          &quot;CameraName&quot;: &quot;CamTV1_07&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 10,
+          &quot;CameraName&quot;: &quot;CamTV1_08&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 11,
+          &quot;CameraName&quot;: &quot;CamTV1_09&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 12,
+          &quot;CameraName&quot;: &quot;CamTV1_10&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 13,
+          &quot;CameraName&quot;: &quot;CamTV1_11&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 14,
+          &quot;CameraName&quot;: &quot;CamTV1_12&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 15,
+          &quot;CameraName&quot;: &quot;CamTV2_00&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 16,
+          &quot;CameraName&quot;: &quot;CamTV2_01&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 17,
+          &quot;CameraName&quot;: &quot;CamTV2_02&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 18,
+          &quot;CameraName&quot;: &quot;CamTV2_03&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 19,
+          &quot;CameraName&quot;: &quot;CamTV2_04&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 20,
+          &quot;CameraName&quot;: &quot;CamTV2_05&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 21,
+          &quot;CameraName&quot;: &quot;CamTV2_06&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 22,
+          &quot;CameraName&quot;: &quot;CamTV2_07&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 23,
+          &quot;CameraName&quot;: &quot;CamTV2_08&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 24,
+          &quot;CameraName&quot;: &quot;CamTV2_09&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 25,
+          &quot;CameraName&quot;: &quot;CamTV2_10&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 26,
+          &quot;CameraName&quot;: &quot;CamTV2_11&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 27,
+          &quot;CameraName&quot;: &quot;CamTV2_12&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 28,
+          &quot;CameraName&quot;: &quot;CamTV3_00&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 29,
+          &quot;CameraName&quot;: &quot;CamTV3_01&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 30,
+          &quot;CameraName&quot;: &quot;CamTV3_02&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 31,
+          &quot;CameraName&quot;: &quot;CamTV3_03&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 32,
+          &quot;CameraName&quot;: &quot;CamTV3_04&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 33,
+          &quot;CameraName&quot;: &quot;CamTV3_05&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 34,
+          &quot;CameraName&quot;: &quot;CamTV3_06&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 35,
+          &quot;CameraName&quot;: &quot;CamTV3_08&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 36,
+          &quot;CameraName&quot;: &quot;CamTV3_09&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 37,
+          &quot;CameraName&quot;: &quot;CamTV3_10&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 38,
+          &quot;CameraName&quot;: &quot;CamTV3_11&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 39,
+          &quot;CameraName&quot;: &quot;CamTV4_00&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 40,
+          &quot;CameraName&quot;: &quot;CamTV4_01&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 41,
+          &quot;CameraName&quot;: &quot;CamTV4_02&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 42,
+          &quot;CameraName&quot;: &quot;CamTV4_03&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 43,
+          &quot;CameraName&quot;: &quot;CamTV4_04&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 44,
+          &quot;CameraName&quot;: &quot;CamTV4_05&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 45,
+          &quot;CameraName&quot;: &quot;CamTV4_06&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 46,
+          &quot;CameraName&quot;: &quot;CamTV4_07&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 47,
+          &quot;CameraName&quot;: &quot;CamTV4_08&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 48,
+          &quot;CameraName&quot;: &quot;CamTV4_09&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 49,
+          &quot;CameraName&quot;: &quot;CamTV4_10&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 50,
+          &quot;CameraName&quot;: &quot;CamTV4_11&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 51,
+          &quot;CameraName&quot;: &quot;CamTV4_12&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 52,
+          &quot;CameraName&quot;: &quot;CamTV4_13&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 53,
+          &quot;CameraName&quot;: &quot;CamTV4_14&quot;
+        },
+        {
+          &quot;CameraNum&quot;: 54,
+          &quot;CameraName&quot;: &quot;CamRoll Bar&quot;
+        }
+      ]
+    },
+    {
+      &quot;GroupNum&quot;: 16,
+      &quot;GroupName&quot;: &quot;Pit Lane&quot;,
+      &quot;Cameras&quot;: [
+        {
+          &quot;CameraNum&quot;: 1,
+          &quot;CameraName&quot;: &quot;CamPit Lane&quot;
+        }
+      ]
+    },
+    {
+      &quot;GroupNum&quot;: 17,
+      &quot;GroupName&quot;: &quot;Pit Lane 2&quot;,
+      &quot;Cameras&quot;: [
+        {
+          &quot;CameraNum&quot;: 1,
+          &quot;CameraName&quot;: &quot;CamPit Lane 2&quot;
+        }
+      ]
+    },
+    {
+      &quot;GroupNum&quot;: 18,
+      &quot;GroupName&quot;: &quot;Blimp&quot;,
+      &quot;Cameras&quot;: [
+        {
+          &quot;CameraNum&quot;: 1,
+          &quot;CameraName&quot;: &quot;CamBlimp&quot;
+        }
+      ]
+    },
+    {
+      &quot;GroupNum&quot;: 19,
+      &quot;GroupName&quot;: &quot;Chopper&quot;,
+      &quot;Cameras&quot;: [
+        {
+          &quot;CameraNum&quot;: 1,
+          &quot;CameraName&quot;: &quot;CamChopper&quot;
+        }
+      ]
+    },
+    {
+      &quot;GroupNum&quot;: 20,
+      &quot;GroupName&quot;: &quot;Chase&quot;,
+      &quot;Cameras&quot;: [
+        {
+          &quot;CameraNum&quot;: 1,
+          &quot;CameraName&quot;: &quot;CamChase&quot;
+        }
+      ]
+    },
+    {
+      &quot;GroupNum&quot;: 21,
+      &quot;GroupName&quot;: &quot;Far Chase&quot;,
+      &quot;Cameras&quot;: [
+        {
+          &quot;CameraNum&quot;: 1,
+          &quot;CameraName&quot;: &quot;CamFar Chase&quot;
+        }
+      ]
+    },
+    {
+      &quot;GroupNum&quot;: 22,
+      &quot;GroupName&quot;: &quot;Rear Chase&quot;,
+      &quot;Cameras&quot;: [
+        {
+          &quot;CameraNum&quot;: 1,
+          &quot;CameraName&quot;: &quot;CamRear Chase&quot;
+        }
+      ]
+    }
+  ]
+}</pre></details><details><summary>RadioInfo</summary><pre>{
+  &quot;SelectedRadioNum&quot;: 0,
+  &quot;Radios&quot;: [
+    {
+      &quot;RadioNum&quot;: 0,
+      &quot;HopCount&quot;: 2,
+      &quot;NumFrequencies&quot;: 6,
+      &quot;TunedToFrequencyNum&quot;: 1,
+      &quot;ScanningIsOn&quot;: 1,
+      &quot;Frequencies&quot;: [
+        {
+          &quot;FrequencyNum&quot;: 0,
+          &quot;FrequencyName&quot;: &quot;@ALLTEAMS&quot;,
+          &quot;Priority&quot;: 12,
+          &quot;CarIdx&quot;: -1,
+          &quot;EntryIdx&quot;: -1,
+          &quot;ClubID&quot;: 0,
+          &quot;CanScan&quot;: 1,
+          &quot;CanSquawk&quot;: 1,
+          &quot;Muted&quot;: 0,
+          &quot;IsMutable&quot;: 1,
+          &quot;IsDeletable&quot;: 0
+        },
+        {
+          &quot;FrequencyNum&quot;: 1,
+          &quot;FrequencyName&quot;: &quot;@DRIVERS&quot;,
+          &quot;Priority&quot;: 15,
+          &quot;CarIdx&quot;: -1,
+          &quot;EntryIdx&quot;: -1,
+          &quot;ClubID&quot;: 0,
+          &quot;CanScan&quot;: 1,
+          &quot;CanSquawk&quot;: 1,
+          &quot;Muted&quot;: 0,
+          &quot;IsMutable&quot;: 1,
+          &quot;IsDeletable&quot;: 0
+        },
+        {
+          &quot;FrequencyNum&quot;: 2,
+          &quot;FrequencyName&quot;: &quot;@TEAM&quot;,
+          &quot;Priority&quot;: 60,
+          &quot;CarIdx&quot;: 0,
+          &quot;EntryIdx&quot;: -1,
+          &quot;ClubID&quot;: 0,
+          &quot;CanScan&quot;: 1,
+          &quot;CanSquawk&quot;: 1,
+          &quot;Muted&quot;: 0,
+          &quot;IsMutable&quot;: 0,
+          &quot;IsDeletable&quot;: 0
+        },
+        {
+          &quot;FrequencyNum&quot;: 3,
+          &quot;FrequencyName&quot;: &quot;@ADMIN&quot;,
+          &quot;Priority&quot;: 90,
+          &quot;CarIdx&quot;: -1,
+          &quot;EntryIdx&quot;: -1,
+          &quot;ClubID&quot;: 0,
+          &quot;CanScan&quot;: 1,
+          &quot;CanSquawk&quot;: 1,
+          &quot;Muted&quot;: 0,
+          &quot;IsMutable&quot;: 0,
+          &quot;IsDeletable&quot;: 0
+        },
+        {
+          &quot;FrequencyNum&quot;: 4,
+          &quot;FrequencyName&quot;: &quot;@RACECONTROL&quot;,
+          &quot;Priority&quot;: 80,
+          &quot;CarIdx&quot;: -1,
+          &quot;EntryIdx&quot;: -1,
+          &quot;ClubID&quot;: 0,
+          &quot;CanScan&quot;: 1,
+          &quot;CanSquawk&quot;: 1,
+          &quot;Muted&quot;: 0,
+          &quot;IsMutable&quot;: 0,
+          &quot;IsDeletable&quot;: 0
+        },
+        {
+          &quot;FrequencyNum&quot;: 5,
+          &quot;FrequencyName&quot;: &quot;@PRIVATE&quot;,
+          &quot;Priority&quot;: 70,
+          &quot;CarIdx&quot;: -1,
+          &quot;EntryIdx&quot;: 0,
+          &quot;ClubID&quot;: 0,
+          &quot;CanScan&quot;: 1,
+          &quot;CanSquawk&quot;: 1,
+          &quot;Muted&quot;: 0,
+          &quot;IsMutable&quot;: 0,
+          &quot;IsDeletable&quot;: 0
+        }
+      ]
+    }
+  ]
+}</pre></details><details><summary>DriverInfo</summary><pre>{
+  &quot;DriverCarIdx&quot;: 0,
+  &quot;DriverUserID&quot;: 900937,
+  &quot;PaceCarIdx&quot;: 64,
+  &quot;DriverIsAdmin&quot;: 1,
+  &quot;DriverHeadPosX&quot;: 0.043,
+  &quot;DriverHeadPosY&quot;: 0.325,
+  &quot;DriverHeadPosZ&quot;: 0.535,
+  &quot;DriverCarIsElectric&quot;: 0,
+  &quot;DriverCarIdleRPM&quot;: 2950,
+  &quot;DriverCarRedLine&quot;: 8000,
+  &quot;DriverCarEngCylinderCount&quot;: 6,
+  &quot;DriverCarFuelKgPerLtr&quot;: 0.75,
+  &quot;DriverCarFuelMaxLtr&quot;: 104,
+  &quot;DriverCarMaxFuelPct&quot;: 1,
+  &quot;DriverCarGearNumForward&quot;: 6,
+  &quot;DriverCarGearNeutral&quot;: 1,
+  &quot;DriverCarGearReverse&quot;: 1,
+  &quot;DriverGearboxType&quot;: &quot;Sequential&quot;,
+  &quot;DriverGearboxControlType&quot;: &quot;Sequential&quot;,
+  &quot;DriverCarShiftAid&quot;: &quot;Antistall&quot;,
+  &quot;DriverCarSLFirstRPM&quot;: 6000,
+  &quot;DriverCarSLShiftRPM&quot;: 7300,
+  &quot;DriverCarSLLastRPM&quot;: 7500,
+  &quot;DriverCarSLBlinkRPM&quot;: 7900,
+  &quot;DriverCarVersion&quot;: &quot;2026.07.08.01&quot;,
+  &quot;DriverPitTrkPct&quot;: 0.006324,
+  &quot;DriverCarEstLapTime&quot;: 103.1952,
+  &quot;DriverSetupName&quot;: &quot;Garage 61\\Data packs\\26S3 W08 IMSA Ferrari Fuji\\26S3-W08-GnG-Fuji-Ferrari-R-Safe.sto&quot;,
+  &quot;DriverSetupIsModified&quot;: 0,
+  &quot;DriverSetupLoadTypeName&quot;: &quot;user&quot;,
+  &quot;DriverSetupPassedTech&quot;: 1,
+  &quot;DriverIncidentCount&quot;: 0,
+  &quot;DriverBrakeCurvingFactor&quot;: 0.001,
+  &quot;DriverTires&quot;: [
+    {
+      &quot;TireIndex&quot;: 0,
+      &quot;TireCompoundType&quot;: &quot;Hard&quot;
+    },
+    {
+      &quot;TireIndex&quot;: 1,
+      &quot;TireCompoundType&quot;: &quot;Wet&quot;
+    }
+  ],
+  &quot;Drivers&quot;: [
+    {
+      &quot;CarIdx&quot;: 0,
+      &quot;UserName&quot;: &quot;Emilio Spatola&quot;,
+      &quot;AbbrevName&quot;: &quot;&quot;,
+      &quot;Initials&quot;: &quot;&quot;,
+      &quot;UserID&quot;: 900937,
+      &quot;TeamID&quot;: 0,
+      &quot;TeamName&quot;: &quot;Emilio Spatola&quot;,
+      &quot;CarNumber&quot;: &quot;64&quot;,
+      &quot;CarNumberRaw&quot;: 64,
+      &quot;CarPath&quot;: &quot;ferrari296gt3&quot;,
+      &quot;CarClassID&quot;: 0,
+      &quot;CarID&quot;: 173,
+      &quot;CarIsPaceCar&quot;: 0,
+      &quot;CarIsAI&quot;: 0,
+      &quot;CarIsElectric&quot;: 0,
+      &quot;CarScreenName&quot;: &quot;Ferrari 296 GT3&quot;,
+      &quot;CarScreenNameShort&quot;: &quot;Ferrari 296 GT3&quot;,
+      &quot;CarCfg&quot;: -1,
+      &quot;CarCfgName&quot;: null,
+      &quot;CarCfgCustomPaintExt&quot;: null,
+      &quot;CarClassShortName&quot;: null,
+      &quot;CarClassRelSpeed&quot;: 100,
+      &quot;CarClassLicenseLevel&quot;: 0,
+      &quot;CarClassMaxFuelPct&quot;: &quot;1.000 %&quot;,
+      &quot;CarClassWeightPenalty&quot;: &quot;0.000 kg&quot;,
+      &quot;CarClassPowerAdjust&quot;: &quot;0.000 %&quot;,
+      &quot;CarClassDryTireSetLimit&quot;: &quot;0 %&quot;,
+      &quot;CarClassColor&quot;: 16777215,
+      &quot;CarClassEstLapTime&quot;: 103.1952,
+      &quot;IRating&quot;: 1,
+      &quot;LicLevel&quot;: 1,
+      &quot;LicSubLevel&quot;: 1,
+      &quot;LicString&quot;: &quot;R 0.01&quot;,
+      &quot;LicColor&quot;: &quot;0xundefined&quot;,
+      &quot;IsSpectator&quot;: 0,
+      &quot;CarDesignStr&quot;: &quot;1,FF0000,00FF00,0000FF&quot;,
+      &quot;HelmetDesignStr&quot;: &quot;23,32f500,001da5,ffd800&quot;,
+      &quot;SuitDesignStr&quot;: &quot;28,010101,000000,de0000&quot;,
+      &quot;BodyType&quot;: 0,
+      &quot;FaceType&quot;: 0,
+      &quot;HelmetType&quot;: 0,
+      &quot;CarNumberDesignStr&quot;: &quot;0,0,FFFFFF,777777,000000&quot;,
+      &quot;CarSponsor_1&quot;: 0,
+      &quot;CarSponsor_2&quot;: 0,
+      &quot;CurDriverIncidentCount&quot;: 0,
+      &quot;TeamIncidentCount&quot;: 0
+    },
+    {
+      &quot;CarIdx&quot;: 1,
+      &quot;UserName&quot;: &quot;Otto Szebeni&quot;,
+      &quot;AbbrevName&quot;: &quot;&quot;,
+      &quot;Initials&quot;: &quot;&quot;,
+      &quot;UserID&quot;: 9700,
+      &quot;TeamID&quot;: 10,
+      &quot;TeamName&quot;: &quot;Otto Szebeni&quot;,
+      &quot;CarNumber&quot;: &quot;1&quot;,
+      &quot;CarNumberRaw&quot;: 1,
+      &quot;CarPath&quot;: &quot;acuraarx06gtp&quot;,
+      &quot;CarClassID&quot;: 0,
+      &quot;CarID&quot;: 170,
+      &quot;CarIsPaceCar&quot;: 0,
+      &quot;CarIsAI&quot;: 1,
+      &quot;CarIsElectric&quot;: 0,
+      &quot;CarScreenName&quot;: &quot;Acura ARX-06&quot;,
+      &quot;CarScreenNameShort&quot;: &quot;Acura ARX-06&quot;,
+      &quot;CarCfg&quot;: -1,
+      &quot;CarCfgName&quot;: null,
+      &quot;CarCfgCustomPaintExt&quot;: null,
+      &quot;CarClassShortName&quot;: null,
+      &quot;CarClassRelSpeed&quot;: 100,
+      &quot;CarClassLicenseLevel&quot;: 0,
+      &quot;CarClassMaxFuelPct&quot;: &quot;1.000 %&quot;,
+      &quot;CarClassWeightPenalty&quot;: &quot;0.000 kg&quot;,
+      &quot;CarClassPowerAdjust&quot;: &quot;0.000 %&quot;,
+      &quot;CarClassDryTireSetLimit&quot;: &quot;0 %&quot;,
+      &quot;CarClassColor&quot;: 16777215,
+      &quot;CarClassEstLapTime&quot;: 91.9327,
+      &quot;IRating&quot;: 0,
+      &quot;LicLevel&quot;: 1,
+      &quot;LicSubLevel&quot;: 0,
+      &quot;LicString&quot;: &quot;R 0.00&quot;,
+      &quot;LicColor&quot;: 8913056,
+      &quot;IsSpectator&quot;: 0,
+      &quot;CarDesignStr&quot;: &quot;17,ec232d,ffffff,2e358f&quot;,
+      &quot;HelmetDesignStr&quot;: &quot;40,ec232d,ffffff,2e358f&quot;,
+      &quot;SuitDesignStr&quot;: &quot;30,ec232d,ffffff,2e358f&quot;,
+      &quot;BodyType&quot;: 0,
+      &quot;FaceType&quot;: 0,
+      &quot;HelmetType&quot;: 0,
+      &quot;CarNumberDesignStr&quot;: &quot;15,2,ffffff,0a0a0a,2e358f&quot;,
+      &quot;CarSponsor_1&quot;: 2,
+      &quot;CarSponsor_2&quot;: 0,
+      &quot;CurDriverIncidentCount&quot;: 0,
+      &quot;TeamIncidentCount&quot;: 0
+    },
+    {
+      &quot;CarIdx&quot;: 2,
+      &quot;UserName&quot;: &quot;John Hughes&quot;,
+      &quot;AbbrevName&quot;: &quot;&quot;,
+      &quot;Initials&quot;: &quot;&quot;,
+      &quot;UserID&quot;: 9701,
+      &quot;TeamID&quot;: 11,
+      &quot;TeamName&quot;: &quot;John Hughes&quot;,
+      &quot;CarNumber&quot;: &quot;2&quot;,
+      &quot;CarNumberRaw&quot;: 2,
+      &quot;CarPath&quot;: &quot;acuransxevo22gt3&quot;,
+      &quot;CarClassID&quot;: 0,
+      &quot;CarID&quot;: 194,
+      &quot;CarIsPaceCar&quot;: 0,
+      &quot;CarIsAI&quot;: 1,
+      &quot;CarIsElectric&quot;: 0,
+      &quot;CarScreenName&quot;: &quot;Acura NSX GT3 EVO 22&quot;,
+      &quot;CarScreenNameShort&quot;: &quot;Acura NSX GT3 EVO 22&quot;,
+      &quot;CarCfg&quot;: -1,
+      &quot;CarCfgName&quot;: null,
+      &quot;CarCfgCustomPaintExt&quot;: null,
+      &quot;CarClassShortName&quot;: null,
+      &quot;CarClassRelSpeed&quot;: 100,
+      &quot;CarClassLicenseLevel&quot;: 0,
+      &quot;CarClassMaxFuelPct&quot;: &quot;1.000 %&quot;,
+      &quot;CarClassWeightPenalty&quot;: &quot;0.000 kg&quot;,
+      &quot;CarClassPowerAdjust&quot;: &quot;0.000 %&quot;,
+      &quot;CarClassDryTireSetLimit&quot;: &quot;0 %&quot;,
+      &quot;CarClassColor&quot;: 16777215,
+      &quot;CarClassEstLapTime&quot;: 103.2057,
+      &quot;IRating&quot;: 0,
+      &quot;LicLevel&quot;: 1,
+      &quot;LicSubLevel&quot;: 0,
+      &quot;LicString&quot;: &quot;R 0.00&quot;,
+      &quot;LicColor&quot;: 8913056,
+      &quot;IsSpectator&quot;: 0,
+      &quot;CarDesignStr&quot;: &quot;3,2e358f,ec232d,0a0a0a&quot;,
+      &quot;HelmetDesignStr&quot;: &quot;50,2e358f,ec232d,0a0a0a&quot;,
+      &quot;SuitDesignStr&quot;: &quot;15,2e358f,ec232d,0a0a0a&quot;,
+      &quot;BodyType&quot;: 0,
+      &quot;FaceType&quot;: 0,
+      &quot;HelmetType&quot;: 0,
+      &quot;CarNumberDesignStr&quot;: &quot;15,2,ffffff,0a0a0a,2e358f&quot;,
+      &quot;CarSponsor_1&quot;: 2,
+      &quot;CarSponsor_2&quot;: 0,
+      &quot;CurDriverIncidentCount&quot;: 0,
+      &quot;TeamIncidentCount&quot;: 0
+    },
+    {
+      &quot;CarIdx&quot;: 3,
+      &quot;UserName&quot;: &quot;Ian Sudol&quot;,
+      &quot;AbbrevName&quot;: &quot;&quot;,
+      &quot;Initials&quot;: &quot;&quot;,
+      &quot;UserID&quot;: 9702,
+      &quot;TeamID&quot;: 12,
+      &quot;TeamName&quot;: &quot;Ian Sudol&quot;,
+      &quot;CarNumber&quot;: &quot;3&quot;,
+      &quot;CarNumberRaw&quot;: 3,
+      &quot;CarPath&quot;: &quot;amvantageevogt3&quot;,
+      &quot;CarClassID&quot;: 0,
+      &quot;CarID&quot;: 206,
+      &quot;CarIsPaceCar&quot;: 0,
+      &quot;CarIsAI&quot;: 1,
+      &quot;CarIsElectric&quot;: 0,
+      &quot;CarScreenName&quot;: &quot;Aston Martin Vantage GT3 EVO&quot;,
+      &quot;CarScreenNameShort&quot;: &quot;AMR Vantage GT3 EVO&quot;,
+      &quot;CarCfg&quot;: -1,
+      &quot;CarCfgName&quot;: null,
+      &quot;CarCfgCustomPaintExt&quot;: null,
+      &quot;CarClassShortName&quot;: null,
+      &quot;CarClassRelSpeed&quot;: 100,
+      &quot;CarClassLicenseLevel&quot;: 0,
+      &quot;CarClassMaxFuelPct&quot;: &quot;1.000 %&quot;,
+      &quot;CarClassWeightPenalty&quot;: &quot;0.000 kg&quot;,
+      &quot;CarClassPowerAdjust&quot;: &quot;0.000 %&quot;,
+      &quot;CarClassDryTireSetLimit&quot;: &quot;0 %&quot;,
+      &quot;CarClassColor&quot;: 16777215,
+      &quot;CarClassEstLapTime&quot;: 102.5469,
+      &quot;IRating&quot;: 0,
+      &quot;LicLevel&quot;: 1,
+      &quot;LicSubLevel&quot;: 0,
+      &quot;LicString&quot;: &quot;R 0.00&quot;,
+      &quot;LicColor&quot;: 8913056,
+      &quot;IsSpectator&quot;: 0,
+      &quot;CarDesignStr&quot;: &quot;5,a0a0a0,a0a0a0,0AC700&quot;,
+      &quot;HelmetDesignStr&quot;: &quot;11,a0a0a0,a0a0a0,0AC700&quot;,
+      &quot;SuitDesignStr&quot;: &quot;2,a0a0a0,a0a0a0,0AC700&quot;,
+      &quot;BodyType&quot;: 0,
+      &quot;FaceType&quot;: 0,
+      &quot;HelmetType&quot;: 0,
+      &quot;CarNumberDesignStr&quot;: &quot;48,0,000000,FFFFFF,FFFFFF&quot;,
+      &quot;CarSponsor_1&quot;: 0,
+      &quot;CarSponsor_2&quot;: 0,
+      &quot;CurDriverIncidentCount&quot;: 0,
+      &quot;TeamIncidentCount&quot;: 0
+    },
+    {
+      &quot;CarIdx&quot;: 4,
+      &quot;UserName&quot;: &quot;Chris Yanchar&quot;,
+      &quot;AbbrevName&quot;: &quot;&quot;,
+      &quot;Initials&quot;: &quot;&quot;,
+      &quot;UserID&quot;: 9703,
+      &quot;TeamID&quot;: 13,
+      &quot;TeamName&quot;: &quot;Chris Yanchar&quot;,
+      &quot;CarNumber&quot;: &quot;777&quot;,
+      &quot;CarNumberRaw&quot;: 777,
+      &quot;CarPath&quot;: &quot;ferrari296gt3&quot;,
+      &quot;CarClassID&quot;: 0,
+      &quot;CarID&quot;: 173,
+      &quot;CarIsPaceCar&quot;: 0,
+      &quot;CarIsAI&quot;: 1,
+      &quot;CarIsElectric&quot;: 0,
+      &quot;CarScreenName&quot;: &quot;Ferrari 296 GT3&quot;,
+      &quot;CarScreenNameShort&quot;: &quot;Ferrari 296 GT3&quot;,
+      &quot;CarCfg&quot;: -1,
+      &quot;CarCfgName&quot;: null,
+      &quot;CarCfgCustomPaintExt&quot;: null,
+      &quot;CarClassShortName&quot;: null,
+      &quot;CarClassRelSpeed&quot;: 100,
+      &quot;CarClassLicenseLevel&quot;: 0,
+      &quot;CarClassMaxFuelPct&quot;: &quot;1.000 %&quot;,
+      &quot;CarClassWeightPenalty&quot;: &quot;0.000 kg&quot;,
+      &quot;CarClassPowerAdjust&quot;: &quot;0.000 %&quot;,
+      &quot;CarClassDryTireSetLimit&quot;: &quot;0 %&quot;,
+      &quot;CarClassColor&quot;: 16777215,
+      &quot;CarClassEstLapTime&quot;: 103.1952,
+      &quot;IRating&quot;: 0,
+      &quot;LicLevel&quot;: 1,
+      &quot;LicSubLevel&quot;: 0,
+      &quot;LicString&quot;: &quot;R 0.00&quot;,
+      &quot;LicColor&quot;: 8913056,
+      &quot;IsSpectator&quot;: 0,
+      &quot;CarDesignStr&quot;: &quot;9,000080,210042,00FF00&quot;,
+      &quot;HelmetDesignStr&quot;: &quot;17,FF0000,400080,00FF00&quot;,
+      &quot;SuitDesignStr&quot;: &quot;29,2e358f,ec232d,0a0a0a&quot;,
+      &quot;BodyType&quot;: 0,
+      &quot;FaceType&quot;: 0,
+      &quot;HelmetType&quot;: 0,
+      &quot;CarNumberDesignStr&quot;: &quot;15,2,ffffff,0a0a0a,2e358f&quot;,
+      &quot;CarSponsor_1&quot;: 0,
+      &quot;CarSponsor_2&quot;: 0,
+      &quot;CurDriverIncidentCount&quot;: 0,
+      &quot;TeamIncidentCount&quot;: 0
+    },
+    {
+      &quot;CarIdx&quot;: 5,
+      &quot;UserName&quot;: &quot;Derek Edgerton&quot;,
+      &quot;AbbrevName&quot;: &quot;&quot;,
+      &quot;Initials&quot;: &quot;&quot;,
+      &quot;UserID&quot;: 9704,
+      &quot;TeamID&quot;: 14,
+      &quot;TeamName&quot;: &quot;Derek Edgerton&quot;,
+      &quot;CarNumber&quot;: &quot;32&quot;,
+      &quot;CarNumberRaw&quot;: 32,
+      &quot;CarPath&quot;: &quot;ferrari499p&quot;,
+      &quot;CarClassID&quot;: 0,
+      &quot;CarID&quot;: 196,
+      &quot;CarIsPaceCar&quot;: 0,
+      &quot;CarIsAI&quot;: 1,
+      &quot;CarIsElectric&quot;: 0,
+      &quot;CarScreenName&quot;: &quot;Ferrari 499P&quot;,
+      &quot;CarScreenNameShort&quot;: &quot;Ferrari 499P&quot;,
+      &quot;CarCfg&quot;: -1,
+      &quot;CarCfgName&quot;: null,
+      &quot;CarCfgCustomPaintExt&quot;: null,
+      &quot;CarClassShortName&quot;: null,
+      &quot;CarClassRelSpeed&quot;: 100,
+      &quot;CarClassLicenseLevel&quot;: 0,
+      &quot;CarClassMaxFuelPct&quot;: &quot;1.000 %&quot;,
+      &quot;CarClassWeightPenalty&quot;: &quot;0.000 kg&quot;,
+      &quot;CarClassPowerAdjust&quot;: &quot;0.000 %&quot;,
+      &quot;CarClassDryTireSetLimit&quot;: &quot;0 %&quot;,
+      &quot;CarClassColor&quot;: 16777215,
+      &quot;CarClassEstLapTime&quot;: 92.099,
+      &quot;IRating&quot;: 0,
+      &quot;LicLevel&quot;: 1,
+      &quot;LicSubLevel&quot;: 0,
+      &quot;LicString&quot;: &quot;R 0.00&quot;,
+      &quot;LicColor&quot;: 8913056,
+      &quot;IsSpectator&quot;: 0,
+      &quot;CarDesignStr&quot;: &quot;2,FF0000,00FF00,0000FF&quot;,
+      &quot;HelmetDesignStr&quot;: &quot;2,2f2a30,fa6f96,00cda6&quot;,
+      &quot;SuitDesignStr&quot;: &quot;2,2f2a30,fa6f96,00cda6&quot;,
+      &quot;BodyType&quot;: 0,
+      &quot;FaceType&quot;: 0,
+      &quot;HelmetType&quot;: 0,
+      &quot;CarNumberDesignStr&quot;: &quot;0,0,FFFFFF,777777,000000&quot;,
+      &quot;CarSponsor_1&quot;: 0,
+      &quot;CarSponsor_2&quot;: 0,
+      &quot;CurDriverIncidentCount&quot;: 0,
+      &quot;TeamIncidentCount&quot;: 0
+    },
+    {
+      &quot;CarIdx&quot;: 6,
+      &quot;UserName&quot;: &quot;Richard Jobling&quot;,
+      &quot;AbbrevName&quot;: &quot;&quot;,
+      &quot;Initials&quot;: &quot;&quot;,
+      &quot;UserID&quot;: 9705,
+      &quot;TeamID&quot;: 15,
+      &quot;TeamName&quot;: &quot;Richard Jobling&quot;,
+      &quot;CarNumber&quot;: &quot;4&quot;,
+      &quot;CarNumberRaw&quot;: 4,
+      &quot;CarPath&quot;: &quot;mercedesamgevogt3&quot;,
+      &quot;CarClassID&quot;: 0,
+      &quot;CarID&quot;: 156,
+      &quot;CarIsPaceCar&quot;: 0,
+      &quot;CarIsAI&quot;: 1,
+      &quot;CarIsElectric&quot;: 0,
+      &quot;CarScreenName&quot;: &quot;Mercedes-AMG GT3 2020&quot;,
+      &quot;CarScreenNameShort&quot;: &quot;Mercedes GT3 2020&quot;,
+      &quot;CarCfg&quot;: -1,
+      &quot;CarCfgName&quot;: null,
+      &quot;CarCfgCustomPaintExt&quot;: null,
+      &quot;CarClassShortName&quot;: null,
+      &quot;CarClassRelSpeed&quot;: 100,
+      &quot;CarClassLicenseLevel&quot;: 0,
+      &quot;CarClassMaxFuelPct&quot;: &quot;1.000 %&quot;,
+      &quot;CarClassWeightPenalty&quot;: &quot;0.000 kg&quot;,
+      &quot;CarClassPowerAdjust&quot;: &quot;0.000 %&quot;,
+      &quot;CarClassDryTireSetLimit&quot;: &quot;0 %&quot;,
+      &quot;CarClassColor&quot;: 16777215,
+      &quot;CarClassEstLapTime&quot;: 103.4432,
+      &quot;IRating&quot;: 0,
+      &quot;LicLevel&quot;: 1,
+      &quot;LicSubLevel&quot;: 0,
+      &quot;LicString&quot;: &quot;R 0.00&quot;,
+      &quot;LicColor&quot;: 8913056,
+      &quot;IsSpectator&quot;: 0,
+      &quot;CarDesignStr&quot;: &quot;24,000000,0094D8,FFDC00&quot;,
+      &quot;HelmetDesignStr&quot;: &quot;63,000000,0094D8,FFDC00&quot;,
+      &quot;SuitDesignStr&quot;: &quot;30,000000,0094D8,FFDC00&quot;,
+      &quot;BodyType&quot;: 0,
+      &quot;FaceType&quot;: 0,
+      &quot;HelmetType&quot;: 0,
+      &quot;CarNumberDesignStr&quot;: &quot;48,0,000000,FFFFFF,FFFFFF&quot;,
+      &quot;CarSponsor_1&quot;: 290,
+      &quot;CarSponsor_2&quot;: 0,
+      &quot;CurDriverIncidentCount&quot;: 0,
+      &quot;TeamIncidentCount&quot;: 0
+    },
+    {
+      &quot;CarIdx&quot;: 7,
+      &quot;UserName&quot;: &quot;Susan Flint&quot;,
+      &quot;AbbrevName&quot;: &quot;&quot;,
+      &quot;Initials&quot;: &quot;&quot;,
+      &quot;UserID&quot;: 9706,
+      &quot;TeamID&quot;: 16,
+      &quot;TeamName&quot;: &quot;Susan Flint&quot;,
+      &quot;CarNumber&quot;: &quot;8&quot;,
+      &quot;CarNumberRaw&quot;: 8,
+      &quot;CarPath&quot;: &quot;porsche9922cup&quot;,
+      &quot;CarClassID&quot;: 0,
+      &quot;CarID&quot;: 208,
+      &quot;CarIsPaceCar&quot;: 0,
+      &quot;CarIsAI&quot;: 1,
+      &quot;CarIsElectric&quot;: 0,
+      &quot;CarScreenName&quot;: &quot;Porsche 911 Cup (992.2)&quot;,
+      &quot;CarScreenNameShort&quot;: &quot;Porsche 911 Cup (992.2)&quot;,
+      &quot;CarCfg&quot;: -1,
+      &quot;CarCfgName&quot;: null,
+      &quot;CarCfgCustomPaintExt&quot;: null,
+      &quot;CarClassShortName&quot;: null,
+      &quot;CarClassRelSpeed&quot;: 100,
+      &quot;CarClassLicenseLevel&quot;: 0,
+      &quot;CarClassMaxFuelPct&quot;: &quot;1.000 %&quot;,
+      &quot;CarClassWeightPenalty&quot;: &quot;0.000 kg&quot;,
+      &quot;CarClassPowerAdjust&quot;: &quot;0.000 %&quot;,
+      &quot;CarClassDryTireSetLimit&quot;: &quot;0 %&quot;,
+      &quot;CarClassColor&quot;: 16777215,
+      &quot;CarClassEstLapTime&quot;: 106.3155,
+      &quot;IRating&quot;: 0,
+      &quot;LicLevel&quot;: 1,
+      &quot;LicSubLevel&quot;: 0,
+      &quot;LicString&quot;: &quot;R 0.00&quot;,
+      &quot;LicColor&quot;: 8913056,
+      &quot;IsSpectator&quot;: 0,
+      &quot;CarDesignStr&quot;: &quot;20,E41D36,FFFFFF,E41D36&quot;,
+      &quot;HelmetDesignStr&quot;: &quot;56,E41D36,FFFFFF,E41D36&quot;,
+      &quot;SuitDesignStr&quot;: &quot;28,E41D36,FFFFFF,E41D36&quot;,
+      &quot;BodyType&quot;: 0,
+      &quot;FaceType&quot;: 0,
+      &quot;HelmetType&quot;: 0,
+      &quot;CarNumberDesignStr&quot;: &quot;0,0,ffffff,777777,000000&quot;,
+      &quot;CarSponsor_1&quot;: 0,
+      &quot;CarSponsor_2&quot;: 0,
+      &quot;CurDriverIncidentCount&quot;: 0,
+      &quot;TeamIncidentCount&quot;: 0
+    },
+    {
+      &quot;CarIdx&quot;: 8,
+      &quot;UserName&quot;: &quot;Jonas Meyer&quot;,
+      &quot;AbbrevName&quot;: &quot;&quot;,
+      &quot;Initials&quot;: &quot;&quot;,
+      &quot;UserID&quot;: 9707,
+      &quot;TeamID&quot;: 17,
+      &quot;TeamName&quot;: &quot;Jonas Meyer&quot;,
+      &quot;CarNumber&quot;: &quot;323&quot;,
+      &quot;CarNumberRaw&quot;: 323,
+      &quot;CarPath&quot;: &quot;porsche992rgt3&quot;,
+      &quot;CarClassID&quot;: 0,
+      &quot;CarID&quot;: 169,
+      &quot;CarIsPaceCar&quot;: 0,
+      &quot;CarIsAI&quot;: 1,
+      &quot;CarIsElectric&quot;: 0,
+      &quot;CarScreenName&quot;: &quot;Porsche 911 GT3 R (992)&quot;,
+      &quot;CarScreenNameShort&quot;: &quot;Porsche 911 GT3 R (992)&quot;,
+      &quot;CarCfg&quot;: -1,
+      &quot;CarCfgName&quot;: null,
+      &quot;CarCfgCustomPaintExt&quot;: null,
+      &quot;CarClassShortName&quot;: null,
+      &quot;CarClassRelSpeed&quot;: 100,
+      &quot;CarClassLicenseLevel&quot;: 0,
+      &quot;CarClassMaxFuelPct&quot;: &quot;1.000 %&quot;,
+      &quot;CarClassWeightPenalty&quot;: &quot;0.000 kg&quot;,
+      &quot;CarClassPowerAdjust&quot;: &quot;0.000 %&quot;,
+      &quot;CarClassDryTireSetLimit&quot;: &quot;0 %&quot;,
+      &quot;CarClassColor&quot;: 16777215,
+      &quot;CarClassEstLapTime&quot;: 103.1874,
+      &quot;IRating&quot;: 0,
+      &quot;LicLevel&quot;: 1,
+      &quot;LicSubLevel&quot;: 0,
+      &quot;LicString&quot;: &quot;R 0.00&quot;,
+      &quot;LicColor&quot;: 8913056,
+      &quot;IsSpectator&quot;: 0,
+      &quot;CarDesignStr&quot;: &quot;1,FF0000,00FF00,0000FF&quot;,
+      &quot;HelmetDesignStr&quot;: &quot;51,312783,312783,76E2CF&quot;,
+      &quot;SuitDesignStr&quot;: &quot;34,312783,312783,76E2CF&quot;,
+      &quot;BodyType&quot;: 0,
+      &quot;FaceType&quot;: 0,
+      &quot;HelmetType&quot;: 0,
+      &quot;CarNumberDesignStr&quot;: &quot;48,0,000000,FFFFFF,FFFFFF&quot;,
+      &quot;CarSponsor_1&quot;: 0,
+      &quot;CarSponsor_2&quot;: 0,
+      &quot;CurDriverIncidentCount&quot;: 0,
+      &quot;TeamIncidentCount&quot;: 0
+    },
+    {
+      &quot;CarIdx&quot;: 9,
+      &quot;UserName&quot;: &quot;Jeff Rubin&quot;,
+      &quot;AbbrevName&quot;: &quot;&quot;,
+      &quot;Initials&quot;: &quot;&quot;,
+      &quot;UserID&quot;: 9708,
+      &quot;TeamID&quot;: 18,
+      &quot;TeamName&quot;: &quot;Jeff Rubin&quot;,
+      &quot;CarNumber&quot;: &quot;5&quot;,
+      &quot;CarNumberRaw&quot;: 5,
+      &quot;CarPath&quot;: &quot;porsche963gtp&quot;,
+      &quot;CarClassID&quot;: 0,
+      &quot;CarID&quot;: 174,
+      &quot;CarIsPaceCar&quot;: 0,
+      &quot;CarIsAI&quot;: 1,
+      &quot;CarIsElectric&quot;: 0,
+      &quot;CarScreenName&quot;: &quot;Porsche 963 GTP&quot;,
+      &quot;CarScreenNameShort&quot;: &quot;Porsche 963&quot;,
+      &quot;CarCfg&quot;: -1,
+      &quot;CarCfgName&quot;: null,
+      &quot;CarCfgCustomPaintExt&quot;: null,
+      &quot;CarClassShortName&quot;: null,
+      &quot;CarClassRelSpeed&quot;: 100,
+      &quot;CarClassLicenseLevel&quot;: 0,
+      &quot;CarClassMaxFuelPct&quot;: &quot;1.000 %&quot;,
+      &quot;CarClassWeightPenalty&quot;: &quot;0.000 kg&quot;,
+      &quot;CarClassPowerAdjust&quot;: &quot;0.000 %&quot;,
+      &quot;CarClassDryTireSetLimit&quot;: &quot;0 %&quot;,
+      &quot;CarClassColor&quot;: 16777215,
+      &quot;CarClassEstLapTime&quot;: 92.2485,
+      &quot;IRating&quot;: 0,
+      &quot;LicLevel&quot;: 1,
+      &quot;LicSubLevel&quot;: 0,
+      &quot;LicString&quot;: &quot;R 0.00&quot;,
+      &quot;LicColor&quot;: 8913056,
+      &quot;IsSpectator&quot;: 0,
+      &quot;CarDesignStr&quot;: &quot;23,CC0000,FFFFFF,000000&quot;,
+      &quot;HelmetDesignStr&quot;: &quot;6,CC0000,FFFFFF,000000&quot;,
+      &quot;SuitDesignStr&quot;: &quot;21,CC0000,FFFFFF,000000&quot;,
+      &quot;BodyType&quot;: 0,
+      &quot;FaceType&quot;: 0,
+      &quot;HelmetType&quot;: 0,
+      &quot;CarNumberDesignStr&quot;: &quot;7,0,FFFFFF,000000,CC0000&quot;,
+      &quot;CarSponsor_1&quot;: 0,
+      &quot;CarSponsor_2&quot;: 0,
+      &quot;CurDriverIncidentCount&quot;: 0,
+      &quot;TeamIncidentCount&quot;: 0
+    },
+    {
+      &quot;CarIdx&quot;: 10,
+      &quot;UserName&quot;: &quot;Aussie Greg Hill&quot;,
+      &quot;AbbrevName&quot;: &quot;&quot;,
+      &quot;Initials&quot;: &quot;&quot;,
+      &quot;UserID&quot;: 9709,
+      &quot;TeamID&quot;: 19,
+      &quot;TeamName&quot;: &quot;Aussie Greg Hill&quot;,
+      &quot;CarNumber&quot;: &quot;6&quot;,
+      &quot;CarNumberRaw&quot;: 6,
+      &quot;CarPath&quot;: &quot;dallarap217&quot;,
+      &quot;CarClassID&quot;: 0,
+      &quot;CarID&quot;: 128,
+      &quot;CarIsPaceCar&quot;: 0,
+      &quot;CarIsAI&quot;: 1,
+      &quot;CarIsElectric&quot;: 0,
+      &quot;CarScreenName&quot;: &quot;Dallara P217 LMP2&quot;,
+      &quot;CarScreenNameShort&quot;: &quot;Dallara P217 LMP2&quot;,
+      &quot;CarCfg&quot;: -1,
+      &quot;CarCfgName&quot;: null,
+      &quot;CarCfgCustomPaintExt&quot;: null,
+      &quot;CarClassShortName&quot;: null,
+      &quot;CarClassRelSpeed&quot;: 100,
+      &quot;CarClassLicenseLevel&quot;: 0,
+      &quot;CarClassMaxFuelPct&quot;: &quot;1.000 %&quot;,
+      &quot;CarClassWeightPenalty&quot;: &quot;0.000 kg&quot;,
+      &quot;CarClassPowerAdjust&quot;: &quot;0.000 %&quot;,
+      &quot;CarClassDryTireSetLimit&quot;: &quot;0 %&quot;,
+      &quot;CarClassColor&quot;: 16777215,
+      &quot;CarClassEstLapTime&quot;: 94.5768,
+      &quot;IRating&quot;: 0,
+      &quot;LicLevel&quot;: 1,
+      &quot;LicSubLevel&quot;: 0,
+      &quot;LicString&quot;: &quot;R 0.00&quot;,
+      &quot;LicColor&quot;: 8913056,
+      &quot;IsSpectator&quot;: 0,
+      &quot;CarDesignStr&quot;: &quot;13,ec232d,ffffff,2e358f&quot;,
+      &quot;HelmetDesignStr&quot;: &quot;42,ec232d,ffffff,2e358f&quot;,
+      &quot;SuitDesignStr&quot;: &quot;27,ec232d,ffffff,2e358f&quot;,
+      &quot;BodyType&quot;: 0,
+      &quot;FaceType&quot;: 0,
+      &quot;HelmetType&quot;: 0,
+      &quot;CarNumberDesignStr&quot;: &quot;15,2,ffffff,0a0a0a,2e358f&quot;,
+      &quot;CarSponsor_1&quot;: 2,
+      &quot;CarSponsor_2&quot;: 0,
+      &quot;CurDriverIncidentCount&quot;: 0,
+      &quot;TeamIncidentCount&quot;: 0
+    },
+    {
+      &quot;CarIdx&quot;: 11,
+      &quot;UserName&quot;: &quot;Vicente Maestre&quot;,
+      &quot;AbbrevName&quot;: &quot;&quot;,
+      &quot;Initials&quot;: &quot;&quot;,
+      &quot;UserID&quot;: 9710,
+      &quot;TeamID&quot;: 20,
+      &quot;TeamName&quot;: &quot;Vicente Maestre&quot;,
+      &quot;CarNumber&quot;: &quot;7&quot;,
+      &quot;CarNumberRaw&quot;: 7,
+      &quot;CarPath&quot;: &quot;fordmustanggt4&quot;,
+      &quot;CarClassID&quot;: 0,
+      &quot;CarID&quot;: 204,
+      &quot;CarIsPaceCar&quot;: 0,
+      &quot;CarIsAI&quot;: 1,
+      &quot;CarIsElectric&quot;: 0,
+      &quot;CarScreenName&quot;: &quot;Ford Mustang GT4&quot;,
+      &quot;CarScreenNameShort&quot;: &quot;Ford Mustang GT4&quot;,
+      &quot;CarCfg&quot;: -1,
+      &quot;CarCfgName&quot;: null,
+      &quot;CarCfgCustomPaintExt&quot;: null,
+      &quot;CarClassShortName&quot;: null,
+      &quot;CarClassRelSpeed&quot;: 100,
+      &quot;CarClassLicenseLevel&quot;: 0,
+      &quot;CarClassMaxFuelPct&quot;: &quot;1.000 %&quot;,
+      &quot;CarClassWeightPenalty&quot;: &quot;0.000 kg&quot;,
+      &quot;CarClassPowerAdjust&quot;: &quot;0.000 %&quot;,
+      &quot;CarClassDryTireSetLimit&quot;: &quot;0 %&quot;,
+      &quot;CarClassColor&quot;: 16777215,
+      &quot;CarClassEstLapTime&quot;: 114.5568,
+      &quot;IRating&quot;: 0,
+      &quot;LicLevel&quot;: 1,
+      &quot;LicSubLevel&quot;: 0,
+      &quot;LicString&quot;: &quot;R 0.00&quot;,
+      &quot;LicColor&quot;: 8913056,
+      &quot;IsSpectator&quot;: 0,
+      &quot;CarDesignStr&quot;: &quot;12,231F20,E31F26,231F20&quot;,
+      &quot;HelmetDesignStr&quot;: &quot;31,231F20,E31F26,231F20&quot;,
+      &quot;SuitDesignStr&quot;: &quot;8,231F20,E31F26,231F20&quot;,
+      &quot;BodyType&quot;: 0,
+      &quot;FaceType&quot;: 0,
+      &quot;HelmetType&quot;: 0,
+      &quot;CarNumberDesignStr&quot;: &quot;48,0,000000,FFFFFF,FFFFFF&quot;,
+      &quot;CarSponsor_1&quot;: 285,
+      &quot;CarSponsor_2&quot;: 175,
+      &quot;CurDriverIncidentCount&quot;: 0,
+      &quot;TeamIncidentCount&quot;: 0
+    },
+    {
+      &quot;CarIdx&quot;: 64,
+      &quot;UserName&quot;: &quot;Pace Car&quot;,
+      &quot;AbbrevName&quot;: &quot;&quot;,
+      &quot;Initials&quot;: &quot;&quot;,
+      &quot;UserID&quot;: -1,
+      &quot;TeamID&quot;: 0,
+      &quot;TeamName&quot;: &quot;Pace Car&quot;,
+      &quot;CarNumber&quot;: &quot;0&quot;,
+      &quot;CarNumberRaw&quot;: 0,
+      &quot;CarPath&quot;: &quot;safety pcsedan&quot;,
+      &quot;CarClassID&quot;: 11,
+      &quot;CarID&quot;: 136,
+      &quot;CarIsPaceCar&quot;: 1,
+      &quot;CarIsAI&quot;: 0,
+      &quot;CarIsElectric&quot;: 0,
+      &quot;CarScreenName&quot;: &quot;safety pcsedan&quot;,
+      &quot;CarScreenNameShort&quot;: &quot;safety pcsedan&quot;,
+      &quot;CarCfg&quot;: -1,
+      &quot;CarCfgName&quot;: null,
+      &quot;CarCfgCustomPaintExt&quot;: null,
+      &quot;CarClassShortName&quot;: null,
+      &quot;CarClassRelSpeed&quot;: 0,
+      &quot;CarClassLicenseLevel&quot;: 0,
+      &quot;CarClassMaxFuelPct&quot;: &quot;1.000 %&quot;,
+      &quot;CarClassWeightPenalty&quot;: &quot;0.000 kg&quot;,
+      &quot;CarClassPowerAdjust&quot;: &quot;0.000 %&quot;,
+      &quot;CarClassDryTireSetLimit&quot;: &quot;0 %&quot;,
+      &quot;CarClassColor&quot;: 16777215,
+      &quot;CarClassEstLapTime&quot;: 111.6202,
+      &quot;IRating&quot;: 0,
+      &quot;LicLevel&quot;: 1,
+      &quot;LicSubLevel&quot;: 0,
+      &quot;LicString&quot;: &quot;R 0.00&quot;,
+      &quot;LicColor&quot;: 16777215,
+      &quot;IsSpectator&quot;: 0,
+      &quot;CarDesignStr&quot;: &quot;0,ffffff,ffffff,ffffff&quot;,
+      &quot;HelmetDesignStr&quot;: &quot;0,ffffff,ffffff,ffffff&quot;,
+      &quot;SuitDesignStr&quot;: &quot;0,ffffff,ffffff,ffffff&quot;,
+      &quot;BodyType&quot;: 0,
+      &quot;FaceType&quot;: 0,
+      &quot;HelmetType&quot;: 0,
+      &quot;CarNumberDesignStr&quot;: &quot;0,0,ffffff,ffffff,ffffff&quot;,
+      &quot;CarSponsor_1&quot;: 0,
+      &quot;CarSponsor_2&quot;: 0,
+      &quot;CurDriverIncidentCount&quot;: 0,
+      &quot;TeamIncidentCount&quot;: 0
+    }
+  ]
+}</pre></details><details><summary>SplitTimeInfo</summary><pre>{
+  &quot;Sectors&quot;: [
+    {
+      &quot;SectorNum&quot;: 0,
+      &quot;SectorStartPct&quot;: 0
+    },
+    {
+      &quot;SectorNum&quot;: 1,
+      &quot;SectorStartPct&quot;: 0.356625
+    },
+    {
+      &quot;SectorNum&quot;: 2,
+      &quot;SectorStartPct&quot;: 0.644156
+    }
+  ]
+}</pre></details><details><summary>CarSetupInfo</summary><pre>null</pre></details></section>
+</body>
+</html>

@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import type { Weather } from '#schema/weather.schema.ts';
-import { WelcomePage } from '../../common/WelcomePage.js';
+import { WelcomePage800x480 } from '../../common/WelcomePage800x480.js';
 import { CompassRose } from './CompassRose.js';
 import './styles.css';
 
@@ -81,13 +81,13 @@ export const App = () => {
     };
   }, []);
 
-  if (!weather) return <WelcomePage subtitle="Weather" />;
+  if (!weather) return <WelcomePage800x480 subtitle="Weather" />;
 
   const kmh = (weather.windVelocityMs * 3.6).toFixed(1);
   const windLabel = COMPASS_LABELS[compassIndex(weather.windDirectionDeg)];
 
   return (
-    <div className="grid grid-rows-[100px_1fr] w-200 h-120 bg-bg text-white font-mono">
+    <div className="grid grid-rows-[100px_1fr] h-full bg-bg text-white font-mono">
       {/* Metric chips row */}
       <div className="grid grid-cols-[1fr_1fr_1fr_1fr_2fr] border-b border-border">
         <MetricChip
