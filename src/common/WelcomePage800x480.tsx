@@ -2,8 +2,8 @@ type Props = {
   subtitle: string;
 };
 
-export const WelcomePage = ({ subtitle }: Props) => (
-  <div className="relative grid place-items-center w-200 h-120 bg-bg font-mono overflow-hidden">
+export const WelcomePage800x480 = ({ subtitle }: Props) => (
+  <div className="relative grid place-items-center w-full h-full bg-bg font-mono overflow-hidden">
     <div className="absolute top-8 left-8 w-10 h-10 border-t border-l border-border-player" />
     <div className="absolute top-8 right-8 w-10 h-10 border-t border-r border-border-player" />
     <div className="absolute bottom-8 left-8 w-10 h-10 border-b border-l border-border-player" />

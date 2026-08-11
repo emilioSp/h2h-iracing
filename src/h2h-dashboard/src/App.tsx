@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { Head2Head } from '#schema/head2head.schema.ts';
-import { WelcomePage } from '../../common/WelcomePage.js';
+import { WelcomePage800x480 } from '../../common/WelcomePage800x480.js';
 import { CarCard } from './CarCard.js';
 import './styles.css';
 
@@ -36,11 +36,11 @@ export const App = () => {
   }, []);
 
   if (!h2h) {
-    return <WelcomePage subtitle="Head to Head" />;
+    return <WelcomePage800x480 subtitle="Head to Head" />;
   }
 
   return (
-    <div className="grid grid-rows-[120px_240px_120px] w-200 h-120 bg-bg text-white">
+    <div className="grid grid-rows-[120px_240px_120px] h-full bg-bg text-white">
       {/* Ahead */}
       <div className="bg-card">
         {h2h.ahead ? (

@@ -146,34 +146,36 @@ overlay), whichever matches what Phase 0 decided.
 - `styles.css` copies the `@theme` colour block, then sets `html, body, #root` to the agreed size.
   Transparent overlays set `background-color: transparent`; panels use `var(--color-bg)`.
 - `styles.css` also needs `@source "../../common";` on the line after `@import "tailwindcss";`.
-  `WelcomePage` lives outside the dashboard's Vite root, so Tailwind never scans it otherwise and
-  the welcome screen renders as unstyled grey text on no background. Every dashboard except
-  `spotter-dashboard` has this line — do not copy the spotter's `styles.css` and forget it.
+  The welcome pages live outside the dashboard's Vite root, so Tailwind never scans them otherwise
+  and the welcome screen renders as unstyled grey text on no background. All six dashboards have
+  this line; keep it when you copy one.
 - `App.tsx` copies the `EventSource` + 10s-retry effect from `car-dashboard/src/App.tsx` and
   points it at `/sse/<name>`.
-- **Every dashboard shows `<WelcomePage subtitle="..." />` while disconnected, transparent overlays
-  included.** The user asked for this explicitly: an overlay that is invisible before the sim is
-  running looks broken, and there is no way to tell a working overlay from a dead one. Hiding is
-  for *after* the stream connects, so the two states are separate checks:
+- **Every dashboard shows a welcome page while disconnected, transparent overlays included.** The
+  user asked for this explicitly: an overlay that is invisible before the sim is running looks
+  broken, and there is no way to tell a working overlay from a dead one. Hiding is for *after* the
+  stream connects, so the two states are separate checks:
 
   ```tsx
-  if (!payload) return <WelcomePage subtitle="Traffic" />;  // no session yet
-  if (payload.cars.length === 0) return null;               // live, nothing to show
+  if (!payload) return <WelcomePage500x200 subtitle="Traffic" />;  // no session yet
+  if (payload.cars.length === 0) return null;                     // live, nothing to show
   ```
 
-- `WelcomePage` is a hardcoded 800x480 panel. On a smaller overlay it must be scaled, and a
-  transform does not change the layout box — centring the oversized box with a grid lets it
-  overflow and get clipped. Anchor it instead, with the left offset worked out by hand:
+- **`src/common/` holds one welcome page per overlay size.** Import the one that matches your
+  canvas — do not scale a different one with a CSS transform:
 
-  ```tsx
-  <div className="relative h-50 w-125">
-    <div className="absolute top-0 left-[83px] origin-top-left scale-[0.4167]">
-      <WelcomePage subtitle="Traffic" />
-    </div>
-  </div>
-  ```
+  | Component | Canvas | Used by |
+  |---|---|---|
+  | `WelcomePage800x480` | 800x480 | h2h, weather, car, fuel |
+  | `WelcomePage800x200` | 800x200 | spotter |
+  | `WelcomePage500x200` | 500x200 | traffic |
 
-  `0.4167` is `200/480`, and `83px` is `(500 - 800 * 0.4167) / 2`.
+  A new canvas size needs a new file following the same name pattern, designed for that shape
+  rather than scaled. One design does not survive both: the 800x480 content column is 294px tall
+  and simply does not fit a 200px strip, which is why the tall layout stacks the logo above the
+  text and the short ones put it beside.
+
+  The size comes from `styles.css` alone, never from the component.
 
 - Types come from `#schema/<name>.schema.ts` as type-only imports, so they erase at build time.
 - Tailwind utilities only; prefer grid over flexbox. Register keyframe animations as a
@@ -340,8 +342,9 @@ the packager silently omitted. Every overlay was broken and every dev-mode check
 | Putting a shared SDK enum in the service or in `#schema` | The repository cannot import from the service, and `#schema` is not in the release bundle. Define it in `irsdk.repository.ts`. |
 | Only testing in dev mode | `src/schema` and the test fixtures exist on disk in dev. Extract the zip and start the packaged server before calling it done. |
 | Trusting a green Stop hook | `tsc` errors go to stdout; read the build output. |
-| A transparent overlay that returns `null` while disconnected | It looks broken and cannot be told apart from a dead one. Show `WelcomePage` until the stream connects; hide only after. |
-| Copying `spotter-dashboard/src/styles.css` verbatim | It is the one dashboard with no `@source "../../common";`, so `WelcomePage` renders unstyled. |
+| A transparent overlay that returns `null` while disconnected | It looks broken and cannot be told apart from a dead one. Show the welcome page until the stream connects; hide only after. |
+| Dropping `@source "../../common";` from `styles.css` | Tailwind stops scanning the welcome pages and the screen renders as unstyled grey text. |
+| Scaling a welcome page with a CSS transform to fit a smaller canvas | Import the `WelcomePage<W>x<H>` for your canvas, or add one. A transform does not change the layout box, so the parent cannot centre it. |
 | Committing the work | The user commits. Leave the tree dirty and summarise what changed. |
 
 ## File inventory

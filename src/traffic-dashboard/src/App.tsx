@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { TRAFFIC_WINDOW_SECONDS } from '#common/constant.ts';
 import type { Traffic, TrafficCar } from '#schema/traffic.schema.ts';
-import { WelcomePage } from '../../common/WelcomePage.js';
+import { WelcomePage500x200 } from '../../common/WelcomePage500x200.js';
 import { licenseColor } from './format.ts';
 import './styles.css';
 
@@ -76,25 +76,12 @@ export const App = () => {
     };
   }, []);
 
-  // No session yet: show the welcome page like the other overlays. Once the
-  // session is live the overlay goes back to being invisible until a faster
-  // car closes in.
-  // WelcomePage is a fixed 800x480 panel. Scale it to the 200px height of this
-  // overlay and centre the resulting 333px width by hand: the transform does
-  // not change the layout box, so the parent cannot centre it for us.
-  if (!traffic)
-    return (
-      <div className="relative h-50 w-125">
-        <div className="absolute top-0 left-[83px] origin-top-left scale-[0.4167]">
-          <WelcomePage subtitle="Traffic" />
-        </div>
-      </div>
-    );
+  if (!traffic) return <WelcomePage500x200 subtitle="Traffic" />;
 
   if (traffic.cars.length === 0) return null;
 
   return (
-    <div className="relative h-50 w-125">
+    <div className="relative h-full">
       {/* Cars arrive sorted nearest first, so the nearest row stacks on top. */}
       {traffic.cars.map((car, index) => (
         <Row key={car.carIdx} car={car} zIndex={traffic.cars.length - index} />
