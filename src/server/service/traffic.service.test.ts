@@ -62,7 +62,7 @@ type RunInput = {
   drivers: Driver[];
   lapDistPct: number[];
   lapsCompleted?: number[];
-  onPitRoad?: number[];
+  onPitRoad?: boolean[];
 };
 
 const run = ({
@@ -154,7 +154,7 @@ describe('findTrafficBehind', () => {
       run({
         drivers: [buildDriver({ carIdx: 1 })],
         lapDistPct: [0.2, 0.199],
-        onPitRoad: [0, 1],
+        onPitRoad: [false, true],
       }),
     ).toEqual([]);
   });

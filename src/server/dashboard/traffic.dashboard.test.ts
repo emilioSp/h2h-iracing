@@ -48,7 +48,11 @@ beforeEach(() => {
     0.2, 0.199, 0.198,
   ]);
   vi.spyOn(iracingRepository, 'getLapsCompleted').mockResolvedValue([0, 0, 0]);
-  vi.spyOn(iracingRepository, 'getOnPitRoad').mockResolvedValue([0, 0, 0]);
+  vi.spyOn(iracingRepository, 'getOnPitRoad').mockResolvedValue([
+    false,
+    false,
+    false,
+  ]);
   vi.spyOn(driverRepository, 'getCarsIdx').mockResolvedValue([0, 1, 2]);
   vi.spyOn(driverRepository, 'getDriverInfo').mockImplementation(
     (carIdx: number) => drivers.find((d) => d.carIdx === carIdx) ?? null,
@@ -82,7 +86,11 @@ describe('computeTraffic', () => {
   });
 
   it('reports nothing when the player is on the pit road', async () => {
-    vi.spyOn(iracingRepository, 'getOnPitRoad').mockResolvedValue([1, 0, 0]);
+    vi.spyOn(iracingRepository, 'getOnPitRoad').mockResolvedValue([
+      true,
+      false,
+      false,
+    ]);
 
     expect(await computeTraffic()).toEqual({ cars: [] });
   });
