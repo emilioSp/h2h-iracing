@@ -1,5 +1,6 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { ReferenceLap } from '#repository/reference-lap.repository.ts';
+import * as referenceLapRepository from '#repository/reference-lap.repository.ts';
 import type { Driver } from '#schema/driver.schema.ts';
 import {
   getReferenceInterval,
@@ -52,7 +53,9 @@ const buildReferenceLap = (): ReferenceLap => {
 };
 
 beforeEach(() => {
+  vi.restoreAllMocks();
   initReferenceInterval(TEST_TRACK_LENGTH_METERS);
+  vi.spyOn(referenceLapRepository, 'getRefLap').mockReturnValue(null);
 });
 
 type RunInput = {
@@ -60,7 +63,6 @@ type RunInput = {
   lapDistPct: number[];
   lapsCompleted?: number[];
   onPitRoad?: number[];
-  refLap?: ReferenceLap | null;
 };
 
 const run = ({
@@ -68,7 +70,6 @@ const run = ({
   lapDistPct,
   lapsCompleted = [],
   onPitRoad = [],
-  refLap = null,
 }: RunInput) =>
   findTrafficBehind({
     playerCarIdx: PLAYER_CAR_IDX,
@@ -77,7 +78,6 @@ const run = ({
     lapDistPct,
     lapsCompleted,
     onPitRoad,
-    getRefLapFor: () => refLap,
   });
 
 describe('isFasterCar', () => {
@@ -214,11 +214,14 @@ describe('findTrafficBehind', () => {
   });
 
   it('uses the reference lap when the car has enough laps', () => {
+    vi.spyOn(referenceLapRepository, 'getRefLap').mockReturnValue(
+      buildReferenceLap(),
+    );
+
     const cars = run({
       drivers: [buildDriver({ carIdx: 1 })],
       lapDistPct: [0.2, 0.19],
       lapsCompleted: [4, 4],
-      refLap: buildReferenceLap(),
     });
 
     // The reference lap runs at 100 s, so 1% of the lap is 1 s.
@@ -226,11 +229,14 @@ describe('findTrafficBehind', () => {
   });
 
   it('falls back to the estimate when the car has too few laps', () => {
+    vi.spyOn(referenceLapRepository, 'getRefLap').mockReturnValue(
+      buildReferenceLap(),
+    );
+
     const cars = run({
       drivers: [buildDriver({ carIdx: 1 })],
       lapDistPct: [0.2, 0.19],
       lapsCompleted: [1, 1],
-      refLap: buildReferenceLap(),
     });
 
     // The class lap time is 94.5768 s, so 1% of the lap is 0.9458 s.

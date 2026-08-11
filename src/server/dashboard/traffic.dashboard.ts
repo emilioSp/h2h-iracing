@@ -5,7 +5,6 @@ import {
   getOnPitRoad,
   getPlayerCarIdx,
 } from '#repository/irsdk.repository.ts';
-import { getRefLap } from '#repository/reference-lap.repository.ts';
 import type { Driver } from '#schema/driver.schema.ts';
 import type { Traffic } from '#schema/traffic.schema.ts';
 import { findTrafficBehind } from '#service/traffic.service.ts';
@@ -34,7 +33,6 @@ export const computeTraffic = async (): Promise<Traffic> => {
       lapDistPct: await getLapDistPct(),
       lapsCompleted: await getLapsCompleted(),
       onPitRoad,
-      getRefLapFor: getRefLap,
     }),
   };
 };

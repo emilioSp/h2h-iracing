@@ -1,5 +1,8 @@
 import { TRAFFIC_WINDOW_SECONDS } from '#common/constant.ts';
-import type { ReferenceLap } from '#repository/reference-lap.repository.ts';
+import {
+  getRefLap,
+  type ReferenceLap,
+} from '#repository/reference-lap.repository.ts';
 import type { Driver } from '#schema/driver.schema.ts';
 import type { TrafficCar } from '#schema/traffic.schema.ts';
 import { guessCarClass } from '#server/utils/guess-car-class.ts';
@@ -61,7 +64,6 @@ type FindTrafficBehindInput = {
   lapDistPct: number[];
   lapsCompleted: number[];
   onPitRoad: number[];
-  getRefLapFor: (carIdx: number) => ReferenceLap | null;
 };
 
 export const findTrafficBehind = ({
@@ -71,7 +73,6 @@ export const findTrafficBehind = ({
   lapDistPct,
   lapsCompleted,
   onPitRoad,
-  getRefLapFor,
 }: FindTrafficBehindInput): TrafficCar[] => {
   const playerPct = lapDistPct[playerCarIdx];
   if (playerPct === undefined || playerPct < 0) return [];
@@ -97,7 +98,7 @@ export const findTrafficBehind = ({
     if (wrapLapDelta(playerPct - carPct) < 0) continue;
 
     const gapSeconds = getGapSeconds({
-      refLap: getRefLapFor(carIdx),
+      refLap: getRefLap(carIdx),
       classLapTime: driver.classEstLapTime,
       playerPct,
       carPct,
