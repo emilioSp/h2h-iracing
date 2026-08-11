@@ -30,12 +30,16 @@ turned out not to exist anywhere in shared memory — the whole algorithm had to
 lap-distance deltas instead. Ten minutes of probing saves a rewrite.
 
 ```bash
-# List every var whose name matches a keyword
-node .claude/skills/new-dashboard/scripts/probe-sdk.mjs --search tire
-
-# Print live values from the mock dump
-node .claude/skills/new-dashboard/scripts/probe-sdk.mjs CAR_IDX_LAP_DIST_PCT SPEED
+npm run inspect-memory-dump
 ```
+
+This reads the dump at `DUMP_FILE_PATH` and writes `examples/dump-report.html` — every telemetry
+variable with all of its values, plus drivers, cars, car classes and all seven session-info
+sections. Open it and search the page for your keyword. Point `DUMP_FILE_PATH` at a different
+fixture to inspect another session.
+
+The report shows what a given dump actually contains, which is the question that matters: a
+variable declared in `VARS` is not proof that the sim fills it in your session.
 
 Also read the doc comments in
 `node_modules/@emiliosp/node-iracing-sdk/dist/vars.d.ts` — they carry units and semantics that
@@ -247,7 +251,8 @@ export const getCarLeftRight = withConnect((): number =>
 
 Keeping the fake here rather than in the dashboard keeps the orchestrator's real/mock code paths
 identical, so what you see in dev is what runs live. Check whether the dump contains a usable
-scenario at all — the probe script prints per-car values so you can pick a car index that does.
+scenario at all — the report's Cars table lists every car index side by side, so you can pick one
+that does.
 
 ## Verify
 

@@ -9,6 +9,7 @@
   "scripts": {
     "server:start:dev": "npm run h2h:build & npm run weather:build & npm run car:build & npm run fuel:build & npm run spotter:build & DATA_MODE=mock node --env-file=.env --watch src/server/server.ts",
     "server:start": "node --env-file=.env src/server/server.ts",
+    "inspect-memory-dump": "node --env-file=.env examples/inspect-memory-dump.ts",
     "cli:start:dev": "DATA_MODE=mock node --env-file=.env examples/cli.ts",
     "cli:start": "node --env-file=.env examples/cli.ts",
     "cli:fuel:dev": "DATA_MODE=mock node --env-file=.env examples/fuel-cli.ts",
