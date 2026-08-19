@@ -7,8 +7,8 @@ import {
   updateFuelTracking,
 } from '#repository/fuel.repository.ts';
 
-const tick = (lap: number, fuel: number) => {
-  updateFuelTracking({ fuelLevel: fuel, playerLapCompleted: lap });
+const recordLapStart = (lapNumber: number, fuelLevel: number) => {
+  updateFuelTracking({ fuelLevel, playerLapCompleted: lapNumber });
 };
 
 beforeEach(() => {
@@ -16,84 +16,84 @@ beforeEach(() => {
 });
 
 describe('getMedianFuelPerLap', () => {
-  it('returns null before any crossing', () => {
+  it('When one fuel sample has no consumption delta then the median is null', () => {
+    recordLapStart(0, 50);
+
     expect(getMedianFuelPerLap()).toBeNull();
   });
 
-  it('returns null with only one sample (no delta yet)', () => {
-    tick(0, 50);
-    expect(getMedianFuelPerLap()).toBeNull();
-  });
+  it('When four valid fuel deltas are recorded then their median is returned', () => {
+    recordLapStart(0, 50);
+    recordLapStart(1, 48);
+    recordLapStart(2, 46);
+    recordLapStart(3, 44);
+    recordLapStart(4, 41);
 
-  it('returns median over valid deltas', () => {
-    tick(0, 50);
-    tick(1, 48); // delta 2
-    tick(2, 46); // delta 2
-    tick(3, 44); // delta 2
-    tick(4, 41); // delta 3
-    // sorted deltas: [2, 2, 2, 3] → median = 2
     expect(getMedianFuelPerLap()).toBe(2);
   });
 
-  it('excludes negative deltas (pit refuel)', () => {
-    tick(0, 50);
-    tick(1, 48); // delta 2
-    tick(2, 100); // delta -52 (refuel) — excluded
-    tick(3, 98); // delta 2
-    tick(4, 96); // delta 2
-    // fuelDeltas (positive only): [2, 2, 2] → median = 2
+  it('When fuel increases during a pit stop then the refuel delta is excluded', () => {
+    recordLapStart(0, 50);
+    recordLapStart(1, 48);
+    recordLapStart(2, 100);
+    recordLapStart(3, 98);
+    recordLapStart(4, 96);
+
     expect(getMedianFuelPerLap()).toBe(2);
   });
 
-  it('pit lap outlier absorbed by median', () => {
-    tick(0, 50);
-    tick(1, 48); // delta 2
-    tick(2, 46); // delta 2
-    tick(3, 44); // delta 2
-    tick(4, 42); // delta 2
-    tick(5, 32); // delta 10 (outlier)
+  it('When one lap consumes much more fuel then the median absorbs the outlier', () => {
+    recordLapStart(0, 50);
+    recordLapStart(1, 48); // delta 2
+    recordLapStart(2, 46); // delta 2
+    recordLapStart(3, 44); // delta 2
+    recordLapStart(4, 42); // delta 2
+    recordLapStart(5, 32); // delta 10 (outlier)
+
     expect(getMedianFuelPerLap()).toBe(2);
   });
 });
 
 describe('getFuelSamples', () => {
-  it('returns empty array initially', () => {
-    expect(getFuelSamples()).toEqual([]);
-  });
+  it('When two lap starts are recorded then both samples are returned', () => {
+    recordLapStart(0, 50);
+    recordLapStart(1, 48);
 
-  it('returns current samples after tracking', () => {
-    tick(0, 50);
-    tick(1, 48);
     expect(getFuelSamples()).toEqual([
       { lapNumber: 0, fuelAtLapStart: 50 },
       { lapNumber: 1, fuelAtLapStart: 48 },
     ]);
   });
 
-  it('clears after reset', () => {
-    tick(0, 50);
+  it('When fuel tracking is reset then recorded samples are cleared', () => {
+    recordLapStart(0, 50);
+
     resetFuelTracking();
+
     expect(getFuelSamples()).toEqual([]);
   });
 });
 
 describe('getLastLapFuelDelta', () => {
-  it('returns null with fewer than 2 samples', () => {
-    tick(0, 50);
+  it('When one fuel sample has no consumption delta then the last delta is null', () => {
+    recordLapStart(0, 50);
+
     expect(getLastLapFuelDelta()).toBeNull();
   });
 
-  it('returns fuel consumed on the last lap', () => {
-    tick(0, 50);
-    tick(1, 48);
-    tick(2, 45);
+  it('When three lap starts are recorded then the latest consumption is returned', () => {
+    recordLapStart(0, 50);
+    recordLapStart(1, 48);
+    recordLapStart(2, 45);
+
     expect(getLastLapFuelDelta()).toBe(3);
   });
 
-  it('returns null on pit refuel lap', () => {
-    tick(0, 50);
-    tick(1, 48);
-    tick(2, 100); // refuel
+  it('When fuel increases on the latest lap then the last delta is null', () => {
+    recordLapStart(0, 50);
+    recordLapStart(1, 48);
+    recordLapStart(2, 100);
+
     expect(getLastLapFuelDelta()).toBeNull();
   });
 });

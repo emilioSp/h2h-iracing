@@ -8,7 +8,7 @@ describe('computeEstimatedTimeRemaining', () => {
   const noFlag = 0;
   const checkeredFlag = 0x00000001;
 
-  it('leader at distPct=0: rounds partial lap up to the next S/F crossing', () => {
+  it('When the leader is at the start line with time remaining then one final lap is added', () => {
     expect(
       computeEstimatedTimeRemaining({
         timeRemaining: 120,
@@ -20,7 +20,7 @@ describe('computeEstimatedTimeRemaining', () => {
     ).toBeCloseTo(180);
   });
 
-  it('timeRemaining=0 (timer already expired): race ends at next S/F', () => {
+  it('When the timer expired while the leader is mid-lap then the race ends at the next crossing', () => {
     expect(
       computeEstimatedTimeRemaining({
         timeRemaining: 0,
@@ -32,7 +32,7 @@ describe('computeEstimatedTimeRemaining', () => {
     ).toBeCloseTo(30);
   });
 
-  it('timeRemaining < timeToNextSF: race ends at current crossing', () => {
+  it('When the timer expires before the next crossing then no extra lap is added', () => {
     expect(
       computeEstimatedTimeRemaining({
         timeRemaining: 30,
@@ -44,7 +44,7 @@ describe('computeEstimatedTimeRemaining', () => {
     ).toBeCloseTo(60);
   });
 
-  it('leader mid-lap with multiple laps remaining', () => {
+  it('When the leader is mid-lap with time for multiple laps then all remaining race time is returned', () => {
     expect(
       computeEstimatedTimeRemaining({
         timeRemaining: 1140,
@@ -56,7 +56,7 @@ describe('computeEstimatedTimeRemaining', () => {
     ).toBeCloseTo(1207.5);
   });
 
-  it('checkered flag: returns 0 regardless of time remaining', () => {
+  it('When the checkered flag is shown then the remaining time is zero', () => {
     expect(
       computeEstimatedTimeRemaining({
         timeRemaining: 600,
@@ -68,7 +68,7 @@ describe('computeEstimatedTimeRemaining', () => {
     ).toBe(0);
   });
 
-  it('null lap times: returns null', () => {
+  it('When lap times are unavailable then the remaining time is null', () => {
     expect(
       computeEstimatedTimeRemaining({
         timeRemaining: 600,
@@ -82,38 +82,41 @@ describe('computeEstimatedTimeRemaining', () => {
 });
 
 describe('computeFuelRefill', () => {
-  it('clamps to 0 when tank has enough fuel', () => {
+  it('When the tank has enough fuel then every refill value is clamped to zero', () => {
     const result = computeFuelRefill({
       fuelLevel: 10,
       medianFuelPerLap: 2,
       lapsRemaining: 3,
     });
-    expect(result.fuelRefillNoMarginLap).toBe(0);
-    expect(result.fuelRefillForHalfMarginLap).toBe(0);
-    expect(result.fuelRefillFor1MarginLap).toBe(0);
+
+    expect(result).toEqual({
+      fuelRefillNoMarginLap: 0,
+      fuelRefillForHalfMarginLap: 0,
+      fuelRefillFor1MarginLap: 0,
+    });
   });
 
-  it('ordering: noMargin ≤ halfMargin ≤ 1Margin', () => {
+  it('When the tank is empty then each safety margin adds its fuel allowance', () => {
     const result = computeFuelRefill({
       fuelLevel: 0,
       medianFuelPerLap: 2,
       lapsRemaining: 10,
     });
-    expect(result.fuelRefillNoMarginLap as number).toBeLessThanOrEqual(
-      result.fuelRefillForHalfMarginLap as number,
-    );
-    expect(result.fuelRefillForHalfMarginLap as number).toBeLessThanOrEqual(
-      result.fuelRefillFor1MarginLap as number,
-    );
+
+    expect(result).toEqual({
+      fuelRefillNoMarginLap: 20,
+      fuelRefillForHalfMarginLap: 21,
+      fuelRefillFor1MarginLap: 22,
+    });
   });
 
-  it('returns fractional fuel amount without rounding', () => {
-    // 3 laps * 2.3 l/lap = 6.9, tank=0 → 6.9
+  it('When fuel consumption is fractional then the refill value is not rounded', () => {
     const result = computeFuelRefill({
       fuelLevel: 0,
       medianFuelPerLap: 2.3,
       lapsRemaining: 3,
     });
+
     expect(result.fuelRefillNoMarginLap).toBeCloseTo(6.9);
   });
 });

@@ -1,14 +1,8 @@
 {
   "variables": {
-    "CarIdxLapDistPct": [
-      0.5
-    ],
-    "SessionTime": [
-      50
-    ],
-    "CarIdxOnPitRoad": [
-      false
-    ]
+    "CarIdxLapDistPct": [0.5],
+    "SessionTime": [50],
+    "CarIdxOnPitRoad": [false]
   },
   "sessionData": {
     "DriverInfo": {

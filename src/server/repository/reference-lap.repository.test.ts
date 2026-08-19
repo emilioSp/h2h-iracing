@@ -1,12 +1,12 @@
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import {
   addRecentLap,
   getRefLap,
   type ReferenceLap,
-  ROLLING_WINDOW_LAPS_SIZE,
+  resetReferenceLaps,
 } from '#repository/reference-lap.repository.ts';
 
-const common = {
+const commonLapData = {
   refPoints: new Map(),
   lastTrackedPct: 0.99,
   isOnPitRoad: false,
@@ -15,71 +15,64 @@ const common = {
 const lap1: ReferenceLap = {
   startTime: 0,
   finishTime: 45,
-  ...common,
+  ...commonLapData,
 };
 
 const lap2: ReferenceLap = {
   startTime: 50,
   finishTime: 99,
-  ...common,
+  ...commonLapData,
 };
 
 const lap3: ReferenceLap = {
   startTime: 99,
   finishTime: 150,
-  ...common,
+  ...commonLapData,
 };
 
 const lap4: ReferenceLap = {
   startTime: 150,
   finishTime: 200,
-  ...common,
+  ...commonLapData,
 };
 
 const lap5: ReferenceLap = {
   startTime: 200,
   finishTime: 248,
-  ...common,
+  ...commonLapData,
 };
 
 const lap6: ReferenceLap = {
   startTime: 248,
   finishTime: 300,
-  ...common,
+  ...commonLapData,
 };
 
-describe('getRefLap', () => {
-  it('returns 5 for the rolling window size', () => {
-    expect(ROLLING_WINDOW_LAPS_SIZE).toBe(5);
-  });
+beforeEach(() => {
+  resetReferenceLaps();
+});
 
-  it('returns null when no recent laps exist', () => {
+describe('getRefLap', () => {
+  it('When no recent laps exist for a car then its reference lap is null', () => {
     expect(getRefLap(0)).toBeNull();
   });
 
-  it('returns the fastest lap in the rolling window even if the window is not full', () => {
+  it('When the recent window is not full then its fastest lap is returned', () => {
     addRecentLap({ carIdx: 0, lap: lap1 });
     addRecentLap({ carIdx: 0, lap: lap2 });
     addRecentLap({ carIdx: 0, lap: lap3 });
+
     expect(getRefLap(0)).toBe(lap1);
   });
 
-  it('returns the fastest lap in the rolling window', () => {
-    addRecentLap({ carIdx: 0, lap: lap1 });
-    addRecentLap({ carIdx: 0, lap: lap2 });
-    addRecentLap({ carIdx: 0, lap: lap3 });
-    addRecentLap({ carIdx: 0, lap: lap4 });
-    addRecentLap({ carIdx: 0, lap: lap5 });
-    expect(getRefLap(0)).toBe(lap1);
-  });
-
-  it('should not return lap1 even if it is the fastest (due to rolling window size)', () => {
+  it('When the recent window overflows then the expired fastest lap is excluded', () => {
     addRecentLap({ carIdx: 0, lap: lap1 });
     addRecentLap({ carIdx: 0, lap: lap2 });
     addRecentLap({ carIdx: 0, lap: lap3 });
     addRecentLap({ carIdx: 0, lap: lap4 });
     addRecentLap({ carIdx: 0, lap: lap5 });
     addRecentLap({ carIdx: 0, lap: lap6 });
+
     expect(getRefLap(0)).toBe(lap5);
   });
 });

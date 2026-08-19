@@ -5,14 +5,21 @@ import {
   updateLapTimeTracking,
 } from '#repository/lap.repository.ts';
 
-const PLAYER = 0;
+const PLAYER_CAR_IDX = 0;
+const carsIdx = Array.from({ length: 64 }, (_, carIdx) => carIdx);
 
-const carsIdx = Array.from({ length: 64 }, (_, i) => i);
-
-const tick = (lap: number, lapTimes: number[] = []) => {
-  const lapsCompleted = Array(64).fill(lap);
-  const lastLapTimes = lapTimes.length > 0 ? lapTimes : Array(64).fill(0);
-  updateLapTimeTracking({ carsIdx, lapsCompleted, lastLapTimes });
+const recordLapTimes = ({
+  lapNumber,
+  lapTime,
+}: {
+  lapNumber: number;
+  lapTime: number;
+}) => {
+  updateLapTimeTracking({
+    carsIdx,
+    lapsCompleted: Array(64).fill(lapNumber),
+    lastLapTimes: Array(64).fill(lapTime),
+  });
 };
 
 beforeEach(() => {
@@ -20,31 +27,33 @@ beforeEach(() => {
 });
 
 describe('getMedianLapTime', () => {
-  it('returns null for unknown car', () => {
+  it('When no laps are recorded for a car then its median lap time is null', () => {
     expect(getMedianLapTime(99)).toBeNull();
   });
 
-  it('ignores lap time of 0', () => {
-    tick(1, Array(64).fill(0));
-    expect(getMedianLapTime(PLAYER)).toBeNull();
+  it('When iRacing reports a zero lap time then the lap is excluded', () => {
+    recordLapTimes({ lapNumber: 1, lapTime: 0 });
+
+    expect(getMedianLapTime(PLAYER_CAR_IDX)).toBeNull();
   });
 
-  it('returns median of lap times', () => {
-    tick(1, Array(64).fill(90));
-    tick(2, Array(64).fill(92));
-    tick(3, Array(64).fill(91));
-    tick(4, Array(64).fill(89));
-    tick(5, Array(64).fill(90));
-    // sorted: [89, 90, 90, 91, 92] → median = 90
-    expect(getMedianLapTime(PLAYER)).toBe(90);
+  it('When iRacing reports five valid lap times then their median is returned', () => {
+    recordLapTimes({ lapNumber: 1, lapTime: 90 });
+    recordLapTimes({ lapNumber: 2, lapTime: 92 });
+    recordLapTimes({ lapNumber: 3, lapTime: 91 });
+    recordLapTimes({ lapNumber: 4, lapTime: 89 });
+    recordLapTimes({ lapNumber: 5, lapTime: 90 });
+
+    expect(getMedianLapTime(PLAYER_CAR_IDX)).toBe(90);
   });
 
-  it('pit lap outlier absorbed by median', () => {
-    tick(1, Array(64).fill(90));
-    tick(2, Array(64).fill(90));
-    tick(3, Array(64).fill(150)); // pit lap
-    tick(4, Array(64).fill(91));
-    tick(5, Array(64).fill(90));
-    expect(getMedianLapTime(PLAYER)).toBe(90);
+  it('When iRacing reports one slow pit lap then the median absorbs the outlier', () => {
+    recordLapTimes({ lapNumber: 1, lapTime: 90 });
+    recordLapTimes({ lapNumber: 2, lapTime: 90 });
+    recordLapTimes({ lapNumber: 3, lapTime: 150 });
+    recordLapTimes({ lapNumber: 4, lapTime: 91 });
+    recordLapTimes({ lapNumber: 5, lapTime: 90 });
+
+    expect(getMedianLapTime(PLAYER_CAR_IDX)).toBe(90);
   });
 });

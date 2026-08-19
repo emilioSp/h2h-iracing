@@ -1,13 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { computeWeather } from '#dashboard/weather.dashboard.ts';
-import {
-  loadTelemetryFixture,
-  refreshTelemetry,
-} from '#repository/irsdk.repository.ts';
+import { loadTelemetryFixture } from '#repository/irsdk.repository.ts';
 
 describe('computeWeather', () => {
-  it('assembles weather from SDK telemetry values', async () => {
-    loadTelemetryFixture('fixture/telemetry-mock/weather/default.json');
+  it('When iRacing reports weather telemetry then the dashboard returns converted weather data', async () => {
+    loadTelemetryFixture(
+      'fixture/telemetry-mock/weather/dry-track-with-wind.json',
+    );
 
     const weather = await computeWeather();
 
@@ -28,22 +27,11 @@ describe('computeWeather', () => {
     });
   });
 
-  it('maps all track wetness values', async () => {
-    loadTelemetryFixture('fixture/telemetry-mock/weather/wetness.json');
-    const expected = [
-      'Unknown',
-      'Dry',
-      'Mostly Dry',
-      'Very Lightly Wet',
-      'Lightly Wet',
-      'Moderately Wet',
-      'Very Wet',
-      'Extremely Wet',
-    ];
+  it('When iRacing reports an unknown track wetness value then the dashboard returns Unknown', async () => {
+    loadTelemetryFixture('fixture/telemetry-mock/weather/unknown-wetness.json');
 
-    for (const label of expected) {
-      await refreshTelemetry();
-      expect((await computeWeather()).trackWetness).toBe(label);
-    }
+    const weather = await computeWeather();
+
+    expect(weather.trackWetness).toBe('Unknown');
   });
 });

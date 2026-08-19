@@ -2,7 +2,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('#dashboard/head2head.dashboard.ts', () => ({
   computeHead2Head: vi.fn(),
-  cleanUpHead2Head: vi.fn(),
 }));
 vi.mock('#server/tick.ts', () => ({
   tick: vi.fn(),
@@ -30,14 +29,13 @@ import {
 } from '#server/broadcaster.ts';
 import * as tickService from '#server/tick.ts';
 
-const mockClient = () => ({
+const createClient = () => ({
   write: vi.fn().mockResolvedValue(undefined),
   close: vi.fn(),
 });
 
 beforeEach(() => {
   vi.useFakeTimers();
-  loadTelemetryFixture('fixture/telemetry-mock/connection/connected.json');
   vi.mocked(weatherService.computeWeather).mockResolvedValue({
     airTemp: 20,
   } as never);
@@ -56,8 +54,9 @@ afterEach(() => {
 });
 
 describe('addClient', () => {
-  it('sends data to client after poll interval', async () => {
-    const client = mockClient();
+  it('When a weather client connects then weather data is sent after the poll interval', async () => {
+    loadTelemetryFixture('fixture/telemetry-mock/connection/connected.json');
+    const client = createClient();
     addClient({ event: dashboardType.WEATHER, client });
 
     await vi.advanceTimersByTimeAsync(100);
@@ -67,20 +66,22 @@ describe('addClient', () => {
     );
   });
 
-  it('broadcasts to all clients of the same event type', async () => {
-    const client1 = mockClient();
-    const client2 = mockClient();
-    addClient({ event: dashboardType.WEATHER, client: client1 });
-    addClient({ event: dashboardType.WEATHER, client: client2 });
+  it('When two weather clients connect then weather data is sent to both clients', async () => {
+    loadTelemetryFixture('fixture/telemetry-mock/connection/connected.json');
+    const firstClient = createClient();
+    const secondClient = createClient();
+    addClient({ event: dashboardType.WEATHER, client: firstClient });
+    addClient({ event: dashboardType.WEATHER, client: secondClient });
 
     await vi.advanceTimersByTimeAsync(100);
 
-    expect(client1.write).toHaveBeenCalledOnce();
-    expect(client2.write).toHaveBeenCalledOnce();
+    expect(firstClient.write).toHaveBeenCalledOnce();
+    expect(secondClient.write).toHaveBeenCalledOnce();
   });
 
-  it('only calls compute for events with registered clients', async () => {
-    const client = mockClient();
+  it('When only a weather client connects then other dashboards are not computed', async () => {
+    loadTelemetryFixture('fixture/telemetry-mock/connection/connected.json');
+    const client = createClient();
     addClient({ event: dashboardType.WEATHER, client });
 
     await vi.advanceTimersByTimeAsync(100);
@@ -90,23 +91,25 @@ describe('addClient', () => {
     expect(h2hService.computeHead2Head).not.toHaveBeenCalled();
   });
 
-  it('restarts the poller when a client is added after the poller stopped', async () => {
-    const client1 = mockClient();
-    addClient({ event: dashboardType.WEATHER, client: client1 });
-    removeClient({ event: dashboardType.WEATHER, client: client1 });
+  it('When a client connects after polling stopped then polling restarts', async () => {
+    loadTelemetryFixture('fixture/telemetry-mock/connection/connected.json');
+    const firstClient = createClient();
+    addClient({ event: dashboardType.WEATHER, client: firstClient });
+    removeClient({ event: dashboardType.WEATHER, client: firstClient });
 
-    const client2 = mockClient();
-    addClient({ event: dashboardType.WEATHER, client: client2 });
+    const secondClient = createClient();
+    addClient({ event: dashboardType.WEATHER, client: secondClient });
 
     await vi.advanceTimersByTimeAsync(100);
 
-    expect(client2.write).toHaveBeenCalledOnce();
+    expect(secondClient.write).toHaveBeenCalledOnce();
   });
 });
 
 describe('removeClient', () => {
-  it('stops the poller when the last client disconnects', async () => {
-    const client = mockClient();
+  it('When the last client disconnects then polling stops', async () => {
+    loadTelemetryFixture('fixture/telemetry-mock/connection/connected.json');
+    const client = createClient();
     addClient({ event: dashboardType.WEATHER, client });
     removeClient({ event: dashboardType.WEATHER, client });
 
@@ -115,69 +118,65 @@ describe('removeClient', () => {
     expect(weatherService.computeWeather).not.toHaveBeenCalled();
   });
 
-  it('keeps polling when other clients remain after removal', async () => {
-    const client1 = mockClient();
-    const client2 = mockClient();
-    addClient({ event: dashboardType.WEATHER, client: client1 });
-    addClient({ event: dashboardType.WEATHER, client: client2 });
+  it('When one of two clients disconnects then polling continues only for the remaining client', async () => {
+    loadTelemetryFixture('fixture/telemetry-mock/connection/connected.json');
+    const removedClient = createClient();
+    const remainingClient = createClient();
+    addClient({ event: dashboardType.WEATHER, client: removedClient });
+    addClient({ event: dashboardType.WEATHER, client: remainingClient });
 
-    removeClient({ event: dashboardType.WEATHER, client: client1 });
+    removeClient({ event: dashboardType.WEATHER, client: removedClient });
     await vi.advanceTimersByTimeAsync(100);
 
-    expect(client2.write).toHaveBeenCalledOnce();
-    expect(client1.write).not.toHaveBeenCalled();
+    expect(remainingClient.write).toHaveBeenCalledOnce();
+    expect(removedClient.write).not.toHaveBeenCalled();
   });
 });
 
 describe('broadcast tick', () => {
-  it('stops polling and calls h2h cleanup when computeHead2Head returns null', async () => {
+  it('When iRacing returns no head-to-head data then the client closes and polling stops', async () => {
+    loadTelemetryFixture('fixture/telemetry-mock/connection/connected.json');
     vi.mocked(h2hService.computeHead2Head).mockResolvedValue(null);
-    const client = mockClient();
+    const client = createClient();
     addClient({ event: dashboardType.H2H, client });
 
-    await vi.advanceTimersByTimeAsync(100);
+    await vi.advanceTimersByTimeAsync(200);
 
-    expect(client.write).not.toHaveBeenCalled();
+    expect(client.close).toHaveBeenCalledOnce();
+    expect(h2hService.computeHead2Head).toHaveBeenCalledOnce();
   });
 
-  it('stops polling when iRacing disconnects', async () => {
+  it('When iRacing disconnects then polling stops and in-memory state resets', async () => {
     loadTelemetryFixture('fixture/telemetry-mock/connection/disconnected.json');
-    const client = mockClient();
+    const client = createClient();
     addClient({ event: dashboardType.WEATHER, client });
 
-    await vi.advanceTimersByTimeAsync(100);
+    await vi.advanceTimersByTimeAsync(200);
 
     expect(weatherService.computeWeather).not.toHaveBeenCalled();
-
-    await vi.advanceTimersByTimeAsync(100);
-    expect(weatherService.computeWeather).not.toHaveBeenCalled();
-
     expect(tickService.resetInMemoryStorage).toHaveBeenCalledOnce();
   });
 
-  it('removes client and continues broadcasting when a write fails', async () => {
+  it('When one client write fails then that client is removed and healthy clients continue', async () => {
+    loadTelemetryFixture('fixture/telemetry-mock/connection/connected.json');
     const failingClient = {
       write: vi.fn().mockRejectedValue(new Error('stream closed')),
       close: vi.fn(),
     };
-    const healthyClient = mockClient();
+    const healthyClient = createClient();
     addClient({ event: dashboardType.WEATHER, client: failingClient });
     addClient({ event: dashboardType.WEATHER, client: healthyClient });
 
-    await vi.advanceTimersByTimeAsync(100);
-
-    expect(failingClient.write).toHaveBeenCalledOnce();
-
-    await vi.advanceTimersByTimeAsync(100);
+    await vi.advanceTimersByTimeAsync(200);
 
     expect(failingClient.write).toHaveBeenCalledOnce();
     expect(healthyClient.write).toHaveBeenCalledTimes(2);
   });
 
-  it('calls close on all clients when iRacing disconnects', async () => {
+  it('When iRacing disconnects then all dashboard clients close', async () => {
     loadTelemetryFixture('fixture/telemetry-mock/connection/disconnected.json');
-    const weatherClient = mockClient();
-    const carClient = mockClient();
+    const weatherClient = createClient();
+    const carClient = createClient();
     addClient({ event: dashboardType.WEATHER, client: weatherClient });
     addClient({ event: dashboardType.CAR, client: carClient });
 
@@ -186,22 +185,12 @@ describe('broadcast tick', () => {
     expect(weatherClient.close).toHaveBeenCalledOnce();
     expect(carClient.close).toHaveBeenCalledOnce();
   });
-
-  it('calls close on h2h clients when computeHead2Head returns null', async () => {
-    vi.mocked(h2hService.computeHead2Head).mockResolvedValue(null);
-    const client = mockClient();
-    addClient({ event: dashboardType.H2H, client });
-
-    await vi.advanceTimersByTimeAsync(100);
-
-    expect(client.close).toHaveBeenCalledOnce();
-  });
 });
 
-describe('stopPoller', () => {
-  it('calls close on all registered clients', () => {
-    const weatherClient = mockClient();
-    const h2hClient = mockClient();
+describe('stopBroadcasting', () => {
+  it('When broadcasting stops then every registered client closes and in-memory state resets', () => {
+    const weatherClient = createClient();
+    const h2hClient = createClient();
     addClient({ event: dashboardType.WEATHER, client: weatherClient });
     addClient({ event: dashboardType.H2H, client: h2hClient });
 
