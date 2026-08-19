@@ -51,15 +51,16 @@ export const computeLapsRemaining = ({
     return null;
   }
 
-  // Round to the 8th decimal digit to remove precision error
   const projectedTotalLaps =
-    Math.round(
-      (playerLapDistPct + estimatedTimeRemaining / playerMedianLapTime) * 1e8,
-    ) / 1e8;
+    playerLapDistPct + estimatedTimeRemaining / playerMedianLapTime;
 
-  // final lap minus the position where I am
-  const rawRemaining = Math.ceil(projectedTotalLaps) - playerLapDistPct;
-  return Math.round(rawRemaining * 1e8) / 1e8;
+  // Round to the 8th decimal digit to remove precision error
+  const finalLap = Math.ceil(projectedTotalLaps - 1e-8);
+  const rawRemaining = finalLap - playerLapDistPct;
+  return rawRemaining;
+
+  // if needed for aesthetics
+  // return Math.round(rawRemaining * 1e8) / 1e8;
 };
 
 export const computeFuel = async (): Promise<FuelRefill | null> => {

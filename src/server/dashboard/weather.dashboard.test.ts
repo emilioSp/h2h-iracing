@@ -1,50 +1,13 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-
-const mockIr = vi.hoisted(() => ({
-  isConnected: vi.fn(),
-  get: vi.fn(),
-  getSessionInfo: vi.fn(),
-  shutdown: vi.fn(),
-  refreshSharedMemory: vi.fn(),
-}));
-
-vi.mock('@emiliosp/node-iracing-sdk', async (importOriginal) => {
-  const actual =
-    await importOriginal<typeof import('@emiliosp/node-iracing-sdk')>();
-  return {
-    ...actual,
-    IRSDK: {
-      fromDump: vi.fn().mockReturnValue(mockIr),
-      connect: vi.fn().mockResolvedValue(mockIr),
-    },
-  };
-});
-
-import { VARS } from '@emiliosp/node-iracing-sdk';
+import { describe, expect, it } from 'vitest';
 import { computeWeather } from '#dashboard/weather.dashboard.ts';
-
-beforeEach(() => {
-  vi.clearAllMocks();
-  mockIr.isConnected.mockReturnValue(true);
-  mockIr.get.mockReturnValue([0]);
-});
+import {
+  loadTelemetryFixture,
+  refreshTelemetry,
+} from '#repository/irsdk.repository.ts';
 
 describe('computeWeather', () => {
   it('assembles weather from SDK telemetry values', async () => {
-    mockIr.get.mockImplementation((varName: string) => {
-      const values: Record<string, number[]> = {
-        [VARS.AIR_TEMP]: [22.5],
-        [VARS.TRACK_TEMP_CREW]: [35.0],
-        [VARS.TRACK_WETNESS]: [1], // Dry
-        [VARS.PRECIPITATION]: [0.545343434],
-        [VARS.WIND_DIR]: [0],
-        [VARS.WIND_VEL]: [5.0],
-        [VARS.YAW_NORTH]: [Math.PI],
-        [VARS.SESSION_TIME_OF_DAY]: [43200],
-        [VARS.RELATIVE_HUMIDITY]: [0.605999079065],
-      };
-      return values[varName] ?? [0];
-    });
+    loadTelemetryFixture('fixture/telemetry-mock/weather/default.json');
 
     const weather = await computeWeather();
 
@@ -65,28 +28,22 @@ describe('computeWeather', () => {
     });
   });
 
-  it.each([
-    [0, 'Unknown'],
-    [1, 'Dry'],
-    [2, 'Mostly Dry'],
-    [3, 'Very Lightly Wet'],
-    [4, 'Lightly Wet'],
-    [5, 'Moderately Wet'],
-    [6, 'Very Wet'],
-    [7, 'Extremely Wet'],
-  ])('maps track wetness %i to "%s"', async (raw, expected) => {
-    mockIr.get.mockImplementation(() => [raw]);
+  it('maps all track wetness values', async () => {
+    loadTelemetryFixture('fixture/telemetry-mock/weather/wetness.json');
+    const expected = [
+      'Unknown',
+      'Dry',
+      'Mostly Dry',
+      'Very Lightly Wet',
+      'Lightly Wet',
+      'Moderately Wet',
+      'Very Wet',
+      'Extremely Wet',
+    ];
 
-    const { trackWetness } = await computeWeather();
-
-    expect(trackWetness).toBe(expected);
-  });
-
-  it('falls back to Unknown for out-of-range wetness value', async () => {
-    mockIr.get.mockImplementation(() => 99);
-
-    const { trackWetness } = await computeWeather();
-
-    expect(trackWetness).toBe('Unknown');
+    for (const label of expected) {
+      await refreshTelemetry();
+      expect((await computeWeather()).trackWetness).toBe(label);
+    }
   });
 });

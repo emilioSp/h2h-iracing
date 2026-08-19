@@ -1,45 +1,15 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-
-vi.mock('#repository/irsdk.repository.ts', () => ({
-  getLapDistPct: vi.fn(),
-  getLapsCompleted: vi.fn(),
-  getClassPositions: vi.fn(),
-}));
-
-vi.mock('#repository/driver.repository.ts', () => ({
-  getPlayerClassCarIdx: vi.fn(),
-}));
-
-import { getPlayerClassCarIdx } from '#repository/driver.repository.ts';
-import {
-  getClassPositions,
-  getLapDistPct,
-  getLapsCompleted,
-} from '#repository/irsdk.repository.ts';
+import { describe, expect, it } from 'vitest';
+import { loadTelemetryFixture } from '#repository/irsdk.repository.ts';
 import {
   getRaceStandings,
   getSessionStandings,
-  getStandings,
 } from '#service/standings.service.ts';
 
-const mockGetLapDistPct = vi.mocked(getLapDistPct);
-const mockGetLapsCompleted = vi.mocked(getLapsCompleted);
-const mockGetClassPositions = vi.mocked(getClassPositions);
-const mockGetCarIdxs = vi.mocked(getPlayerClassCarIdx);
-
-beforeEach(() => {
-  vi.clearAllMocks();
-});
-
 describe('getRaceStandings', () => {
-  it('sorts cars by total distance descending and assigns positions', async () => {
-    mockGetCarIdxs.mockResolvedValue([1, 2, 3]);
-    mockGetLapDistPct.mockResolvedValue([0, 0.8, 0.5, 0.3]);
-    mockGetLapsCompleted.mockResolvedValue([0, 5, 5, 6]);
+  it('sorts cars by total distance and assigns positions', async () => {
+    loadTelemetryFixture('fixture/telemetry-mock/standings/race.json');
 
-    const standings = await getRaceStandings();
-
-    expect(standings).toEqual([
+    expect(await getRaceStandings()).toEqual([
       { pos: 1, carIdx: 3 },
       { pos: 2, carIdx: 1 },
       { pos: 3, carIdx: 2 },
@@ -48,65 +18,30 @@ describe('getRaceStandings', () => {
 });
 
 describe('getSessionStandings', () => {
-  it('maps class positions and sorts ascending', async () => {
-    mockGetCarIdxs.mockResolvedValue([1, 2, 3]);
-    mockGetClassPositions.mockResolvedValue([0, 3, 1, 2]);
+  it('maps class positions and sorts them', async () => {
+    loadTelemetryFixture('fixture/telemetry-mock/standings/session.json');
 
-    const standings = await getSessionStandings();
-
-    expect(standings).toEqual([
+    expect(await getSessionStandings()).toEqual([
       { pos: 1, carIdx: 2 },
       { pos: 2, carIdx: 3 },
       { pos: 3, carIdx: 1 },
     ]);
   });
 
-  it('excludes cars with class position 0 (no time set)', async () => {
-    mockGetCarIdxs.mockResolvedValue([1, 2, 3]);
-    mockGetClassPositions.mockResolvedValue([0, 0, 1, 2]);
+  it('excludes cars with class position 0', async () => {
+    loadTelemetryFixture(
+      'fixture/telemetry-mock/standings/session-excludes-zero.json',
+    );
 
-    const standings = await getSessionStandings();
-
-    expect(standings).toEqual([
+    expect(await getSessionStandings()).toEqual([
       { pos: 1, carIdx: 2 },
       { pos: 2, carIdx: 3 },
     ]);
-    expect(standings.some((s) => s.carIdx === 1)).toBe(false);
   });
 
-  it('returns empty array when all cars have no time set', async () => {
-    mockGetCarIdxs.mockResolvedValue([1, 2]);
-    mockGetClassPositions.mockResolvedValue([0, 0, 0]);
+  it('returns an empty array when all class positions are 0', async () => {
+    loadTelemetryFixture('fixture/telemetry-mock/standings/session-empty.json');
 
-    const standings = await getSessionStandings();
-
-    expect(standings).toEqual([]);
-  });
-});
-
-describe('getStandings', () => {
-  it('delegates to getRaceStandings when isRace is true', async () => {
-    mockGetCarIdxs.mockResolvedValue([1, 2]);
-    mockGetLapDistPct.mockResolvedValue([0, 0.5, 0.3]);
-    mockGetLapsCompleted.mockResolvedValue([0, 3, 4]);
-
-    const standings = await getStandings(true);
-
-    expect(standings).toEqual([
-      { pos: 1, carIdx: 2 },
-      { pos: 2, carIdx: 1 },
-    ]);
-  });
-
-  it('delegates to getSessionStandings when isRace is false', async () => {
-    mockGetCarIdxs.mockResolvedValue([1, 2]);
-    mockGetClassPositions.mockResolvedValue([0, 2, 1]);
-
-    const standings = await getStandings(false);
-
-    expect(standings).toEqual([
-      { pos: 1, carIdx: 2 },
-      { pos: 2, carIdx: 1 },
-    ]);
+    expect(await getSessionStandings()).toEqual([]);
   });
 });

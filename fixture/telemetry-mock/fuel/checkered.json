@@ -1,0 +1,35 @@
+{
+  "variables": {
+    "PlayerCarIdx": [0],
+    "CarIdxLapCompleted": [0],
+    "FuelLevel": [50],
+    "CarIdxLastLapTime": [90],
+    "CarIdxLapDistPct": [0.5],
+    "SessionTimeRemain": [600],
+    "SessionFlags": [1],
+    "CarIdxPosition": [1]
+  },
+  "sessionData": {
+    "DriverInfo": {
+      "Drivers": [
+        {
+          "CarIdx": 0,
+          "CarClassID": 100,
+          "CarIsPaceCar": 0,
+          "UserName": "Player",
+          "CarNumber": "1",
+          "CarScreenNameShort": "GT3",
+          "IRating": 3000,
+          "LicString": "A 4.00",
+          "CarClassEstLapTime": 90
+        }
+      ]
+    },
+    "SessionInfo": {
+      "CurrentSessionNum": 0,
+      "Sessions": [
+        { "SessionNum": 0, "SessionType": "Race", "ResultsPositions": [] }
+      ]
+    }
+  }
+}

@@ -92,6 +92,7 @@ export const interpolateTimeAtTrackPosition = ({
   const refPoint1 = lap.refPoints.get(refPointKey1);
 
   if (!refPoint0) return null;
+  // We only know the time at this marker, so use it when the next marker is missing.
   if (!refPoint1) return refPoint0.timeElapsedSinceStart;
 
   // This is to manage the boundary case when refPoint0 is near the end of the track and refPoint1 is near the start, e.g. 98% and 0.5% respectively

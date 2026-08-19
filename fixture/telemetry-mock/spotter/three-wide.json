@@ -1,0 +1,6 @@
+{
+  "variables": {
+    "PlayerCarIdx": [4],
+    "CarLeftRight": [4]
+  }
+}

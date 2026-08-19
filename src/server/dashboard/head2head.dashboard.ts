@@ -8,7 +8,11 @@ import type { Head2Head } from '#schema/head2head.schema.ts';
 import { computeCar } from '#service/car.service.ts';
 import * as DeltaService from '#service/delta.service.ts';
 import * as GapService from '#service/gap.service.ts';
-import { getStandings, type Standing } from '#service/standings.service.ts';
+import {
+  getRaceStandings,
+  getSessionStandings,
+  type Standing,
+} from '#service/standings.service.ts';
 
 type GetGapAndDeltaInput = {
   player: Car;
@@ -73,11 +77,12 @@ const computeAheadAndBehindCar = async ({
 export const computeHead2Head = async (): Promise<Head2Head | null> => {
   const isRace = isRaceSession();
 
-  const playerIdx =
-    process.env.DATA_MODE === 'mock' ? 4 : await getPlayerCarIdx();
+  const playerIdx = await getPlayerCarIdx();
   if (playerIdx < 0) return null;
 
-  const standings = await getStandings(isRace);
+  const standings = isRace
+    ? await getRaceStandings()
+    : await getSessionStandings();
   const sessionTime = await getSessionTime();
 
   const playerCar = await computeCar({ carIdx: playerIdx, standings });

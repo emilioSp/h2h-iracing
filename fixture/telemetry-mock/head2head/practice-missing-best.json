@@ -1,0 +1,56 @@
+{
+  "variables": {
+    "PlayerCarIdx": [1],
+    "SessionTime": [120],
+    "CarIdxLapDistPct": [0, 0.5, 0.7, 0.3],
+    "CarIdxLapCompleted": [0, 2, 2, 2],
+    "CarIdxClassPosition": [0, 2, 1, 3],
+    "CarIdxLastLapTime": [0, 90, 89.5, 91],
+    "CarIdxBestLapTime": [0, -1, -1, -1]
+  },
+  "sessionData": {
+    "DriverInfo": {
+      "Drivers": [
+        {
+          "CarIdx": 1,
+          "CarClassID": 100,
+          "CarIsPaceCar": 0,
+          "UserName": "Player",
+          "CarNumber": "1",
+          "CarScreenNameShort": "GT3",
+          "IRating": 3000,
+          "LicString": "A 4.00",
+          "CarClassEstLapTime": 90
+        },
+        {
+          "CarIdx": 2,
+          "CarClassID": 100,
+          "CarIsPaceCar": 0,
+          "UserName": "Ahead",
+          "CarNumber": "2",
+          "CarScreenNameShort": "GT3",
+          "IRating": 3100,
+          "LicString": "A 4.10",
+          "CarClassEstLapTime": 90
+        },
+        {
+          "CarIdx": 3,
+          "CarClassID": 100,
+          "CarIsPaceCar": 0,
+          "UserName": "Behind",
+          "CarNumber": "3",
+          "CarScreenNameShort": "GT3",
+          "IRating": 2900,
+          "LicString": "A 3.90",
+          "CarClassEstLapTime": 90
+        }
+      ]
+    },
+    "SessionInfo": {
+      "CurrentSessionNum": 0,
+      "Sessions": [
+        { "SessionNum": 0, "SessionType": "Practice", "ResultsPositions": [] }
+      ]
+    }
+  }
+}

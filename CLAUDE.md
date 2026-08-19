@@ -17,6 +17,10 @@ npm run build        # TypeScript type-check only (noEmit)
 
 ## Workflow
 
+- Do not use property getter or setter syntax. Use explicit setter and getter. (e.g setActiveFrame, getActiveFrame)
+- Do not add defensive code or tests for states that cannot occur in the real application flow.
+- Do not write meaningless test. If a test don't raise the coverage, don't write it, unless it is an explicit test added after we found a bug.
+
 @rules/principles.md
 @rules/architecture.md
 @rules/typescript.md

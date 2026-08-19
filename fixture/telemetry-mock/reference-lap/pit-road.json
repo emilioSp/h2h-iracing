@@ -1,0 +1,26 @@
+{
+  "variables": {
+    "CarIdxLapDistPct": [
+      0.6
+    ],
+    "SessionTime": [
+      100
+    ],
+    "CarIdxOnPitRoad": [
+      true
+    ]
+  },
+  "sessionData": {
+    "DriverInfo": {
+      "Drivers": [
+        {
+          "CarIdx": 0,
+          "CarIsPaceCar": 0
+        }
+      ]
+    },
+    "WeekendInfo": {
+      "TrackLength": "5.000 km"
+    }
+  }
+}

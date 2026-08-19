@@ -1,0 +1,20 @@
+{
+  "variables": {
+    "CarIdxLastLapTime": [0, 0],
+    "CarIdxBestLapTime": [0, 0]
+  },
+  "sessionData": {
+    "SessionInfo": {
+      "CurrentSessionNum": 0,
+      "Sessions": [
+        {
+          "SessionNum": 0,
+          "SessionType": "Practice",
+          "ResultsPositions": [
+            { "CarIdx": 1, "LapsComplete": 0, "LastTime": 0, "FastestTime": 0 }
+          ]
+        }
+      ]
+    }
+  }
+}

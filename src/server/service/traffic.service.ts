@@ -5,9 +5,9 @@ import {
 } from '#repository/reference-lap.repository.ts';
 import type { Driver } from '#schema/driver.schema.ts';
 import type { TrafficCar } from '#schema/traffic.schema.ts';
+import { estimatedDelta, referenceDelta } from '#server/utils/gap-delta.ts';
 import { guessCarClass } from '#server/utils/guess-car-class.ts';
 import { wrapLapDelta } from '#server/utils/track-position.ts';
-import { estimatedDelta, referenceDelta } from '#service/gap.service.ts';
 
 // iRacing reports every car of a mixed AI field as one class, so CarClassID and
 // CarClassRelSpeed cannot order them. Only the estimated lap time separates a

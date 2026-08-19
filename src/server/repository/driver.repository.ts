@@ -33,8 +33,7 @@ export const refreshDriverInfo = async () => {
       name: driver.UserName,
       carNumber: driver.CarNumber,
       car: driver.CarScreenNameShort,
-      iRating:
-        process.env.DATA_MODE === 'mock' ? 3000 : Number(driver.IRating ?? 0),
+      iRating: Number(driver.IRating ?? 0),
       license: String(driver.LicString ?? ''),
       classEstLapTime: driver.CarClassEstLapTime,
     });

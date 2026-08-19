@@ -1,5 +1,4 @@
-import type { Driver as RawDriver } from '@emiliosp/node-iracing-sdk';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
   getClassEstLapTime,
   getDriverInfo,
@@ -7,196 +6,82 @@ import {
   getPlayerClassCarIdx,
   refreshDriverInfo,
 } from '#repository/driver.repository.ts';
-import * as irsdkRepo from '#repository/irsdk.repository.ts';
-
-const makeRawDriver = (
-  overrides: Partial<{
-    CarIdx: number;
-    CarClassID: number;
-    CarIsPaceCar: number;
-    UserName: string;
-    CarNumber: string;
-    CarScreenNameShort: string;
-    IRating: string;
-    LicString: string;
-    CarClassEstLapTime: number;
-  }> = {},
-) =>
-  ({
-    CarIdx: 1,
-    CarClassID: 100,
-    CarIsPaceCar: 0,
-    UserName: 'Driver One',
-    CarNumber: '1',
-    CarScreenNameShort: 'GT3 Car',
-    IRating: '2000',
-    LicString: 'A 4.00',
-    CarClassEstLapTime: 90.0,
-    ...overrides,
-  }) as unknown as RawDriver;
+import { loadTelemetryFixture } from '#repository/irsdk.repository.ts';
 
 describe('driver.repository', () => {
   describe('getFilteredRawDrivers', () => {
-    beforeEach(() => {
-      vi.restoreAllMocks();
-    });
-
-    it('returns only drivers of the same car class as the player (including player)', async () => {
-      vi.spyOn(irsdkRepo, 'getPlayerCarIdx').mockResolvedValue(1);
-      vi.spyOn(irsdkRepo, 'getRawDrivers').mockResolvedValue([
-        makeRawDriver({ CarIdx: 1, CarClassID: 100, UserName: 'Player' }),
-        makeRawDriver({ CarIdx: 2, CarClassID: 100, UserName: 'Same Class' }),
-        makeRawDriver({ CarIdx: 3, CarClassID: 200, UserName: 'Other Class' }),
-      ]);
+    it('returns drivers in the player class', async () => {
+      loadTelemetryFixture('fixture/telemetry-mock/drivers/same-class.json');
 
       const result = await getFilteredRawDrivers();
 
-      expect(result).toHaveLength(2);
-      expect(result.map((d) => d.UserName)).toEqual(['Player', 'Same Class']);
-      expect(result.some((d) => d.UserName === 'Other Class')).toBe(false);
+      const names = result.map((driver) => driver.UserName);
+      expect(names).toContain('Player');
+      expect(names).toContain('Same Class');
+      expect(names).not.toContain('Other Class');
     });
 
-    it('excludes drivers with CarIdx === 0', async () => {
-      vi.spyOn(irsdkRepo, 'getPlayerCarIdx').mockResolvedValue(1);
-      vi.spyOn(irsdkRepo, 'getRawDrivers').mockResolvedValue([
-        makeRawDriver({ CarIdx: 1, CarClassID: 100 }), // player
-        makeRawDriver({ CarIdx: -1, CarClassID: 100, UserName: 'Slot Zero' }),
-        makeRawDriver({ CarIdx: 2, CarClassID: 100, UserName: 'Valid Driver' }),
-      ]);
+    it('excludes drivers with an invalid car index', async () => {
+      loadTelemetryFixture('fixture/telemetry-mock/drivers/invalid-index.json');
 
       const result = await getFilteredRawDrivers();
 
-      expect(result.every((d) => d.CarIdx > -1)).toBe(true);
-      expect(result.some((d) => d.UserName === 'Slot Zero')).toBe(false);
+      expect(result.every((driver) => driver.CarIdx > -1)).toBe(true);
+      expect(result.some((driver) => driver.UserName === 'Slot Zero')).toBe(
+        false,
+      );
     });
 
     it('excludes pace cars', async () => {
-      vi.spyOn(irsdkRepo, 'getPlayerCarIdx').mockResolvedValue(1);
-      vi.spyOn(irsdkRepo, 'getRawDrivers').mockResolvedValue([
-        makeRawDriver({ CarIdx: 1, CarClassID: 100 }), // player
-        makeRawDriver({
-          CarIdx: 2,
-          CarClassID: 100,
-          CarIsPaceCar: 1,
-          UserName: 'Pace Car',
-        }),
-        makeRawDriver({ CarIdx: 3, CarClassID: 100, UserName: 'Racer' }),
-      ]);
+      loadTelemetryFixture('fixture/telemetry-mock/drivers/pace-car.json');
 
       const result = await getFilteredRawDrivers();
 
-      expect(result.every((d) => !d.CarIsPaceCar)).toBe(true);
-      expect(result.some((d) => d.UserName === 'Pace Car')).toBe(false);
-    });
-
-    it('returns only the player when no other drivers share the player class', async () => {
-      vi.spyOn(irsdkRepo, 'getPlayerCarIdx').mockResolvedValue(1);
-      vi.spyOn(irsdkRepo, 'getRawDrivers').mockResolvedValue([
-        makeRawDriver({ CarIdx: 1, CarClassID: 100, UserName: 'Player' }),
-        makeRawDriver({
-          CarIdx: 2,
-          CarClassID: 200,
-          UserName: 'Prototype Driver',
-        }),
-      ]);
-
-      const result = await getFilteredRawDrivers();
-
-      expect(result).toHaveLength(1);
-      expect(result[0].UserName).toBe('Player');
+      expect(result.every((driver) => !driver.CarIsPaceCar)).toBe(true);
     });
   });
 
-  describe('refreshDriverInfo / getDriverInfo / getClassEstLapTime', async () => {
-    beforeEach(async () => {
-      vi.restoreAllMocks();
-      vi.spyOn(irsdkRepo, 'getPlayerCarIdx').mockResolvedValue(10);
-      vi.spyOn(irsdkRepo, 'getRawDrivers').mockResolvedValue([
-        makeRawDriver({ CarIdx: 10, CarClassID: 100, UserName: 'Player' }), // player
-        makeRawDriver({
-          CarIdx: 5,
-          CarClassID: 100,
-          UserName: 'Alice',
-          CarNumber: '42',
-          CarScreenNameShort: 'GT3 Car',
-          IRating: '3500',
-          LicString: 'A 4.50',
-          CarClassEstLapTime: 88.5,
-        }),
-      ]);
-      await refreshDriverInfo();
-    });
-
-    it('getDriverInfo returns correct driver data after refresh', async () => {
-      const driver = await getDriverInfo(5);
-
-      expect(driver).not.toBeNull();
-      expect(driver?.carIdx).toBe(5);
-      expect(driver?.name).toBe('Alice');
-      expect(driver?.carNumber).toBe('42');
-      expect(driver?.iRating).toBe(3000); // DATA_MODE=mock forces 3000
-      expect(driver?.license).toBe('A 4.50');
-      expect(driver?.classEstLapTime).toBe(88.5);
-    });
-
-    it('getDriverInfo returns null for unknown carIdx', async () => {
-      expect(await getDriverInfo(99)).toBeNull();
-    });
-
-    it('getClassEstLapTime returns the lap time for a known driver', async () => {
-      expect(await getClassEstLapTime(5)).toBe(88.5);
-    });
-
-    it('getClassEstLapTime returns 0 for unknown carIdx', async () => {
-      expect(await getClassEstLapTime(99)).toBe(0);
-    });
-  });
-
-  describe('getCarIdxs', async () => {
-    beforeEach(() => {
-      vi.restoreAllMocks();
-    });
-
-    it('returns car indices of filtered drivers', async () => {
-      vi.spyOn(irsdkRepo, 'getPlayerCarIdx').mockResolvedValue(1);
-      vi.spyOn(irsdkRepo, 'getRawDrivers').mockResolvedValue([
-        makeRawDriver({ CarIdx: 1, CarClassID: 100 }), // player
-        makeRawDriver({ CarIdx: 2, CarClassID: 100 }),
-        makeRawDriver({ CarIdx: 3, CarClassID: 100 }),
-        makeRawDriver({ CarIdx: 4, CarClassID: 200 }), // other class
-      ]);
-
-      expect(await getPlayerClassCarIdx()).toEqual([1, 2, 3]);
-    });
-  });
-
-  describe('integration against dump data', async () => {
-    beforeEach(() => {
-      vi.restoreAllMocks();
-    });
-
-    it('getFilteredRawDrivers returns only same-class non-pace-car drivers with valid CarIdx', async () => {
-      const result = await getFilteredRawDrivers();
-
-      expect(result.every((d) => d.CarIdx > -1)).toBe(true);
-      expect(result.every((d) => !d.CarIsPaceCar)).toBe(true);
-
-      if (result.length > 0) {
-        const classId = result[0].CarClassID;
-        expect(result.every((d) => d.CarClassID === classId)).toBe(true);
-      }
-    });
-
-    it('refreshDriverInfo builds a map consistent with getFilteredRawDrivers', async () => {
-      const filtered = await getFilteredRawDrivers();
+  describe('driver map', () => {
+    it('returns driver data after refresh', async () => {
+      loadTelemetryFixture('fixture/telemetry-mock/drivers/refresh.json');
       await refreshDriverInfo();
 
-      for (const raw of filtered) {
-        const driver = getDriverInfo(raw.CarIdx);
-        expect(driver).not.toBeNull();
-        expect(driver?.carIdx).toBe(raw.CarIdx);
-        expect(driver?.name).toBe(raw.UserName);
-      }
+      expect(getDriverInfo(5)).toEqual({
+        carIdx: 5,
+        name: 'Alice',
+        carNumber: '42',
+        car: 'GT3 Car',
+        iRating: 3500,
+        license: 'A 4.50',
+        classEstLapTime: 88.5,
+      });
     });
+
+    it('returns the estimated lap time for a known driver', async () => {
+      loadTelemetryFixture('fixture/telemetry-mock/drivers/refresh.json');
+      await refreshDriverInfo();
+
+      expect(getClassEstLapTime(5)).toBe(88.5);
+    });
+  });
+
+  it('returns the car indices in the player class', async () => {
+    loadTelemetryFixture('fixture/telemetry-mock/drivers/car-indices.json');
+
+    expect(await getPlayerClassCarIdx()).toEqual([1, 2, 3]);
+  });
+
+  it('builds driver data from a complete telemetry fixture', async () => {
+    loadTelemetryFixture('fixture/telemetry-mock/head2head/race.json');
+
+    const filtered = await getFilteredRawDrivers();
+    await refreshDriverInfo();
+
+    for (const raw of filtered) {
+      expect(getDriverInfo(raw.CarIdx)).toMatchObject({
+        carIdx: raw.CarIdx,
+        name: raw.UserName,
+      });
+    }
   });
 });
