@@ -5,7 +5,7 @@ import { IRSDKMock } from '#repository/irsdk-mock.ts';
 describe('IRSDKMock', () => {
   it('reads variables and session data', () => {
     const sdk = IRSDKMock.fromFixture(
-      'fixture/telemetry-mock/frames/base.json',
+      'fixture/telemetry-mock/frames/default.json',
     );
 
     expect(sdk.get(VARS.AIR_TEMP)).toEqual([10]);
@@ -17,7 +17,7 @@ describe('IRSDKMock', () => {
 
   it('uses the first frame for the first refresh and then advances', () => {
     const sdk = IRSDKMock.fromFixture(
-      'fixture/telemetry-mock/frames/base.json',
+      'fixture/telemetry-mock/frames/default.json',
     );
 
     expect(sdk.get(VARS.AIR_TEMP)).toEqual([10]);
@@ -29,7 +29,7 @@ describe('IRSDKMock', () => {
 
   it('keeps the last frame active', () => {
     const sdk = IRSDKMock.fromFixture(
-      'fixture/telemetry-mock/frames/base.json',
+      'fixture/telemetry-mock/frames/default.json',
     );
 
     sdk.refreshSharedMemory();

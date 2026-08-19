@@ -10,7 +10,7 @@ beforeEach(() => {
 
 describe('computeTraffic', () => {
   it('reports the faster car and skips the same-class car', async () => {
-    loadTelemetryFixture('fixture/telemetry-mock/traffic/base.json');
+    loadTelemetryFixture('fixture/telemetry-mock/traffic/default.json');
     await refreshDriverInfo();
 
     const traffic = await computeTraffic();

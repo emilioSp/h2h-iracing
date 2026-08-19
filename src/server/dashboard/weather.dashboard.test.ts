@@ -7,7 +7,7 @@ import {
 
 describe('computeWeather', () => {
   it('assembles weather from SDK telemetry values', async () => {
-    loadTelemetryFixture('fixture/telemetry-mock/weather/base.json');
+    loadTelemetryFixture('fixture/telemetry-mock/weather/default.json');
 
     const weather = await computeWeather();
 

@@ -4,7 +4,7 @@ import { computeCarTelemetry } from '#server/dashboard/car-telemetry.dashboard.t
 
 describe('computeCarTelemetry', () => {
   it('assembles car telemetry from SDK values', async () => {
-    loadTelemetryFixture('fixture/telemetry-mock/car-telemetry/base.json');
+    loadTelemetryFixture('fixture/telemetry-mock/car-telemetry/default.json');
 
     const car = await computeCarTelemetry();
 

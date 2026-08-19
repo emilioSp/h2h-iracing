@@ -27,6 +27,10 @@ export const loadTelemetryFixture = (path: string): void => {
   ir = IRSDKMock.fromFixture(path);
 };
 
+export const resetIRSDK = (): void => {
+  ir = null;
+};
+
 const connectToIRacing = async (): Promise<void> => {
   if (process.env.NODE_ENV === 'test') {
     if (!(ir instanceof IRSDKMock)) {
