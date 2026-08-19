@@ -59,7 +59,7 @@ export const computeLapsRemaining = ({
   const rawRemaining = finalLap - playerLapDistPct;
   return rawRemaining;
 
-  // if needed for estetic
+  // if needed for aesthetics
   // return Math.round(rawRemaining * 1e8) / 1e8;
 };
 
