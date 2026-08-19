@@ -1,7 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { ReferenceLap } from '#repository/reference-lap.repository.ts';
-import * as referenceLapRepository from '#repository/reference-lap.repository.ts';
+import {
+  addRecentLap,
+  type ReferenceLap,
+  type ReferencePoint,
+  resetReferenceLaps,
+} from '#repository/reference-lap.repository.ts';
 import type { Driver } from '#schema/driver.schema.ts';
+import * as gapDelta from '#server/utils/gap-delta.ts';
 import {
   getReferenceInterval,
   initReferenceInterval,
@@ -12,28 +17,24 @@ import {
   isFasterCar,
 } from '#service/traffic.service.ts';
 
-const PLAYER_EST_LAP_TIME = 103.1952;
+const PLAYER_ESTIMATED_LAP_TIME = 103.1952;
 const PLAYER_CAR_IDX = 0;
-
-// 10 m reference points over 1280 m give an interval of 1/128, which has no
-// floating point drift when normalizeTrackPct snaps a position to its bucket.
 const TEST_TRACK_LENGTH_METERS = 1280;
 const REFERENCE_LAP_SECONDS = 100;
 
-const buildDriver = (driver: Partial<Driver> & { carIdx: number }): Driver => ({
-  name: `Driver ${driver.carIdx}`,
-  carNumber: String(driver.carIdx),
+const fasterDriver: Driver = {
+  carIdx: 1,
+  name: 'Faster Driver',
+  carNumber: '1',
   car: 'Dallara P217 LMP2',
   iRating: 3000,
   license: 'A 3.51',
   classEstLapTime: 94.5768,
-  ...driver,
-});
+};
 
-// A lap at constant speed: the time at any position is its percentage of 100 s.
-const buildReferenceLap = (): ReferenceLap => {
+const createReferenceLap = (): ReferenceLap => {
   const interval = getReferenceInterval();
-  const refPoints = new Map();
+  const refPoints = new Map<number, ReferencePoint>();
 
   for (let step = 0; step * interval <= 1; step++) {
     const trackPct = step * interval;
@@ -52,216 +53,242 @@ const buildReferenceLap = (): ReferenceLap => {
   };
 };
 
-beforeEach(() => {
-  vi.restoreAllMocks();
-  initReferenceInterval(TEST_TRACK_LENGTH_METERS);
-  vi.spyOn(referenceLapRepository, 'getRefLap').mockReturnValue(null);
-});
-
-type RunInput = {
-  drivers: Driver[];
-  lapDistPct: number[];
-  lapsCompleted?: number[];
-  onPitRoad?: boolean[];
-};
-
-const run = ({
-  drivers,
-  lapDistPct,
-  lapsCompleted = [],
-  onPitRoad = [],
-}: RunInput) =>
-  findTrafficBehind({
-    playerCarIdx: PLAYER_CAR_IDX,
-    playerClassEstLapTime: PLAYER_EST_LAP_TIME,
-    drivers,
-    lapDistPct,
-    lapsCompleted,
-    onPitRoad,
-  });
-
 describe('isFasterCar', () => {
-  it('accepts a car a full class quicker', () => {
+  it.each([
+    {
+      scenario: 'a car is a full class faster',
+      carClassEstLapTime: 94.5768,
+      expected: true,
+    },
+    {
+      scenario: 'a car in the same class is only 0.6 seconds faster',
+      carClassEstLapTime: 102.5469,
+      expected: false,
+    },
+    {
+      scenario: 'a car is slower over a lap',
+      carClassEstLapTime: 106.3155,
+      expected: false,
+    },
+    {
+      scenario: 'a car has no estimated lap time',
+      carClassEstLapTime: 0,
+      expected: false,
+    },
+    {
+      scenario: 'a car is exactly on the faster-class margin',
+      carClassEstLapTime:
+        PLAYER_ESTIMATED_LAP_TIME - FASTER_CLASS_MARGIN_SECONDS,
+      expected: true,
+    },
+  ])('When $scenario then the faster-car result is $expected', ({
+    carClassEstLapTime,
+    expected,
+  }) => {
     expect(
       isFasterCar({
-        carClassEstLapTime: 94.5768,
-        playerClassEstLapTime: PLAYER_EST_LAP_TIME,
+        carClassEstLapTime,
+        playerClassEstLapTime: PLAYER_ESTIMATED_LAP_TIME,
       }),
-    ).toBe(true);
-  });
-
-  it('rejects a same-class car that is only 0.6 s quicker', () => {
-    expect(
-      isFasterCar({
-        carClassEstLapTime: 102.5469,
-        playerClassEstLapTime: PLAYER_EST_LAP_TIME,
-      }),
-    ).toBe(false);
-  });
-
-  it('rejects the Porsche Cup, which is slower over a lap', () => {
-    expect(
-      isFasterCar({
-        carClassEstLapTime: 106.3155,
-        playerClassEstLapTime: PLAYER_EST_LAP_TIME,
-      }),
-    ).toBe(false);
-  });
-
-  it('rejects a car with no estimated lap time', () => {
-    expect(
-      isFasterCar({
-        carClassEstLapTime: 0,
-        playerClassEstLapTime: PLAYER_EST_LAP_TIME,
-      }),
-    ).toBe(false);
-  });
-
-  it('accepts a car exactly on the margin', () => {
-    expect(
-      isFasterCar({
-        carClassEstLapTime: PLAYER_EST_LAP_TIME - FASTER_CLASS_MARGIN_SECONDS,
-        playerClassEstLapTime: PLAYER_EST_LAP_TIME,
-      }),
-    ).toBe(true);
+    ).toBe(expected);
   });
 });
 
 describe('findTrafficBehind', () => {
-  it('reports a faster car just behind', () => {
-    const cars = run({
-      drivers: [buildDriver({ carIdx: 1 })],
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    initReferenceInterval(TEST_TRACK_LENGTH_METERS);
+    resetReferenceLaps();
+  });
+
+  it('When iRacing reports a faster car just behind then the car is returned with its estimated gap', () => {
+    const cars = findTrafficBehind({
+      playerCarIdx: PLAYER_CAR_IDX,
+      playerClassEstLapTime: PLAYER_ESTIMATED_LAP_TIME,
+      drivers: [fasterDriver],
       lapDistPct: [0.2, 0.199],
+      lapsCompleted: [0, 0],
+      onPitRoad: [false, false],
     });
 
-    expect(cars).toHaveLength(1);
-    expect(cars[0].carIdx).toBe(1);
-    expect(cars[0].className).toBe('LMP2');
-    expect(cars[0].gapSeconds).toBeCloseTo(0.0946, 3);
+    expect(cars).toEqual([
+      {
+        carIdx: 1,
+        carNumber: '1',
+        driverName: 'Faster Driver',
+        className: 'LMP2',
+        license: 'A 3.51',
+        iRating: 3000,
+        gapSeconds: expect.closeTo(0.0946, 3),
+      },
+    ]);
   });
 
-  it('ignores the player', () => {
-    expect(
-      run({
-        drivers: [buildDriver({ carIdx: PLAYER_CAR_IDX })],
-        lapDistPct: [0.2],
-      }),
-    ).toEqual([]);
+  it('When iRacing includes the player in the driver list then the player is excluded', () => {
+    const cars = findTrafficBehind({
+      playerCarIdx: PLAYER_CAR_IDX,
+      playerClassEstLapTime: PLAYER_ESTIMATED_LAP_TIME,
+      drivers: [{ ...fasterDriver, carIdx: PLAYER_CAR_IDX }],
+      lapDistPct: [0.2],
+      lapsCompleted: [0],
+      onPitRoad: [false],
+    });
+
+    expect(cars).toEqual([]);
   });
 
-  it('ignores a car in the pits', () => {
-    expect(
-      run({
-        drivers: [buildDriver({ carIdx: 1 })],
-        lapDistPct: [0.2, 0.199],
-        onPitRoad: [false, true],
-      }),
-    ).toEqual([]);
+  it('When iRacing reports a faster car in the pits then the car is excluded', () => {
+    const cars = findTrafficBehind({
+      playerCarIdx: PLAYER_CAR_IDX,
+      playerClassEstLapTime: PLAYER_ESTIMATED_LAP_TIME,
+      drivers: [fasterDriver],
+      lapDistPct: [0.2, 0.199],
+      lapsCompleted: [0, 0],
+      onPitRoad: [false, true],
+    });
+
+    expect(cars).toEqual([]);
   });
 
-  it('ignores a car that is not on track', () => {
-    expect(
-      run({
-        drivers: [buildDriver({ carIdx: 1 })],
-        lapDistPct: [0.2, -1],
-      }),
-    ).toEqual([]);
+  it('When iRacing reports a faster car not on track then the car is excluded', () => {
+    const cars = findTrafficBehind({
+      playerCarIdx: PLAYER_CAR_IDX,
+      playerClassEstLapTime: PLAYER_ESTIMATED_LAP_TIME,
+      drivers: [fasterDriver],
+      lapDistPct: [0.2, -1],
+      lapsCompleted: [0, 0],
+      onPitRoad: [false, false],
+    });
+
+    expect(cars).toEqual([]);
   });
 
-  it('ignores a car of the same class', () => {
-    expect(
-      run({
-        drivers: [buildDriver({ carIdx: 1, classEstLapTime: 102.5469 })],
-        lapDistPct: [0.2, 0.199],
-      }),
-    ).toEqual([]);
+  it('When iRacing reports a car from the same class then the car is excluded', () => {
+    const cars = findTrafficBehind({
+      playerCarIdx: PLAYER_CAR_IDX,
+      playerClassEstLapTime: PLAYER_ESTIMATED_LAP_TIME,
+      drivers: [{ ...fasterDriver, classEstLapTime: 102.5469 }],
+      lapDistPct: [0.2, 0.199],
+      lapsCompleted: [0, 0],
+      onPitRoad: [false, false],
+    });
+
+    expect(cars).toEqual([]);
   });
 
-  it('ignores a faster car that is in front', () => {
-    expect(
-      run({
-        drivers: [buildDriver({ carIdx: 1 })],
-        lapDistPct: [0.2, 0.21],
-      }),
-    ).toEqual([]);
+  it('When iRacing reports a faster car in front then the car is excluded', () => {
+    const cars = findTrafficBehind({
+      playerCarIdx: PLAYER_CAR_IDX,
+      playerClassEstLapTime: PLAYER_ESTIMATED_LAP_TIME,
+      drivers: [fasterDriver],
+      lapDistPct: [0.2, 0.21],
+      lapsCompleted: [0, 0],
+      onPitRoad: [false, false],
+    });
+
+    expect(cars).toEqual([]);
   });
 
-  it('sees a car behind across the start line', () => {
-    const cars = run({
-      drivers: [buildDriver({ carIdx: 1 })],
+  it('When iRacing reports a faster car behind across the start line then the car is included', () => {
+    const cars = findTrafficBehind({
+      playerCarIdx: PLAYER_CAR_IDX,
+      playerClassEstLapTime: PLAYER_ESTIMATED_LAP_TIME,
+      drivers: [fasterDriver],
       lapDistPct: [0.005, 0.999],
+      lapsCompleted: [0, 0],
+      onPitRoad: [false, false],
     });
 
-    expect(cars).toHaveLength(1);
+    expect(cars.map((car) => car.carIdx)).toEqual([1]);
   });
 
-  it('treats a car in front across the start line as in front', () => {
-    expect(
-      run({
-        drivers: [buildDriver({ carIdx: 1 })],
-        lapDistPct: [0.999, 0.005],
-      }),
-    ).toEqual([]);
+  it('When iRacing reports a faster car in front across the start line then the car is excluded', () => {
+    const cars = findTrafficBehind({
+      playerCarIdx: PLAYER_CAR_IDX,
+      playerClassEstLapTime: PLAYER_ESTIMATED_LAP_TIME,
+      drivers: [fasterDriver],
+      lapDistPct: [0.999, 0.005],
+      lapsCompleted: [0, 0],
+      onPitRoad: [false, false],
+    });
+
+    expect(cars).toEqual([]);
   });
 
-  it('drops a car outside the window', () => {
-    expect(
-      run({
-        drivers: [buildDriver({ carIdx: 1 })],
-        lapDistPct: [0.2, 0.15],
-      }),
-    ).toEqual([]);
+  it('When iRacing reports a faster car outside the traffic window then the car is excluded', () => {
+    const cars = findTrafficBehind({
+      playerCarIdx: PLAYER_CAR_IDX,
+      playerClassEstLapTime: PLAYER_ESTIMATED_LAP_TIME,
+      drivers: [fasterDriver],
+      lapDistPct: [0.2, 0.15],
+      lapsCompleted: [0, 0],
+      onPitRoad: [false, false],
+    });
+
+    expect(cars).toEqual([]);
   });
 
-  it('uses the reference lap when the car has enough laps', () => {
-    vi.spyOn(referenceLapRepository, 'getRefLap').mockReturnValue(
-      buildReferenceLap(),
-    );
+  it('When iRacing reports enough completed laps then the reference lap provides the gap', () => {
+    addRecentLap({ carIdx: 1, lap: createReferenceLap() });
+    const referenceDelta = vi.spyOn(gapDelta, 'referenceDelta');
 
-    const cars = run({
-      drivers: [buildDriver({ carIdx: 1 })],
+    const cars = findTrafficBehind({
+      playerCarIdx: PLAYER_CAR_IDX,
+      playerClassEstLapTime: PLAYER_ESTIMATED_LAP_TIME,
+      drivers: [fasterDriver],
       lapDistPct: [0.2, 0.19],
       lapsCompleted: [4, 4],
+      onPitRoad: [false, false],
     });
 
-    // The reference lap runs at 100 s, so 1% of the lap is 1 s.
     expect(cars[0].gapSeconds).toBeCloseTo(1, 5);
+    expect(referenceDelta).toHaveBeenCalled();
   });
 
-  it('falls back to the estimate when the car has too few laps', () => {
-    vi.spyOn(referenceLapRepository, 'getRefLap').mockReturnValue(
-      buildReferenceLap(),
-    );
+  it('When iRacing reports too few completed laps then the estimated lap time provides the gap', () => {
+    addRecentLap({ carIdx: 1, lap: createReferenceLap() });
+    const estimatedDelta = vi.spyOn(gapDelta, 'estimatedDelta');
 
-    const cars = run({
-      drivers: [buildDriver({ carIdx: 1 })],
+    const cars = findTrafficBehind({
+      playerCarIdx: PLAYER_CAR_IDX,
+      playerClassEstLapTime: PLAYER_ESTIMATED_LAP_TIME,
+      drivers: [fasterDriver],
       lapDistPct: [0.2, 0.19],
       lapsCompleted: [1, 1],
+      onPitRoad: [false, false],
     });
 
-    // The class lap time is 94.5768 s, so 1% of the lap is 0.9458 s.
     expect(cars[0].gapSeconds).toBeCloseTo(0.9458, 3);
+    expect(estimatedDelta).toHaveBeenCalled();
   });
 
-  it('sorts the nearest car first', () => {
-    const cars = run({
+  it('When iRacing reports three faster cars behind then the nearest car is first', () => {
+    const cars = findTrafficBehind({
+      playerCarIdx: PLAYER_CAR_IDX,
+      playerClassEstLapTime: PLAYER_ESTIMATED_LAP_TIME,
       drivers: [
-        buildDriver({ carIdx: 1 }),
-        buildDriver({ carIdx: 2 }),
-        buildDriver({ carIdx: 3 }),
+        fasterDriver,
+        { ...fasterDriver, carIdx: 2, carNumber: '2' },
+        { ...fasterDriver, carIdx: 3, carNumber: '3' },
       ],
       lapDistPct: [0.2, 0.19, 0.199, 0.195],
+      lapsCompleted: [0, 0, 0, 0],
+      onPitRoad: [false, false, false, false],
     });
 
     expect(cars.map((car) => car.carIdx)).toEqual([2, 3, 1]);
   });
 
-  it('reports nothing when the player is not on track', () => {
-    expect(
-      run({
-        drivers: [buildDriver({ carIdx: 1 })],
-        lapDistPct: [-1, 0.199],
-      }),
-    ).toEqual([]);
+  it('When iRacing reports the player not on track then no traffic is returned', () => {
+    const cars = findTrafficBehind({
+      playerCarIdx: PLAYER_CAR_IDX,
+      playerClassEstLapTime: PLAYER_ESTIMATED_LAP_TIME,
+      drivers: [fasterDriver],
+      lapDistPct: [-1, 0.199],
+      lapsCompleted: [0, 0],
+      onPitRoad: [false, false],
+    });
+
+    expect(cars).toEqual([]);
   });
 });

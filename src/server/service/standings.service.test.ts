@@ -6,7 +6,7 @@ import {
 } from '#service/standings.service.ts';
 
 describe('getRaceStandings', () => {
-  it('sorts cars by total distance and assigns positions', async () => {
+  it('When iRacing reports race lap counts and positions then cars are sorted by total distance', async () => {
     loadTelemetryFixture('fixture/telemetry-mock/standings/race.json');
 
     expect(await getRaceStandings()).toEqual([
@@ -18,7 +18,7 @@ describe('getRaceStandings', () => {
 });
 
 describe('getSessionStandings', () => {
-  it('maps class positions and sorts them', async () => {
+  it('When iRacing reports class positions then cars are returned in position order', async () => {
     loadTelemetryFixture('fixture/telemetry-mock/standings/session.json');
 
     expect(await getSessionStandings()).toEqual([
@@ -28,7 +28,7 @@ describe('getSessionStandings', () => {
     ]);
   });
 
-  it('excludes cars with class position 0', async () => {
+  it('When iRacing reports one car with class position zero then that car is excluded', async () => {
     loadTelemetryFixture(
       'fixture/telemetry-mock/standings/session-excludes-zero.json',
     );
@@ -39,7 +39,7 @@ describe('getSessionStandings', () => {
     ]);
   });
 
-  it('returns an empty array when all class positions are 0', async () => {
+  it('When iRacing reports all class positions as zero then no standings are returned', async () => {
     loadTelemetryFixture('fixture/telemetry-mock/standings/session-empty.json');
 
     expect(await getSessionStandings()).toEqual([]);

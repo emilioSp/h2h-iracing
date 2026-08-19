@@ -1,23 +1,32 @@
 import { SESSION_DATA_KEYS, VARS } from '@emiliosp/node-iracing-sdk';
 import { describe, expect, it } from 'vitest';
+import {
+  isIRacingConnected,
+  loadTelemetryFixture,
+} from '#repository/irsdk.repository.ts';
 import { IRSDKMock } from '#repository/irsdk-mock.ts';
 
 describe('IRSDKMock', () => {
-  it('reads variables and session data', () => {
+  it('When a telemetry fixture is loaded then its variables and session data are available', () => {
     const sdk = IRSDKMock.fromFixture(
-      'fixture/telemetry-mock/frames/default.json',
+      'fixture/telemetry-mock/frames/advancing-frames.json',
     );
 
-    expect(sdk.get(VARS.AIR_TEMP)).toEqual([10]);
-    expect(sdk.get(VARS.WIND_VEL)).toEqual([4]);
-    expect(sdk.getSessionInfo(SESSION_DATA_KEYS.WEEKEND_INFO).TrackLength).toBe(
-      '5.0 km',
-    );
+    expect({
+      airTemperature: sdk.get(VARS.AIR_TEMP),
+      windVelocity: sdk.get(VARS.WIND_VEL),
+      trackLength: sdk.getSessionInfo(SESSION_DATA_KEYS.WEEKEND_INFO)
+        .TrackLength,
+    }).toEqual({
+      airTemperature: [10],
+      windVelocity: [4],
+      trackLength: '5.0 km',
+    });
   });
 
-  it('uses the first frame for the first refresh and then advances', () => {
+  it('When telemetry is refreshed then the mock starts at the first frame and advances', () => {
     const sdk = IRSDKMock.fromFixture(
-      'fixture/telemetry-mock/frames/default.json',
+      'fixture/telemetry-mock/frames/advancing-frames.json',
     );
 
     expect(sdk.get(VARS.AIR_TEMP)).toEqual([10]);
@@ -27,9 +36,9 @@ describe('IRSDKMock', () => {
     expect(sdk.get(VARS.AIR_TEMP)).toEqual([21]);
   });
 
-  it('keeps the last frame active', () => {
+  it('When telemetry is refreshed past the final frame then the final frame remains active', () => {
     const sdk = IRSDKMock.fromFixture(
-      'fixture/telemetry-mock/frames/default.json',
+      'fixture/telemetry-mock/frames/advancing-frames.json',
     );
 
     sdk.refreshSharedMemory();
@@ -39,18 +48,27 @@ describe('IRSDKMock', () => {
     expect(sdk.get(VARS.AIR_TEMP)).toEqual([21]);
   });
 
-  it('supports connected, disconnected, and shutdown states', () => {
-    const connected = IRSDKMock.fromFixture(
+  it('When a connected fixture is loaded then the mock is connected', () => {
+    const sdk = IRSDKMock.fromFixture(
       'fixture/telemetry-mock/connection/connected.json',
     );
-    const disconnected = IRSDKMock.fromFixture(
-      'fixture/telemetry-mock/connection/disconnected.json',
+
+    expect(sdk.isConnected()).toBe(true);
+  });
+
+  it('When a disconnected fixture is loaded then the test repository remains disconnected', async () => {
+    loadTelemetryFixture('fixture/telemetry-mock/connection/disconnected.json');
+
+    expect(await isIRacingConnected()).toBe(false);
+  });
+
+  it('When a connected mock is shut down then it disconnects', () => {
+    const sdk = IRSDKMock.fromFixture(
+      'fixture/telemetry-mock/connection/connected.json',
     );
 
-    expect(connected.isConnected()).toBe(true);
-    expect(disconnected.isConnected()).toBe(false);
+    sdk.shutdown();
 
-    connected.shutdown();
-    expect(connected.isConnected()).toBe(false);
+    expect(sdk.isConnected()).toBe(false);
   });
 });

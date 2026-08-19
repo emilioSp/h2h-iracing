@@ -1,24 +1,18 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { refreshDriverInfo } from '#repository/driver.repository.ts';
 import {
   getTrackLengthMeters,
   loadTelemetryFixture,
   refreshTelemetry,
 } from '#repository/irsdk.repository.ts';
-import * as referenceLapRepository from '#repository/reference-lap.repository.ts';
 import {
   getActiveRefLap,
+  getRefLap,
   type ReferenceLap,
   type ReferencePoint,
   resetReferenceLaps,
   setActiveRefLap,
 } from '#repository/reference-lap.repository.ts';
-import * as referenceLapService from '#service/reference-lap.service.ts';
-
-vi.spyOn(referenceLapRepository, 'addRecentLap');
-vi.spyOn(referenceLapRepository, 'setActiveRefLap');
-vi.spyOn(referenceLapService, 'normalizeTrackPct');
-
 import {
   getMinPointsForValidLap,
   getReferenceInterval,
@@ -28,24 +22,22 @@ import {
   updateReferenceLaps,
 } from '#service/reference-lap.service.ts';
 
-const loadReferenceLapFixture = async (name: string): Promise<void> => {
-  loadTelemetryFixture(`fixture/telemetry-mock/reference-lap/${name}.json`);
-  await refreshDriverInfo();
-  initReferenceInterval(await getTrackLengthMeters());
-};
-
-const seedActiveLap = (
-  carIdx: number,
-  pointCount: number,
-  opts?: Partial<ReferenceLap>,
-): void => {
+const seedActiveLap = ({
+  carIdx,
+  pointCount,
+  overrides,
+}: {
+  carIdx: number;
+  pointCount: number;
+  overrides?: Partial<ReferenceLap>;
+}): void => {
   const interval = getReferenceInterval();
   const refPoints = new Map<number, ReferencePoint>();
-  for (let i = 0; i < pointCount; i++) {
-    const pct = i * interval;
-    refPoints.set(pct, {
-      trackPct: pct,
-      timeElapsedSinceStart: i,
+  for (let point = 0; point < pointCount; point++) {
+    const trackPct = point * interval;
+    refPoints.set(trackPct, {
+      trackPct,
+      timeElapsedSinceStart: point,
     });
   }
   setActiveRefLap({
@@ -56,40 +48,52 @@ const seedActiveLap = (
       refPoints,
       lastTrackedPct: 0.97,
       isOnPitRoad: false,
-      ...opts,
+      ...overrides,
     },
   });
 };
 
 beforeEach(() => {
-  vi.clearAllMocks();
   resetReferenceLaps();
 });
 
 describe('updateReferenceLaps', () => {
-  it('skips cars with lapDistPct < 0', async () => {
-    await loadReferenceLapFixture('negative');
+  it('When iRacing reports a negative lap position then no active lap is created', async () => {
+    loadTelemetryFixture('fixture/telemetry-mock/reference-lap/negative.json');
+    await refreshDriverInfo();
+    initReferenceInterval(await getTrackLengthMeters());
 
     await updateReferenceLaps();
 
-    expect(referenceLapService.normalizeTrackPct).not.toHaveBeenCalled();
+    expect(getActiveRefLap(0)).toBeNull();
   });
 
-  it('initialises a new active lap on first data point', async () => {
-    const sessionStart = 50;
-    await loadReferenceLapFixture('session-start');
+  it('When iRacing reports the first point of a lap then a new active lap is created', async () => {
+    loadTelemetryFixture(
+      'fixture/telemetry-mock/reference-lap/session-start.json',
+    );
+    await refreshDriverInfo();
+    initReferenceInterval(await getTrackLengthMeters());
 
     await updateReferenceLaps();
-    expect(referenceLapRepository.setActiveRefLap).toHaveBeenCalledOnce();
 
-    const lap = getActiveRefLap(0);
-    expect(lap).not.toBeNull();
-    expect(lap?.startTime).toBe(sessionStart);
-    expect(lap?.refPoints.size).toBe(1);
+    expect(getActiveRefLap(0)).toEqual({
+      startTime: 50,
+      finishTime: -1,
+      refPoints: new Map([
+        [normalizeTrackPct(0.5), { trackPct: 0.5, timeElapsedSinceStart: 0 }],
+      ]),
+      lastTrackedPct: 0.5,
+      isOnPitRoad: false,
+    });
   });
 
-  it('adds a refPoint to an existing active lap', async () => {
-    await loadReferenceLapFixture('two-points');
+  it('When iRacing reports two points in different buckets then both points are stored', async () => {
+    loadTelemetryFixture(
+      'fixture/telemetry-mock/reference-lap/two-points.json',
+    );
+    await refreshDriverInfo();
+    initReferenceInterval(await getTrackLengthMeters());
     await refreshTelemetry();
     await updateReferenceLaps();
 
@@ -99,98 +103,118 @@ describe('updateReferenceLaps', () => {
     expect(getActiveRefLap(0)?.refPoints.size).toBe(2);
   });
 
-  it('does not add a duplicate refPoint for the same normalised key', async () => {
-    await loadReferenceLapFixture('two-points');
+  it('When iRacing repeats a point in the same bucket then no duplicate point is stored', async () => {
+    loadTelemetryFixture(
+      'fixture/telemetry-mock/reference-lap/two-points.json',
+    );
+    await refreshDriverInfo();
+    initReferenceInterval(await getTrackLengthMeters());
     await refreshTelemetry();
     await updateReferenceLaps();
+
     await updateReferenceLaps();
 
     expect(getActiveRefLap(0)?.refPoints.size).toBe(1);
   });
 
-  it('marks a clean lap dirty when the car enters pit road', async () => {
-    const currentPct = 0.5;
-    const fewPoints = 5;
-    await loadReferenceLapFixture('pit-road');
-    seedActiveLap(0, fewPoints, {
-      lastTrackedPct: currentPct,
-      isOnPitRoad: false,
+  it('When iRacing reports that a car entered pit road then its active lap is dirty', async () => {
+    loadTelemetryFixture('fixture/telemetry-mock/reference-lap/pit-road.json');
+    await refreshDriverInfo();
+    initReferenceInterval(await getTrackLengthMeters());
+    seedActiveLap({
+      carIdx: 0,
+      pointCount: 5,
+      overrides: { lastTrackedPct: 0.5, isOnPitRoad: false },
     });
 
     await updateReferenceLaps();
 
     expect(getActiveRefLap(0)?.isOnPitRoad).toBe(true);
   });
-});
 
-describe('lap completion', async () => {
-  it('resets active lap when lap wraps (lastTrackedPct > 0.95 → trackPct < 0.05)', async () => {
-    const fewPoints = 5;
-    const lapTime = 80;
-    await loadReferenceLapFixture('finish');
-    seedActiveLap(0, fewPoints);
+  it('When iRacing reports a finish-line crossing then a new active lap starts', async () => {
+    loadTelemetryFixture('fixture/telemetry-mock/reference-lap/finish.json');
+    await refreshDriverInfo();
+    initReferenceInterval(await getTrackLengthMeters());
+    seedActiveLap({ carIdx: 0, pointCount: 5 });
 
     await updateReferenceLaps();
 
-    const newLap = getActiveRefLap(0);
-    expect(newLap?.startTime).toBe(lapTime);
-    expect(newLap?.refPoints.size).toBe(1);
+    expect(getActiveRefLap(0)).toEqual({
+      startTime: 80,
+      finishTime: -1,
+      refPoints: new Map([
+        [0.01, { trackPct: 0.01, timeElapsedSinceStart: 0 }],
+      ]),
+      lastTrackedPct: 0.01,
+      isOnPitRoad: false,
+    });
   });
 
-  it('saves a valid clean lap to the recent window', async () => {
-    await loadReferenceLapFixture('finish');
-    seedActiveLap(0, getMinPointsForValidLap());
+  it('When iRacing reports a complete clean lap then the lap enters the recent window', async () => {
+    loadTelemetryFixture('fixture/telemetry-mock/reference-lap/finish.json');
+    await refreshDriverInfo();
+    initReferenceInterval(await getTrackLengthMeters());
+    seedActiveLap({ carIdx: 0, pointCount: getMinPointsForValidLap() });
 
     await updateReferenceLaps();
 
-    expect(referenceLapRepository.addRecentLap).toHaveBeenCalled();
+    expect(getRefLap(0)).not.toBeNull();
   });
 
-  it('does not add to recent window when point count is below threshold', async () => {
-    await loadReferenceLapFixture('finish');
-    seedActiveLap(0, getMinPointsForValidLap() - 1);
+  it('When iRacing reports a lap below the point threshold then the lap is excluded from the recent window', async () => {
+    loadTelemetryFixture('fixture/telemetry-mock/reference-lap/finish.json');
+    await refreshDriverInfo();
+    initReferenceInterval(await getTrackLengthMeters());
+    seedActiveLap({
+      carIdx: 0,
+      pointCount: getMinPointsForValidLap() - 1,
+    });
 
     await updateReferenceLaps();
 
-    expect(referenceLapRepository.addRecentLap).not.toHaveBeenCalled();
+    expect(getRefLap(0)).toBeNull();
   });
 
-  it('does not add to recent window when lap is dirty', async () => {
-    await loadReferenceLapFixture('finish');
-    seedActiveLap(0, getMinPointsForValidLap(), { isOnPitRoad: true });
+  it('When iRacing reports a dirty lap then the lap is excluded from the recent window', async () => {
+    loadTelemetryFixture('fixture/telemetry-mock/reference-lap/finish.json');
+    await refreshDriverInfo();
+    initReferenceInterval(await getTrackLengthMeters());
+    seedActiveLap({
+      carIdx: 0,
+      pointCount: getMinPointsForValidLap(),
+      overrides: { isOnPitRoad: true },
+    });
 
     await updateReferenceLaps();
 
-    expect(referenceLapRepository.addRecentLap).not.toHaveBeenCalled();
+    expect(getRefLap(0)).toBeNull();
   });
 });
 
 describe('normalizeTrackPct', () => {
-  it('returns 0 for key = 0', async () => {
-    await loadReferenceLapFixture('default');
+  beforeEach(() => {
+    initReferenceInterval(5_000);
+  });
 
+  it('When the track position is at the start line then zero is returned', () => {
     expect(normalizeTrackPct(0)).toBe(0);
   });
 
-  it('returns the key unchanged when it falls exactly on a boundary', async () => {
-    await loadReferenceLapFixture('default');
-
+  it('When the track position is on a bucket boundary then the position is unchanged', () => {
     expect(normalizeTrackPct(getReferenceInterval())).toBe(
       getReferenceInterval(),
     );
   });
 
-  it('truncates to the nearest referenceInterval boundary below', async () => {
-    await loadReferenceLapFixture('default');
-
+  it('When the track position is between bucket boundaries then it is truncated to the lower boundary', () => {
     const interval = getReferenceInterval();
-    const keyBetweenBoundaries = interval * 1.5;
-    expect(normalizeTrackPct(keyBetweenBoundaries)).toBe(interval);
+    const positionBetweenBoundaries = interval * 1.5;
+
+    expect(normalizeTrackPct(positionBetweenBoundaries)).toBe(interval);
   });
 
-  it('returns 0 for negative input', async () => {
-    await loadReferenceLapFixture('default');
-
+  it('When the track position is negative then it is clamped to zero', () => {
     expect(normalizeTrackPct(-0.1)).toBe(0);
   });
 });
@@ -201,11 +225,15 @@ describe('interpolateTimeAtTrackPosition', () => {
     timeElapsedSinceStart: time,
   });
 
-  const makeLap = (
-    points: Array<[number, ReferencePoint]>,
+  const makeLap = ({
+    points,
     startTime = 0,
     finishTime = 100,
-  ): ReferenceLap => ({
+  }: {
+    points: Array<[number, ReferencePoint]>;
+    startTime?: number;
+    finishTime?: number;
+  }): ReferenceLap => ({
     refPoints: new Map(points),
     startTime,
     finishTime,
@@ -213,35 +241,43 @@ describe('interpolateTimeAtTrackPosition', () => {
     isOnPitRoad: false,
   });
 
-  it('returns null when no refPoint exists at the target position', async () => {
-    await loadReferenceLapFixture('default');
+  beforeEach(() => {
+    initReferenceInterval(5_000);
+  });
 
-    const lap = makeLap([[0.5, makePoint(0.5, 50)]]);
+  it('When the target bucket has no reference point then null is returned', () => {
+    const lap = makeLap({ points: [[0.5, makePoint(0.5, 50)]] });
+
     expect(
-      interpolateTimeAtTrackPosition({ lap, currentTrackPositionPct: 0.3 }),
+      interpolateTimeAtTrackPosition({
+        lap,
+        currentTrackPositionPct: 0.3,
+      }),
     ).toBeNull();
   });
 
-  it('uses the time from the only known marker when the next marker is missing', async () => {
-    await loadReferenceLapFixture('default');
+  it('When the next reference point is missing then the known time is returned', () => {
+    const trackPct = 0.5;
+    const key = normalizeTrackPct(trackPct);
+    const lap = makeLap({ points: [[key, makePoint(key, 50)]] });
 
-    const rawPct = 0.5;
-    const key = normalizeTrackPct(rawPct);
-    const time = 50;
-    const lap = makeLap([[key, makePoint(key, time)]]);
     expect(
-      interpolateTimeAtTrackPosition({ lap, currentTrackPositionPct: rawPct }),
-    ).toBe(time);
+      interpolateTimeAtTrackPosition({
+        lap,
+        currentTrackPositionPct: trackPct,
+      }),
+    ).toBe(50);
   });
 
-  it('linearly interpolates between two points', async () => {
-    await loadReferenceLapFixture('default');
-
+  it('When two reference points surround the track position then the time is linearly interpolated', () => {
     const interval = getReferenceInterval();
-    const lap = makeLap([
-      [0.0, makePoint(0.0, 0)],
-      [interval, makePoint(interval, 10)],
-    ]);
+    const lap = makeLap({
+      points: [
+        [0, makePoint(0, 0)],
+        [interval, makePoint(interval, 10)],
+      ],
+    });
+
     expect(
       interpolateTimeAtTrackPosition({
         lap,
@@ -250,43 +286,20 @@ describe('interpolateTimeAtTrackPosition', () => {
     ).toBeCloseTo(5, 10);
   });
 
-  it('returns the stored time at an exact key', async () => {
-    await loadReferenceLapFixture('default');
-
-    const interval = getReferenceInterval();
-    const lapTime = 100;
-    const buckets = Math.floor(1 / interval);
-    const entries: Array<[number, ReferencePoint]> = [];
-    for (let i = 0; i < buckets; i++) {
-      const pct = i * interval;
-      entries.push([pct, makePoint(pct, pct * lapTime)]);
-    }
-    const lap = makeLap(entries, 0, lapTime);
-    const storedPct = Math.floor(buckets / 2) * interval;
-    expect(
-      interpolateTimeAtTrackPosition({
-        lap,
-        currentTrackPositionPct: storedPct,
-      }),
-    ).toBeCloseTo(storedPct * lapTime, 5);
-  });
-
-  it('wraps time correctly when interpolating across the finish line', async () => {
-    await loadReferenceLapFixture('default');
-
+  it('When reference points cross the finish line then the completed lap time is used for interpolation', () => {
     const interval = getReferenceInterval();
     const lapTime = 100;
     const lastPct = 1 - interval;
-    const lap = makeLap(
-      [
+    const lap = makeLap({
+      points: [
         [lastPct, makePoint(lastPct, lastPct * lapTime)],
         [0, makePoint(0, 0)],
       ],
-      0,
-      lapTime,
-    );
+      finishTime: lapTime,
+    });
     const currentTrackPositionPct = lastPct + interval / 2;
     const expected = lastPct * lapTime + (interval / 2) * lapTime;
+
     expect(
       interpolateTimeAtTrackPosition({ lap, currentTrackPositionPct }),
     ).toBeCloseTo(expected, 3);

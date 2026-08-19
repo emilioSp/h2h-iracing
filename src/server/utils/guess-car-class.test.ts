@@ -34,8 +34,9 @@ describe('guessCarClass', () => {
     expect(guessCarClass('Ferrari GT30000')).toBe('GTP');
   });
 
-  it('returns the same label for a repeated name', () => {
-    expect(guessCarClass('Mercedes GT3 2020')).toBe('GT3');
+  it('When a car name is resolved again then its cached label is returned', () => {
+    guessCarClass('Mercedes GT3 2020');
+
     expect(guessCarClass('Mercedes GT3 2020')).toBe('GT3');
   });
 });

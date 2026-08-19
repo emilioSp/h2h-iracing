@@ -10,13 +10,13 @@ import {
 import type { Standing } from '#service/standings.service.ts';
 
 describe('computeLastLapTime', () => {
-  it('returns the SDK lap time when it is positive', async () => {
+  it('When iRacing telemetry reports a positive lap time then it returns that time', async () => {
     loadTelemetryFixture('fixture/telemetry-mock/car-service/car.json');
 
     expect(await computeLastLapTime(7)).toBe(85.5);
   });
 
-  it('uses the session lap time when the SDK value is 0', async () => {
+  it('When iRacing telemetry reports zero then it returns the session lap time', async () => {
     loadTelemetryFixture(
       'fixture/telemetry-mock/car-service/session-times.json',
     );
@@ -25,7 +25,7 @@ describe('computeLastLapTime', () => {
     expect(await computeLastLapTime(1)).toBe(86.2);
   });
 
-  it('returns NaN when there is no time', async () => {
+  it('When iRacing reports no lap time in telemetry or session data then it returns NaN', async () => {
     loadTelemetryFixture('fixture/telemetry-mock/car-service/no-times.json');
     await refreshCurrentSessionInfo();
 
@@ -34,13 +34,13 @@ describe('computeLastLapTime', () => {
 });
 
 describe('computeBestLapTime', () => {
-  it('returns the SDK best time when it is positive', async () => {
+  it('When iRacing telemetry reports a positive best time then it returns that time', async () => {
     loadTelemetryFixture('fixture/telemetry-mock/car-service/car.json');
 
     expect(await computeBestLapTime(7)).toBe(84.1);
   });
 
-  it('uses the session best time when the SDK value is 0', async () => {
+  it('When iRacing telemetry reports zero then it returns the session best time', async () => {
     loadTelemetryFixture(
       'fixture/telemetry-mock/car-service/session-times.json',
     );
@@ -49,7 +49,7 @@ describe('computeBestLapTime', () => {
     expect(await computeBestLapTime(1)).toBe(83.9);
   });
 
-  it('returns NaN when both sources have no time', async () => {
+  it('When iRacing reports no best time in telemetry or session data then it returns NaN', async () => {
     loadTelemetryFixture('fixture/telemetry-mock/car-service/no-times.json');
     await refreshCurrentSessionInfo();
 
@@ -60,14 +60,10 @@ describe('computeBestLapTime', () => {
 describe('computeCar', () => {
   const standings: Standing[] = [{ carIdx: 7, pos: 3 }];
 
-  const loadCarFixture = async (path: string): Promise<void> => {
-    loadTelemetryFixture(path);
+  it('When iRacing reports complete car data then it assembles the car', async () => {
+    loadTelemetryFixture('fixture/telemetry-mock/car-service/car.json');
     await refreshDriverInfo();
     await refreshCurrentSessionInfo();
-  };
-
-  it('assembles a car from telemetry data', async () => {
-    await loadCarFixture('fixture/telemetry-mock/car-service/car.json');
 
     const car = await computeCar({ carIdx: 7, standings });
 
@@ -80,10 +76,12 @@ describe('computeCar', () => {
     });
   });
 
-  it('uses position 0 when the car is not in the standings', async () => {
-    await loadCarFixture('fixture/telemetry-mock/car-service/car.json');
+  it('When iRacing reports a valid car missing from the standings then its position is zero', async () => {
+    loadTelemetryFixture('fixture/telemetry-mock/car-service/car.json');
+    await refreshDriverInfo();
+    await refreshCurrentSessionInfo();
 
-    const car = await computeCar({ carIdx: 99, standings });
+    const car = await computeCar({ carIdx: 7, standings: [] });
 
     expect(car.position).toBe(0);
   });

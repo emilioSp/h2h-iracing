@@ -103,7 +103,7 @@ const speedUp = (currentSpeed: number): number => {
 - Use clear test names.
    - State what iRacing reports.
    - State the expected application result.
-   - Example: iRacing reports a car on the left, but no car overlaps, so the left bar has no coloured segment.
+   - Example: when iRacing reports a car on the left, but no car overlaps, then the left bar has no coloured segment.
 - Avoid redundant expectations.
    - One expectation must prove one behavior.
    - Remove a second expectation when the first one already proves the same result.

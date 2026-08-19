@@ -9,24 +9,38 @@ beforeEach(() => {
 });
 
 describe('computeTraffic', () => {
-  it('reports the faster car and skips the same-class car', async () => {
-    loadTelemetryFixture('fixture/telemetry-mock/traffic/default.json');
+  it('When iRacing reports a faster-class car behind then the dashboard returns that car', async () => {
+    loadTelemetryFixture(
+      'fixture/telemetry-mock/traffic/faster-and-same-class-behind.json',
+    );
     await refreshDriverInfo();
 
     const traffic = await computeTraffic();
 
-    expect(traffic.cars).toHaveLength(1);
-    expect(traffic.cars[0]).toMatchObject({
-      carIdx: 1,
-      carNumber: '6',
-      driverName: 'Aussie Greg Hill',
-      className: 'LMP2',
-      license: 'B 2.10',
-      iRating: 4200,
-    });
+    expect(traffic.cars).toEqual([
+      expect.objectContaining({
+        carIdx: 1,
+        carNumber: '6',
+        driverName: 'Aussie Greg Hill',
+        className: 'LMP2',
+        license: 'B 2.10',
+        iRating: 4200,
+      }),
+    ]);
   });
 
-  it('reports nothing when the player is in pit road', async () => {
+  it('When iRacing reports a same-class car behind then the dashboard excludes that car', async () => {
+    loadTelemetryFixture(
+      'fixture/telemetry-mock/traffic/faster-and-same-class-behind.json',
+    );
+    await refreshDriverInfo();
+
+    const traffic = await computeTraffic();
+
+    expect(traffic.cars.map((car) => car.carIdx)).not.toContain(2);
+  });
+
+  it('When iRacing reports the player in pit road then the dashboard returns no traffic', async () => {
     loadTelemetryFixture('fixture/telemetry-mock/traffic/player-in-pit.json');
 
     expect(await computeTraffic()).toEqual({ cars: [] });

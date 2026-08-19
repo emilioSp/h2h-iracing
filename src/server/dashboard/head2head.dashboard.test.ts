@@ -1,78 +1,63 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { computeHead2Head } from '#dashboard/head2head.dashboard.ts';
 import { refreshDriverInfo } from '#repository/driver.repository.ts';
 import { loadTelemetryFixture } from '#repository/irsdk.repository.ts';
 import { refreshCurrentSessionInfo } from '#repository/session-info.repository.ts';
 import { resetInMemoryStorage } from '#server/tick.ts';
 
-const loadHead2HeadFixture = async (path: string): Promise<void> => {
-  loadTelemetryFixture(path);
-  resetInMemoryStorage();
-  await refreshDriverInfo();
-  await refreshCurrentSessionInfo();
-};
-
-describe('computeHead2Head in a race', () => {
-  beforeEach(async () => {
-    await loadHead2HeadFixture('fixture/telemetry-mock/head2head/race.json');
-  });
-
-  it('returns a valid result', async () => {
-    const head2Head = await computeHead2Head();
-
-    expect(head2Head).not.toBeNull();
-    expect(head2Head?.sessionTime).toBe(120);
-    expect(head2Head?.player.position).toBe(2);
-    expect(head2Head?.player.driver.name).toBe('Player');
-    expect(head2Head?.player.driver.iRating).toBe(3000);
-  });
-
-  it('returns the cars ahead and behind', async () => {
-    const head2Head = await computeHead2Head();
-
-    expect(head2Head?.ahead?.position).toBe(1);
-    expect(head2Head?.player.position).toBe(2);
-    expect(head2Head?.behind?.position).toBe(3);
-  });
-
-  it('returns race gaps', async () => {
-    const head2Head = await computeHead2Head();
-
-    expect(head2Head?.gapAhead).not.toBeNull();
-    expect(head2Head?.gapBehind).not.toBeNull();
-  });
-});
-
-describe('computeHead2Head in a practise', () => {
-  it('returns null gaps', async () => {
-    await loadHead2HeadFixture(
-      'fixture/telemetry-mock/head2head/practice.json',
-    );
+describe('computeHead2Head', () => {
+  it('When iRacing reports a race then the dashboard returns positions, race gaps, and lap deltas', async () => {
+    loadTelemetryFixture('fixture/telemetry-mock/head2head/race.json');
+    resetInMemoryStorage();
+    await refreshDriverInfo();
+    await refreshCurrentSessionInfo();
 
     const head2Head = await computeHead2Head();
 
-    expect(head2Head?.gapAhead).toBeNull();
-    expect(head2Head?.gapBehind).toBeNull();
+    expect(head2Head).toMatchObject({
+      sessionTime: 120,
+      ahead: { position: 1, driver: { name: 'Ahead' } },
+      player: {
+        position: 2,
+        driver: { name: 'Player', iRating: 3000 },
+      },
+      behind: { position: 3, driver: { name: 'Behind' } },
+      gapAhead: { value: expect.closeTo(18), unit: 'seconds' },
+      gapBehind: { value: 18, unit: 'seconds' },
+      deltaAhead: 0.5,
+      deltaBehind: -1,
+    });
   });
 
-  it('uses best lap times for the delta', async () => {
-    await loadHead2HeadFixture(
-      'fixture/telemetry-mock/head2head/practice.json',
-    );
+  it('When iRacing reports a practice session then the dashboard returns lap deltas without race gaps', async () => {
+    loadTelemetryFixture('fixture/telemetry-mock/head2head/practice.json');
+    resetInMemoryStorage();
+    await refreshDriverInfo();
+    await refreshCurrentSessionInfo();
 
     const head2Head = await computeHead2Head();
 
-    expect(head2Head?.deltaAhead).toBeCloseTo(90 - 89.5);
+    expect(head2Head).toMatchObject({
+      gapAhead: null,
+      gapBehind: null,
+      deltaAhead: 0.5,
+      deltaBehind: -1,
+    });
   });
 
-  it('returns null deltas when a neighbor has no best lap time', async () => {
-    await loadHead2HeadFixture(
+  it('When iRacing reports no practice best times then the dashboard returns no lap deltas', async () => {
+    loadTelemetryFixture(
       'fixture/telemetry-mock/head2head/practice-missing-best.json',
     );
+    resetInMemoryStorage();
+    await refreshDriverInfo();
+    await refreshCurrentSessionInfo();
 
     const head2Head = await computeHead2Head();
 
-    expect(head2Head?.deltaAhead).toBeNull();
-    expect(head2Head?.deltaBehind).toBeNull();
+    expect(head2Head).toMatchObject({
+      deltaAhead: null,
+      deltaBehind: null,
+    });
   });
 });
