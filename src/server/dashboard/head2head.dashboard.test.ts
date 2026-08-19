@@ -1,51 +1,53 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { computeHead2Head } from '#dashboard/head2head.dashboard.ts';
-import * as iracingRepository from '#repository/irsdk.repository.ts';
-import * as sessionInfoRepository from '#repository/session-info.repository.ts';
-import { tick } from '#server/tick.ts';
+import { refreshDriverInfo } from '#repository/driver.repository.ts';
+import { loadTelemetryFixture } from '#repository/irsdk.repository.ts';
+import { refreshCurrentSessionInfo } from '#repository/session-info.repository.ts';
+import { resetInMemoryStorage } from '#server/tick.ts';
 
-describe('head2head.service (race session - dump)', () => {
+const loadHead2HeadFixture = async (path: string): Promise<void> => {
+  loadTelemetryFixture(path);
+  resetInMemoryStorage();
+  await refreshDriverInfo();
+  await refreshCurrentSessionInfo();
+};
+
+describe('computeHead2Head in a race', () => {
   beforeEach(async () => {
-    vi.restoreAllMocks();
-    await tick();
-    vi.spyOn(sessionInfoRepository, 'isRaceSession').mockReturnValue(true);
+    await loadHead2HeadFixture('fixture/telemetry-mock/head2head/race.json');
   });
 
-  it('returns a valid Head2Head from dump', async () => {
+  it('returns a valid result', async () => {
     const head2Head = await computeHead2Head();
 
     expect(head2Head).not.toBeNull();
-    expect(head2Head?.sessionTime).toBeGreaterThan(0);
-    expect(head2Head?.player.position).toBeGreaterThan(0);
-    expect(head2Head?.player.driver.name).toBeTruthy();
-    expect(head2Head?.player.driver.iRating).toBeDefined();
+    expect(head2Head?.sessionTime).toBe(120);
+    expect(head2Head?.player.position).toBe(2);
+    expect(head2Head?.player.driver.name).toBe('Player');
+    expect(head2Head?.player.driver.iRating).toBe(3000);
   });
 
-  it('ahead and behind neighbors match expected positions', async () => {
+  it('returns the cars ahead and behind', async () => {
     const head2Head = await computeHead2Head();
-    if (!head2Head) return;
 
-    const playerPos = head2Head.player.position;
-    if (head2Head.ahead) expect(head2Head.ahead.position).toBe(playerPos - 1);
-    if (head2Head.behind) expect(head2Head.behind.position).toBe(playerPos + 1);
+    expect(head2Head?.ahead?.position).toBe(1);
+    expect(head2Head?.player.position).toBe(2);
+    expect(head2Head?.behind?.position).toBe(3);
   });
 
-  it('gaps are non-null in a race session', async () => {
+  it('returns race gaps', async () => {
     const head2Head = await computeHead2Head();
-    if (!head2Head) return;
 
-    if (head2Head.ahead) expect(head2Head.gapAhead).not.toBeNull();
-    if (head2Head.behind) expect(head2Head.gapBehind).not.toBeNull();
+    expect(head2Head?.gapAhead).not.toBeNull();
+    expect(head2Head?.gapBehind).not.toBeNull();
   });
 });
 
-describe('head2head.service (non-race session)', () => {
-  beforeEach(() => {
-    vi.restoreAllMocks();
-  });
-
-  it('gaps are null during practice/qualify', async () => {
-    vi.spyOn(sessionInfoRepository, 'isRaceSession').mockReturnValue(false);
+describe('computeHead2Head in a practise', () => {
+  it('returns null gaps', async () => {
+    await loadHead2HeadFixture(
+      'fixture/telemetry-mock/head2head/practice.json',
+    );
 
     const head2Head = await computeHead2Head();
 
@@ -53,34 +55,19 @@ describe('head2head.service (non-race session)', () => {
     expect(head2Head?.gapBehind).toBeNull();
   });
 
-  it('delta uses best lap times during qualify', async () => {
-    vi.spyOn(sessionInfoRepository, 'isRaceSession').mockReturnValue(false);
-    vi.spyOn(iracingRepository, 'getBestLapTime').mockImplementation(
-      async (carIdx) => {
-        if (carIdx === 4) return 90.0;
-        if (carIdx === 3) return 89.5;
-        return NaN;
-      },
-    );
-    vi.spyOn(iracingRepository, 'getClassPositions').mockResolvedValue(
-      Array(64)
-        .fill(0)
-        .map((_, i) => i),
+  it('uses best lap times for the delta', async () => {
+    await loadHead2HeadFixture(
+      'fixture/telemetry-mock/head2head/practice.json',
     );
 
     const head2Head = await computeHead2Head();
-    if (!head2Head?.ahead) return;
 
-    expect(head2Head.deltaAhead).toBeCloseTo(90.0 - 89.5);
+    expect(head2Head?.deltaAhead).toBeCloseTo(90 - 89.5);
   });
 
-  it('delta is null when a neighbor has no best lap time', async () => {
-    vi.spyOn(sessionInfoRepository, 'isRaceSession').mockReturnValue(false);
-    vi.spyOn(iracingRepository, 'getBestLapTime').mockResolvedValue(NaN);
-    vi.spyOn(iracingRepository, 'getClassPositions').mockResolvedValue(
-      Array(64)
-        .fill(0)
-        .map((_, i) => i),
+  it('returns null deltas when a neighbor has no best lap time', async () => {
+    await loadHead2HeadFixture(
+      'fixture/telemetry-mock/head2head/practice-missing-best.json',
     );
 
     const head2Head = await computeHead2Head();

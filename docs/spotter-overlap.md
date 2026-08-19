@@ -23,9 +23,9 @@ yours.
 | Value | Meaning | Bars shown |
 |---|---|---|
 | `0` off, `1` clear | Nobody alongside | none |
-| `2` car left, `5` two cars left | Left | left |
-| `3` car right, `6` two cars right | Right | right |
-| `4` car left and right | Three wide | both, full height, blinking red/yellow |
+| `2` car left | Left | left |
+| `3` car right | Right | right |
+| `4` car left and right, `5` two cars left, `6` two cars right | Three wide | both, full height, blinking red/yellow |
 
 ## Step 2 — how far ahead or behind the neighbour is
 
@@ -116,10 +116,10 @@ does not.
 
 - **Car length is a constant.** iRacing exposes no car dimensions, so a 4.8 m value is used for
   every car. A Formula car and a GT car produce the same bar.
-- **`CarLeftRight = 4` cannot be split.** When iRacing reports cars on both sides it does not say
-  which car index is on which side, so no per-side overlap can be attributed. `computeSpotter`
-  returns early with `isThreeWide: true` and both sides `null` — it skips the neighbour search
-  entirely rather than inventing a figure — and the overlay fills both bars full height, blinking
-  red/yellow on a 0.6 s cycle.
+- **Three-wide states cannot use per-car overlap.** Values `4`, `5`, and `6` report one car on
+  each side, two cars on the left, or two cars on the right. They do not identify the car indexes.
+  `computeSpotter` returns early with `isThreeWide: true` and both sides `null`. It skips the
+  neighbour search, and the overlay fills both bars full height. The bars blink red and yellow on
+  a 0.6 s cycle.
 - **Lap distance follows the track centreline.** Cars side by side through a corner travel arcs of
   slightly different length, so the overlap can be off by a few tenths of a metre mid-corner.

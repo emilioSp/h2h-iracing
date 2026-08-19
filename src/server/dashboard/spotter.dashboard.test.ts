@@ -1,41 +1,11 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import * as driverRepository from '#repository/driver.repository.ts';
-import * as iracingRepository from '#repository/irsdk.repository.ts';
-import { CAR_LEFT_RIGHT } from '#repository/irsdk.repository.ts';
+import { describe, expect, it } from 'vitest';
+import { refreshDriverInfo } from '#repository/driver.repository.ts';
+import { loadTelemetryFixture } from '#repository/irsdk.repository.ts';
 import { computeSpotter } from '#server/dashboard/spotter.dashboard.ts';
-
-const TRACK_LENGTH_METERS = 5000;
-
-// Player is car 4 at half distance, car 2 is 1 m ahead, car 7 is far away.
-const lapDistPct = [0, 0, 0.5002, 0, 0.5, 0, 0, 0.8];
-
-let getCarsIdx: ReturnType<typeof vi.spyOn>;
-
-beforeEach(() => {
-  vi.restoreAllMocks();
-  vi.stubEnv('DATA_MODE', 'live');
-  vi.spyOn(iracingRepository, 'getPlayerCarIdx').mockResolvedValue(4);
-  vi.spyOn(iracingRepository, 'getLapDistPct').mockResolvedValue(lapDistPct);
-  vi.spyOn(iracingRepository, 'getOnPitRoad').mockResolvedValue(
-    Array(8).fill(false),
-  );
-  vi.spyOn(iracingRepository, 'getTrackLengthMeters').mockResolvedValue(
-    TRACK_LENGTH_METERS,
-  );
-  getCarsIdx = vi
-    .spyOn(driverRepository, 'getCarsIdx')
-    .mockResolvedValue([2, 4, 7]);
-});
-
-afterEach(() => {
-  vi.unstubAllEnvs();
-});
 
 describe('computeSpotter', () => {
   it('reports nothing when the track is clear', async () => {
-    vi.spyOn(iracingRepository, 'getCarLeftRight').mockResolvedValue(
-      CAR_LEFT_RIGHT.CLEAR,
-    );
+    loadTelemetryFixture('fixture/telemetry-mock/spotter/clear.json');
 
     expect(await computeSpotter()).toEqual({
       left: null,
@@ -45,9 +15,7 @@ describe('computeSpotter', () => {
   });
 
   it('reports nothing when the spotter is off', async () => {
-    vi.spyOn(iracingRepository, 'getCarLeftRight').mockResolvedValue(
-      CAR_LEFT_RIGHT.OFF,
-    );
+    loadTelemetryFixture('fixture/telemetry-mock/spotter/off.json');
 
     expect(await computeSpotter()).toEqual({
       left: null,
@@ -57,9 +25,8 @@ describe('computeSpotter', () => {
   });
 
   it('fills only the left bar when a car is on the left', async () => {
-    vi.spyOn(iracingRepository, 'getCarLeftRight').mockResolvedValue(
-      CAR_LEFT_RIGHT.CAR_LEFT,
-    );
+    loadTelemetryFixture('fixture/telemetry-mock/spotter/left.json');
+    await refreshDriverInfo();
 
     const spotter = await computeSpotter();
 
@@ -70,9 +37,8 @@ describe('computeSpotter', () => {
   });
 
   it('fills only the right bar when a car is on the right', async () => {
-    vi.spyOn(iracingRepository, 'getCarLeftRight').mockResolvedValue(
-      CAR_LEFT_RIGHT.CAR_RIGHT,
-    );
+    loadTelemetryFixture('fixture/telemetry-mock/spotter/right.json');
+    await refreshDriverInfo();
 
     const spotter = await computeSpotter();
 
@@ -80,38 +46,43 @@ describe('computeSpotter', () => {
     expect(spotter.right).not.toBeNull();
   });
 
-  it('treats two cars on one side as that side', async () => {
-    vi.spyOn(iracingRepository, 'getCarLeftRight').mockResolvedValue(
-      CAR_LEFT_RIGHT.TWO_CARS_LEFT,
-    );
-
-    const spotter = await computeSpotter();
-
-    expect(spotter.left).not.toBeNull();
-    expect(spotter.right).toBeNull();
-  });
-
-  it('flags three wide without a per-side overlap when cars are on both sides', async () => {
-    vi.spyOn(iracingRepository, 'getCarLeftRight').mockResolvedValue(
-      CAR_LEFT_RIGHT.CAR_LEFT_AND_RIGHT,
-    );
+  it('reports three wide when two cars are on the left', async () => {
+    loadTelemetryFixture('fixture/telemetry-mock/spotter/two-left.json');
 
     expect(await computeSpotter()).toEqual({
       left: null,
       right: null,
       isThreeWide: true,
     });
-    expect(getCarsIdx).not.toHaveBeenCalled();
   });
 
-  it('shows an empty bar when the nearest car does not overlap', async () => {
-    vi.spyOn(iracingRepository, 'getCarLeftRight').mockResolvedValue(
-      CAR_LEFT_RIGHT.CAR_LEFT,
-    );
-    vi.spyOn(driverRepository, 'getCarsIdx').mockResolvedValue([4, 7]);
+  it('reports three wide when two cars are on the right', async () => {
+    loadTelemetryFixture('fixture/telemetry-mock/spotter/two-right.json');
+
+    expect(await computeSpotter()).toEqual({
+      left: null,
+      right: null,
+      isThreeWide: true,
+    });
+  });
+
+  it('reports three wide when cars are on both sides', async () => {
+    loadTelemetryFixture('fixture/telemetry-mock/spotter/three-wide.json');
+
+    expect(await computeSpotter()).toEqual({
+      left: null,
+      right: null,
+      isThreeWide: true,
+    });
+  });
+
+  it('shows an empty left bar when iRacing reports a car left but no car overlaps', async () => {
+    loadTelemetryFixture('fixture/telemetry-mock/spotter/no-overlap.json');
+    await refreshDriverInfo();
 
     const spotter = await computeSpotter();
 
+    // Equal start and end values produce a visible bar with no coloured segment.
     expect(spotter.left).toEqual({ overlapStartPct: 100, overlapEndPct: 100 });
   });
 });

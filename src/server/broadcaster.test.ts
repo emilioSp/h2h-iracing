@@ -14,9 +14,6 @@ vi.mock('#dashboard/weather.dashboard.ts', () => ({
 vi.mock('#dashboard/car-telemetry.dashboard.ts', () => ({
   computeCarTelemetry: vi.fn(),
 }));
-vi.mock('#repository/irsdk.repository.ts', () => ({
-  isIRacingConnected: vi.fn(),
-}));
 vi.mock('#config', () => ({
   default: { POLL_INTERVAL_MS: 100 },
 }));
@@ -24,7 +21,7 @@ vi.mock('#config', () => ({
 import * as carService from '#dashboard/car-telemetry.dashboard.ts';
 import * as h2hService from '#dashboard/head2head.dashboard.ts';
 import * as weatherService from '#dashboard/weather.dashboard.ts';
-import * as iracingRepo from '#repository/irsdk.repository.ts';
+import { loadTelemetryFixture } from '#repository/irsdk.repository.ts';
 import {
   addClient,
   dashboardType,
@@ -40,7 +37,7 @@ const mockClient = () => ({
 
 beforeEach(() => {
   vi.useFakeTimers();
-  vi.mocked(iracingRepo.isIRacingConnected).mockResolvedValue(true);
+  loadTelemetryFixture('fixture/telemetry-mock/connection/connected.json');
   vi.mocked(weatherService.computeWeather).mockResolvedValue({
     airTemp: 20,
   } as never);
@@ -144,7 +141,7 @@ describe('broadcast tick', () => {
   });
 
   it('stops polling when iRacing disconnects', async () => {
-    vi.mocked(iracingRepo.isIRacingConnected).mockResolvedValue(false);
+    loadTelemetryFixture('fixture/telemetry-mock/connection/disconnected.json');
     const client = mockClient();
     addClient({ event: dashboardType.WEATHER, client });
 
@@ -178,7 +175,7 @@ describe('broadcast tick', () => {
   });
 
   it('calls close on all clients when iRacing disconnects', async () => {
-    vi.mocked(iracingRepo.isIRacingConnected).mockResolvedValue(false);
+    loadTelemetryFixture('fixture/telemetry-mock/connection/disconnected.json');
     const weatherClient = mockClient();
     const carClient = mockClient();
     addClient({ event: dashboardType.WEATHER, client: weatherClient });

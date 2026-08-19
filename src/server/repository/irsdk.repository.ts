@@ -5,6 +5,7 @@ import {
   VARS,
 } from '@emiliosp/node-iracing-sdk';
 import config from '#config';
+import { IRSDKMock } from '#repository/irsdk-mock.ts';
 import { debug } from '../debug.ts';
 
 export const CAR_LEFT_RIGHT = {
@@ -17,9 +18,23 @@ export const CAR_LEFT_RIGHT = {
   TWO_CARS_RIGHT: 6,
 } as const;
 
-let ir: IRSDK | null = null;
+let ir: IRSDK | IRSDKMock | null = null;
+
+export const loadTelemetryFixture = (path: string): void => {
+  if (process.env.NODE_ENV !== 'test') {
+    throw new Error('Telemetry fixtures are available only in tests');
+  }
+  ir = IRSDKMock.fromFixture(path);
+};
 
 const connectToIRacing = async (): Promise<void> => {
+  if (process.env.NODE_ENV === 'test') {
+    if (!(ir instanceof IRSDKMock)) {
+      throw new Error('Load a telemetry fixture before reading telemetry');
+    }
+    return;
+  }
+
   if (ir?.isConnected()) {
     return;
   }
@@ -91,7 +106,7 @@ export const getSessionNum = withConnect(
 );
 
 export const getRawDrivers = withConnect(
-  () => ir?.getSessionInfo(SESSION_DATA_KEYS.DRIVER_INFO).Drivers ?? [],
+  () => ir?.getSessionInfo(SESSION_DATA_KEYS.DRIVER_INFO)?.Drivers ?? [],
 );
 
 export const getClassPositions = withConnect(
@@ -201,10 +216,6 @@ export const getSessionFlags = withConnect(
   (): number => ir?.get(VARS.SESSION_FLAGS)[0] ?? 0,
 );
 
-// The dump always reports a clear track, so mock mode forces a car on the
-// right. Without it the spotter overlay never renders in dev.
-export const getCarLeftRight = withConnect((): number =>
-  config.DATA_MODE === 'mock'
-    ? CAR_LEFT_RIGHT.CAR_RIGHT
-    : (ir?.get(VARS.CAR_LEFT_RIGHT)[0] ?? 0),
+export const getCarLeftRight = withConnect(
+  (): number => ir?.get(VARS.CAR_LEFT_RIGHT)[0] ?? 0,
 );

@@ -1,0 +1,27 @@
+{
+  "variables": { "PlayerCarIdx": [1] },
+  "sessionData": {
+    "DriverInfo": {
+      "Drivers": [
+        {
+          "CarIdx": 1,
+          "CarClassID": 100,
+          "CarIsPaceCar": 0,
+          "UserName": "Player"
+        },
+        {
+          "CarIdx": -1,
+          "CarClassID": 100,
+          "CarIsPaceCar": 0,
+          "UserName": "Slot Zero"
+        },
+        {
+          "CarIdx": 2,
+          "CarClassID": 100,
+          "CarIsPaceCar": 0,
+          "UserName": "Valid Driver"
+        }
+      ]
+    }
+  }
+}

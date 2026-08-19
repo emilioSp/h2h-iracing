@@ -1,0 +1,15 @@
+{
+  "variables": {
+    "AirTemp": [10],
+    "WindVel": [4]
+  },
+  "sessionData": {
+    "WeekendInfo": {
+      "TrackLength": "5.0 km"
+    }
+  },
+  "frames": [
+    { "variables": { "AirTemp": [20] } },
+    { "variables": { "AirTemp": [21] } }
+  ]
+}

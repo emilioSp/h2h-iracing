@@ -1,0 +1,18 @@
+{
+  "variables": {
+    "PlayerCarIdx": [4],
+    "CarIdxLapDistPct": [0, 0, 0.5002, 0, 0.5, 0, 0, 0.8],
+    "CarIdxOnPitRoad": [false, false, false, false, false, false, false, false],
+    "CarLeftRight": [2]
+  },
+  "sessionData": {
+    "WeekendInfo": { "TrackLength": "5.0 km" },
+    "DriverInfo": {
+      "Drivers": [
+        { "CarIdx": 2, "CarIsPaceCar": 0 },
+        { "CarIdx": 4, "CarIsPaceCar": 0 },
+        { "CarIdx": 7, "CarIsPaceCar": 0 }
+      ]
+    }
+  }
+}

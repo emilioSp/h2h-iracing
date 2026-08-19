@@ -1,0 +1,41 @@
+{
+  "variables": {
+    "CarIdxLapCompleted": [0, 0, 0, 0, 0, 0, 0, 10],
+    "CarIdxLastLapTime": [0, 0, 0, 0, 0, 0, 0, 85.5],
+    "CarIdxBestLapTime": [0, 0, 0, 0, 0, 0, 0, 84.1]
+  },
+  "sessionData": {
+    "DriverInfo": {
+      "Drivers": [
+        {
+          "CarIdx": 7,
+          "CarClassID": 100,
+          "CarIsPaceCar": 0,
+          "UserName": "Test Driver",
+          "CarNumber": "07",
+          "CarScreenNameShort": "Ferrari",
+          "IRating": 3000,
+          "LicString": "A 4.99",
+          "CarClassEstLapTime": 84.1
+        }
+      ]
+    },
+    "SessionInfo": {
+      "CurrentSessionNum": 0,
+      "Sessions": [
+        {
+          "SessionNum": 0,
+          "SessionType": "Race",
+          "ResultsPositions": [
+            {
+              "CarIdx": 7,
+              "LapsComplete": 5,
+              "LastTime": 85.5,
+              "FastestTime": 84.1
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -16,6 +16,7 @@ export const computeLastLapTime = async (carIdx: number): Promise<number> => {
   const lastLapTime = await getLastLapTime(carIdx);
   if (lastLapTime > 0) return lastLapTime;
 
+  // This is the case when a driver has left the session
   const sessionLastLapTime = getSessionLastLapTime(carIdx);
   if (sessionLastLapTime > 0) return sessionLastLapTime;
 

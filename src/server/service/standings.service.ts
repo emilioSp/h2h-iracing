@@ -41,6 +41,3 @@ export const getSessionStandings = async (): Promise<Standing[]> => {
     .map((carIdx) => ({ pos: classPositions[carIdx], carIdx }))
     .sort((a, b) => a.pos - b.pos);
 };
-
-export const getStandings = (isRace: boolean): Promise<Standing[]> =>
-  isRace ? getRaceStandings() : getSessionStandings();

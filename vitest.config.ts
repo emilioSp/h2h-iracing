@@ -3,10 +3,7 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
-    env: {
-      ...loadEnv('', process.cwd(), ''),
-      DATA_MODE: 'mock',
-    },
+    env: loadEnv('', process.cwd(), ''),
     coverage: {
       include: ['src/server/**/*.ts', 'src/h2h-dashboard/src/**/*.ts'],
       exclude: [

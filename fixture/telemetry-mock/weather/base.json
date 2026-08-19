@@ -1,0 +1,13 @@
+{
+  "variables": {
+    "AirTemp": [22.5],
+    "TrackTempCrew": [35],
+    "TrackWetness": [1],
+    "Precipitation": [0.545343434],
+    "WindDir": [0],
+    "WindVel": [5],
+    "YawNorth": [3.141592653589793],
+    "SessionTimeOfDay": [43200],
+    "RelativeHumidity": [0.605999079065]
+  }
+}

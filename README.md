@@ -224,7 +224,7 @@ Cars alongside, and how much they overlap your car.
 }
 ```
 
-`left` and `right` are `null` when no car is on that side. `overlapStartPct` and `overlapEndPct` are percentages of your own car length, `0` at the rear and `100` at the nose. `isThreeWide` is `true` when iRacing reports cars on both sides at once; both sides are then `null`, because iRacing does not say which car is on which side, and the overlay fills both bars full height, blinking red/yellow, instead. The overlay shows the welcome page until a session starts, then renders nothing while both sides are `null` and `isThreeWide` is `false`. See [How the spotter overlap is computed](docs/spotter-overlap.md).
+`left` and `right` are `null` when no car is on that side. `overlapStartPct` and `overlapEndPct` are percentages of your own car length, `0` at the rear and `100` at the nose. `isThreeWide` is `true` when iRacing reports cars on both sides, two cars on the left, or two cars on the right. Both sides are then `null`, because iRacing does not identify the car indexes. The overlay fills both bars full height and blinks red/yellow instead. The overlay shows the welcome page until a session starts, then renders nothing while both sides are `null` and `isThreeWide` is `false`. See [How the spotter overlap is computed](docs/spotter-overlap.md).
 
 ### `GET /sse/traffic`
 

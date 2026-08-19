@@ -4,59 +4,13 @@ import {
   getLapsCompleted,
   getOnPitRoad,
 } from '#repository/irsdk.repository.ts';
-import {
-  getRefLap,
-  type ReferenceLap,
-} from '#repository/reference-lap.repository.ts';
+import { getRefLap } from '#repository/reference-lap.repository.ts';
 import type { Car } from '#schema/car.schema.ts';
-import { interpolateTimeAtTrackPosition } from '#service/reference-lap.service.ts';
+import * as GapDeltaUtil from '#server/utils/gap-delta.ts';
 
 export type Gap = {
   value: number;
   unit: 'seconds' | 'laps';
-};
-
-type EstimatedDeltaInput = {
-  classLapTime: number;
-  aheadPct: number;
-  behindPct: number;
-};
-
-export const estimatedDelta = ({
-  classLapTime,
-  aheadPct,
-  behindPct,
-}: EstimatedDeltaInput): number => {
-  let delta = aheadPct * classLapTime - behindPct * classLapTime;
-  if (aheadPct < behindPct) delta += classLapTime;
-  return Math.abs(delta);
-};
-
-type ReferenceDeltaInput = {
-  refLap: ReferenceLap;
-  aheadPct: number;
-  behindPct: number;
-};
-
-export const referenceDelta = ({
-  refLap,
-  aheadPct,
-  behindPct,
-}: ReferenceDeltaInput): number => {
-  const timeAhead =
-    interpolateTimeAtTrackPosition({
-      lap: refLap,
-      currentTrackPositionPct: aheadPct,
-    }) ?? 0;
-  const timeBehind =
-    interpolateTimeAtTrackPosition({
-      lap: refLap,
-      currentTrackPositionPct: behindPct,
-    }) ?? 0;
-  let delta = timeAhead - timeBehind;
-  const lapTime = refLap.finishTime - refLap.startTime;
-  if (aheadPct < behindPct) delta += lapTime;
-  return Math.abs(delta);
 };
 
 type ComputeGapInput = {
@@ -87,7 +41,11 @@ const computeGap = async ({ ahead, behind }: ComputeGapInput): Promise<Gap> => {
   const classLapTime = getClassEstLapTime(behindIdx);
   if ((lapsCompleted[behindIdx] ?? 0) < 2) {
     return {
-      value: estimatedDelta({ classLapTime, aheadPct, behindPct }),
+      value: GapDeltaUtil.estimatedDelta({
+        classLapTime,
+        aheadPct,
+        behindPct,
+      }),
       unit: 'seconds',
     };
   }
@@ -99,13 +57,17 @@ const computeGap = async ({ ahead, behind }: ComputeGapInput): Promise<Gap> => {
 
   if (!anyOnPit && hasRefData) {
     return {
-      value: referenceDelta({ refLap, aheadPct, behindPct }),
+      value: GapDeltaUtil.referenceDelta({ refLap, aheadPct, behindPct }),
       unit: 'seconds',
     };
   }
 
   return {
-    value: estimatedDelta({ classLapTime, aheadPct, behindPct }),
+    value: GapDeltaUtil.estimatedDelta({
+      classLapTime,
+      aheadPct,
+      behindPct,
+    }),
     unit: 'seconds',
   };
 };

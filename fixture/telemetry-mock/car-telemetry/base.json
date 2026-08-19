@@ -1,0 +1,9 @@
+{
+  "variables": {
+    "dcABS": [4],
+    "dcTractionControl": [2],
+    "BrakeABSactive": [true],
+    "dcBrakeBias": [0.543],
+    "dcPitSpeedLimiterToggle": [false]
+  }
+}
