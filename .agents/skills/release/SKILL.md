@@ -1,22 +1,26 @@
 ---
 name: release
-description: Use when releasing a new version of h2h-iracing - bumps npm version, pushes tag, collects PR descriptions, and creates a GitHub release
+description: Use when releasing a new version of h2h-iracing - previews and confirms release notes, then creates the version tag and GitHub release
 ---
 
 # Release h2h-iracing
 
 ## Overview
 
-Automates the full release flow: version bump → git push → PR-description changelog → GitHub release.
+Automates the full release flow: pre-flight → changelog preview and confirmation → version bump → package → push → GitHub release.
 
 **Announce at start:** "I'm using the release skill to publish a new version."
 
-**Core principle:** Collect PR descriptions for a descriptive changelog. Never use `--generate-notes` alone.
+**Core principles:**
+
+- Collect PR descriptions for a descriptive changelog. Never use `--generate-notes` alone.
+- Do not create or push a version tag before the user confirms the release notes.
+- After confirmation, complete the package and GitHub release flow. Do not stop after pushing the tag.
 
 ## Step 1: Pre-flight Checks
 
 ```bash
-git fetch origin
+git fetch origin --tags
 git status -sb
 git branch --show-current
 ```
@@ -41,10 +45,12 @@ ls simhub_dashies/
 grep -c "dashboard'" scripts/package.ts   # one dist copy per dashboard
 ```
 
-Then show what's changed since the last release:
+Find the most recent GitHub release, not merely the most recent local tag. A tag without a
+release must not become the changelog baseline:
 
 ```bash
-git log $(git describe --tags --abbrev=0)..HEAD --oneline
+LATEST_RELEASE_TAG=$(gh release view --json tagName --jq .tagName)
+git log "$LATEST_RELEASE_TAG"..HEAD --oneline
 ```
 
 ## Step 2: Determine Version Bump
@@ -55,35 +61,14 @@ Ask the user:
 
 Convention: patch is most common for fixes and chores; minor for new features; major is rare.
 
-```bash
-npm version <patch|minor|major>
-```
+Do not run `npm version` yet. It creates the tag, which must wait for release-notes confirmation.
 
-`npm version` creates both the bump commit and the tag (e.g. `v1.31.0`). Capture the new version:
+## Step 3: Collect PR Descriptions and Preview Release Notes
 
-```bash
-node -p "require('./package.json').version"
-```
-
-## Step 3: Push Commit and Tag
+Extract PR numbers from the commits after the latest GitHub release:
 
 ```bash
-git push
-git push origin v<new-version>
-```
-
-## Step 4: Collect PR Descriptions
-
-Find the previous release tag:
-
-```bash
-git describe --tags --abbrev=0 HEAD~1
-```
-
-Extract PR numbers from commits between the previous tag and the new one:
-
-```bash
-git log <prev-tag>..<new-tag> --oneline
+git log "$LATEST_RELEASE_TAG"..HEAD --oneline
 ```
 
 Look for `(#NNN)` patterns in the commit subjects. For each PR number found:
@@ -93,8 +78,6 @@ gh pr view <N> --json number,title,body
 ```
 
 If a PR body is empty, use the title only. Skip bots and chore-only PRs at your discretion.
-
-## Step 5: Preview Release Notes
 
 Format the changelog as:
 
@@ -110,59 +93,77 @@ Format the changelog as:
 <PR body>
 ```
 
-Show the preview to the user and ask for confirmation before publishing.
+Show the full notes and ask explicitly:
 
-## Step 6: Package
+> Confirm the selected version bump, these release notes, and publication of the GitHub release.
+
+Stop here until the user confirms. Do not run `npm version`, push a tag, package, or create a
+release before confirmation.
+
+## Step 4: Create the Version Commit and Package
+
+After confirmation:
 
 ```bash
+npm version <patch|minor|major>
+NEW_VERSION=$(node -p "require('./package.json').version")
 npm run package
+ls -la "build/h2h-iracing-$NEW_VERSION.zip"
 ```
 
-This takes a while and is destructive: it deletes `node_modules`, runs `npm ci`, builds every
-dashboard, reinstalls with `--omit=dev`, assembles the bundle, then reinstalls dev dependencies
-at the very end. If it throws anywhere after the `--omit=dev` step, you are left with
-production-only dependencies — no biome, no vitest, no tsc — and the cause is not obvious. The
-recovery is simply:
+`npm version` creates the version-bump commit and local tag (for example, `v1.31.0`).
+
+`npm run package` takes a while and is destructive: it deletes `node_modules`, runs `npm ci`,
+builds every dashboard, reinstalls with `--omit=dev`, assembles the bundle, then reinstalls dev
+dependencies at the end. If it throws anywhere after the `--omit=dev` step, you are left with
+production-only dependencies. Recover with:
 
 ```bash
 npm ci
 ```
 
-Confirm the zip actually exists before trying to upload it:
+Stop and report the failure if packaging fails. Do not push the commit or tag.
+
+## Step 5: Push and Create the GitHub Release
+
+Only after the zip exists:
 
 ```bash
-ls -la h2h-iracing-<version>.zip
+git push origin main
+git push origin "v$NEW_VERSION"
 ```
 
-## Step 7: Create the Release
-
-Write the changelog to a file and pass `--notes-file`. Never interpolate it into `--notes`:
-PR bodies routinely contain backticks, and a body such as ``Fixes the `npm run build` step``
-will execute that command in your shell and splice its output into the release notes.
+Write the approved changelog to a file and pass `--notes-file`. Never interpolate it into
+`--notes`: PR bodies can contain backticks and `$` characters.
 
 ```bash
 cat > /tmp/release-notes.md <<'EOF'
-<formatted changelog>
+<formatted changelog approved by the user>
 EOF
 
-gh release create v<version> "./h2h-iracing-<version>.zip" \
-  --title "v<version>" \
+gh release create "v$NEW_VERSION" "./build/h2h-iracing-$NEW_VERSION.zip" \
+  --title "v$NEW_VERSION" \
   --notes-file /tmp/release-notes.md
+
+gh release view "v$NEW_VERSION" --json url,isDraft
 ```
 
-The quoted `<<'EOF'` matters too — unquoted, the heredoc still expands backticks and `$`.
+The quoted `<<'EOF'` prevents shell expansion. Do **not** use `--generate-notes`; it ignores the
+PR bodies collected in Step 3.
 
-Do **not** use `--generate-notes`; it ignores the PR bodies collected in Step 4.
+Report the release URL only after `gh release view` confirms that the release exists and is not a
+draft.
 
 ## Common Mistakes
 
 | Mistake | Fix |
-|---------|-----|
-| Using `npm run release` directly | It uses `--generate-notes`, which skips PR bodies. Run `npm run package` + `gh release create` separately. |
+|---|---|
+| Creating or pushing a tag before notes confirmation | Collect and preview notes first. Run `npm version` only after explicit approval. |
+| Stopping after pushing the tag | Continue immediately with `gh release create` and verify it with `gh release view`. |
+| Using the latest local tag as the changelog baseline | Use `gh release view --json tagName --jq .tagName`; a tag may exist without a release. |
+| Using `npm run release` directly | It uses `--generate-notes`, which skips PR bodies. Run `npm run package` and `gh release create` separately. |
 | Passing the changelog via `--notes "..."` | Backticks in PR bodies execute as shell commands. Use `--notes-file` with a quoted heredoc. |
-| Pushing tag before `npm version` | `npm version` creates the tag — run it first, push after. |
-| Empty release notes sections | If a PR has no body, use the title only — don't leave blank sections. |
-| Missing the previous tag | Use `git describe --tags --abbrev=0 HEAD~1` (note the `HEAD~1`) to get the tag before the new bump. |
-| Releasing from a branch behind origin | `git fetch` first — tagging while behind releases the wrong commit. |
+| Empty release notes sections | If a PR has no body, use the title only. Do not leave blank sections. |
+| Releasing from a branch behind origin | Fetch first. Do not tag an outdated commit. |
 | A new overlay missing from the bundle | Check `scripts/package.ts` lists a build step and a `dist/` copy for every dashboard. |
-| Dev tooling broken after a failed package | `npm run package` leaves `--omit=dev` deps behind. Run `npm ci`. |
+| Dev tooling broken after a failed package | `npm run package` leaves `--omit=dev` dependencies behind. Run `npm ci`. |
