@@ -1,3 +1,4 @@
+// Verifies fuel dashboard payloads during regression tests.
 import { describe, expect, it } from 'vitest';
 
 import { computeFuel, computeLapsRemaining } from '#dashboard/fuel.dashboard.ts';
@@ -8,7 +9,7 @@ import { refreshCurrentSessionInfo } from '#repository/session-info.repository.t
 import { resetInMemoryStorage } from '#server/tick.ts';
 
 describe('computeFuel', () => {
-  it('When iRacing reports too few completed laps then the dashboard returns no fuel estimate', async () => {
+  it('given iRacing reports too few completed laps when fuel is computed then the dashboard returns no fuel estimate', async () => {
     loadTelemetryFixture('fixture/telemetry-mock/fuel/one-lap-sample.json');
     resetInMemoryStorage();
     await refreshDriverInfo();
@@ -30,7 +31,7 @@ describe('computeFuel', () => {
     });
   });
 
-  it('When iRacing reports enough completed laps then the dashboard returns refill values for each margin', async () => {
+  it('given iRacing reports enough completed laps when fuel is computed then the dashboard returns refill values for each margin', async () => {
     loadTelemetryFixture('fixture/telemetry-mock/fuel/accumulating-lap-samples.json');
     resetInMemoryStorage();
     await refreshDriverInfo();
@@ -50,7 +51,7 @@ describe('computeFuel', () => {
     });
   });
 
-  it('When iRacing reports the checkered flag then the dashboard returns no remaining time', async () => {
+  it('given iRacing reports the checkered flag when fuel is computed then the dashboard returns no remaining time', async () => {
     loadTelemetryFixture('fixture/telemetry-mock/fuel/checkered.json');
     resetInMemoryStorage();
     await refreshDriverInfo();
@@ -75,7 +76,7 @@ describe('computeLapsRemaining', () => {
       expected: 5501.962667427957,
     },
   ])(
-    'When projected laps contain floating-point error at player position $playerLapDistPct then the error is removed',
+    'given projected laps contain floating-point error at player position $playerLapDistPct when remaining laps are computed then the error is removed',
     ({ estimatedTimeRemaining, playerLapDistPct, expected }) => {
       expect(
         computeLapsRemaining({

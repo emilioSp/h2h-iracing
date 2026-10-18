@@ -1,3 +1,4 @@
+// Generates an HTML telemetry report when inspecting an iRacing memory dump.
 import { statSync, writeFileSync } from 'node:fs';
 import { basename, join, resolve } from 'node:path';
 
@@ -66,7 +67,8 @@ ir.refreshSharedMemory();
 
 const readVar = (key: string): unknown[] | null => {
   try {
-    return ir.get(key as never);
+    // JUSTIFICATION: Dump headers may include keys outside VARS; the SDK reads them by name or throws below.
+    return ir.get(key as (typeof VARS)[keyof typeof VARS]);
   } catch {
     return null;
   }
@@ -78,7 +80,7 @@ const sessionInfo = ir.getSessionInfo(SESSION_DATA_KEYS.SESSION_INFO);
 
 const drivers = ir.getSessionInfo(SESSION_DATA_KEYS.DRIVER_INFO)?.Drivers ?? [];
 
-const playerCarIdx = readVar(VARS.PLAYER_CAR_IDX)?.[0] as number;
+const playerCarIdx = readVar(VARS.PLAYER_CAR_IDX)?.[0];
 
 const playerRow = drivers.findIndex((d) => d.CarIdx === playerCarIdx);
 
@@ -178,9 +180,7 @@ const carTable = renderTable({
 
 // ---------------------------------------------------------- telemetry vars
 
-const varConstantByKey = new Map(
-  Object.entries(VARS).map(([constant, key]) => [key as string, constant]),
-);
+const varConstantByKey = new Map(Object.entries(VARS).map(([constant, key]) => [key, constant]));
 
 const varNames = ir.getVarHeadersNamesList().sort();
 

@@ -1,3 +1,4 @@
+// Formats racing values when rendering the head-to-head overlay.
 export const formatTime = (s: number): string => {
   if (s <= 0 || !Number.isFinite(s)) return '--:--.---';
   const m = Math.floor(s / 60);
@@ -29,7 +30,7 @@ export const formatDelta = (d: number | null): string => {
   return `${sign}${abs.toFixed(2).padStart(3, '0')}s`;
 };
 
-export const deltaClass = (d: number | null): string => {
+export const deltaClass = (d: number | null) => {
   if (d === null) return 'neutral';
 
   return d < 0 ? 'gaining' : 'losing';

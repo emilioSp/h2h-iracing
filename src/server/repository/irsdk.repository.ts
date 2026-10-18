@@ -1,3 +1,4 @@
+// Reads iRacing telemetry when the backend refreshes or queries simulator state.
 import { IRSDK, SESSION_DATA_KEYS, type Session, VARS } from '@emiliosp/node-iracing-sdk';
 
 import config from '#config';
@@ -69,6 +70,7 @@ export const shutdown = withConnect((): void => ir?.shutdown());
 
 export const getPlayerCarIdx = withConnect((): number => ir?.get(VARS.PLAYER_CAR_IDX)[0] ?? -1);
 
+// JUSTIFICATION: The implementation returns all lap times without an index, and one number with an index.
 export const getLastLapTime = withConnect((carIdx?: number): number | number[] => {
   const lapTimes = ir?.get(VARS.CAR_IDX_LAST_LAP_TIME) ?? [];
 

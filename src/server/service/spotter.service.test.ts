@@ -1,3 +1,4 @@
+// Verifies car overlap calculations during regression tests.
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -36,7 +37,7 @@ describe('getDeltaMeters', () => {
       expected: -1,
     },
   ])(
-    'When $scenario then the shortest track distance is returned',
+    'given $scenario when track distance is computed then the shortest track distance is returned',
     ({ playerPct, otherDriverPct, expected }) => {
       const delta = getDeltaMeters({
         playerPct,
@@ -86,13 +87,16 @@ describe('computeOverlap', () => {
       deltaMeters: -CAR_LENGTH_METERS * 3,
       expected: { overlapStartPct: 0, overlapEndPct: 0 },
     },
-  ])('When $scenario then the overlap remains within the bar', ({ deltaMeters, expected }) => {
-    expect(computeOverlap(deltaMeters)).toEqual(expected);
-  });
+  ])(
+    'given $scenario when overlap is computed then the overlap remains within the bar',
+    ({ deltaMeters, expected }) => {
+      expect(computeOverlap(deltaMeters)).toEqual(expected);
+    },
+  );
 });
 
 describe('findNearestDeltaMeters', () => {
-  it('When iRacing reports two nearby cars then the closest distance is returned', () => {
+  it('given iRacing reports two nearby cars when the nearest neighbour is searched then the closest distance is returned', () => {
     const delta = findNearestDeltaMeters({
       playerCarIdx: 0,
       carsIdx: [0, 1, 2],
@@ -104,7 +108,7 @@ describe('findNearestDeltaMeters', () => {
     expect(delta).toBeCloseTo(1, 5);
   });
 
-  it('When iRacing reports only the player car then no neighbour is returned', () => {
+  it('given iRacing reports only the player car when the nearest neighbour is searched then no neighbour is returned', () => {
     const delta = findNearestDeltaMeters({
       playerCarIdx: 0,
       carsIdx: [0],
@@ -116,7 +120,7 @@ describe('findNearestDeltaMeters', () => {
     expect(delta).toBeNull();
   });
 
-  it('When iRacing reports a nearby car on pit road then that car is excluded', () => {
+  it('given iRacing reports a nearby car on pit road when the nearest neighbour is searched then that car is excluded', () => {
     const delta = findNearestDeltaMeters({
       playerCarIdx: 0,
       carsIdx: [0, 1],
@@ -128,7 +132,7 @@ describe('findNearestDeltaMeters', () => {
     expect(delta).toBeNull();
   });
 
-  it('When iRacing reports distant cars then the nearest distance is still returned', () => {
+  it('given iRacing reports distant cars when the nearest neighbour is searched then the nearest distance is still returned', () => {
     const delta = findNearestDeltaMeters({
       playerCarIdx: 0,
       carsIdx: [0, 1, 2],
@@ -140,7 +144,7 @@ describe('findNearestDeltaMeters', () => {
     expect(delta).toBeCloseTo(-50, 5);
   });
 
-  it('When iRacing reports other cars off track then no neighbour is returned', () => {
+  it('given iRacing reports other cars off track when the nearest neighbour is searched then no neighbour is returned', () => {
     const delta = findNearestDeltaMeters({
       playerCarIdx: 0,
       carsIdx: [0, 1, 2],
@@ -152,7 +156,7 @@ describe('findNearestDeltaMeters', () => {
     expect(delta).toBeNull();
   });
 
-  it('When iRacing reports the player off track then no neighbour is returned', () => {
+  it('given iRacing reports the player off track when the nearest neighbour is searched then no neighbour is returned', () => {
     const delta = findNearestDeltaMeters({
       playerCarIdx: 0,
       carsIdx: [0, 1, 2],
@@ -164,7 +168,7 @@ describe('findNearestDeltaMeters', () => {
     expect(delta).toBeNull();
   });
 
-  it('When iRacing reports no track length then no neighbour is returned', () => {
+  it('given iRacing reports no track length when the nearest neighbour is searched then no neighbour is returned', () => {
     const delta = findNearestDeltaMeters({
       playerCarIdx: 0,
       carsIdx: [0, 1, 2],
@@ -176,7 +180,7 @@ describe('findNearestDeltaMeters', () => {
     expect(delta).toBeNull();
   });
 
-  it('When iRacing reports a neighbour across the finish line then the wrapped distance is returned', () => {
+  it('given iRacing reports a neighbour across the finish line when the nearest neighbour is searched then the wrapped distance is returned', () => {
     const delta = findNearestDeltaMeters({
       playerCarIdx: 0,
       carsIdx: [0, 1, 2],

@@ -1,3 +1,4 @@
+// Provides fixture-backed SDK data when tests run without iRacing.
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
@@ -117,6 +118,7 @@ export class IRSDKMock {
   ): K extends keyof SessionDataValue ? SessionDataValue[K] : unknown {
     const value = this.getActiveFrame()?.sessionData[key] ?? this.base.sessionData[key];
 
+    // JUSTIFICATION: Test fixtures supply SDK-shaped session data; the key selects its SDK return type.
     return value as K extends keyof SessionDataValue ? SessionDataValue[K] : unknown;
   }
 

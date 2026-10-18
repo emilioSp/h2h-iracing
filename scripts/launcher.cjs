@@ -1,3 +1,5 @@
+// Starts the bundled server when the packaged Windows launcher is run.
+/* oxlint-disable import/no-commonjs -- pkg builds this launcher from a CommonJS entrypoint. */
 'use strict';
 
 // TODO: check if esm is really supported: https://github.com/yao-pkg/pkg/issues/16

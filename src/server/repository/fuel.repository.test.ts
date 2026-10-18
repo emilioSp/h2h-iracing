@@ -1,3 +1,4 @@
+// Verifies fuel sample storage and consumption during regression tests.
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import {
@@ -17,13 +18,13 @@ beforeEach(() => {
 });
 
 describe('getMedianFuelPerLap', () => {
-  it('When one fuel sample has no consumption delta then the median is null', () => {
+  it('given one fuel sample has no consumption delta when median consumption is requested then the median is null', () => {
     recordLapStart(0, 50);
 
     expect(getMedianFuelPerLap()).toBeNull();
   });
 
-  it('When four valid fuel deltas are recorded then their median is returned', () => {
+  it('given four valid fuel deltas are recorded when median consumption is requested then their median is returned', () => {
     recordLapStart(0, 50);
     recordLapStart(1, 48);
     recordLapStart(2, 46);
@@ -33,7 +34,7 @@ describe('getMedianFuelPerLap', () => {
     expect(getMedianFuelPerLap()).toBe(2);
   });
 
-  it('When fuel increases during a pit stop then the refuel delta is excluded', () => {
+  it('given fuel increases during a pit stop when median consumption is requested then the refuel delta is excluded', () => {
     recordLapStart(0, 50);
     recordLapStart(1, 48);
     recordLapStart(2, 100);
@@ -43,7 +44,7 @@ describe('getMedianFuelPerLap', () => {
     expect(getMedianFuelPerLap()).toBe(2);
   });
 
-  it('When one lap consumes much more fuel then the median absorbs the outlier', () => {
+  it('given one lap consumes much more fuel when median consumption is requested then the median absorbs the outlier', () => {
     recordLapStart(0, 50);
     recordLapStart(1, 48); // delta 2
     recordLapStart(2, 46); // delta 2
@@ -56,7 +57,7 @@ describe('getMedianFuelPerLap', () => {
 });
 
 describe('getFuelSamples', () => {
-  it('When two lap starts are recorded then both samples are returned', () => {
+  it('given two lap starts are recorded when fuel samples are requested then both samples are returned', () => {
     recordLapStart(0, 50);
     recordLapStart(1, 48);
 
@@ -66,7 +67,7 @@ describe('getFuelSamples', () => {
     ]);
   });
 
-  it('When fuel tracking is reset then recorded samples are cleared', () => {
+  it('given fuel tracking is reset when fuel samples are requested then recorded samples are cleared', () => {
     recordLapStart(0, 50);
 
     resetFuelTracking();
@@ -76,13 +77,13 @@ describe('getFuelSamples', () => {
 });
 
 describe('getLastLapFuelDelta', () => {
-  it('When one fuel sample has no consumption delta then the last delta is null', () => {
+  it('given one fuel sample has no consumption delta when last lap consumption is requested then the last delta is null', () => {
     recordLapStart(0, 50);
 
     expect(getLastLapFuelDelta()).toBeNull();
   });
 
-  it('When three lap starts are recorded then the latest consumption is returned', () => {
+  it('given three lap starts are recorded when last lap consumption is requested then the latest consumption is returned', () => {
     recordLapStart(0, 50);
     recordLapStart(1, 48);
     recordLapStart(2, 45);
@@ -90,7 +91,7 @@ describe('getLastLapFuelDelta', () => {
     expect(getLastLapFuelDelta()).toBe(3);
   });
 
-  it('When fuel increases on the latest lap then the last delta is null', () => {
+  it('given fuel increases on the latest lap when last lap consumption is requested then the last delta is null', () => {
     recordLapStart(0, 50);
     recordLapStart(1, 48);
     recordLapStart(2, 100);
