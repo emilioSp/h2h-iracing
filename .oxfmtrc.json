@@ -1,0 +1,17 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "overrides": [
+    {
+      "files": ["*.md", "*.mdx"],
+      "options": {
+        "printWidth": 170,
+        "proseWrap": "always"
+      }
+    }
+  ],
+  "useTabs": false,
+  "tabWidth": 2,
+  "singleQuote": true,
+  "sortImports": true,
+  "ignorePatterns": ["node_modules/**", "dist/**", "tests/fixtures/**", ".pi/**", "vendor/**"]
+}

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+
 import { computeHead2Head } from '#dashboard/head2head.dashboard.ts';
 import { refreshDriverInfo } from '#repository/driver.repository.ts';
 import { loadTelemetryFixture } from '#repository/irsdk.repository.ts';
@@ -46,9 +47,7 @@ describe('computeHead2Head', () => {
   });
 
   it('When iRacing reports no practice best times then the dashboard returns no lap deltas', async () => {
-    loadTelemetryFixture(
-      'fixture/telemetry-mock/head2head/practice-missing-best.json',
-    );
+    loadTelemetryFixture('fixture/telemetry-mock/head2head/practice-missing-best.json');
     resetInMemoryStorage();
     await refreshDriverInfo();
     await refreshCurrentSessionInfo();

@@ -1,13 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
+
 import type { Car } from '#schema/car.schema.ts';
 import type { Gap } from '#schema/head2head.schema.ts';
-import {
-  deltaClass,
-  formatDelta,
-  formatGap,
-  formatName,
-  formatTime,
-} from './format.js';
+
+import { deltaClass, formatDelta, formatGap, formatName, formatTime } from './format.js';
 
 type Props =
   | { car: Car; variant: 'ahead' | 'behind' }
@@ -21,9 +17,7 @@ type Props =
     };
 
 const Label = ({ children }: { children: string }) => (
-  <span className="text-[13px] text-dim uppercase tracking-widest leading-none">
-    {children}
-  </span>
+  <span className="text-[13px] text-dim uppercase tracking-widest leading-none">{children}</span>
 );
 
 const deltaColors: Record<string, string> = {
@@ -43,6 +37,7 @@ const DriverInfoGrid = ({ car }: { car: Car }) => {
       prevBestRef.current = car.bestLapTime;
       setBestHighlighted(true);
       const timer = setTimeout(() => setBestHighlighted(false), 8000);
+
       return () => clearTimeout(timer);
     }
   }, [car.bestLapTime]);
@@ -52,6 +47,7 @@ const DriverInfoGrid = ({ car }: { car: Car }) => {
       prevLastRef.current = car.lastLapTime;
       setLastHighlighted(true);
       const timer = setTimeout(() => setLastHighlighted(false), 8000);
+
       return () => clearTimeout(timer);
     }
   }, [car.lastLapTime]);
@@ -80,31 +76,19 @@ const DriverInfoGrid = ({ car }: { car: Car }) => {
         <Label>Last</Label>
       </div>
       <div className="grid place-items-center">
-        <span className="font-mono text-3xl font-bold text-white">
-          P{car.position}
-        </span>
+        <span className="font-mono text-3xl font-bold text-white">P{car.position}</span>
       </div>
       <div className="grid place-items-center">
-        <span className="font-mono text-3xl font-bold text-white">
-          {car.driver.license}
-        </span>
+        <span className="font-mono text-3xl font-bold text-white">{car.driver.license}</span>
       </div>
       <div className="grid items-center justify-items-end">
-        <span className="font-mono text-3xl font-bold text-white pr-1.5">
-          {car.driver.iRating}
-        </span>
+        <span className="font-mono text-3xl font-bold text-white pr-1.5">{car.driver.iRating}</span>
       </div>
     </div>
   );
 };
 
-const GapDeltaRow = ({
-  gap,
-  delta,
-}: {
-  gap: Gap | null;
-  delta: number | null;
-}) => {
+const GapDeltaRow = ({ gap, delta }: { gap: Gap | null; delta: number | null }) => {
   const [deltaHighlighted, setDeltaHighlighted] = useState(false);
   const prevDeltaRef = useRef(0);
 
@@ -113,6 +97,7 @@ const GapDeltaRow = ({
       prevDeltaRef.current = delta;
       setDeltaHighlighted(true);
       const timer = setTimeout(() => setDeltaHighlighted(false), 8000);
+
       return () => clearTimeout(timer);
     }
   }, [delta]);
@@ -146,6 +131,7 @@ export const CarCard = (props: Props) => {
 
   if (props.variant === 'player') {
     const { gapAhead, deltaAhead, gapBehind, deltaBehind } = props;
+
     return (
       <div className="grid grid-rows-[1fr_2fr_1fr] h-full py-2.5">
         <GapDeltaRow gap={gapAhead} delta={deltaAhead} />

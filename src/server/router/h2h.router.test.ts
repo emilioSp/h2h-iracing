@@ -1,12 +1,15 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
+
 import * as broadcasterService from '#server/broadcaster.ts';
 import { dashboardType } from '#server/broadcaster.ts';
+
 import { h2hRouter } from './h2h.router.ts';
 
 vi.mock('hono/streaming');
 
 vi.mock(import('#server/broadcaster.ts'), async (importOriginal) => {
   const actual = await importOriginal();
+
   return {
     ...actual,
     addClient: vi.fn(),
@@ -21,15 +24,18 @@ afterEach(() => {
 
 const setupStreamSSE = async () => {
   const { streamSSE } = await import('hono/streaming');
+
   const stream = {
     writeSSE: vi.fn().mockResolvedValue(undefined),
     onAbort: vi.fn(),
     close: vi.fn().mockResolvedValue(undefined),
   };
+
   let run: () => Promise<void>;
 
   vi.mocked(streamSSE).mockImplementationOnce((_c, cb) => {
     run = async () => cb(stream as never);
+
     return new Response();
   });
 
@@ -70,8 +76,7 @@ describe('h2hRouter', () => {
     h2hRouter({} as never);
     await run();
 
-    const client = vi.mocked(broadcasterService.addClient).mock.calls[0][0]
-      .client;
+    const client = vi.mocked(broadcasterService.addClient).mock.calls[0][0].client;
     await client.write('test-data');
 
     expect(stream.writeSSE).toHaveBeenCalledWith({ data: 'test-data' });

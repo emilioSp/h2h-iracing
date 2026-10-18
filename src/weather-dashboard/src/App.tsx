@@ -1,26 +1,21 @@
-import {
-  Clock,
-  CloudRain,
-  Droplets,
-  Flag,
-  Road,
-  Sun,
-  Waves,
-  Wind,
-} from 'lucide-react';
+import { Clock, CloudRain, Droplets, Flag, Road, Sun, Waves, Wind } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+
 import type { Weather } from '#schema/weather.schema.ts';
+
 import { WelcomePage800x480 } from '../../common/WelcomePage800x480.js';
 import { CompassRose } from './CompassRose.js';
+
 import './styles.css';
 
 const COMPASS_LABELS = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'] as const;
-const compassIndex = (deg: number) =>
-  Math.round((((deg % 360) + 360) % 360) / 45) % 8;
+
+const compassIndex = (deg: number) => Math.round((((deg % 360) + 360) % 360) / 45) % 8;
 
 const formatSessionTime = (seconds: number): string => {
   const h = Math.floor(seconds / 3600);
   const m = Math.floor((seconds % 3600) / 60);
+
   return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
 };
 
@@ -50,6 +45,7 @@ export const App = () => {
 
   useEffect(() => {
     localTimerRef.current = setInterval(() => setLocalTime(new Date()), 1000);
+
     return () => clearInterval(localTimerRef.current);
   }, []);
 
@@ -63,6 +59,7 @@ export const App = () => {
         const parsed = JSON.parse(e.data) as { data: Weather };
         setWeather(parsed.data);
       };
+
       es.onerror = (error) => {
         console.log('error', error);
         console.log('Connection lost, retrying in 10 seconds...');
@@ -90,40 +87,23 @@ export const App = () => {
     <div className="grid grid-rows-[100px_1fr] h-full bg-bg text-white font-mono">
       {/* Metric chips row */}
       <div className="grid grid-cols-[1fr_1fr_1fr_1fr_2fr] border-b border-border">
-        <MetricChip
-          icon={<Road size={28} />}
-          value={`${weather.trackTemperatureC.toFixed(1)}°C`}
-        />
-        <MetricChip
-          icon={<Sun size={28} />}
-          value={`${weather.airTemperatureC.toFixed(1)}°C`}
-        />
-        <MetricChip
-          icon={<Droplets size={28} />}
-          value={`${weather.relativeHumidityPct}%`}
-        />
-        <MetricChip
-          icon={<CloudRain size={28} />}
-          value={`${weather.precipitationPct}%`}
-        />
+        <MetricChip icon={<Road size={28} />} value={`${weather.trackTemperatureC.toFixed(1)}°C`} />
+        <MetricChip icon={<Sun size={28} />} value={`${weather.airTemperatureC.toFixed(1)}°C`} />
+        <MetricChip icon={<Droplets size={28} />} value={`${weather.relativeHumidityPct}%`} />
+        <MetricChip icon={<CloudRain size={28} />} value={`${weather.precipitationPct}%`} />
         <MetricChip icon={<Waves size={28} />} value={weather.trackWetness} />
       </div>
 
       {/* Compass area */}
       <div className="grid grid-cols-2 items-center justify-items-center h-full">
-        <CompassRose
-          windRelativeDeg={weather.windRelativeDirectionDeg}
-          size={360}
-        />
+        <CompassRose windRelativeDeg={weather.windRelativeDirectionDeg} size={360} />
 
         <div className="grid justify-items-center gap-2 border border-border rounded-xl p-8">
           <Wind size={50} className="text-green" />
           <span className="text-5xl font-bold font-mono tracking-widest uppercase">
             {windLabel}
           </span>
-          <span className="text-5xl font-mono font-bold text-white text-dim">
-            {kmh} km/h
-          </span>
+          <span className="text-5xl font-mono font-bold text-white text-dim">{kmh} km/h</span>
           <div className="w-full border-t border-border my-2" />
           <div className="grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-2 w-full">
             <Flag size={28} className="text-green" />

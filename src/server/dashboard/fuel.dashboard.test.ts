@@ -1,14 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import {
-  computeFuel,
-  computeLapsRemaining,
-} from '#dashboard/fuel.dashboard.ts';
+
+import { computeFuel, computeLapsRemaining } from '#dashboard/fuel.dashboard.ts';
 import { refreshDriverInfo } from '#repository/driver.repository.ts';
 import { FUEL_SAMPLE_WINDOW } from '#repository/fuel.repository.ts';
-import {
-  loadTelemetryFixture,
-  refreshTelemetry,
-} from '#repository/irsdk.repository.ts';
+import { loadTelemetryFixture, refreshTelemetry } from '#repository/irsdk.repository.ts';
 import { refreshCurrentSessionInfo } from '#repository/session-info.repository.ts';
 import { resetInMemoryStorage } from '#server/tick.ts';
 
@@ -36,9 +31,7 @@ describe('computeFuel', () => {
   });
 
   it('When iRacing reports enough completed laps then the dashboard returns refill values for each margin', async () => {
-    loadTelemetryFixture(
-      'fixture/telemetry-mock/fuel/accumulating-lap-samples.json',
-    );
+    loadTelemetryFixture('fixture/telemetry-mock/fuel/accumulating-lap-samples.json');
     resetInMemoryStorage();
     await refreshDriverInfo();
     await refreshCurrentSessionInfo();
@@ -81,17 +74,16 @@ describe('computeLapsRemaining', () => {
       playerLapDistPct: 0.03733257204294205,
       expected: 5501.962667427957,
     },
-  ])('When projected laps contain floating-point error at player position $playerLapDistPct then the error is removed', ({
-    estimatedTimeRemaining,
-    playerLapDistPct,
-    expected,
-  }) => {
-    expect(
-      computeLapsRemaining({
-        estimatedTimeRemaining,
-        playerMedianLapTime: 109.93440246582031,
-        playerLapDistPct,
-      }),
-    ).toBe(expected);
-  });
+  ])(
+    'When projected laps contain floating-point error at player position $playerLapDistPct then the error is removed',
+    ({ estimatedTimeRemaining, playerLapDistPct, expected }) => {
+      expect(
+        computeLapsRemaining({
+          estimatedTimeRemaining,
+          playerMedianLapTime: 109.93440246582031,
+          playerLapDistPct,
+        }),
+      ).toBe(expected);
+    },
+  );
 });

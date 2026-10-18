@@ -1,10 +1,11 @@
 import { setTimeout } from 'node:timers/promises';
+
 import config from '#config';
 import { computeHead2Head } from '#dashboard/head2head.dashboard.ts';
 import { computeWeather } from '#dashboard/weather.dashboard.ts';
 import { isIRacingConnected } from '#repository/irsdk.repository.ts';
-import type { Car } from '#schema/car.schema.ts';
 import type { CarTelemetry } from '#schema/car-telemetry.schema.ts';
+import type { Car } from '#schema/car.schema.ts';
 import type { Head2Head } from '#schema/head2head.schema.ts';
 import type { Weather } from '#schema/weather.schema.ts';
 import { computeCarTelemetry } from '#server/dashboard/car-telemetry.dashboard.ts';
@@ -12,6 +13,7 @@ import { tick } from '#server/tick.ts';
 import type { Gap } from '#service/gap.service.ts';
 
 const W = 64;
+
 const LINE = '═'.repeat(W);
 
 const pad = (s: string, len = W) => s.padEnd(len);
@@ -21,31 +23,38 @@ export const formatTime = (s: number): string => {
   const m = Math.floor(s / 60);
   const sec = Math.floor(s % 60);
   const ms = Math.round((s % 1) * 1000);
+
   return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}.${String(ms).padStart(3, '0')}`;
 };
 
 export const formatGap = (gap: Gap | null): string => {
   if (gap === null) return 'N/A';
+
   if (gap.unit === 'laps') return `${gap.value}L`;
+
   if (!Number.isFinite(gap.value)) return 'N/A';
   const sec = Math.floor(gap.value);
   const ms = Math.round((gap.value % 1) * 1000);
+
   return `${sec}.${String(ms).padStart(3, '0')}s`;
 };
 
 export const formatDelta = (d: number | null): string => {
   if (d === null) return 'N/A';
   let sign = '';
+
   if (d > 0) sign = '+';
   else if (d < 0) sign = '-';
   const abs = Math.abs(d);
   const sec = Math.floor(abs);
   const ms = Math.round((abs % 1) * 1000);
+
   return `${sign}${sec}.${String(ms).padStart(3, '0')}s`;
 };
 
 const deltaLabel = (d: number | null): string => {
   if (d === null) return '';
+
   return d >= 0 ? 'slower' : 'faster';
 };
 
@@ -55,6 +64,7 @@ const row = (label: string, value: string) =>
 export const printCar = (car: Car | null): void => {
   if (!car) {
     console.log(`║    ${pad('none', W - 2)}║`);
+
     return;
   }
 
@@ -71,6 +81,7 @@ export const printHead2Head = (head2Head: Head2Head | null): void => {
 
   if (!head2Head) {
     console.log('Waiting for session…');
+
     return;
   }
 
@@ -81,11 +92,13 @@ export const printHead2Head = (head2Head: Head2Head | null): void => {
   console.log(`╠${LINE}╣`);
 
   console.log(`║  ${pad('AHEAD', W)}║`);
+
   if (!head2Head.ahead) {
     console.log(`║    ${pad('You are the leader', W - 2)}║`);
   } else {
     printCar(head2Head.ahead);
   }
+
   console.log(`╠${LINE}╣`);
 
   console.log(`║  ${pad('PLAYER', W)}║`);
@@ -97,24 +110,26 @@ export const printHead2Head = (head2Head: Head2Head | null): void => {
   console.log(`╠${LINE}╣`);
 
   console.log(`║  ${pad('BEHIND', W)}║`);
+
   if (!head2Head.behind) {
     console.log(`║    ${pad('You are the last', W - 2)}║`);
   } else {
     printCar(head2Head.behind);
   }
+
   console.log(`╚${LINE}╝`);
 };
 
 const formatTimeOfDay = (seconds: number): string => {
   const h = Math.floor(seconds / 3600);
   const m = Math.floor((seconds % 3600) / 60);
+
   return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
 };
 
 const COMPASS_LABELS = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'] as const;
 
-const compassIndex = (deg: number): number =>
-  Math.round((((deg % 360) + 360) % 360) / 45) % 8;
+const compassIndex = (deg: number): number => Math.round((((deg % 360) + 360) % 360) / 45) % 8;
 
 // Relative wind: 0°=headwind, 90°=crosswind from right, 180°=tailwind, 270°=crosswind from left
 const RELATIVE_WIND_LABELS = [
@@ -157,8 +172,7 @@ export const printWeather = (weather: Weather): void => {
   const kmh = (weather.windVelocityMs * 3.6).toFixed(1);
 
   const windLabel = COMPASS_LABELS[compassIndex(weather.windDirectionDeg)];
-  const headingLabel =
-    COMPASS_LABELS[compassIndex(weather.yawNorthDirectionDeg)];
+  const headingLabel = COMPASS_LABELS[compassIndex(weather.yawNorthDirectionDeg)];
   const relIdx = relativeWindIndex(weather.windRelativeDirectionDeg);
   const relLabel = RELATIVE_WIND_LABELS[relIdx];
 
@@ -176,18 +190,14 @@ export const printWeather = (weather: Weather): void => {
     'Wind:     ',
     `${windLabel.padEnd(3)}  (${weather.windDirectionDeg.toFixed(1)}°)  ${kmh} km/h`,
   );
-  row(
-    'Heading:  ',
-    `${headingLabel.padEnd(3)}  (${weather.yawNorthDirectionDeg.toFixed(1)}°)`,
-  );
-  row(
-    'Relative: ',
-    `${relLabel}  (${weather.windRelativeDirectionDeg.toFixed(1)}°)`,
-  );
+  row('Heading:  ', `${headingLabel.padEnd(3)}  (${weather.yawNorthDirectionDeg.toFixed(1)}°)`);
+  row('Relative: ', `${relLabel}  (${weather.windRelativeDirectionDeg.toFixed(1)}°)`);
   console.log(`║    ${pad('', W - 2)}║`);
+
   for (const line of buildCarDiagram(relIdx)) {
     console.log(`║    ${pad(line, W - 2)}║`);
   }
+
   console.log(`║    ${pad('', W - 2)}║`);
   console.log(`╚${LINE}╝`);
 };
@@ -198,12 +208,9 @@ export const printCarTelemetry = (car: CarTelemetry): void => {
   console.log(`╔${LINE}╗`);
   console.log(`║  ${pad('CAR DASHBOARD', W)}║`);
   console.log(`╠${LINE}╣`);
-  row(
-    'ABS:        ',
-    `${car.abs.toFixed(0).padEnd(4)} [${flag(car.isAbsActive)}]`,
-  );
+  row('ABS:        ', `${car.abs.toFixed(0).padEnd(4)} [${flag(car.isAbsActive)}]`);
   row('TC:         ', `${car.tc.toFixed(0).padEnd(4)}`);
-  row('Brake Bias: ', `${(car.brakeBias).toFixed(2)}%`);
+  row('Brake Bias: ', `${car.brakeBias.toFixed(2)}%`);
   row('Pit Limiter:', flag(car.isPitSpeedLimiterActive));
   console.log(`╚${LINE}╝`);
 };
@@ -212,7 +219,9 @@ while (true) {
   if (!(await isIRacingConnected())) {
     continue;
   }
+
   await tick();
+
   const [head2Head, weather, carTelemetry] = await Promise.all([
     computeHead2Head(),
     computeWeather(),

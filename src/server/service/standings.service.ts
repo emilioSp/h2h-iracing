@@ -19,9 +19,11 @@ export const getRaceStandings = async (): Promise<Standing[]> => {
     const distA =
       (lapsCompleted[a.carIdx] ?? getSessionLapsCompleted(a.carIdx) ?? 0) +
       (lapDistPct[a.carIdx] ?? 0);
+
     const distB =
       (lapsCompleted[b.carIdx] ?? getSessionLapsCompleted(b.carIdx) ?? 0) +
       (lapDistPct[b.carIdx] ?? 0);
+
     return distB - distA;
   });
 

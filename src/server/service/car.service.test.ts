@@ -1,12 +1,9 @@
 import { describe, expect, it } from 'vitest';
+
 import { refreshDriverInfo } from '#repository/driver.repository.ts';
 import { loadTelemetryFixture } from '#repository/irsdk.repository.ts';
 import { refreshCurrentSessionInfo } from '#repository/session-info.repository.ts';
-import {
-  computeBestLapTime,
-  computeCar,
-  computeLastLapTime,
-} from '#service/car.service.ts';
+import { computeBestLapTime, computeCar, computeLastLapTime } from '#service/car.service.ts';
 import type { Standing } from '#service/standings.service.ts';
 
 describe('computeLastLapTime', () => {
@@ -17,9 +14,7 @@ describe('computeLastLapTime', () => {
   });
 
   it('When iRacing telemetry reports zero then it returns the session lap time', async () => {
-    loadTelemetryFixture(
-      'fixture/telemetry-mock/car-service/session-times.json',
-    );
+    loadTelemetryFixture('fixture/telemetry-mock/car-service/session-times.json');
     await refreshCurrentSessionInfo();
 
     expect(await computeLastLapTime(1)).toBe(86.2);
@@ -41,9 +36,7 @@ describe('computeBestLapTime', () => {
   });
 
   it('When iRacing telemetry reports zero then it returns the session best time', async () => {
-    loadTelemetryFixture(
-      'fixture/telemetry-mock/car-service/session-times.json',
-    );
+    loadTelemetryFixture('fixture/telemetry-mock/car-service/session-times.json');
     await refreshCurrentSessionInfo();
 
     expect(await computeBestLapTime(1)).toBe(83.9);

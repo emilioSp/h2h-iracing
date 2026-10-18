@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
+
 import { refreshDriverInfo } from '#repository/driver.repository.ts';
 import { loadTelemetryFixture } from '#repository/irsdk.repository.ts';
 import { resetReferenceLaps } from '#repository/reference-lap.repository.ts';
@@ -10,9 +11,7 @@ beforeEach(() => {
 
 describe('computeTraffic', () => {
   it('When iRacing reports a faster-class car behind then the dashboard returns that car', async () => {
-    loadTelemetryFixture(
-      'fixture/telemetry-mock/traffic/faster-and-same-class-behind.json',
-    );
+    loadTelemetryFixture('fixture/telemetry-mock/traffic/faster-and-same-class-behind.json');
     await refreshDriverInfo();
 
     const traffic = await computeTraffic();
@@ -30,9 +29,7 @@ describe('computeTraffic', () => {
   });
 
   it('When iRacing reports a same-class car behind then the dashboard excludes that car', async () => {
-    loadTelemetryFixture(
-      'fixture/telemetry-mock/traffic/faster-and-same-class-behind.json',
-    );
+    loadTelemetryFixture('fixture/telemetry-mock/traffic/faster-and-same-class-behind.json');
     await refreshDriverInfo();
 
     const traffic = await computeTraffic();

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+
 import { refreshDriverInfo } from '#repository/driver.repository.ts';
 import { loadTelemetryFixture } from '#repository/irsdk.repository.ts';
 import { computeSpotter } from '#server/dashboard/spotter.dashboard.ts';

@@ -3,16 +3,20 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 vi.mock('#dashboard/head2head.dashboard.ts', () => ({
   computeHead2Head: vi.fn(),
 }));
+
 vi.mock('#server/tick.ts', () => ({
   tick: vi.fn(),
   resetInMemoryStorage: vi.fn(),
 }));
+
 vi.mock('#dashboard/weather.dashboard.ts', () => ({
   computeWeather: vi.fn(),
 }));
+
 vi.mock('#dashboard/car-telemetry.dashboard.ts', () => ({
   computeCarTelemetry: vi.fn(),
 }));
+
 vi.mock('#config', () => ({
   default: { POLL_INTERVAL_MS: 100 },
 }));
@@ -21,12 +25,7 @@ import * as carService from '#dashboard/car-telemetry.dashboard.ts';
 import * as h2hService from '#dashboard/head2head.dashboard.ts';
 import * as weatherService from '#dashboard/weather.dashboard.ts';
 import { loadTelemetryFixture } from '#repository/irsdk.repository.ts';
-import {
-  addClient,
-  dashboardType,
-  removeClient,
-  stopBroadcasting,
-} from '#server/broadcaster.ts';
+import { addClient, dashboardType, removeClient, stopBroadcasting } from '#server/broadcaster.ts';
 import * as tickService from '#server/tick.ts';
 
 const createClient = () => ({
@@ -61,9 +60,7 @@ describe('addClient', () => {
 
     await vi.advanceTimersByTimeAsync(100);
 
-    expect(client.write).toHaveBeenCalledWith(
-      JSON.stringify({ data: { airTemp: 20 } }),
-    );
+    expect(client.write).toHaveBeenCalledWith(JSON.stringify({ data: { airTemp: 20 } }));
   });
 
   it('When two weather clients connect then weather data is sent to both clients', async () => {
@@ -159,10 +156,12 @@ describe('broadcast tick', () => {
 
   it('When one client write fails then that client is removed and healthy clients continue', async () => {
     loadTelemetryFixture('fixture/telemetry-mock/connection/connected.json');
+
     const failingClient = {
       write: vi.fn().mockRejectedValue(new Error('stream closed')),
       close: vi.fn(),
     };
+
     const healthyClient = createClient();
     addClient({ event: dashboardType.WEATHER, client: failingClient });
     addClient({ event: dashboardType.WEATHER, client: healthyClient });

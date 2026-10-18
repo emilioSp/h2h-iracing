@@ -13,8 +13,7 @@ export const getDeltaMeters = ({
   playerPct,
   otherDriverPct,
   trackLengthMeters,
-}: GetDeltaMetersInput): number =>
-  wrapLapDelta(otherDriverPct - playerPct) * trackLengthMeters;
+}: GetDeltaMetersInput): number => wrapLapDelta(otherDriverPct - playerPct) * trackLengthMeters;
 
 const clampPct = (value: number): number => Math.min(100, Math.max(0, value));
 
@@ -43,6 +42,7 @@ export const findNearestDeltaMeters = ({
   trackLengthMeters,
 }: FindNearestDeltaMetersInput): number | null => {
   const playerPct = lapDistPct[playerCarIdx];
+
   if (playerPct === undefined || playerPct < 0 || trackLengthMeters <= 0) {
     return null;
   }
@@ -51,9 +51,11 @@ export const findNearestDeltaMeters = ({
 
   for (const carIdx of carsIdx) {
     if (carIdx === playerCarIdx) continue;
+
     if (onPitRoad[carIdx]) continue;
 
     const otherDriverPct = lapDistPct[carIdx];
+
     if (otherDriverPct === undefined || otherDriverPct < 0) continue;
 
     const delta = getDeltaMeters({

@@ -1,13 +1,10 @@
 import { getCarsIdx } from '#repository/driver.repository.ts';
-import {
-  getLapDistPct,
-  getOnPitRoad,
-  getSessionTime,
-} from '#repository/irsdk.repository.ts';
+import { getLapDistPct, getOnPitRoad, getSessionTime } from '#repository/irsdk.repository.ts';
 import type { ReferenceLap } from '#repository/reference-lap.repository.ts';
 import * as referenceLapRepository from '#repository/reference-lap.repository.ts';
 
 const REF_POINTS_DISTANCE_METERS = 10;
+
 const DECIMAL_PLACES = 8;
 
 const COVERAGE_THRESHOLD = 0.6;
@@ -20,8 +17,7 @@ let referenceInterval = 0;
 export const getReferenceInterval = (): number => referenceInterval;
 
 export const initReferenceInterval = (trackLengthMeters: number): void => {
-  referenceInterval =
-    trackLengthMeters > 0 ? REF_POINTS_DISTANCE_METERS / trackLengthMeters : 0;
+  referenceInterval = trackLengthMeters > 0 ? REF_POINTS_DISTANCE_METERS / trackLengthMeters : 0;
 };
 
 // Truncates the raw percentage to the nearest referenceInterval boundary.
@@ -34,9 +30,8 @@ export const normalizeTrackPct = (trackPct: number): number => {
   const normalizedTrackPct = Number.parseFloat(
     (trackPct - (trackPct % referenceInterval)).toFixed(DECIMAL_PLACES),
   );
-  return normalizedTrackPct < 0 || normalizedTrackPct >= 1
-    ? 0
-    : normalizedTrackPct;
+
+  return normalizedTrackPct < 0 || normalizedTrackPct >= 1 ? 0 : normalizedTrackPct;
 };
 
 /**
@@ -84,14 +79,13 @@ export const interpolateTimeAtTrackPosition = ({
   currentTrackPositionPct,
 }: InterpolateTimeAtTrackPositionInput): number | null => {
   const refPointKey0 = normalizeTrackPct(currentTrackPositionPct);
-  const refPointKey1 = normalizeTrackPct(
-    currentTrackPositionPct + referenceInterval,
-  );
+  const refPointKey1 = normalizeTrackPct(currentTrackPositionPct + referenceInterval);
 
   const refPoint0 = lap.refPoints.get(refPointKey0);
   const refPoint1 = lap.refPoints.get(refPointKey1);
 
   if (!refPoint0) return null;
+
   // We only know the time at this marker, so use it when the next marker is missing.
   if (!refPoint1) return refPoint0.timeElapsedSinceStart;
 
@@ -103,25 +97,23 @@ export const interpolateTimeAtTrackPosition = ({
     : refPoint1.trackPct - refPoint0.trackPct;
 
   const refPoint0StartTime = refPoint0.timeElapsedSinceStart;
+
   const refPoint1StartTime = crossedFinishLine
     ? refPoint1.timeElapsedSinceStart + (lap.finishTime - lap.startTime)
     : refPoint1.timeElapsedSinceStart;
 
   const currentPositionBetweenRefPoints =
     (currentTrackPositionPct - refPoint0.trackPct) / distanceBetweenRefPoints;
+
   return (
-    refPoint0StartTime +
-    currentPositionBetweenRefPoints * (refPoint1StartTime - refPoint0StartTime)
+    refPoint0StartTime + currentPositionBetweenRefPoints * (refPoint1StartTime - refPoint0StartTime)
   );
 };
 
 const isLapValid = (lap: ReferenceLap) => {
   const lapTime = lap.finishTime - lap.startTime;
-  return (
-    lap.refPoints.size >= getMinPointsForValidLap() &&
-    lapTime > 0 &&
-    !lap.isOnPitRoad
-  );
+
+  return lap.refPoints.size >= getMinPointsForValidLap() && lapTime > 0 && !lap.isOnPitRoad;
 };
 
 type CollectLapDataInput = {
@@ -147,13 +139,12 @@ const collectLapData = ({
       lap: {
         startTime: sessionTime,
         finishTime: -1,
-        refPoints: new Map([
-          [refPointKey, { trackPct, timeElapsedSinceStart: 0 }],
-        ]),
+        refPoints: new Map([[refPointKey, { trackPct, timeElapsedSinceStart: 0 }]]),
         lastTrackedPct: trackPct,
         isOnPitRoad,
       },
     });
+
     return;
   }
 
@@ -171,9 +162,7 @@ const collectLapData = ({
       lap: {
         startTime: sessionTime,
         finishTime: -1,
-        refPoints: new Map([
-          [refPointKey, { trackPct, timeElapsedSinceStart: 0 }],
-        ]),
+        refPoints: new Map([[refPointKey, { trackPct, timeElapsedSinceStart: 0 }]]),
         lastTrackedPct: trackPct,
         isOnPitRoad,
       },

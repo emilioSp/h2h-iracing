@@ -25,28 +25,24 @@ git status -sb
 git branch --show-current
 ```
 
-Stop and tell the user if the working tree is dirty, the branch is not `main`, or the branch is
-behind `origin/main` — tagging while behind puts the release on the wrong commit.
+Stop and tell the user if the working tree is dirty, the branch is not `main`, or the branch is behind `origin/main` — tagging while behind puts the release on the wrong
+commit.
 
-`npm run package` copies `.env` into the bundle, so a missing one fails the release halfway
-through, after it has already reinstalled dependencies:
+`npm run package` copies `.env` into the bundle, so a missing one fails the release halfway through, after it has already reinstalled dependencies:
 
 ```bash
 test -f .env || echo "MISSING .env — packaging will fail"
 ```
 
-Every SimHub dashie and every built dashboard has to be referenced in `scripts/package.ts`, or
-the overlay ships without its SimHub dashboard and nobody notices until a user complains. The
-dashies are copied with a glob, but the per-dashboard build steps and `dist/` copies are still
-listed by hand:
+Every SimHub dashie and every built dashboard has to be referenced in `scripts/package.ts`, or the overlay ships without its SimHub dashboard and nobody notices until a
+user complains. The dashies are copied with a glob, but the per-dashboard build steps and `dist/` copies are still listed by hand:
 
 ```bash
 ls simhub_dashies/
 grep -c "dashboard'" scripts/package.ts   # one dist copy per dashboard
 ```
 
-Find the most recent GitHub release, not merely the most recent local tag. A tag without a
-release must not become the changelog baseline:
+Find the most recent GitHub release, not merely the most recent local tag. A tag without a release must not become the changelog baseline:
 
 ```bash
 LATEST_RELEASE_TAG=$(gh release view --json tagName --jq .tagName)
@@ -97,8 +93,7 @@ Show the full notes and ask explicitly:
 
 > Confirm the selected version bump, these release notes, and publication of the GitHub release.
 
-Stop here until the user confirms. Do not run `npm version`, push a tag, package, or create a
-release before confirmation.
+Stop here until the user confirms. Do not run `npm version`, push a tag, package, or create a release before confirmation.
 
 ## Step 4: Create the Version Commit and Package
 
@@ -113,10 +108,8 @@ ls -la "build/h2h-iracing-$NEW_VERSION.zip"
 
 `npm version` creates the version-bump commit and local tag (for example, `v1.31.0`).
 
-`npm run package` takes a while and is destructive: it deletes `node_modules`, runs `npm ci`,
-builds every dashboard, reinstalls with `--omit=dev`, assembles the bundle, then reinstalls dev
-dependencies at the end. If it throws anywhere after the `--omit=dev` step, you are left with
-production-only dependencies. Recover with:
+`npm run package` takes a while and is destructive: it deletes `node_modules`, runs `npm ci`, builds every dashboard, reinstalls with `--omit=dev`, assembles the bundle,
+then reinstalls dev dependencies at the end. If it throws anywhere after the `--omit=dev` step, you are left with production-only dependencies. Recover with:
 
 ```bash
 npm ci
@@ -133,8 +126,7 @@ git push origin main
 git push origin "v$NEW_VERSION"
 ```
 
-Write the approved changelog to a file and pass `--notes-file`. Never interpolate it into
-`--notes`: PR bodies can contain backticks and `$` characters.
+Write the approved changelog to a file and pass `--notes-file`. Never interpolate it into `--notes`: PR bodies can contain backticks and `$` characters.
 
 ```bash
 cat > /tmp/release-notes.md <<'EOF'
@@ -148,22 +140,20 @@ gh release create "v$NEW_VERSION" "./build/h2h-iracing-$NEW_VERSION.zip" \
 gh release view "v$NEW_VERSION" --json url,isDraft
 ```
 
-The quoted `<<'EOF'` prevents shell expansion. Do **not** use `--generate-notes`; it ignores the
-PR bodies collected in Step 3.
+The quoted `<<'EOF'` prevents shell expansion. Do **not** use `--generate-notes`; it ignores the PR bodies collected in Step 3.
 
-Report the release URL only after `gh release view` confirms that the release exists and is not a
-draft.
+Report the release URL only after `gh release view` confirms that the release exists and is not a draft.
 
 ## Common Mistakes
 
-| Mistake | Fix |
-|---|---|
-| Creating or pushing a tag before notes confirmation | Collect and preview notes first. Run `npm version` only after explicit approval. |
-| Stopping after pushing the tag | Continue immediately with `gh release create` and verify it with `gh release view`. |
-| Using the latest local tag as the changelog baseline | Use `gh release view --json tagName --jq .tagName`; a tag may exist without a release. |
-| Using `npm run release` directly | It uses `--generate-notes`, which skips PR bodies. Run `npm run package` and `gh release create` separately. |
-| Passing the changelog via `--notes "..."` | Backticks in PR bodies execute as shell commands. Use `--notes-file` with a quoted heredoc. |
-| Empty release notes sections | If a PR has no body, use the title only. Do not leave blank sections. |
-| Releasing from a branch behind origin | Fetch first. Do not tag an outdated commit. |
-| A new overlay missing from the bundle | Check `scripts/package.ts` lists a build step and a `dist/` copy for every dashboard. |
-| Dev tooling broken after a failed package | `npm run package` leaves `--omit=dev` dependencies behind. Run `npm ci`. |
+| Mistake                                              | Fix                                                                                                          |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Creating or pushing a tag before notes confirmation  | Collect and preview notes first. Run `npm version` only after explicit approval.                             |
+| Stopping after pushing the tag                       | Continue immediately with `gh release create` and verify it with `gh release view`.                          |
+| Using the latest local tag as the changelog baseline | Use `gh release view --json tagName --jq .tagName`; a tag may exist without a release.                       |
+| Using `npm run release` directly                     | It uses `--generate-notes`, which skips PR bodies. Run `npm run package` and `gh release create` separately. |
+| Passing the changelog via `--notes "..."`            | Backticks in PR bodies execute as shell commands. Use `--notes-file` with a quoted heredoc.                  |
+| Empty release notes sections                         | If a PR has no body, use the title only. Do not leave blank sections.                                        |
+| Releasing from a branch behind origin                | Fetch first. Do not tag an outdated commit.                                                                  |
+| A new overlay missing from the bundle                | Check `scripts/package.ts` lists a build step and a `dist/` copy for every dashboard.                        |
+| Dev tooling broken after a failed package            | `npm run package` leaves `--omit=dev` dependencies behind. Run `npm ci`.                                     |

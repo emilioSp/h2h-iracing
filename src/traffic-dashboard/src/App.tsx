@@ -1,11 +1,15 @@
 import { useEffect, useState } from 'react';
+
 import { TRAFFIC_WINDOW_SECONDS } from '#common/constant.ts';
 import type { Traffic, TrafficCar } from '#schema/traffic.schema.ts';
+
 import { WelcomePage500x200 } from '../../common/WelcomePage500x200.js';
 import { licenseColor } from './format.ts';
+
 import './styles.css';
 
 const OVERLAY_HEIGHT = 200;
+
 const ROW_HEIGHT = 28;
 
 const topOf = (gapSeconds: number): number =>
@@ -58,6 +62,7 @@ export const App = () => {
         const parsed = JSON.parse(e.data) as { data: Traffic };
         setTraffic(parsed.data);
       };
+
       es.onerror = (error) => {
         console.log('error', error);
         console.log('Connection lost, retrying in 10 seconds...');

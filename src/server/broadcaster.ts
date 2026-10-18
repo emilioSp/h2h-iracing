@@ -39,6 +39,7 @@ const closeSSEStream = (set: Set<SSEClient>) => {
   for (const client of set) {
     client.close();
   }
+
   set.clear();
 };
 
@@ -47,10 +48,7 @@ type WriteToClientsInput = {
   data: unknown;
 };
 
-const writeToClients = async ({
-  clientSet,
-  data,
-}: WriteToClientsInput): Promise<void> => {
+const writeToClients = async ({ clientSet, data }: WriteToClientsInput): Promise<void> => {
   const json = JSON.stringify({ data });
   await Promise.all(
     [...clientSet].map(async (client) => {
@@ -66,8 +64,10 @@ const writeToClients = async ({
 const broadcastH2H = async () => {
   // biome-ignore lint/style/noNonNullAssertion: clients map is defined above
   const h2hClients = clients.get(dashboardType.H2H)!;
+
   if (h2hClients.size > 0) {
     const result = await computeHead2Head();
+
     if (result === null) {
       closeSSEStream(h2hClients);
     } else {
@@ -79,6 +79,7 @@ const broadcastH2H = async () => {
 const broadcastWeather = async () => {
   // biome-ignore lint/style/noNonNullAssertion: clients map is defined above
   const weatherClients = clients.get(dashboardType.WEATHER)!;
+
   if (weatherClients.size > 0) {
     await writeToClients({
       clientSet: weatherClients,
@@ -90,6 +91,7 @@ const broadcastWeather = async () => {
 const broadcastCar = async () => {
   // biome-ignore lint/style/noNonNullAssertion: clients map is defined above
   const carClients = clients.get(dashboardType.CAR)!;
+
   if (carClients.size > 0) {
     await writeToClients({
       clientSet: carClients,
@@ -101,8 +103,10 @@ const broadcastCar = async () => {
 const broadcastFuel = async () => {
   // biome-ignore lint/style/noNonNullAssertion: clients map is defined above
   const fuelClients = clients.get(dashboardType.FUEL)!;
+
   if (fuelClients.size > 0) {
     const result = await computeFuel();
+
     if (result === null) {
       closeSSEStream(fuelClients);
     } else {
@@ -114,6 +118,7 @@ const broadcastFuel = async () => {
 const broadcastSpotter = async () => {
   // biome-ignore lint/style/noNonNullAssertion: clients map is defined above
   const spotterClients = clients.get(dashboardType.SPOTTER)!;
+
   if (spotterClients.size > 0) {
     await writeToClients({
       clientSet: spotterClients,
@@ -125,6 +130,7 @@ const broadcastSpotter = async () => {
 const broadcastTraffic = async () => {
   // biome-ignore lint/style/noNonNullAssertion: clients map is defined above
   const trafficClients = clients.get(dashboardType.TRAFFIC)!;
+
   if (trafficClients.size > 0) {
     await writeToClients({
       clientSet: trafficClients,
@@ -136,6 +142,7 @@ const broadcastTraffic = async () => {
 const broadcast = async (): Promise<void> => {
   if (!(await isIRacingConnected())) {
     stopBroadcasting();
+
     return;
   }
 
@@ -152,6 +159,7 @@ const broadcast = async (): Promise<void> => {
 
   if ([...clients.values()].every((clientSet) => clientSet.size === 0)) {
     stopBroadcasting();
+
     return;
   }
 

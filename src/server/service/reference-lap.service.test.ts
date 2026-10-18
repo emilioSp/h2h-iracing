@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
+
 import { refreshDriverInfo } from '#repository/driver.repository.ts';
 import {
   getTrackLengthMeters,
@@ -33,6 +34,7 @@ const seedActiveLap = ({
 }): void => {
   const interval = getReferenceInterval();
   const refPoints = new Map<number, ReferencePoint>();
+
   for (let point = 0; point < pointCount; point++) {
     const trackPct = point * interval;
     refPoints.set(trackPct, {
@@ -40,6 +42,7 @@ const seedActiveLap = ({
       timeElapsedSinceStart: point,
     });
   }
+
   setActiveRefLap({
     carIdx,
     lap: {
@@ -69,9 +72,7 @@ describe('updateReferenceLaps', () => {
   });
 
   it('When iRacing reports the first point of a lap then a new active lap is created', async () => {
-    loadTelemetryFixture(
-      'fixture/telemetry-mock/reference-lap/session-start.json',
-    );
+    loadTelemetryFixture('fixture/telemetry-mock/reference-lap/session-start.json');
     await refreshDriverInfo();
     initReferenceInterval(await getTrackLengthMeters());
 
@@ -80,18 +81,14 @@ describe('updateReferenceLaps', () => {
     expect(getActiveRefLap(0)).toEqual({
       startTime: 50,
       finishTime: -1,
-      refPoints: new Map([
-        [normalizeTrackPct(0.5), { trackPct: 0.5, timeElapsedSinceStart: 0 }],
-      ]),
+      refPoints: new Map([[normalizeTrackPct(0.5), { trackPct: 0.5, timeElapsedSinceStart: 0 }]]),
       lastTrackedPct: 0.5,
       isOnPitRoad: false,
     });
   });
 
   it('When iRacing reports two points in different buckets then both points are stored', async () => {
-    loadTelemetryFixture(
-      'fixture/telemetry-mock/reference-lap/two-points.json',
-    );
+    loadTelemetryFixture('fixture/telemetry-mock/reference-lap/two-points.json');
     await refreshDriverInfo();
     initReferenceInterval(await getTrackLengthMeters());
     await refreshTelemetry();
@@ -104,9 +101,7 @@ describe('updateReferenceLaps', () => {
   });
 
   it('When iRacing repeats a point in the same bucket then no duplicate point is stored', async () => {
-    loadTelemetryFixture(
-      'fixture/telemetry-mock/reference-lap/two-points.json',
-    );
+    loadTelemetryFixture('fixture/telemetry-mock/reference-lap/two-points.json');
     await refreshDriverInfo();
     initReferenceInterval(await getTrackLengthMeters());
     await refreshTelemetry();
@@ -143,9 +138,7 @@ describe('updateReferenceLaps', () => {
     expect(getActiveRefLap(0)).toEqual({
       startTime: 80,
       finishTime: -1,
-      refPoints: new Map([
-        [0.01, { trackPct: 0.01, timeElapsedSinceStart: 0 }],
-      ]),
+      refPoints: new Map([[0.01, { trackPct: 0.01, timeElapsedSinceStart: 0 }]]),
       lastTrackedPct: 0.01,
       isOnPitRoad: false,
     });
@@ -202,9 +195,7 @@ describe('normalizeTrackPct', () => {
   });
 
   it('When the track position is on a bucket boundary then the position is unchanged', () => {
-    expect(normalizeTrackPct(getReferenceInterval())).toBe(
-      getReferenceInterval(),
-    );
+    expect(normalizeTrackPct(getReferenceInterval())).toBe(getReferenceInterval());
   });
 
   it('When the track position is between bucket boundaries then it is truncated to the lower boundary', () => {
@@ -271,6 +262,7 @@ describe('interpolateTimeAtTrackPosition', () => {
 
   it('When two reference points surround the track position then the time is linearly interpolated', () => {
     const interval = getReferenceInterval();
+
     const lap = makeLap({
       points: [
         [0, makePoint(0, 0)],
@@ -290,6 +282,7 @@ describe('interpolateTimeAtTrackPosition', () => {
     const interval = getReferenceInterval();
     const lapTime = 100;
     const lastPct = 1 - interval;
+
     const lap = makeLap({
       points: [
         [lastPct, makePoint(lastPct, lastPct * lapTime)],
@@ -297,11 +290,13 @@ describe('interpolateTimeAtTrackPosition', () => {
       ],
       finishTime: lapTime,
     });
+
     const currentTrackPositionPct = lastPct + interval / 2;
     const expected = lastPct * lapTime + (interval / 2) * lapTime;
 
-    expect(
-      interpolateTimeAtTrackPosition({ lap, currentTrackPositionPct }),
-    ).toBeCloseTo(expected, 3);
+    expect(interpolateTimeAtTrackPosition({ lap, currentTrackPositionPct })).toBeCloseTo(
+      expected,
+      3,
+    );
   });
 });

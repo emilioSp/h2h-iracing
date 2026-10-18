@@ -7,14 +7,8 @@ import {
 } from '#repository/irsdk.repository.ts';
 import { resetLapTimeTracking } from '#repository/lap.repository.ts';
 import { resetReferenceLaps } from '#repository/reference-lap.repository.ts';
-import {
-  isRaceSession,
-  refreshCurrentSessionInfo,
-} from '#repository/session-info.repository.ts';
-import {
-  initReferenceInterval,
-  updateReferenceLaps,
-} from '#service/reference-lap.service.ts';
+import { isRaceSession, refreshCurrentSessionInfo } from '#repository/session-info.repository.ts';
+import { initReferenceInterval, updateReferenceLaps } from '#service/reference-lap.service.ts';
 
 let previousSessionNum = -1;
 
@@ -31,6 +25,7 @@ export const resetInMemoryStorage = () => {
 
 export const onSessionChange = async () => {
   const currentSessionNum = await getSessionNum();
+
   if (currentSessionNum === previousSessionNum) {
     return;
   }

@@ -1,12 +1,11 @@
 import { describe, expect, it } from 'vitest';
+
 import { loadTelemetryFixture } from '#repository/irsdk.repository.ts';
 import { computeCarTelemetry } from '#server/dashboard/car-telemetry.dashboard.ts';
 
 describe('computeCarTelemetry', () => {
   it('When iRacing reports car control telemetry then the dashboard returns the current settings', async () => {
-    loadTelemetryFixture(
-      'fixture/telemetry-mock/car-telemetry/current-settings.json',
-    );
+    loadTelemetryFixture('fixture/telemetry-mock/car-telemetry/current-settings.json');
 
     const car = await computeCarTelemetry();
 

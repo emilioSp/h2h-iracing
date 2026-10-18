@@ -15,4 +15,5 @@ export const trafficSchema = z.object({
 });
 
 export type TrafficCar = z.infer<typeof trafficCarSchema>;
+
 export type Traffic = z.infer<typeof trafficSchema>;

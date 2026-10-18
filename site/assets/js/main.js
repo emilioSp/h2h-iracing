@@ -17,6 +17,7 @@ document.querySelectorAll('[data-reveal]').forEach((el) => {
 
 // YouTube lazy embed — avoids loading YouTube JS until user clicks
 const ytContainer = document.getElementById('yt-container');
+
 if (ytContainer) {
   ytContainer.addEventListener('click', () => {
     const videoId = ytContainer.dataset.videoId;

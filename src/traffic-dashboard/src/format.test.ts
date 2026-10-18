@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+
 import { DEFAULT_LICENSE_COLOR, licenseColor } from './format.ts';
 
 describe('licenseColor', () => {

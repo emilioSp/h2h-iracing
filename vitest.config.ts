@@ -7,10 +7,7 @@ export default defineConfig({
     setupFiles: ['./vitest-setup.ts'],
     coverage: {
       include: ['src/server/**/*.ts', 'src/h2h-dashboard/src/**/*.ts'],
-      exclude: [
-        'src/server/**/*.test.ts',
-        'src/h2h-dashboard/src/**/*.test.ts',
-      ],
+      exclude: ['src/server/**/*.test.ts', 'src/h2h-dashboard/src/**/*.test.ts'],
       thresholds: {
         statements: 80,
         lines: 80,

@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
+
 import {
   getMedianLapTime,
   resetLapTimeTracking,
@@ -6,15 +7,10 @@ import {
 } from '#repository/lap.repository.ts';
 
 const PLAYER_CAR_IDX = 0;
+
 const carsIdx = Array.from({ length: 64 }, (_, carIdx) => carIdx);
 
-const recordLapTimes = ({
-  lapNumber,
-  lapTime,
-}: {
-  lapNumber: number;
-  lapTime: number;
-}) => {
+const recordLapTimes = ({ lapNumber, lapTime }: { lapNumber: number; lapTime: number }) => {
   updateLapTimeTracking({
     carsIdx,
     lapsCompleted: Array(64).fill(lapNumber),

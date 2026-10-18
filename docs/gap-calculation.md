@@ -95,7 +95,8 @@ The raw delta would be:
 delta = 9.0 - 45.0 = -36.0s   ← wrong! The gap can't be negative
 ```
 
-This happens because the reference lap restarts at 0 after the finish line. The ahead car's time (9s) is small because it just started a new lap, but it's actually **further ahead**, not behind.
+This happens because the reference lap restarts at 0 after the finish line. The ahead car's time (9s) is small because it just started a new lap, but it's actually
+**further ahead**, not behind.
 
 ### The Fix
 
@@ -129,4 +130,3 @@ If the ahead car **has** crossed the finish line, its percentage resets to a low
    b. Fall back to estimated time
    c. Correct for finish-line crossing
 ```
-

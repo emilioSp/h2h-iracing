@@ -1,11 +1,7 @@
 import { statSync, writeFileSync } from 'node:fs';
 import { basename, join, resolve } from 'node:path';
-import {
-  type Driver,
-  IRSDK,
-  SESSION_DATA_KEYS,
-  VARS,
-} from '@emiliosp/node-iracing-sdk';
+
+import { type Driver, IRSDK, SESSION_DATA_KEYS, VARS } from '@emiliosp/node-iracing-sdk';
 
 type Column = {
   label: string;
@@ -24,8 +20,7 @@ const escapeHtml = (value: string): string =>
 
 const cell = (value: unknown): string => escapeHtml(String(value));
 
-const cellList = (values: unknown[]): string =>
-  [...new Set(values)].map(cell).join(', ');
+const cellList = (values: unknown[]): string => [...new Set(values)].map(cell).join(', ');
 
 type RenderTableInput = {
   columns: Column[];
@@ -33,20 +28,13 @@ type RenderTableInput = {
   highlightRow?: number;
 };
 
-const renderTable = ({
-  columns,
-  rows,
-  highlightRow,
-}: RenderTableInput): string => {
-  const head = columns
-    .map((c) => `<th${columnClass(c)}>${escapeHtml(c.label)}</th>`)
-    .join('');
+const renderTable = ({ columns, rows, highlightRow }: RenderTableInput): string => {
+  const head = columns.map((c) => `<th${columnClass(c)}>${escapeHtml(c.label)}</th>`).join('');
 
   const body = rows
     .map((row, rowIndex) => {
-      const cells = row
-        .map((value, i) => `<td${columnClass(columns[i])}>${value}</td>`)
-        .join('');
+      const cells = row.map((value, i) => `<td${columnClass(columns[i])}>${value}</td>`).join('');
+
       return `<tr${rowIndex === highlightRow ? ' class="me"' : ''}>${cells}</tr>`;
     })
     .join('');
@@ -59,9 +47,8 @@ const section = ({ title, body }: { title: string; body: string }): string =>
 
 const printValues = (values: unknown[]): string => {
   if (values.length === 1) return cell(values[0]);
-  return values
-    .map((value, index) => `<b>${index}</b>:${cell(value)}`)
-    .join('  ');
+
+  return values.map((value, index) => `<b>${index}</b>:${cell(value)}`).join('  ');
 };
 
 if (!process.env.DUMP_FILE_PATH) {
@@ -70,9 +57,11 @@ if (!process.env.DUMP_FILE_PATH) {
 }
 
 const outPath = join(import.meta.dirname, 'dump-report.html');
+
 const absoluteDumpPath = resolve(process.env.DUMP_FILE_PATH);
 
 const ir = IRSDK.fromDump(process.env.DUMP_FILE_PATH);
+
 ir.refreshSharedMemory();
 
 const readVar = (key: string): unknown[] | null => {
@@ -84,10 +73,13 @@ const readVar = (key: string): unknown[] | null => {
 };
 
 const weekend = ir.getSessionInfo(SESSION_DATA_KEYS.WEEKEND_INFO);
+
 const sessionInfo = ir.getSessionInfo(SESSION_DATA_KEYS.SESSION_INFO);
+
 const drivers = ir.getSessionInfo(SESSION_DATA_KEYS.DRIVER_INFO)?.Drivers ?? [];
 
 const playerCarIdx = readVar(VARS.PLAYER_CAR_IDX)?.[0] as number;
+
 const playerRow = drivers.findIndex((d) => d.CarIdx === playerCarIdx);
 
 // ---------------------------------------------------------------- overview
@@ -96,12 +88,7 @@ const overview = renderTable({
   columns: [{ label: 'Field' }, { label: 'Value' }],
   rows: [
     ['Dump', cell(absoluteDumpPath)],
-    [
-      'Size',
-      cell(
-        `${(statSync(process.env.DUMP_FILE_PATH).size / 1024 / 1024).toFixed(2)} MB`,
-      ),
-    ],
+    ['Size', cell(`${(statSync(process.env.DUMP_FILE_PATH).size / 1024 / 1024).toFixed(2)} MB`)],
     ['Track', cell(weekend?.TrackDisplayName)],
     ['Track length', cell(weekend?.TrackLength)],
     ['Event type', cell(weekend?.EventType)],
@@ -198,13 +185,10 @@ const varConstantByKey = new Map(
 const varNames = ir.getVarHeadersNamesList().sort();
 
 const varsTable = renderTable({
-  columns: [
-    { label: 'Variable' },
-    { label: 'VARS constant' },
-    { label: 'Value', className: 'w' },
-  ],
+  columns: [{ label: 'Variable' }, { label: 'VARS constant' }, { label: 'Value', className: 'w' }],
   rows: varNames.map((name) => {
     const values = readVar(name);
+
     return [
       cell(name),
       cell(varConstantByKey.get(name) ?? ''),
@@ -218,10 +202,8 @@ const varsTable = renderTable({
 const sessionSections = Object.values(SESSION_DATA_KEYS)
   .map((key) => {
     const value = ir.getSessionInfo(key);
-    const json =
-      value === undefined
-        ? 'not present in this dump'
-        : JSON.stringify(value, null, 2);
+    const json = value === undefined ? 'not present in this dump' : JSON.stringify(value, null, 2);
+
     return `<details><summary>${escapeHtml(key)}</summary><pre>${escapeHtml(json)}</pre></details>`;
   })
   .join('');
@@ -271,6 +253,7 @@ ${section({ title: 'Session info', body: sessionSections })}
 writeFileSync(outPath, html);
 
 console.log(`Report written to ${resolve(outPath)}`);
+
 console.log(
   `${drivers.length} drivers, ${driversByClassId.size} car class(es), ${varNames.length} telemetry variables`,
 );

@@ -16,11 +16,13 @@ From consecutive window samples, fuel deltas are computed:
 delta[i] = fuelAtLapStart[i] - fuelAtLapStart[i+1]
 ```
 
-Negative deltas (pit stop refuels) are discarded. The **median** of the remaining positive deltas is used as `medianFuelPerLap`. Median is preferred over mean to absorb outlier laps (safety car, anomalous stints).
+Negative deltas (pit stop refuels) are discarded. The **median** of the remaining positive deltas is used as `medianFuelPerLap`. Median is preferred over mean to absorb
+outlier laps (safety car, anomalous stints).
 
 ## 3. Estimated Time Remaining (only timed races are support)
 
-The race is timed. The clock shows how much time is left, but when the clock hits zero the current lap still has to be completed. The computation uses the **leader's position** to determine when the race actually ends for the player.
+The race is timed. The clock shows how much time is left, but when the clock hits zero the current lap still has to be completed. The computation uses the **leader's
+position** to determine when the race actually ends for the player.
 
 ```
 leaderTimeToFinishCurrentLap = (1 - leaderLapDistPct) * leaderMedianLapTime
@@ -50,7 +52,8 @@ Source: `src/server/dashboard/fuel.dashboard.ts → getLeaderCarIdx()`
 lapsRemaining = ceil(playerLapDistPct + estimatedTimeRemaining / playerMedianLapTime) - playerLapDistPct
 ```
 
-This is intentionally a fractional number — it represents the exact lap-distance the player still has to cover, not a rounded lap count. The fuel calculation consumes this value directly.
+This is intentionally a fractional number — it represents the exact lap-distance the player still has to cover, not a rounded lap count. The fuel calculation consumes
+this value directly.
 
 Source: `src/server/dashboard/fuel.dashboard.ts → computeLapsRemaining()`
 
@@ -70,10 +73,10 @@ Source: `src/server/service/fuel.service.ts → computeFuelRefill()`
 
 ## Edge Cases
 
-| Situation | Behavior |
-|---|---|
-| Pit stop during sample window | Negative delta filtered out; does not corrupt median |
-| Fewer than 2 fuel samples | `medianFuelPerLap` is `null`; refill values are `null` |
-| Checkered flag | `estimatedTimeRemaining = 0`; refill = whatever is needed to finish the current lap |
-| Practice / qualifying | Refill values are `null` (no race context) |
-| Player not found | Entire computation returns `null` |
+| Situation                     | Behavior                                                                            |
+| ----------------------------- | ----------------------------------------------------------------------------------- |
+| Pit stop during sample window | Negative delta filtered out; does not corrupt median                                |
+| Fewer than 2 fuel samples     | `medianFuelPerLap` is `null`; refill values are `null`                              |
+| Checkered flag                | `estimatedTimeRemaining = 0`; refill = whatever is needed to finish the current lap |
+| Practice / qualifying         | Refill values are `null` (no race context)                                          |
+| Player not found              | Entire computation returns `null`                                                   |

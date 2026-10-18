@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+
 import {
   CAR_LENGTH_METERS,
   computeOverlap,
@@ -34,19 +35,18 @@ describe('getDeltaMeters', () => {
       otherDriverPct: 0.9999,
       expected: -1,
     },
-  ])('When $scenario then the shortest track distance is returned', ({
-    playerPct,
-    otherDriverPct,
-    expected,
-  }) => {
-    const delta = getDeltaMeters({
-      playerPct,
-      otherDriverPct,
-      trackLengthMeters: TRACK_LENGTH_METERS,
-    });
+  ])(
+    'When $scenario then the shortest track distance is returned',
+    ({ playerPct, otherDriverPct, expected }) => {
+      const delta = getDeltaMeters({
+        playerPct,
+        otherDriverPct,
+        trackLengthMeters: TRACK_LENGTH_METERS,
+      });
 
-    expect(delta).toBeCloseTo(expected, 5);
-  });
+      expect(delta).toBeCloseTo(expected, 5);
+    },
+  );
 });
 
 describe('computeOverlap', () => {
@@ -86,10 +86,7 @@ describe('computeOverlap', () => {
       deltaMeters: -CAR_LENGTH_METERS * 3,
       expected: { overlapStartPct: 0, overlapEndPct: 0 },
     },
-  ])('When $scenario then the overlap remains within the bar', ({
-    deltaMeters,
-    expected,
-  }) => {
+  ])('When $scenario then the overlap remains within the bar', ({ deltaMeters, expected }) => {
     expect(computeOverlap(deltaMeters)).toEqual(expected);
   });
 });

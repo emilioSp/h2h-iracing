@@ -1,8 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import {
-  computeEstimatedTimeRemaining,
-  computeFuelRefill,
-} from '#service/fuel.service.ts';
+
+import { computeEstimatedTimeRemaining, computeFuelRefill } from '#service/fuel.service.ts';
 
 describe('computeEstimatedTimeRemaining', () => {
   const noFlag = 0;

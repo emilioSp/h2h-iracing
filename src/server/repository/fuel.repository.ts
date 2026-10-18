@@ -6,6 +6,7 @@ export type FuelSample = {
 };
 
 let fuelSamples: FuelSample[] = [];
+
 let prevPlayerLapCompleted = -1;
 
 export type UpdateFuelTrackingInput = {
@@ -42,9 +43,10 @@ export const getMedianFuelPerLap = (): number | null => {
   if (fuelSamples.length < 2) return null;
 
   const fuelDeltas: number[] = [];
+
   for (let i = 0; i < fuelSamples.length - 1; i++) {
-    const delta =
-      fuelSamples[i].fuelAtLapStart - fuelSamples[i + 1].fuelAtLapStart;
+    const delta = fuelSamples[i].fuelAtLapStart - fuelSamples[i + 1].fuelAtLapStart;
+
     if (delta > 0) fuelDeltas.push(delta);
   }
 
@@ -52,9 +54,8 @@ export const getMedianFuelPerLap = (): number | null => {
 
   const sorted = [...fuelDeltas].sort((a, b) => a - b);
   const mid = Math.floor(sorted.length / 2);
-  return sorted.length % 2 === 0
-    ? (sorted[mid - 1] + sorted[mid]) / 2
-    : sorted[mid];
+
+  return sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid];
 };
 
 export const getLastLapFuelDelta = (): number | null => {
@@ -65,5 +66,6 @@ export const getLastLapFuelDelta = (): number | null => {
   const prev = fuelSamples[fuelSamples.length - 2];
   const last = fuelSamples[fuelSamples.length - 1];
   const fuelLastLap = prev.fuelAtLapStart - last.fuelAtLapStart;
+
   return fuelLastLap <= 0 ? null : fuelLastLap;
 };

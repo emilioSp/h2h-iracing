@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+
 import { guessCarClass } from '#server/utils/guess-car-class.ts';
 
 describe('guessCarClass', () => {
@@ -14,11 +15,7 @@ describe('guessCarClass', () => {
     expect(guessCarClass(car)).toBe(expected);
   });
 
-  it.each([
-    'Acura ARX-06',
-    'Ferrari 499P',
-    'Porsche 963',
-  ])('falls back to GTP for %s', (car) => {
+  it.each(['Acura ARX-06', 'Ferrari 499P', 'Porsche 963'])('falls back to GTP for %s', (car) => {
     expect(guessCarClass(car)).toBe('GTP');
   });
 

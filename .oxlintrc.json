@@ -1,0 +1,55 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "categories": {
+    "correctness": "error"
+  },
+  "plugins": ["typescript", "import", "vitest"],
+  "jsPlugins": [
+    {
+      "name": "anti-slop",
+      "specifier": "oxlint-anti-slop"
+    }
+  ],
+  "ignorePatterns": [
+    "dist/**",
+    "build/**",
+    "coverage/**",
+    "node_module/**",
+    "tests/fixtures/**",
+    ".pi/**",
+    "vendor/**"
+  ],
+  "rules": {
+    "vitest/valid-title": [
+      "error",
+      {
+        "ignoreTypeOfDescribeName": true,
+        "mustMatch": {
+          "it": "^given .+ when .+ then .+$",
+          "test": "^given .+ when .+ then .+$"
+        }
+      }
+    ],
+    "prefer-const": "error",
+    "no-else-return": ["error", { "allowElseIf": false }],
+    "typescript/consistent-type-definitions": ["error", "type"],
+    "import/no-commonjs": [
+      "error",
+      {
+        "allowConditionalRequire": false,
+        "allowPrimitiveModules": false,
+        "allowRequire": false
+      }
+    ],
+    "anti-slop/no-reduce-accumulator-copy": "error",
+    "anti-slop/no-chained-type-assertions": "error",
+    "anti-slop/no-unnecessary-type-widening": "error",
+    "anti-slop/no-object-parameters": "error",
+    "anti-slop/no-typeof-outside-guards": "error",
+    "anti-slop/no-meaningless-unknown-aliases": "error",
+    "anti-slop/no-unsafe-dictionary-values": "error",
+    "anti-slop/no-narrowing-after-widening": "error",
+    "anti-slop/require-logical-blank-lines": "error",
+    "anti-slop/require-type-assertion-justification": "error"
+  }
+}

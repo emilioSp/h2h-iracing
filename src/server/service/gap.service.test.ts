@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { refreshDriverInfo } from '#repository/driver.repository.ts';
 import { loadTelemetryFixture } from '#repository/irsdk.repository.ts';
 import {
@@ -34,6 +35,7 @@ const makeCar = (carIdx: number): Car => ({
 const makeReferenceLap = (): ReferenceLap => {
   const lapTime = 90;
   const interval = getReferenceInterval();
+
   const percentages = [
     0.02,
     0.02 + interval,
@@ -100,9 +102,11 @@ describe('getGap', () => {
   it('When iRacing reports all cars on track with reference laps then only reference deltas are used', async () => {
     loadTelemetryFixture('fixture/telemetry-mock/gap/reference.json');
     await refreshDriverInfo();
+
     for (const carIdx of [0, 1, 2]) {
       addRecentLap({ carIdx, lap: makeReferenceLap() });
     }
+
     const referenceDelta = vi.spyOn(gapDelta, 'referenceDelta');
     const estimatedDelta = vi.spyOn(gapDelta, 'estimatedDelta');
 

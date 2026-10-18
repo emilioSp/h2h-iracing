@@ -1,9 +1,5 @@
 import { getDriverInfo } from '#repository/driver.repository.ts';
-import {
-  getBestLapTime,
-  getLapsCompleted,
-  getLastLapTime,
-} from '#repository/irsdk.repository.ts';
+import { getBestLapTime, getLapsCompleted, getLastLapTime } from '#repository/irsdk.repository.ts';
 import {
   getSessionBestTime,
   getSessionLapsCompleted,
@@ -14,10 +10,12 @@ import type { Standing } from '#service/standings.service.ts';
 
 export const computeLastLapTime = async (carIdx: number): Promise<number> => {
   const lastLapTime = await getLastLapTime(carIdx);
+
   if (lastLapTime > 0) return lastLapTime;
 
   // This is the case when a driver has left the session
   const sessionLastLapTime = getSessionLastLapTime(carIdx);
+
   if (sessionLastLapTime > 0) return sessionLastLapTime;
 
   return NaN;
@@ -25,9 +23,11 @@ export const computeLastLapTime = async (carIdx: number): Promise<number> => {
 
 export const computeBestLapTime = async (carIdx: number): Promise<number> => {
   const bestLapTime = await getBestLapTime(carIdx);
+
   if (bestLapTime > 0) return bestLapTime;
 
   const sessionBestTime = getSessionBestTime(carIdx);
+
   if (sessionBestTime > 0) return sessionBestTime;
 
   return NaN;
@@ -38,10 +38,7 @@ export type ComputeCarInput = {
   standings: Standing[];
 };
 
-export const computeCar = async ({
-  carIdx,
-  standings,
-}: ComputeCarInput): Promise<Car> => {
+export const computeCar = async ({ carIdx, standings }: ComputeCarInput): Promise<Car> => {
   const carStanding = standings.find((s) => s.carIdx === carIdx);
 
   // biome-ignore lint/style/noNonNullAssertion: we assume the driver info is always available for valid carIdx

@@ -1,12 +1,10 @@
 import type { Session } from '@emiliosp/node-iracing-sdk';
+
 import { getCurrentSessionInfo } from '#repository/irsdk.repository.ts';
 
 type SessionInfo = {
   sessionType: string;
-  resultsPosition: Map<
-    number,
-    Exclude<Session['ResultsPositions'], null>[number]
-  >;
+  resultsPosition: Map<number, Exclude<Session['ResultsPositions'], null>[number]>;
 };
 
 const sessionInfo: SessionInfo = {
@@ -16,6 +14,7 @@ const sessionInfo: SessionInfo = {
 
 export const refreshCurrentSessionInfo = async (): Promise<SessionInfo> => {
   const currentSessionInfo = await getCurrentSessionInfo();
+
   if (!currentSessionInfo) {
     return sessionInfo;
   }
@@ -25,6 +24,7 @@ export const refreshCurrentSessionInfo = async (): Promise<SessionInfo> => {
   }
 
   sessionInfo.sessionType = currentSessionInfo?.SessionType ?? '';
+
   for (const resultPosition of currentSessionInfo.ResultsPositions) {
     sessionInfo.resultsPosition.set(resultPosition.CarIdx, resultPosition);
   }
@@ -45,9 +45,10 @@ export const getSessionType = () => sessionInfo.sessionType;
 
 export const isRaceSession = (): boolean => {
   const sessionType = getSessionType();
+
   return sessionType.toLowerCase() === 'race';
 };
 
 const SESSION_FLAG_CHECKERED = 0x00000001;
-export const isCheckeredFlag = (flags: number): boolean =>
-  (flags & SESSION_FLAG_CHECKERED) !== 0;
+
+export const isCheckeredFlag = (flags: number): boolean => (flags & SESSION_FLAG_CHECKERED) !== 0;

@@ -1,8 +1,5 @@
 import { TRAFFIC_WINDOW_SECONDS } from '#common/constant.ts';
-import {
-  getRefLap,
-  type ReferenceLap,
-} from '#repository/reference-lap.repository.ts';
+import { getRefLap, type ReferenceLap } from '#repository/reference-lap.repository.ts';
 import type { Driver } from '#schema/driver.schema.ts';
 import type { TrafficCar } from '#schema/traffic.schema.ts';
 import { estimatedDelta, referenceDelta } from '#server/utils/gap-delta.ts';
@@ -75,16 +72,20 @@ export const findTrafficBehind = ({
   onPitRoad,
 }: FindTrafficBehindInput): TrafficCar[] => {
   const playerPct = lapDistPct[playerCarIdx];
+
   if (playerPct === undefined || playerPct < 0) return [];
 
   const cars: TrafficCar[] = [];
 
   for (const driver of drivers) {
     const { carIdx } = driver;
+
     if (carIdx === playerCarIdx) continue;
+
     if (onPitRoad[carIdx]) continue;
 
     const carPct = lapDistPct[carIdx];
+
     if (carPct === undefined || carPct < 0) continue;
 
     if (
@@ -105,6 +106,7 @@ export const findTrafficBehind = ({
       lapsCompleted: lapsCompleted[carIdx] ?? 0,
       isAnyOnPitRoad: onPitRoad[playerCarIdx],
     });
+
     if (gapSeconds > TRAFFIC_WINDOW_SECONDS) continue;
 
     cars.push({

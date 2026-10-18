@@ -1,12 +1,11 @@
 import { describe, expect, it } from 'vitest';
+
 import { computeWeather } from '#dashboard/weather.dashboard.ts';
 import { loadTelemetryFixture } from '#repository/irsdk.repository.ts';
 
 describe('computeWeather', () => {
   it('When iRacing reports weather telemetry then the dashboard returns converted weather data', async () => {
-    loadTelemetryFixture(
-      'fixture/telemetry-mock/weather/dry-track-with-wind.json',
-    );
+    loadTelemetryFixture('fixture/telemetry-mock/weather/dry-track-with-wind.json');
 
     const weather = await computeWeather();
 

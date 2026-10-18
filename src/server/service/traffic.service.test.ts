@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import {
   addRecentLap,
   type ReferenceLap,
@@ -7,10 +8,7 @@ import {
 } from '#repository/reference-lap.repository.ts';
 import type { Driver } from '#schema/driver.schema.ts';
 import * as gapDelta from '#server/utils/gap-delta.ts';
-import {
-  getReferenceInterval,
-  initReferenceInterval,
-} from '#service/reference-lap.service.ts';
+import { getReferenceInterval, initReferenceInterval } from '#service/reference-lap.service.ts';
 import {
   FASTER_CLASS_MARGIN_SECONDS,
   findTrafficBehind,
@@ -18,8 +16,11 @@ import {
 } from '#service/traffic.service.ts';
 
 const PLAYER_ESTIMATED_LAP_TIME = 103.1952;
+
 const PLAYER_CAR_IDX = 0;
+
 const TEST_TRACK_LENGTH_METERS = 1280;
+
 const REFERENCE_LAP_SECONDS = 100;
 
 const fasterDriver: Driver = {
@@ -77,21 +78,20 @@ describe('isFasterCar', () => {
     },
     {
       scenario: 'a car is exactly on the faster-class margin',
-      carClassEstLapTime:
-        PLAYER_ESTIMATED_LAP_TIME - FASTER_CLASS_MARGIN_SECONDS,
+      carClassEstLapTime: PLAYER_ESTIMATED_LAP_TIME - FASTER_CLASS_MARGIN_SECONDS,
       expected: true,
     },
-  ])('When $scenario then the faster-car result is $expected', ({
-    carClassEstLapTime,
-    expected,
-  }) => {
-    expect(
-      isFasterCar({
-        carClassEstLapTime,
-        playerClassEstLapTime: PLAYER_ESTIMATED_LAP_TIME,
-      }),
-    ).toBe(expected);
-  });
+  ])(
+    'When $scenario then the faster-car result is $expected',
+    ({ carClassEstLapTime, expected }) => {
+      expect(
+        isFasterCar({
+          carClassEstLapTime,
+          playerClassEstLapTime: PLAYER_ESTIMATED_LAP_TIME,
+        }),
+      ).toBe(expected);
+    },
+  );
 });
 
 describe('findTrafficBehind', () => {

@@ -27,9 +27,7 @@
     },
     "SessionInfo": {
       "CurrentSessionNum": 0,
-      "Sessions": [
-        { "SessionNum": 0, "SessionType": "Race", "ResultsPositions": [] }
-      ]
+      "Sessions": [{ "SessionNum": 0, "SessionType": "Race", "ResultsPositions": [] }]
     }
   }
 }

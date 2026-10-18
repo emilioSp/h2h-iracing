@@ -1,9 +1,7 @@
 import { describe, expect, it } from 'vitest';
+
 import { loadTelemetryFixture } from '#repository/irsdk.repository.ts';
-import {
-  getRaceStandings,
-  getSessionStandings,
-} from '#service/standings.service.ts';
+import { getRaceStandings, getSessionStandings } from '#service/standings.service.ts';
 
 describe('getRaceStandings', () => {
   it('When iRacing reports race lap counts and positions then cars are sorted by total distance', async () => {
@@ -29,9 +27,7 @@ describe('getSessionStandings', () => {
   });
 
   it('When iRacing reports one car with class position zero then that car is excluded', async () => {
-    loadTelemetryFixture(
-      'fixture/telemetry-mock/standings/session-excludes-zero.json',
-    );
+    loadTelemetryFixture('fixture/telemetry-mock/standings/session-excludes-zero.json');
 
     expect(await getSessionStandings()).toEqual([
       { pos: 1, carIdx: 2 },
