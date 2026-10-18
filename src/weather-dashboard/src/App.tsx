@@ -1,3 +1,4 @@
+// Renders the weather overlay when its dashboard page is open.
 import { Clock, CloudRain, Droplets, Flag, Road, Sun, Waves, Wind } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
@@ -56,6 +57,7 @@ export const App = () => {
     const connect = () => {
       es = new EventSource('/sse/weather');
       es.onmessage = (e) => {
+        // JUSTIFICATION: This local SSE endpoint sends the server's Weather payload wrapped in { data }.
         const parsed = JSON.parse(e.data) as { data: Weather };
         setWeather(parsed.data);
       };

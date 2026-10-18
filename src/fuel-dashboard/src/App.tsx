@@ -1,3 +1,4 @@
+// Renders the fuel overlay when its dashboard page is open.
 import { Activity, Clock, Fuel, Gauge, RotateCw } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
@@ -147,6 +148,7 @@ export const App = () => {
     const connect = () => {
       es = new EventSource('/sse/fuel');
       es.onmessage = (e) => {
+        // JUSTIFICATION: This local SSE endpoint sends the server's FuelRefill payload wrapped in { data }.
         const parsed = JSON.parse(e.data) as { data: FuelRefill };
         setFuel(parsed.data);
       };

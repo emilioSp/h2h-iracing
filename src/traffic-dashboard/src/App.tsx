@@ -1,3 +1,4 @@
+// Renders the traffic overlay when its dashboard page is open.
 import { useEffect, useState } from 'react';
 
 import { TRAFFIC_WINDOW_SECONDS } from '#common/constant.ts';
@@ -59,6 +60,7 @@ export const App = () => {
     const connect = () => {
       es = new EventSource('/sse/traffic');
       es.onmessage = (e) => {
+        // JUSTIFICATION: This local SSE endpoint sends the server's Traffic payload wrapped in { data }.
         const parsed = JSON.parse(e.data) as { data: Traffic };
         setTraffic(parsed.data);
       };

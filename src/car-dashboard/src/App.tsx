@@ -1,3 +1,4 @@
+// Renders the car overlay when its dashboard page is open.
 import { Banana, Gauge, ShieldCog, Snail } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -77,6 +78,7 @@ export const App = () => {
     const connect = () => {
       es = new EventSource('/sse/car');
       es.onmessage = (e) => {
+        // JUSTIFICATION: This local SSE endpoint sends the server's CarTelemetry payload wrapped in { data }.
         const parsed = JSON.parse(e.data) as { data: CarTelemetry };
         setCar(parsed.data);
       };

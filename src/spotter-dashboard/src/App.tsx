@@ -1,3 +1,4 @@
+// Renders the spotter overlay when its dashboard page is open.
 import { useEffect, useState } from 'react';
 
 import type { Spotter, SpotterSide } from '#schema/spotter.schema.ts';
@@ -49,6 +50,7 @@ export const App = () => {
     const connect = () => {
       es = new EventSource('/sse/spotter');
       es.onmessage = (e) => {
+        // JUSTIFICATION: This local SSE endpoint sends the server's Spotter payload wrapped in { data }.
         const parsed = JSON.parse(e.data) as { data: Spotter };
         setSpotter(parsed.data);
       };
