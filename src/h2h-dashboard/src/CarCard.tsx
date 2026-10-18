@@ -1,3 +1,4 @@
+// Renders driver and lap information when a head-to-head car card is displayed.
 import { useEffect, useRef, useState } from 'react';
 
 import type { Car } from '#schema/car.schema.ts';
@@ -20,11 +21,11 @@ const Label = ({ children }: { children: string }) => (
   <span className="text-[13px] text-dim uppercase tracking-widest leading-none">{children}</span>
 );
 
-const deltaColors: Record<string, string> = {
+const deltaColors = {
   gaining: 'text-green',
   losing: 'text-red',
   neutral: 'text-dim',
-};
+} as const;
 
 const DriverInfoGrid = ({ car }: { car: Car }) => {
   const [bestHighlighted, setBestHighlighted] = useState(false);
