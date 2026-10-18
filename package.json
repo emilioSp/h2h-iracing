@@ -38,7 +38,7 @@
     "traffic:build": "vite build --config vite.traffic.config.ts",
     "test": "vitest run --coverage --config vitest.config.ts",
     "build": "tsc",
-    "check": "npm run build && npm run fmt && npm run test",
+    "check": "npm run build && npm run fmt && npm run lint && npm run test",
     "fmt": "oxfmt",
     "lint": "oxlint --fix",
     "package": "node scripts/package.ts",
