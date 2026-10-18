@@ -1,3 +1,4 @@
+// Sends dashboard updates to subscribed SSE clients while polling iRacing.
 import config from '#config';
 import { computeCarTelemetry } from '#dashboard/car-telemetry.dashboard.ts';
 import { computeFuel } from '#dashboard/fuel.dashboard.ts';
@@ -18,6 +19,15 @@ export const dashboardType = {
 } as const;
 
 export type DashboardType = keyof typeof dashboardType;
+
+const dashboardComputations = {
+  [dashboardType.H2H]: computeHead2Head,
+  [dashboardType.WEATHER]: computeWeather,
+  [dashboardType.CAR]: computeCarTelemetry,
+  [dashboardType.FUEL]: computeFuel,
+  [dashboardType.SPOTTER]: computeSpotter,
+  [dashboardType.TRAFFIC]: computeTraffic,
+};
 
 export type SSEClient = {
   write: (data: string) => Promise<void>;
@@ -61,82 +71,20 @@ const writeToClients = async ({ clientSet, data }: WriteToClientsInput): Promise
   );
 };
 
-const broadcastH2H = async () => {
-  // biome-ignore lint/style/noNonNullAssertion: clients map is defined above
-  const h2hClients = clients.get(dashboardType.H2H)!;
+const broadcastDashboard = async (event: DashboardType): Promise<void> => {
+  const clientSet = clients.get(event);
 
-  if (h2hClients.size > 0) {
-    const result = await computeHead2Head();
+  if (!clientSet || clientSet.size === 0) return;
 
-    if (result === null) {
-      closeSSEStream(h2hClients);
-    } else {
-      await writeToClients({ clientSet: h2hClients, data: result });
-    }
+  const data = await dashboardComputations[event]();
+
+  if (data === null) {
+    closeSSEStream(clientSet);
+
+    return;
   }
-};
 
-const broadcastWeather = async () => {
-  // biome-ignore lint/style/noNonNullAssertion: clients map is defined above
-  const weatherClients = clients.get(dashboardType.WEATHER)!;
-
-  if (weatherClients.size > 0) {
-    await writeToClients({
-      clientSet: weatherClients,
-      data: await computeWeather(),
-    });
-  }
-};
-
-const broadcastCar = async () => {
-  // biome-ignore lint/style/noNonNullAssertion: clients map is defined above
-  const carClients = clients.get(dashboardType.CAR)!;
-
-  if (carClients.size > 0) {
-    await writeToClients({
-      clientSet: carClients,
-      data: await computeCarTelemetry(),
-    });
-  }
-};
-
-const broadcastFuel = async () => {
-  // biome-ignore lint/style/noNonNullAssertion: clients map is defined above
-  const fuelClients = clients.get(dashboardType.FUEL)!;
-
-  if (fuelClients.size > 0) {
-    const result = await computeFuel();
-
-    if (result === null) {
-      closeSSEStream(fuelClients);
-    } else {
-      await writeToClients({ clientSet: fuelClients, data: result });
-    }
-  }
-};
-
-const broadcastSpotter = async () => {
-  // biome-ignore lint/style/noNonNullAssertion: clients map is defined above
-  const spotterClients = clients.get(dashboardType.SPOTTER)!;
-
-  if (spotterClients.size > 0) {
-    await writeToClients({
-      clientSet: spotterClients,
-      data: await computeSpotter(),
-    });
-  }
-};
-
-const broadcastTraffic = async () => {
-  // biome-ignore lint/style/noNonNullAssertion: clients map is defined above
-  const trafficClients = clients.get(dashboardType.TRAFFIC)!;
-
-  if (trafficClients.size > 0) {
-    await writeToClients({
-      clientSet: trafficClients,
-      data: await computeTraffic(),
-    });
-  }
+  await writeToClients({ clientSet, data });
 };
 
 const broadcast = async (): Promise<void> => {
@@ -148,14 +96,7 @@ const broadcast = async (): Promise<void> => {
 
   await tick();
 
-  await Promise.all([
-    broadcastH2H(),
-    broadcastWeather(),
-    broadcastCar(),
-    broadcastFuel(),
-    broadcastSpotter(),
-    broadcastTraffic(),
-  ]);
+  await Promise.all(Object.values(dashboardType).map(broadcastDashboard));
 
   if ([...clients.values()].every((clientSet) => clientSet.size === 0)) {
     stopBroadcasting();

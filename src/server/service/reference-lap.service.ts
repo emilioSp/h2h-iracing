@@ -1,3 +1,4 @@
+// Records reference laps and interpolates their times when calculating race gaps.
 import { getCarsIdx } from '#repository/driver.repository.ts';
 import { getLapDistPct, getOnPitRoad, getSessionTime } from '#repository/irsdk.repository.ts';
 import type { ReferenceLap } from '#repository/reference-lap.repository.ts';
