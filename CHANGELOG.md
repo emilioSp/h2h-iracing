@@ -1,10 +1,10 @@
-# Changelog
+ # Changelog
 
 Meaningful changes from v1.34.0 onward, initialized from local Git history. Tagged entries use consecutive tag comparisons, starting with `v1.33.0..v1.34.0` and ending
 with `v1.35.3..v1.35.4`. Older history is intentionally omitted.
 
-Unreleased code changes were reviewed in `v1.35.4..b45c684`; constitution documentation was added afterward in the working tree. Tags identify version boundaries here,
-not verified package publication or release dates. Remote releases were not checked.
+The initial unreleased code review covered `v1.35.4..b45c684`; constitution documentation and later changes are recorded below. Tags identify version boundaries here, not
+verified package publication or release dates. Remote releases were not checked.
 
 ## Unreleased
 
@@ -12,9 +12,10 @@ not verified package publication or release dates. Remote releases were not chec
    `npm run check` and switched CI to that combined command. Biome remains a declared dependency.
 2. Updated application and development dependencies, including `@hono/node-server` from 1.19.13 to 2.1.5, TypeScript from 6.0.2 to 7.0.2, and Vitest/V8 coverage from
    4.1.2 to 5.0.5. The selected development and packaged Node.js runtime remains 24.14.1. See `git diff v1.35.4..b45c684 -- package.json` for the full version changes.
-3. Consolidated per-dashboard SSE broadcasting into shared dispatch while retaining the existing dashboard-specific missing-player behavior. No consistent missing-player
-   policy has been implemented yet.
+3. Consolidated per-dashboard SSE broadcasting into shared dispatch.
 4. Added standalone mission, tech stack, roadmap, changelog, and accepted architecture decision records.
+5. Standardized missing-player behavior across all six overlays. A disconnected simulator or a missing or negative player index now closes all SSE streams and clears
+   tracking history. Evidence: [PR #79](https://github.com/emilioSp/h2h-iracing/pull/79), merged as `80592d0`.
 
 ## v1.35.4
 
@@ -65,5 +66,7 @@ position and an assumed car length. Its initial development dump mode forced a p
 
 ## Compatibility evidence
 
-The reviewed history did not identify a breaking dashboard SSE payload change or a documented user migration procedure. This is a local-history summary, not a guarantee
-about upstream dependency compatibility or remote release artifacts.
+Normal dashboard SSE payload shapes are unchanged by R-02, but missing-player stream behavior has changed: all endpoints now close their streams instead of some
+continuing to send values or empty results. Custom SSE clients must handle closure and reconnection.
+
+This is a local-history summary, not a guarantee about upstream dependency compatibility or remote release artifacts.
