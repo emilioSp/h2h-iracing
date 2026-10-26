@@ -78,12 +78,6 @@ const broadcastDashboard = async (event: DashboardType): Promise<void> => {
 
   const data = await dashboardComputations[event]();
 
-  if (data === null) {
-    closeSSEStream(clientSet);
-
-    return;
-  }
-
   await writeToClients({ clientSet, data });
 };
 
@@ -95,6 +89,13 @@ const broadcast = async (): Promise<void> => {
   }
 
   await tick();
+
+  // Refreshing telemetry can reveal a disconnection before dashboard computation.
+  if (!(await isIRacingConnected())) {
+    stopBroadcasting();
+
+    return;
+  }
 
   await Promise.all(Object.values(dashboardType).map(broadcastDashboard));
 

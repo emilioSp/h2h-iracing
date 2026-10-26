@@ -141,18 +141,6 @@ describe('removeClient', () => {
 });
 
 describe('broadcast tick', () => {
-  it('given iRacing returns no head-to-head data when broadcasting runs then the client closes and polling stops', async () => {
-    loadTelemetryFixture('fixture/telemetry-mock/connection/connected.json');
-    vi.mocked(h2hService.computeHead2Head).mockResolvedValue(null);
-    const client = createClient();
-    addClient({ event: dashboardType.H2H, client });
-
-    await vi.advanceTimersByTimeAsync(200);
-
-    expect(client.close).toHaveBeenCalledOnce();
-    expect(h2hService.computeHead2Head).toHaveBeenCalledOnce();
-  });
-
   it('given a connected client when iRacing disconnects then polling stops and in-memory state resets', async () => {
     loadTelemetryFixture('fixture/telemetry-mock/connection/disconnected.json');
     const client = createClient();
