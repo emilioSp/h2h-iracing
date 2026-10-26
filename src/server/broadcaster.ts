@@ -78,23 +78,17 @@ const broadcastDashboard = async (event: DashboardType): Promise<void> => {
 
   const data = await dashboardComputations[event]();
 
-  if (data === null) {
-    closeSSEStream(clientSet);
-
-    return;
-  }
-
   await writeToClients({ clientSet, data });
 };
 
 const broadcast = async (): Promise<void> => {
+  await tick();
+
   if (!(await isIRacingConnected())) {
     stopBroadcasting();
 
     return;
   }
-
-  await tick();
 
   await Promise.all(Object.values(dashboardType).map(broadcastDashboard));
 

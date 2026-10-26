@@ -1,0 +1,52 @@
+{
+  "status": "done",
+  "summary": "Completed and verified the central player-index connection policy, normal dashboard return contracts, shared stream shutdown and history cleanup, integration coverage, and affected API documentation.",
+  "acceptanceCriteria": [
+    {
+      "id": "AC1",
+      "probe": "npm run check runs src/server/repository/irsdk.repository.test.ts: connected.json returns true on initial and repeated queries. Separate production Node probes ran NODE_ENV=production DATA_MODE=live and DATA_MODE=mock node --env-file=.env --input-type=module, replacing both IRSDK factories with connected.json-backed IRSDKMock instances before querying the real repository twice. Both queries returned true in each mode; the selected factory ran once and the other never ran.",
+      "probeStatus": "passed"
+    },
+    {
+      "id": "AC2",
+      "probe": "npm run check runs the repository negative-player.json and missing-player-index.json cases: initial and repeated queries return false without throwing. The same isolated production Node factory-stub procedure used each invalid fixture in both live and mock modes, resetting the repository between fixtures. Initial and repeated queries returned false; each selected factory ran once, with no live simulator or dump access.",
+      "probeStatus": "passed"
+    },
+    {
+      "id": "AC3",
+      "probe": "npm run check runs src/server/broadcaster.integration.test.ts. All six clients close once for an initially invalid connected SDK and after valid data followed by a mocked PlayerCarIdx change to -1. Original streams are not restored. Polling stops; no unhandled error occurs.",
+      "probeStatus": "passed"
+    },
+    {
+      "id": "AC4",
+      "probe": "npm run check runs broadcaster integration cases for initial negative-player.json with stale weather, player loss after valid messages, and loss revealed during refreshSharedMemory. All six clients receive zero writes for rejected states, including no null, empty traffic, or fabricated clear spotter messages.",
+      "probeStatus": "passed"
+    },
+    {
+      "id": "AC5",
+      "probe": "npm run check runs the broadcaster history-cleanup integration case: establish six subscriptions, fuel samples at lap 0/50 L and lap 1/48 L, lap-time median 91, and active/completed reference history. Reject PlayerCarIdx=-1 and advance fake timers. Fuel samples become [], median and reference histories become null, all streams close, and no polling timer remains.",
+      "probeStatus": "passed"
+    },
+    {
+      "id": "AC6",
+      "probe": "npm run check runs the real-computation broadcaster integration case using fuel/one-lap-sample.json. Each of six stream writes equals JSON.stringify({data: its actual dashboard computation}). Explicit assertions confirm clear spotter, traffic {cars:[]}, and fuelLevel:50, timeRemaining:600, medianFuelPerLap:null. Existing dashboard computation tests also pass.",
+      "probeStatus": "passed"
+    },
+    {
+      "id": "AC7",
+      "probe": "Built all six overlays with npm run h2h:build, weather:build, car:build, fuel:build, spotter:build, and traffic:build. A temporary Node/CDP probe launched installed Chrome headless, served dist locally, and injected a controllable EventSource. For each overlay it saved initial welcome DOM, delivered a normal data message and confirmed visible dashboard content, then invoked onerror and asserted the root DOM exactly matched its original welcome, the source closed, and retry delay was 10000 ms. Traffic showed car number 6 before error and created a new source after the real retry interval. Valid empty spotter/traffic messages rendered empty root DOM. No browser runtime exceptions occurred. Probe and Chrome profile were removed.",
+      "probeStatus": "passed"
+    }
+  ],
+  "notes": [
+    "npm run check and git diff --check pass. Final suite: 25 files, 189 tests. Coverage: statements 85.87%, branches 83.37%, functions 81.57%, lines 85.56%.",
+    "Production acquisition/reuse checks were performed separately from retained tests. Retained tests select fixture-backed IRSDKMock through NODE_ENV=test and do not use DATA_MODE. Both production SDK factories were replaced before any repository call, preventing real simulator or dump access.",
+    "The working tree already contained most implementation changes at pass start. They were reviewed against the approved spec and verified. No earlier handoffs or prototypes were present.",
+    "docs/spotter-overlap.md and docs/traffic-detection.md contained no conflicting availability descriptions and were left unchanged. Existing CLI connection-first usage and browser implementations were preserved.",
+    "Roadmap and constitution documents describe the earlier planning state. The approved spec governs this implementation; unrelated historical/planning documents were not rewritten.",
+    "A concurrent .oxfmtrc.json change added the .specs exclusion. It was preserved, and npm run check was rerun successfully afterward. Temporary verification files and the temporary formatter ignore file were removed."
+  ],
+  "escalations": [],
+  "version": "1.0.0",
+  "specId": "20261026-143309-r-02-distinguish-sse-disconnection-unavailable-data-and-available-data"
+}

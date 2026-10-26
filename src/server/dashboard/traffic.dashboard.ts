@@ -1,3 +1,4 @@
+// Computes the traffic payload for callers that have checked the repository connection.
 import { getCarsIdx, getDriverInfo } from '#repository/driver.repository.ts';
 import {
   getLapDistPct,
@@ -14,15 +15,12 @@ const NO_TRAFFIC: Traffic = { cars: [] };
 export const computeTraffic = async (): Promise<Traffic> => {
   const playerCarIdx = await getPlayerCarIdx();
 
-  if (playerCarIdx < 0) return NO_TRAFFIC;
-
   const onPitRoad = await getOnPitRoad();
 
   if (onPitRoad[playerCarIdx]) return NO_TRAFFIC;
 
-  const player = getDriverInfo(playerCarIdx);
-
-  if (!player) return NO_TRAFFIC;
+  // Usable player connections are assumed to have driver metadata.
+  const player = getDriverInfo(playerCarIdx)!;
 
   const drivers = (await getCarsIdx())
     .map(getDriverInfo)

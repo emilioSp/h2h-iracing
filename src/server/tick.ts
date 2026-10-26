@@ -1,3 +1,4 @@
+// Refreshes telemetry and updates derived session state and tracking during each polling cycle.
 import { refreshDriverInfo } from '#repository/driver.repository.ts';
 import { resetFuelTracking } from '#repository/fuel.repository.ts';
 import {

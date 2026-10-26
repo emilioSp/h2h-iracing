@@ -1,0 +1,49 @@
+{
+  "version": "1.0.0",
+  "specId": "20261026-143309-r-02-distinguish-sse-disconnection-unavailable-data-and-available-data",
+  "summary": "Independently exercised all seven criteria against the live candidate. Repository, broadcaster, browser behavior, and required checks matched the approved contract; no findings.",
+  "acceptanceCriteria": [
+    {
+      "id": "AC1",
+      "probe": "npm run check executed repository tests for initial and repeated valid test-SDK queries. Independently ran NODE_ENV=production DATA_MODE=live and DATA_MODE=mock node --env-file=.env --input-type=module with both SDK factories replaced by connected.json-backed IRSDKMock instances. Initial and repeated queries returned true; only the selected factory ran, exactly once per scenario.",
+      "probeStatus": "passed"
+    },
+    {
+      "id": "AC2",
+      "probe": "npm run check executed negative-player and missing-player-index repository cases. Repeated the isolated production factory probes in live and mock modes with each invalid fixture, resetting the repository between scenarios. Initial and repeated queries resolved false without throwing; only the selected factory ran once.",
+      "probeStatus": "passed"
+    },
+    {
+      "id": "AC3",
+      "probe": "npm run check executed broadcaster.integration.test.ts with six subscribed dashboards, both initially invalid and after valid messages followed by PlayerCarIdx=-1. Assertions confirmed all six original streams closed exactly once and polling stopped, without recovery on those streams.",
+      "probeStatus": "passed"
+    },
+    {
+      "id": "AC4",
+      "probe": "npm run check executed broadcaster integration scenarios for initial rejection with stale weather, player loss after valid data, and player loss revealed during refreshSharedMemory. All clients had zero writes for rejected states, including no fabricated empty or null payloads.",
+      "probeStatus": "passed"
+    },
+    {
+      "id": "AC5",
+      "probe": "npm run check executed history-cleanup integration scenario: six subscriptions, fuel samples lap 0/50 L and lap 1/48 L, median lap time 91, active and completed reference history, then PlayerCarIdx=-1. Assertions confirmed empty fuel history, null lap median and reference histories, closed streams, and no polling timers.",
+      "probeStatus": "passed"
+    },
+    {
+      "id": "AC6",
+      "probe": "npm run check executed real-computation broadcaster integration using fuel/one-lap-sample.json. All six writes matched their normal computed {data:T} result; explicit assertions covered clear spotter, traffic {cars:[]}, and fuelLevel 50, timeRemaining 600, medianFuelPerLap null. Full dashboard regression suite also passed.",
+      "probeStatus": "passed"
+    },
+    {
+      "id": "AC7",
+      "probe": "Built all six overlays using npm run <overlay>:build. A temporary Node HTTP/CDP probe served dist in installed headless Chrome with controllable EventSource. For each overlay, captured initial welcome DOM, delivered visible normal data, invoked onerror, and asserted exact original welcome DOM restoration, source closure, and 10000 ms retry scheduling. Traffic showed car number 6 before error and created a new source after the real retry interval. Valid empty spotter and traffic results rendered empty root DOM. No browser runtime exceptions occurred.",
+      "probeStatus": "passed"
+    }
+  ],
+  "findings": [],
+  "notes": [
+    "Confirmed exact workflow specId and verifier-running phase; read B1, applicable instructions, relevant source, documentation, and local history. No prototypes or earlier verifier handoffs were present.",
+    "npm exec oxfmt -- --check and npm exec oxlint -- passed before automatic-fix commands. npm run check passed: build, formatting, lint, and 25 test files with 189 tests. Coverage was 85.87% statements, 83.37% branches, 81.57% functions, and 85.56% lines. git diff --check passed.",
+    "Required checks changed only pre-existing generated coverage reports; restored their original bytes. UI builds reproduced existing dist content. Temporary probes, logs, backup, and Chrome profile were removed; pre-existing project changes were preserved.",
+    "README and affected architecture/fuel documentation reflect the approved policy. Spotter/traffic documentation has no conflicting availability rule. CLI connection-first usage remains intact. ROADMAP describes earlier planning, while the approved spec explicitly excludes same-stream recovery."
+  ]
+}

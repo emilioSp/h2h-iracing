@@ -1,3 +1,4 @@
+// Computes the head2head payload for callers that have checked the repository connection.
 import { getPlayerCarIdx, getSessionTime } from '#repository/irsdk.repository.ts';
 import { isRaceSession } from '#repository/session-info.repository.ts';
 import type { Car } from '#schema/car.schema.ts';
@@ -66,12 +67,10 @@ const computeAheadAndBehindCar = async ({
   return { aheadCar, behindCar };
 };
 
-export const computeHead2Head = async (): Promise<Head2Head | null> => {
+export const computeHead2Head = async (): Promise<Head2Head> => {
   const isRace = isRaceSession();
 
   const playerIdx = await getPlayerCarIdx();
-
-  if (playerIdx < 0) return null;
 
   const standings = isRace ? await getRaceStandings() : await getSessionStandings();
   const sessionTime = await getSessionTime();

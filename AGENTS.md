@@ -74,3 +74,11 @@ Run `npm run check` when finishing a coding task.
   - `npm test`
   - `npm run build`
   - `npm run lint`
+
+## Documentation
+
+README.md, and all docs under /docs folder are intended for humans. Don't write them for agents. They are not.
+
+Do not document implementation details in the docs:
+- Agents read both code and docs
+- Humans read mainly doc. They want to understand the what and why at high-level.

@@ -1,3 +1,4 @@
+// Displays dashboard telemetry in the terminal when running the general monitoring CLI.
 import { setTimeout } from 'node:timers/promises';
 
 import config from '#config';
@@ -216,11 +217,11 @@ export const printCarTelemetry = (car: CarTelemetry): void => {
 };
 
 while (true) {
+  await tick();
+
   if (!(await isIRacingConnected())) {
     continue;
   }
-
-  await tick();
 
   const [head2Head, weather, carTelemetry] = await Promise.all([
     computeHead2Head(),
