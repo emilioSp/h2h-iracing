@@ -75,8 +75,9 @@ without the simulator running.
 
 ## Data Flow
 
-1. **Broadcaster** calls each dashboard to compute the latest payload.
-2. **Payloads** are serialized as JSON and written to all connected SSE clients.
-3. **React overlays** receive the event, parse the JSON, and re-render.
+1. **Broadcaster** checks repository availability, runs the shared tick, and checks the refreshed connection.
+2. **Subscribed dashboards** compute the latest normal payloads.
+3. **Payloads** are serialized as `{ data: T }` JSON and written to the corresponding SSE clients.
+4. **React overlays** receive the event, parse the JSON, and re-render.
 
 ---
