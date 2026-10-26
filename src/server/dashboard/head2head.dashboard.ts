@@ -1,7 +1,4 @@
-import {
-  getPlayerCarIdx,
-  getSessionTime,
-} from '#repository/irsdk.repository.ts';
+import { getPlayerCarIdx, getSessionTime } from '#repository/irsdk.repository.ts';
 import { isRaceSession } from '#repository/session-info.repository.ts';
 import type { Car } from '#schema/car.schema.ts';
 import type { Head2Head } from '#schema/head2head.schema.ts';
@@ -57,19 +54,14 @@ const computeAheadAndBehindCar = async ({
   playerCar,
   standings,
 }: ComputeAheadAndBehindCarInput): Promise<ComputeAheadAndBehindCarOutput> => {
-  const aheadIdx =
-    standings.find((s) => s.pos === playerCar.position - 1)?.carIdx ?? null;
-  const behindIdx =
-    standings.find((s) => s.pos === playerCar.position + 1)?.carIdx ?? null;
+  const aheadIdx = standings.find((s) => s.pos === playerCar.position - 1)?.carIdx ?? null;
+  const behindIdx = standings.find((s) => s.pos === playerCar.position + 1)?.carIdx ?? null;
 
   const aheadCar: Car | null =
-    aheadIdx !== null
-      ? await computeCar({ carIdx: aheadIdx, standings })
-      : null;
+    aheadIdx !== null ? await computeCar({ carIdx: aheadIdx, standings }) : null;
+
   const behindCar: Car | null =
-    behindIdx !== null
-      ? await computeCar({ carIdx: behindIdx, standings })
-      : null;
+    behindIdx !== null ? await computeCar({ carIdx: behindIdx, standings }) : null;
 
   return { aheadCar, behindCar };
 };
@@ -78,14 +70,14 @@ export const computeHead2Head = async (): Promise<Head2Head | null> => {
   const isRace = isRaceSession();
 
   const playerIdx = await getPlayerCarIdx();
+
   if (playerIdx < 0) return null;
 
-  const standings = isRace
-    ? await getRaceStandings()
-    : await getSessionStandings();
+  const standings = isRace ? await getRaceStandings() : await getSessionStandings();
   const sessionTime = await getSessionTime();
 
   const playerCar = await computeCar({ carIdx: playerIdx, standings });
+
   if (playerCar.position === 0) {
     return {
       sessionTime,
@@ -103,6 +95,7 @@ export const computeHead2Head = async (): Promise<Head2Head | null> => {
     playerCar,
     standings,
   });
+
   const { gap, delta } = await getGapAndDelta({
     player: playerCar,
     ahead: aheadCar,

@@ -1,6 +1,7 @@
 import { serve } from '@hono/node-server';
 import { serveStatic } from '@hono/node-server/serve-static';
 import { Hono } from 'hono';
+
 import config from '#config';
 import { shutdown } from '#repository/irsdk.repository.ts';
 import { carTelemetryRouter } from '#router/car-telemetry.router.ts';
@@ -14,50 +15,50 @@ import { stopBroadcasting } from '#server/broadcaster.ts';
 const app = new Hono();
 
 app.get('/sse/h2h', h2hRouter);
+
 app.get('/sse/weather', weatherRouter);
+
 app.get('/sse/car', carTelemetryRouter);
+
 app.get('/sse/fuel', fuelRouter);
+
 app.get('/sse/spotter', spotterRouter);
+
 app.get('/sse/traffic', trafficRouter);
+
 app.get('/h2h', serveStatic({ path: './dist/h2h-dashboard/index.html' }));
+
 app.get('/car', serveStatic({ path: './dist/car-dashboard/index.html' }));
+
 app.get('/fuel', serveStatic({ path: './dist/fuel-dashboard/index.html' }));
-app.get(
-  '/spotter',
-  serveStatic({ path: './dist/spotter-dashboard/index.html' }),
-);
-app.get(
-  '/traffic',
-  serveStatic({ path: './dist/traffic-dashboard/index.html' }),
-);
+
+app.get('/spotter', serveStatic({ path: './dist/spotter-dashboard/index.html' }));
+
+app.get('/traffic', serveStatic({ path: './dist/traffic-dashboard/index.html' }));
+
 app.use('/*', serveStatic({ root: './dist' }));
 
-const server = serve(
-  { fetch: app.fetch, port: config.PORT, hostname: '127.0.0.1' },
-  (info) => {
-    console.log(`Server running on http://localhost:${info.port}`);
+const server = serve({ fetch: app.fetch, port: config.PORT, hostname: '127.0.0.1' }, (info) => {
+  console.log(`Server running on http://localhost:${info.port}`);
 
-    console.log('Dashboards:');
-    console.table({
-      'Head to Head': { URL: `http://localhost:${info.port}/h2h-dashboard` },
-      'Car Telemetry': { URL: `http://localhost:${info.port}/car-dashboard` },
-      Weather: { URL: `http://localhost:${info.port}/weather-dashboard` },
-      'Fuel Calculator': {
-        URL: `http://localhost:${info.port}/fuel-dashboard`,
-      },
-      Spotter: { URL: `http://localhost:${info.port}/spotter-dashboard` },
-      Traffic: { URL: `http://localhost:${info.port}/traffic-dashboard` },
-    });
+  console.log('Dashboards:');
+  console.table({
+    'Head to Head': { URL: `http://localhost:${info.port}/h2h-dashboard` },
+    'Car Telemetry': { URL: `http://localhost:${info.port}/car-dashboard` },
+    Weather: { URL: `http://localhost:${info.port}/weather-dashboard` },
+    'Fuel Calculator': {
+      URL: `http://localhost:${info.port}/fuel-dashboard`,
+    },
+    Spotter: { URL: `http://localhost:${info.port}/spotter-dashboard` },
+    Traffic: { URL: `http://localhost:${info.port}/traffic-dashboard` },
+  });
 
-    console.log(
-      `Mode: ${config.DATA_MODE} | Poll: ${config.POLL_INTERVAL_MS}ms`,
-    );
+  console.log(`Mode: ${config.DATA_MODE} | Poll: ${config.POLL_INTERVAL_MS}ms`);
 
-    if (config.DATA_MODE === 'live') {
-      console.log('Do NOT close this window...');
-    }
-  },
-);
+  if (config.DATA_MODE === 'live') {
+    console.log('Do NOT close this window...');
+  }
+});
 
 const cleanShutdown = async () => {
   stopBroadcasting();
@@ -68,4 +69,5 @@ const cleanShutdown = async () => {
 };
 
 process.on('SIGINT', cleanShutdown);
+
 process.on('SIGTERM', cleanShutdown);

@@ -1,6 +1,10 @@
+// Renders the spotter overlay when its dashboard page is open.
 import { useEffect, useState } from 'react';
+
 import type { Spotter, SpotterSide } from '#schema/spotter.schema.ts';
+
 import { WelcomePage800x200 } from '../../common/WelcomePage800x200.js';
+
 import './styles.css';
 
 type BarProps = {
@@ -10,7 +14,9 @@ type BarProps = {
 
 const segmentOf = ({ side, isThreeWide }: BarProps) => {
   if (isThreeWide) return { bottomPct: 0, heightPct: 100 };
+
   if (!side) return { bottomPct: 0, heightPct: 0 };
+
   return {
     bottomPct: side.overlapStartPct,
     heightPct: side.overlapEndPct - side.overlapStartPct,
@@ -44,9 +50,11 @@ export const App = () => {
     const connect = () => {
       es = new EventSource('/sse/spotter');
       es.onmessage = (e) => {
+        // JUSTIFICATION: This local SSE endpoint sends the server's Spotter payload wrapped in { data }.
         const parsed = JSON.parse(e.data) as { data: Spotter };
         setSpotter(parsed.data);
       };
+
       es.onerror = (error) => {
         console.log('error', error);
         console.log('Connection lost, retrying in 10 seconds...');

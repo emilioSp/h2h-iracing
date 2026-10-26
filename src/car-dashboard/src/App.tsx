@@ -1,7 +1,11 @@
+// Renders the car overlay when its dashboard page is open.
 import { Banana, Gauge, ShieldCog, Snail } from 'lucide-react';
 import { useEffect, useState } from 'react';
+
 import type { CarTelemetry } from '#schema/car-telemetry.schema.ts';
+
 import { WelcomePage800x480 } from '../../common/WelcomePage800x480.js';
+
 import './styles.css';
 
 type CellColor = 'red' | 'blue' | 'yellow';
@@ -74,9 +78,11 @@ export const App = () => {
     const connect = () => {
       es = new EventSource('/sse/car');
       es.onmessage = (e) => {
+        // JUSTIFICATION: This local SSE endpoint sends the server's CarTelemetry payload wrapped in { data }.
         const parsed = JSON.parse(e.data) as { data: CarTelemetry };
         setCar(parsed.data);
       };
+
       es.onerror = (error) => {
         console.log('error', error);
         console.log('Connection lost, retrying in 10 seconds...');
@@ -106,17 +112,8 @@ export const App = () => {
         color="red"
         activeBg={car.isAbsActive}
       />
-      <MetricCell
-        label="TC"
-        value={String(car.tc)}
-        icon={<Banana size={56} />}
-        color="blue"
-      />
-      <MetricCell
-        label="BB"
-        value={`${car.brakeBias.toFixed(1)}%`}
-        icon={<Gauge size={56} />}
-      />
+      <MetricCell label="TC" value={String(car.tc)} icon={<Banana size={56} />} color="blue" />
+      <MetricCell label="BB" value={`${car.brakeBias.toFixed(1)}%`} icon={<Gauge size={56} />} />
       <MetricCell
         label="PIT"
         value={car.isPitSpeedLimiterActive ? 'ON' : 'OFF'}

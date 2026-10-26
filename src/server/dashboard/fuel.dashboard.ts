@@ -14,22 +14,14 @@ import {
   getSessionFlags,
   getSessionTimeRemain,
 } from '#repository/irsdk.repository.ts';
-import {
-  getMedianLapTime,
-  updateLapTimeTracking,
-} from '#repository/lap.repository.ts';
-import {
-  isCheckeredFlag,
-  isRaceSession,
-} from '#repository/session-info.repository.ts';
+import { getMedianLapTime, updateLapTimeTracking } from '#repository/lap.repository.ts';
+import { isCheckeredFlag, isRaceSession } from '#repository/session-info.repository.ts';
 import type { FuelRefill } from '#schema/fuel.schema.ts';
-import {
-  computeEstimatedTimeRemaining,
-  computeFuelRefill,
-} from '#service/fuel.service.ts';
+import { computeEstimatedTimeRemaining, computeFuelRefill } from '#service/fuel.service.ts';
 
 const getLeaderCarIdx = async (): Promise<number> => {
   const overallPositions = await getOverallPositions();
+
   return overallPositions.indexOf(1);
 };
 
@@ -51,12 +43,12 @@ export const computeLapsRemaining = ({
     return null;
   }
 
-  const projectedTotalLaps =
-    playerLapDistPct + estimatedTimeRemaining / playerMedianLapTime;
+  const projectedTotalLaps = playerLapDistPct + estimatedTimeRemaining / playerMedianLapTime;
 
   // Round to the 8th decimal digit to remove precision error
   const finalLap = Math.ceil(projectedTotalLaps - 1e-8);
   const rawRemaining = finalLap - playerLapDistPct;
+
   return rawRemaining;
 
   // if needed for aesthetics
@@ -65,25 +57,19 @@ export const computeLapsRemaining = ({
 
 export const computeFuel = async (): Promise<FuelRefill | null> => {
   const playerCarIdx = await getPlayerCarIdx();
+
   if (playerCarIdx < 0) return null;
 
-  const [
-    carsIdx,
-    lapsCompleted,
-    fuelLevel,
-    lastLapTimes,
-    lapDistPct,
-    timeRemaining,
-    flags,
-  ] = await Promise.all([
-    getCarsIdx(),
-    getLapsCompleted(),
-    getFuelLevel(),
-    getLastLapTime(),
-    getLapDistPct(),
-    getSessionTimeRemain(),
-    getSessionFlags(),
-  ]);
+  const [carsIdx, lapsCompleted, fuelLevel, lastLapTimes, lapDistPct, timeRemaining, flags] =
+    await Promise.all([
+      getCarsIdx(),
+      getLapsCompleted(),
+      getFuelLevel(),
+      getLastLapTime(),
+      getLapDistPct(),
+      getSessionTimeRemain(),
+      getSessionFlags(),
+    ]);
 
   const playerLastLapNumber = lapsCompleted[playerCarIdx];
   updateFuelTracking({ fuelLevel, playerLapCompleted: playerLastLapNumber });

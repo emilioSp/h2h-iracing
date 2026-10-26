@@ -8,8 +8,5 @@
       "TrackLength": "5.0 km"
     }
   },
-  "frames": [
-    { "variables": { "AirTemp": [20] } },
-    { "variables": { "AirTemp": [21] } }
-  ]
+  "frames": [{ "variables": { "AirTemp": [20] } }, { "variables": { "AirTemp": [21] } }]
 }

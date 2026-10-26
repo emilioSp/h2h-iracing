@@ -1,4 +1,6 @@
+// Verifies dashboard formatting during regression tests.
 import { describe, expect, it } from 'vitest';
+
 import { DEFAULT_LICENSE_COLOR, licenseColor } from './format.ts';
 
 describe('licenseColor', () => {
@@ -11,23 +13,23 @@ describe('licenseColor', () => {
     ['P 9.99', '#FFFFFF'],
     ['PRO 9.99', '#FFFFFF'],
     ['WC 9.99', '#FFFFFF'],
-  ])('colours %s', (license, expected) => {
+  ])('given license %s when its color is requested then it is %s', (license, expected) => {
     expect(licenseColor(license)).toBe(expected);
   });
 
-  it('ignores the case of the class', () => {
+  it('given a lowercase A license when its color is requested then it is blue', () => {
     expect(licenseColor('a 4.16')).toBe('#006EFF');
   });
 
-  it('reads a class with no safety rating', () => {
+  it('given an A license without a safety rating when its color is requested then it is blue', () => {
     expect(licenseColor('A')).toBe('#006EFF');
   });
 
-  it('falls back for an unknown class', () => {
+  it('given an unknown license class when its color is requested then the default color is returned', () => {
     expect(licenseColor('Z 1.00')).toBe(DEFAULT_LICENSE_COLOR);
   });
 
-  it('falls back for an empty licence', () => {
+  it('given an empty license when its color is requested then the default color is returned', () => {
     expect(licenseColor('')).toBe(DEFAULT_LICENSE_COLOR);
   });
 });

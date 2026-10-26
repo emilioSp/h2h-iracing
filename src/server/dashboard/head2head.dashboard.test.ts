@@ -1,4 +1,6 @@
+// Verifies head-to-head dashboard payloads during regression tests.
 import { describe, expect, it } from 'vitest';
+
 import { computeHead2Head } from '#dashboard/head2head.dashboard.ts';
 import { refreshDriverInfo } from '#repository/driver.repository.ts';
 import { loadTelemetryFixture } from '#repository/irsdk.repository.ts';
@@ -6,7 +8,7 @@ import { refreshCurrentSessionInfo } from '#repository/session-info.repository.t
 import { resetInMemoryStorage } from '#server/tick.ts';
 
 describe('computeHead2Head', () => {
-  it('When iRacing reports a race then the dashboard returns positions, race gaps, and lap deltas', async () => {
+  it('given iRacing reports a race when the dashboard is computed then the dashboard returns positions, race gaps, and lap deltas', async () => {
     loadTelemetryFixture('fixture/telemetry-mock/head2head/race.json');
     resetInMemoryStorage();
     await refreshDriverInfo();
@@ -29,7 +31,7 @@ describe('computeHead2Head', () => {
     });
   });
 
-  it('When iRacing reports a practice session then the dashboard returns lap deltas without race gaps', async () => {
+  it('given iRacing reports a practice session when the dashboard is computed then the dashboard returns lap deltas without race gaps', async () => {
     loadTelemetryFixture('fixture/telemetry-mock/head2head/practice.json');
     resetInMemoryStorage();
     await refreshDriverInfo();
@@ -45,10 +47,8 @@ describe('computeHead2Head', () => {
     });
   });
 
-  it('When iRacing reports no practice best times then the dashboard returns no lap deltas', async () => {
-    loadTelemetryFixture(
-      'fixture/telemetry-mock/head2head/practice-missing-best.json',
-    );
+  it('given iRacing reports no practice best times when the dashboard is computed then the dashboard returns no lap deltas', async () => {
+    loadTelemetryFixture('fixture/telemetry-mock/head2head/practice-missing-best.json');
     resetInMemoryStorage();
     await refreshDriverInfo();
     await refreshCurrentSessionInfo();

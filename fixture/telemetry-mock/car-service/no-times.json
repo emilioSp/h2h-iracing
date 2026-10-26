@@ -10,9 +10,7 @@
         {
           "SessionNum": 0,
           "SessionType": "Practice",
-          "ResultsPositions": [
-            { "CarIdx": 1, "LapsComplete": 0, "LastTime": 0, "FastestTime": 0 }
-          ]
+          "ResultsPositions": [{ "CarIdx": 1, "LapsComplete": 0, "LastTime": 0, "FastestTime": 0 }]
         }
       ]
     }

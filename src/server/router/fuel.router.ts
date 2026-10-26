@@ -1,5 +1,6 @@
 import type { Context } from 'hono';
 import { streamSSE } from 'hono/streaming';
+
 import { addClient, dashboardType, removeClient } from '#server/broadcaster.ts';
 
 export const fuelRouter = (c: Context) =>
@@ -8,6 +9,7 @@ export const fuelRouter = (c: Context) =>
       write: (data: string) => stream.writeSSE({ data }),
       close: () => stream.close(),
     };
+
     addClient({ event: dashboardType.FUEL, client });
     await new Promise<void>((resolve) => stream.onAbort(resolve));
     removeClient({ event: dashboardType.FUEL, client });

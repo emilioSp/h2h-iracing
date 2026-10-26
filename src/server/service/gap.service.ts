@@ -1,9 +1,5 @@
 import { getClassEstLapTime } from '#repository/driver.repository.ts';
-import {
-  getLapDistPct,
-  getLapsCompleted,
-  getOnPitRoad,
-} from '#repository/irsdk.repository.ts';
+import { getLapDistPct, getLapsCompleted, getOnPitRoad } from '#repository/irsdk.repository.ts';
 import { getRefLap } from '#repository/reference-lap.repository.ts';
 import type { Car } from '#schema/car.schema.ts';
 import * as GapDeltaUtil from '#server/utils/gap-delta.ts';
@@ -19,8 +15,7 @@ type ComputeGapInput = {
 };
 
 const computeGap = async ({ ahead, behind }: ComputeGapInput): Promise<Gap> => {
-  if (ahead.driver.carIdx === behind.driver.carIdx)
-    return { value: 0, unit: 'seconds' };
+  if (ahead.driver.carIdx === behind.driver.carIdx) return { value: 0, unit: 'seconds' };
 
   const lapDistPct = await getLapDistPct();
   const lapsCompleted = await getLapsCompleted();
@@ -30,15 +25,14 @@ const computeGap = async ({ ahead, behind }: ComputeGapInput): Promise<Gap> => {
   const behindPct = lapDistPct[behindIdx] ?? 0;
 
   const lapDiff =
-    (lapsCompleted[aheadIdx] ?? 0) +
-    aheadPct -
-    ((lapsCompleted[behindIdx] ?? 0) + behindPct);
+    (lapsCompleted[aheadIdx] ?? 0) + aheadPct - ((lapsCompleted[behindIdx] ?? 0) + behindPct);
 
   if (lapDiff >= 1.0) {
     return { value: Math.floor(lapDiff), unit: 'laps' };
   }
 
   const classLapTime = getClassEstLapTime(behindIdx);
+
   if ((lapsCompleted[behindIdx] ?? 0) < 2) {
     return {
       value: GapDeltaUtil.estimatedDelta({
@@ -80,14 +74,9 @@ export type GetGapInput = {
   behind: Car | null;
 };
 
-export const getGap = async ({
-  ahead,
-  player,
-  behind,
-}: GetGapInput): Promise<GetGapOutput> => {
-  const gapAhead =
-    ahead !== null ? await computeGap({ ahead, behind: player }) : null;
-  const gapBehind =
-    behind !== null ? await computeGap({ ahead: player, behind }) : null;
+export const getGap = async ({ ahead, player, behind }: GetGapInput): Promise<GetGapOutput> => {
+  const gapAhead = ahead !== null ? await computeGap({ ahead, behind: player }) : null;
+  const gapBehind = behind !== null ? await computeGap({ ahead: player, behind }) : null;
+
   return { gapAhead, gapBehind };
 };

@@ -1,4 +1,6 @@
+// Verifies reference lap selection during regression tests.
 import { beforeEach, describe, expect, it } from 'vitest';
+
 import {
   addRecentLap,
   getRefLap,
@@ -53,11 +55,11 @@ beforeEach(() => {
 });
 
 describe('getRefLap', () => {
-  it('When no recent laps exist for a car then its reference lap is null', () => {
+  it('given no recent laps exist for a car when the reference lap is requested then its reference lap is null', () => {
     expect(getRefLap(0)).toBeNull();
   });
 
-  it('When the recent window is not full then its fastest lap is returned', () => {
+  it('given the recent window is not full when the reference lap is requested then its fastest lap is returned', () => {
     addRecentLap({ carIdx: 0, lap: lap1 });
     addRecentLap({ carIdx: 0, lap: lap2 });
     addRecentLap({ carIdx: 0, lap: lap3 });
@@ -65,7 +67,7 @@ describe('getRefLap', () => {
     expect(getRefLap(0)).toBe(lap1);
   });
 
-  it('When the recent window overflows then the expired fastest lap is excluded', () => {
+  it('given the recent window overflows when the reference lap is requested then the expired fastest lap is excluded', () => {
     addRecentLap({ carIdx: 0, lap: lap1 });
     addRecentLap({ carIdx: 0, lap: lap2 });
     addRecentLap({ carIdx: 0, lap: lap3 });

@@ -7,12 +7,16 @@ type Props = {
 
 const shortestDelta = (from: number, to: number): number => {
   let delta = (((to - from) % 360) + 360) % 360;
+
   if (delta > 180) delta -= 360;
+
   return delta;
 };
 
 const TICK_COUNT = 8;
+
 const CARDINALS = ['N', 'E', 'S', 'W'] as const;
+
 const COLOR = '#00e676';
 
 export const CompassRose = ({ windRelativeDeg, size = 280 }: Props) => {
@@ -36,6 +40,7 @@ export const CompassRose = ({ windRelativeDeg, size = 280 }: Props) => {
     const rad = (angle * Math.PI) / 180;
     const isMajor = i % 2 === 0;
     const inner = isMajor ? tickInner * 0.94 : tickInner;
+
     return {
       angle,
       x1: r + Math.sin(rad) * inner,
@@ -48,6 +53,7 @@ export const CompassRose = ({ windRelativeDeg, size = 280 }: Props) => {
 
   const cardinalPositions = CARDINALS.map((label, i) => {
     const angle = (i * 90 * Math.PI) / 180;
+
     return {
       label,
       x: r + Math.sin(angle) * labelR,
@@ -74,6 +80,7 @@ export const CompassRose = ({ windRelativeDeg, size = 280 }: Props) => {
   // Parallelogram trail chunks above the head, fading out
   const trailChunks = [0, 1, 2, 3].map((i) => {
     const y = r - hh - cg - i * (ch + cg);
+
     return {
       key: i,
       opacity: 1 - i * 0.28,
@@ -99,14 +106,7 @@ export const CompassRose = ({ windRelativeDeg, size = 280 }: Props) => {
       role="img"
     >
       {/* Outer ring */}
-      <circle
-        cx={r}
-        cy={r}
-        r={ringR}
-        fill="none"
-        stroke="#2a2a2a"
-        strokeWidth="1.5"
-      />
+      <circle cx={r} cy={r} r={ringR} fill="none" stroke="#2a2a2a" strokeWidth="1.5" />
 
       {/* Tick marks */}
       {ticks.map((t) => (
@@ -148,12 +148,7 @@ export const CompassRose = ({ windRelativeDeg, size = 280 }: Props) => {
       >
         {/* Trail chunks */}
         {trailChunks.map((chunk) => (
-          <polygon
-            key={chunk.key}
-            points={chunk.points}
-            fill={COLOR}
-            opacity={chunk.opacity}
-          />
+          <polygon key={chunk.key} points={chunk.points} fill={COLOR} opacity={chunk.opacity} />
         ))}
 
         {/* Chevron head */}

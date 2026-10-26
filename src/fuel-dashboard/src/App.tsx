@@ -1,11 +1,16 @@
+// Renders the fuel overlay when its dashboard page is open.
 import { Activity, Clock, Fuel, Gauge, RotateCw } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
+
 import type { FuelRefill } from '#schema/fuel.schema.ts';
+
 import { WelcomePage800x480 } from '../../common/WelcomePage800x480.js';
+
 import './styles.css';
 
 const fmt1 = (v: number | null) => (v == null ? '--.-' : v.toFixed(1));
+
 const fmt2 = (v: number | null) => (v == null ? '--.--' : v.toFixed(2));
 
 const fmtTime = (secs: number | null): string => {
@@ -13,18 +18,19 @@ const fmtTime = (secs: number | null): string => {
   const h = Math.floor(secs / 3600);
   const m = Math.floor((secs % 3600) / 60);
   const s = Math.floor(secs % 60);
+
   return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 };
 
 type FuelConsumptionColor = 'red' | 'green' | 'white';
 
-const lastLapColor = (
-  last: number | null,
-  median: number | null,
-): FuelConsumptionColor => {
+const lastLapColor = (last: number | null, median: number | null): FuelConsumptionColor => {
   if (last == null || median == null) return 'white';
+
   if (last > median * 1.05) return 'red';
+
   if (last < median * 0.95) return 'green';
+
   return 'white';
 };
 
@@ -59,9 +65,7 @@ const FuelConsumptionCell = ({
   <div className={`grid place-items-center p-4 bg-card`}>
     <div className="flex items-center gap-2 mb-1.5">
       <span className={fuelConsumptionIconColor[color]}>{icon}</span>
-      <span className="text-xl tracking-[3px] text-white uppercase">
-        {label}
-      </span>
+      <span className="text-xl tracking-[3px] text-white uppercase">{label}</span>
     </div>
     <div className="flex items-baseline gap-1.5">
       <span
@@ -69,9 +73,7 @@ const FuelConsumptionCell = ({
       >
         {value}
       </span>
-      {unit && (
-        <span className="text-xl tracking-[2px] text-white">{unit}</span>
-      )}
+      {unit && <span className="text-xl tracking-[2px] text-white">{unit}</span>}
     </div>
   </div>
 );
@@ -82,8 +84,7 @@ type LapsCellProps = {
 };
 
 const LapsCell = ({ done, remaining }: LapsCellProps) => {
-  const total =
-    done != null && remaining != null ? done + Math.ceil(remaining) : null;
+  const total = done != null && remaining != null ? done + Math.ceil(remaining) : null;
 
   return (
     <div className="grid place-items-center p-4 bg-card">
@@ -91,9 +92,7 @@ const LapsCell = ({ done, remaining }: LapsCellProps) => {
         <span className="text-white">
           <RotateCw size={22} />
         </span>
-        <span className="text-xl tracking-[3px] text-white uppercase">
-          Laps
-        </span>
+        <span className="text-xl tracking-[3px] text-white uppercase">Laps</span>
       </div>
       <div className="flex items-baseline">
         <span className="text-3xl font-black leading-none tabular-nums text-white">
@@ -105,9 +104,7 @@ const LapsCell = ({ done, remaining }: LapsCellProps) => {
         </span>
       </div>
       <span className="text-xl tracking-[2px] text-white mt-1">
-        {remaining != null
-          ? `${remaining.toFixed(2)} remaining`
-          : '-- remaining'}
+        {remaining != null ? `${remaining.toFixed(2)} remaining` : '-- remaining'}
       </span>
     </div>
   );
@@ -129,19 +126,13 @@ type RefillCellProps = {
 };
 
 const RefillCell = ({ label, sublabel, value, color }: RefillCellProps) => (
-  <div
-    className={`grid place-items-center p-5 h-full border ${refillClasses[color]}`}
-  >
+  <div className={`grid place-items-center p-5 h-full border ${refillClasses[color]}`}>
     <div className="flex items-center gap-2 mb-1">
       <span className="text-xl tracking-[3px] uppercase">{label}</span>
     </div>
-    <span className="text-base tracking-[2px] text-white mb-2.5">
-      {sublabel}
-    </span>
+    <span className="text-base tracking-[2px] text-white mb-2.5">{sublabel}</span>
     <div className="flex items-baseline gap-1">
-      <span className="text-5xl font-black leading-none tabular-nums">
-        {fmt2(value)}
-      </span>
+      <span className="text-5xl font-black leading-none tabular-nums">{fmt2(value)}</span>
       <span className="text-base tracking-[2px] text-white">L</span>
     </div>
   </div>
@@ -157,9 +148,11 @@ export const App = () => {
     const connect = () => {
       es = new EventSource('/sse/fuel');
       es.onmessage = (e) => {
+        // JUSTIFICATION: This local SSE endpoint sends the server's FuelRefill payload wrapped in { data }.
         const parsed = JSON.parse(e.data) as { data: FuelRefill };
         setFuel(parsed.data);
       };
+
       es.onerror = () => {
         es.close();
         setFuel(null);
@@ -185,9 +178,7 @@ export const App = () => {
         <div className="grid place-items-center px-7 py-4">
           <div className="flex items-center gap-2 mb-1.5">
             <Fuel size={22} className="text-white" />
-            <span className="text-xl tracking-[3px] text-white uppercase">
-              Fuel Level
-            </span>
+            <span className="text-xl tracking-[3px] text-white uppercase">Fuel Level</span>
           </div>
           <div className="flex items-baseline gap-2">
             <span className="text-6xl font-black leading-none tabular-nums">
@@ -200,9 +191,7 @@ export const App = () => {
         <div className="grid place-items-center px-5 py-4">
           <div className="flex items-center gap-2 mb-1.5">
             <Clock size={22} className="text-white" />
-            <span className="text-xl tracking-[3px] text-white uppercase">
-              remaining
-            </span>
+            <span className="text-xl tracking-[3px] text-white uppercase">remaining</span>
           </div>
           <span className="text-4xl font-black tabular-nums tracking-[2px]">
             {fmtTime(fuel.timeRemaining)}

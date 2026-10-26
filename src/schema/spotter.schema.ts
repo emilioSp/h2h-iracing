@@ -12,4 +12,5 @@ export const spotterSchema = z.object({
 });
 
 export type SpotterSide = z.infer<typeof spotterSideSchema>;
+
 export type Spotter = z.infer<typeof spotterSchema>;

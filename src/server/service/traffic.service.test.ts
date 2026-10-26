@@ -1,4 +1,6 @@
+// Verifies faster-class traffic detection during regression tests.
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import {
   addRecentLap,
   type ReferenceLap,
@@ -7,10 +9,7 @@ import {
 } from '#repository/reference-lap.repository.ts';
 import type { Driver } from '#schema/driver.schema.ts';
 import * as gapDelta from '#server/utils/gap-delta.ts';
-import {
-  getReferenceInterval,
-  initReferenceInterval,
-} from '#service/reference-lap.service.ts';
+import { getReferenceInterval, initReferenceInterval } from '#service/reference-lap.service.ts';
 import {
   FASTER_CLASS_MARGIN_SECONDS,
   findTrafficBehind,
@@ -18,8 +17,11 @@ import {
 } from '#service/traffic.service.ts';
 
 const PLAYER_ESTIMATED_LAP_TIME = 103.1952;
+
 const PLAYER_CAR_IDX = 0;
+
 const TEST_TRACK_LENGTH_METERS = 1280;
+
 const REFERENCE_LAP_SECONDS = 100;
 
 const fasterDriver: Driver = {
@@ -77,21 +79,20 @@ describe('isFasterCar', () => {
     },
     {
       scenario: 'a car is exactly on the faster-class margin',
-      carClassEstLapTime:
-        PLAYER_ESTIMATED_LAP_TIME - FASTER_CLASS_MARGIN_SECONDS,
+      carClassEstLapTime: PLAYER_ESTIMATED_LAP_TIME - FASTER_CLASS_MARGIN_SECONDS,
       expected: true,
     },
-  ])('When $scenario then the faster-car result is $expected', ({
-    carClassEstLapTime,
-    expected,
-  }) => {
-    expect(
-      isFasterCar({
-        carClassEstLapTime,
-        playerClassEstLapTime: PLAYER_ESTIMATED_LAP_TIME,
-      }),
-    ).toBe(expected);
-  });
+  ])(
+    'given $scenario when class pace is compared then the faster-car result is $expected',
+    ({ carClassEstLapTime, expected }) => {
+      expect(
+        isFasterCar({
+          carClassEstLapTime,
+          playerClassEstLapTime: PLAYER_ESTIMATED_LAP_TIME,
+        }),
+      ).toBe(expected);
+    },
+  );
 });
 
 describe('findTrafficBehind', () => {
@@ -101,7 +102,7 @@ describe('findTrafficBehind', () => {
     resetReferenceLaps();
   });
 
-  it('When iRacing reports a faster car just behind then the car is returned with its estimated gap', () => {
+  it('given iRacing reports a faster car just behind when traffic is detected then the car is returned with its estimated gap', () => {
     const cars = findTrafficBehind({
       playerCarIdx: PLAYER_CAR_IDX,
       playerClassEstLapTime: PLAYER_ESTIMATED_LAP_TIME,
@@ -124,7 +125,7 @@ describe('findTrafficBehind', () => {
     ]);
   });
 
-  it('When iRacing includes the player in the driver list then the player is excluded', () => {
+  it('given iRacing includes the player in the driver list when traffic is detected then the player is excluded', () => {
     const cars = findTrafficBehind({
       playerCarIdx: PLAYER_CAR_IDX,
       playerClassEstLapTime: PLAYER_ESTIMATED_LAP_TIME,
@@ -137,7 +138,7 @@ describe('findTrafficBehind', () => {
     expect(cars).toEqual([]);
   });
 
-  it('When iRacing reports a faster car in the pits then the car is excluded', () => {
+  it('given iRacing reports a faster car in the pits when traffic is detected then the car is excluded', () => {
     const cars = findTrafficBehind({
       playerCarIdx: PLAYER_CAR_IDX,
       playerClassEstLapTime: PLAYER_ESTIMATED_LAP_TIME,
@@ -150,7 +151,7 @@ describe('findTrafficBehind', () => {
     expect(cars).toEqual([]);
   });
 
-  it('When iRacing reports a faster car not on track then the car is excluded', () => {
+  it('given iRacing reports a faster car not on track when traffic is detected then the car is excluded', () => {
     const cars = findTrafficBehind({
       playerCarIdx: PLAYER_CAR_IDX,
       playerClassEstLapTime: PLAYER_ESTIMATED_LAP_TIME,
@@ -163,7 +164,7 @@ describe('findTrafficBehind', () => {
     expect(cars).toEqual([]);
   });
 
-  it('When iRacing reports a car from the same class then the car is excluded', () => {
+  it('given iRacing reports a car from the same class when traffic is detected then the car is excluded', () => {
     const cars = findTrafficBehind({
       playerCarIdx: PLAYER_CAR_IDX,
       playerClassEstLapTime: PLAYER_ESTIMATED_LAP_TIME,
@@ -176,7 +177,7 @@ describe('findTrafficBehind', () => {
     expect(cars).toEqual([]);
   });
 
-  it('When iRacing reports a faster car in front then the car is excluded', () => {
+  it('given iRacing reports a faster car in front when traffic is detected then the car is excluded', () => {
     const cars = findTrafficBehind({
       playerCarIdx: PLAYER_CAR_IDX,
       playerClassEstLapTime: PLAYER_ESTIMATED_LAP_TIME,
@@ -189,7 +190,7 @@ describe('findTrafficBehind', () => {
     expect(cars).toEqual([]);
   });
 
-  it('When iRacing reports a faster car behind across the start line then the car is included', () => {
+  it('given iRacing reports a faster car behind across the start line when traffic is detected then the car is included', () => {
     const cars = findTrafficBehind({
       playerCarIdx: PLAYER_CAR_IDX,
       playerClassEstLapTime: PLAYER_ESTIMATED_LAP_TIME,
@@ -202,7 +203,7 @@ describe('findTrafficBehind', () => {
     expect(cars.map((car) => car.carIdx)).toEqual([1]);
   });
 
-  it('When iRacing reports a faster car in front across the start line then the car is excluded', () => {
+  it('given iRacing reports a faster car in front across the start line when traffic is detected then the car is excluded', () => {
     const cars = findTrafficBehind({
       playerCarIdx: PLAYER_CAR_IDX,
       playerClassEstLapTime: PLAYER_ESTIMATED_LAP_TIME,
@@ -215,7 +216,7 @@ describe('findTrafficBehind', () => {
     expect(cars).toEqual([]);
   });
 
-  it('When iRacing reports a faster car outside the traffic window then the car is excluded', () => {
+  it('given iRacing reports a faster car outside the traffic window when traffic is detected then the car is excluded', () => {
     const cars = findTrafficBehind({
       playerCarIdx: PLAYER_CAR_IDX,
       playerClassEstLapTime: PLAYER_ESTIMATED_LAP_TIME,
@@ -228,7 +229,7 @@ describe('findTrafficBehind', () => {
     expect(cars).toEqual([]);
   });
 
-  it('When iRacing reports enough completed laps then the reference lap provides the gap', () => {
+  it('given iRacing reports enough completed laps when traffic is detected then the reference lap provides the gap', () => {
     addRecentLap({ carIdx: 1, lap: createReferenceLap() });
     const referenceDelta = vi.spyOn(gapDelta, 'referenceDelta');
 
@@ -245,7 +246,7 @@ describe('findTrafficBehind', () => {
     expect(referenceDelta).toHaveBeenCalled();
   });
 
-  it('When iRacing reports too few completed laps then the estimated lap time provides the gap', () => {
+  it('given iRacing reports too few completed laps when traffic is detected then the estimated lap time provides the gap', () => {
     addRecentLap({ carIdx: 1, lap: createReferenceLap() });
     const estimatedDelta = vi.spyOn(gapDelta, 'estimatedDelta');
 
@@ -262,7 +263,7 @@ describe('findTrafficBehind', () => {
     expect(estimatedDelta).toHaveBeenCalled();
   });
 
-  it('When iRacing reports three faster cars behind then the nearest car is first', () => {
+  it('given iRacing reports three faster cars behind when traffic is detected then the nearest car is first', () => {
     const cars = findTrafficBehind({
       playerCarIdx: PLAYER_CAR_IDX,
       playerClassEstLapTime: PLAYER_ESTIMATED_LAP_TIME,
@@ -279,7 +280,7 @@ describe('findTrafficBehind', () => {
     expect(cars.map((car) => car.carIdx)).toEqual([2, 3, 1]);
   });
 
-  it('When iRacing reports the player not on track then no traffic is returned', () => {
+  it('given iRacing reports the player not on track when traffic is detected then no traffic is returned', () => {
     const cars = findTrafficBehind({
       playerCarIdx: PLAYER_CAR_IDX,
       playerClassEstLapTime: PLAYER_ESTIMATED_LAP_TIME,

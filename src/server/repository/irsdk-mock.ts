@@ -1,5 +1,7 @@
+// Provides fixture-backed SDK data when tests run without iRacing.
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+
 import {
   type DriverInfo,
   SESSION_DATA_KEYS,
@@ -10,8 +12,9 @@ import {
 import { z } from 'zod/v4';
 
 type VarKey = (typeof VARS)[keyof typeof VARS];
-type SessionDataKey =
-  (typeof SESSION_DATA_KEYS)[keyof typeof SESSION_DATA_KEYS];
+
+type SessionDataKey = (typeof SESSION_DATA_KEYS)[keyof typeof SESSION_DATA_KEYS];
+
 type SessionDataValue = {
   DriverInfo: DriverInfo;
   SessionInfo: SessionInfo;
@@ -52,6 +55,7 @@ const fixtureSchema = z
           });
         }
       }
+
       for (const key of Object.keys(state.sessionData ?? {})) {
         if (!validSessionData.has(key)) {
           context.addIssue({
@@ -77,11 +81,7 @@ export class IRSDKMock {
   private readonly frames: FixtureState[];
   private frameIndex = -1;
 
-  private constructor(input: {
-    connected: boolean;
-    base: FixtureState;
-    frames: FixtureState[];
-  }) {
+  private constructor(input: { connected: boolean; base: FixtureState; frames: FixtureState[] }) {
     this.connected = input.connected;
     this.base = input.base;
     this.frames = input.frames;
@@ -100,6 +100,7 @@ export class IRSDKMock {
 
   private getActiveFrame(): FixtureState | undefined {
     if (this.frameIndex < 0) return undefined;
+
     return this.frames[this.frameIndex];
   }
 
@@ -109,19 +110,16 @@ export class IRSDKMock {
 
   // biome-ignore lint/suspicious/noExplicitAny: Match the IRSDK public contract.
   get(key: VarKey): Array<any> {
-    return (
-      this.getActiveFrame()?.variables[key] ?? this.base.variables[key] ?? []
-    );
+    return this.getActiveFrame()?.variables[key] ?? this.base.variables[key] ?? [];
   }
 
   getSessionInfo<K extends SessionDataKey>(
     key: K,
   ): K extends keyof SessionDataValue ? SessionDataValue[K] : unknown {
-    const value =
-      this.getActiveFrame()?.sessionData[key] ?? this.base.sessionData[key];
-    return value as K extends keyof SessionDataValue
-      ? SessionDataValue[K]
-      : unknown;
+    const value = this.getActiveFrame()?.sessionData[key] ?? this.base.sessionData[key];
+
+    // JUSTIFICATION: Test fixtures supply SDK-shaped session data; the key selects its SDK return type.
+    return value as K extends keyof SessionDataValue ? SessionDataValue[K] : unknown;
   }
 
   refreshSharedMemory(): void {

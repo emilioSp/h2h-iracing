@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 @source "../../common";
 
 @theme {
@@ -9,7 +9,7 @@
   --color-card: #161616;
   --color-border: #2a2a2a;
   --color-border-player: #3a3a6a;
-  --font-mono: "Courier New", Courier, monospace;
+  --font-mono: 'Courier New', Courier, monospace;
 }
 
 html,

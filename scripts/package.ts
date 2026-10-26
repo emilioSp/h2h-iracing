@@ -10,18 +10,29 @@ import {
   writeFileSync,
 } from 'node:fs';
 import { join, resolve } from 'node:path';
+
 import { Data, NtExecutable, NtExecutableResource, Resource } from 'resedit';
 
 const NODE_VERSION = '24.14.1';
+
 const PROJECT_ROOT = resolve(import.meta.dirname, '..');
+
 const SCRIPTS_DIR = join(PROJECT_ROOT, 'scripts');
+
 const NODE_MODULES = join(PROJECT_ROOT, 'node_modules');
+
 const CACHE_DIR = join(PROJECT_ROOT, '.cache');
+
 const BUILD_DIR = join(PROJECT_ROOT, 'build');
+
 const DIST_DIR = join(BUILD_DIR, 'h2h-iracing');
+
 const CACHED_NODE = join(CACHE_DIR, 'node.exe');
+
 const CACHED_NODE_VERSION = join(CACHE_DIR, 'node.exe.version');
+
 const SIMHUB_DASHIE_DIR = join(PROJECT_ROOT, 'simhub_dashies');
+
 const VERSION = process.env.npm_package_version;
 
 const ZIP_FILE = join(BUILD_DIR, `h2h-iracing-${VERSION}.zip`);
@@ -31,6 +42,7 @@ console.log('\n=== H2H iRacing Packager ===\n');
 mkdirSync(CACHE_DIR, { recursive: true });
 
 rmSync(join(PROJECT_ROOT, 'dist'), { recursive: true, force: true });
+
 execSync('npm ci', { cwd: PROJECT_ROOT, stdio: 'inherit' });
 
 const cachedVersion = existsSync(CACHED_NODE_VERSION)
@@ -43,6 +55,7 @@ if (existsSync(CACHED_NODE) && cachedVersion === NODE_VERSION) {
   console.log(`Downloading Node.js v${NODE_VERSION}...`);
   const url = `https://nodejs.org/dist/v${NODE_VERSION}/win-x64/node.exe`;
   const res = await fetch(url);
+
   if (!res.ok) throw new Error(`Failed to download node.exe: ${res.status}`);
   writeFileSync(CACHED_NODE, Buffer.from(await res.arrayBuffer()));
   writeFileSync(CACHED_NODE_VERSION, NODE_VERSION);
@@ -53,6 +66,7 @@ if (existsSync(BUILD_DIR)) {
   console.log('Cleaning previous build...');
   rmSync(BUILD_DIR, { recursive: true, force: true });
 }
+
 mkdirSync(DIST_DIR, { recursive: true });
 
 console.log('Building dashboards...');
@@ -88,12 +102,14 @@ execSync('npm run traffic:build', {
 });
 
 console.log('Building launcher exe...');
+
 execSync(
   `node_modules/.bin/pkg scripts/launcher.cjs --targets node24-win-x64 --output ${join(BUILD_DIR, 'h2h-iracing.exe')}`,
   { cwd: PROJECT_ROOT, stdio: 'inherit' },
 );
 
 const icoPath = join(SCRIPTS_DIR, 'h2h.ico');
+
 if (existsSync(icoPath)) {
   console.log('Embedding icon and version info...');
   const exePath = join(BUILD_DIR, 'h2h-iracing.exe');
@@ -112,10 +128,7 @@ if (existsSync(icoPath)) {
   const version = VERSION ?? '0.0.0';
   const [major, minor, patch] = version.split('.').map(Number);
   const versionInfos = Resource.VersionInfo.fromEntries(res.entries);
-  const vi =
-    versionInfos.length > 0
-      ? versionInfos[0]
-      : Resource.VersionInfo.createEmpty();
+  const vi = versionInfos.length > 0 ? versionInfos[0] : Resource.VersionInfo.createEmpty();
   vi.setFileVersion(major, minor, patch, 0);
   vi.setProductVersion(major, minor, patch, 0);
   vi.setStringValues(
@@ -135,79 +148,71 @@ if (existsSync(icoPath)) {
 }
 
 console.log('Installing production dependencies...');
+
 execSync('npm ci --omit=dev', { cwd: PROJECT_ROOT, stdio: 'inherit' });
 
 console.log('Assembling distribution...');
 
 cpSync(CACHED_NODE, join(DIST_DIR, 'node.exe'));
+
 cpSync(join(BUILD_DIR, 'h2h-iracing.exe'), join(DIST_DIR, 'h2h-iracing.exe'));
+
 for (const dashie of globSync('*.simhubdash', { cwd: SIMHUB_DASHIE_DIR })) {
   cpSync(join(SIMHUB_DASHIE_DIR, dashie), join(DIST_DIR, dashie));
 }
+
 cpSync(join(PROJECT_ROOT, '.env'), join(DIST_DIR, '.env'));
+
 cpSync(join(PROJECT_ROOT, 'package.json'), join(DIST_DIR, 'package.json'));
+
 cpSync(join(PROJECT_ROOT, 'src/server'), join(DIST_DIR, 'src/server'), {
   recursive: true,
   filter: (src) => !src.endsWith('.test.ts'),
 });
+
 // The server imports #common/constant.ts at runtime, so it has to ship. Only
 // the .ts files: the React components in there belong to the dashboards.
 cpSync(join(PROJECT_ROOT, 'src/common'), join(DIST_DIR, 'src/common'), {
   recursive: true,
   filter: (src) => statSync(src).isDirectory() || src.endsWith('.ts'),
 });
-cpSync(
-  join(PROJECT_ROOT, 'dist/h2h-dashboard'),
-  join(DIST_DIR, 'dist/h2h-dashboard'),
-  {
-    recursive: true,
-  },
-);
-cpSync(
-  join(PROJECT_ROOT, 'dist/weather-dashboard'),
-  join(DIST_DIR, 'dist/weather-dashboard'),
-  {
-    recursive: true,
-  },
-);
-cpSync(
-  join(PROJECT_ROOT, 'dist/car-dashboard'),
-  join(DIST_DIR, 'dist/car-dashboard'),
-  {
-    recursive: true,
-  },
-);
-cpSync(
-  join(PROJECT_ROOT, 'dist/fuel-dashboard'),
-  join(DIST_DIR, 'dist/fuel-dashboard'),
-  {
-    recursive: true,
-  },
-);
-cpSync(
-  join(PROJECT_ROOT, 'dist/spotter-dashboard'),
-  join(DIST_DIR, 'dist/spotter-dashboard'),
-  {
-    recursive: true,
-  },
-);
-cpSync(
-  join(PROJECT_ROOT, 'dist/traffic-dashboard'),
-  join(DIST_DIR, 'dist/traffic-dashboard'),
-  {
-    recursive: true,
-  },
-);
+
+cpSync(join(PROJECT_ROOT, 'dist/h2h-dashboard'), join(DIST_DIR, 'dist/h2h-dashboard'), {
+  recursive: true,
+});
+
+cpSync(join(PROJECT_ROOT, 'dist/weather-dashboard'), join(DIST_DIR, 'dist/weather-dashboard'), {
+  recursive: true,
+});
+
+cpSync(join(PROJECT_ROOT, 'dist/car-dashboard'), join(DIST_DIR, 'dist/car-dashboard'), {
+  recursive: true,
+});
+
+cpSync(join(PROJECT_ROOT, 'dist/fuel-dashboard'), join(DIST_DIR, 'dist/fuel-dashboard'), {
+  recursive: true,
+});
+
+cpSync(join(PROJECT_ROOT, 'dist/spotter-dashboard'), join(DIST_DIR, 'dist/spotter-dashboard'), {
+  recursive: true,
+});
+
+cpSync(join(PROJECT_ROOT, 'dist/traffic-dashboard'), join(DIST_DIR, 'dist/traffic-dashboard'), {
+  recursive: true,
+});
 
 console.log('Copying node_modules (production)...');
+
 cpSync(NODE_MODULES, join(DIST_DIR, 'node_modules'), {
   recursive: true,
 });
 
 console.log('Creating zip archive...');
+
 globSync('h2h-iracing-*.zip', { cwd: PROJECT_ROOT }).forEach((file) => {
   rmSync(join(PROJECT_ROOT, file));
 });
+
 execSync(`zip -r -q "${ZIP_FILE}" h2h-iracing`, {
   cwd: BUILD_DIR,
   stdio: 'inherit',
@@ -216,10 +221,13 @@ execSync(`zip -r -q "${ZIP_FILE}" h2h-iracing`, {
 const sizeMB = (statSync(ZIP_FILE).size / 1024 / 1024).toFixed(1);
 
 console.log('\n=== Build complete ===');
+
 console.log(`Output: ${ZIP_FILE} (${sizeMB} MB)`);
+
 console.log('Extract the zip and double-click h2h-iracing.exe to run.\n');
 
 cpSync(ZIP_FILE, join(PROJECT_ROOT, `h2h-iracing-${VERSION}.zip`));
 
 console.log('Restoring dev dependencies...');
+
 execSync('npm ci', { cwd: PROJECT_ROOT, stdio: 'inherit' });

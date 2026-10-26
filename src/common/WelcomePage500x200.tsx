@@ -13,31 +13,19 @@ export const WelcomePage500x200 = ({ subtitle }: Props) => (
 
     <div className="grid grid-flow-col items-center gap-6">
       <div className="grid grid-flow-col items-end leading-none">
-        <span className="text-[44px] font-black text-white leading-none">
-          H
-        </span>
-        <span className="text-[30px] font-black text-green leading-none pb-1 px-0.5">
-          2
-        </span>
-        <span className="text-[44px] font-black text-white leading-none">
-          H
-        </span>
+        <span className="text-[44px] font-black text-white leading-none">H</span>
+        <span className="text-[30px] font-black text-green leading-none pb-1 px-0.5">2</span>
+        <span className="text-[44px] font-black text-white leading-none">H</span>
       </div>
 
       <div className="grid gap-1.5 justify-items-start">
-        <span className="text-base tracking-[4px] text-white uppercase">
-          {subtitle}
-        </span>
+        <span className="text-base tracking-[4px] text-white uppercase">{subtitle}</span>
 
-        <span className="text-sm tracking-[4px] text-dim uppercase">
-          iRacing Overlay
-        </span>
+        <span className="text-sm tracking-[4px] text-dim uppercase">iRacing Overlay</span>
 
         <div className="grid grid-flow-col items-center gap-2">
           <div className="w-2 h-2 rounded-full animate-pulse bg-red" />
-          <span className="text-xs tracking-[2px] text-dim uppercase">
-            Waiting for session
-          </span>
+          <span className="text-xs tracking-[2px] text-dim uppercase">Waiting for session</span>
         </div>
       </div>
     </div>

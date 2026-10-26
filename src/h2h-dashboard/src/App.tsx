@@ -1,7 +1,11 @@
+// Renders the h2h overlay when its dashboard page is open.
 import { useEffect, useState } from 'react';
+
 import type { Head2Head } from '#schema/head2head.schema.ts';
+
 import { WelcomePage800x480 } from '../../common/WelcomePage800x480.js';
 import { CarCard } from './CarCard.js';
+
 import './styles.css';
 
 export const App = () => {
@@ -14,9 +18,11 @@ export const App = () => {
     const connect = () => {
       es = new EventSource('/sse/h2h');
       es.onmessage = (e) => {
+        // JUSTIFICATION: This local SSE endpoint sends the server's Head2Head payload wrapped in { data }.
         const parsed = JSON.parse(e.data) as { data: Head2Head };
         setH2h(parsed.data);
       };
+
       es.onerror = (error) => {
         console.log('error', error);
         console.log('Connection lost, retrying in 10 seconds...');

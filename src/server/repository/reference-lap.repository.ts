@@ -14,6 +14,7 @@ export type ReferenceLap = {
 export const ROLLING_WINDOW_LAPS_SIZE = 5;
 
 const activeLaps = new Map<number, ReferenceLap>();
+
 const recentLaps = new Map<number, ReferenceLap[]>();
 
 export const getActiveRefLap = (carIdx: number): ReferenceLap | null =>
@@ -24,10 +25,7 @@ export type SetActiveRefLapInput = {
   lap: ReferenceLap;
 };
 
-export const setActiveRefLap = ({
-  carIdx,
-  lap,
-}: SetActiveRefLapInput): void => {
+export const setActiveRefLap = ({ carIdx, lap }: SetActiveRefLapInput): void => {
   activeLaps.set(carIdx, lap);
 };
 
@@ -39,17 +37,18 @@ export type AddRecentLapInput = {
 export const addRecentLap = ({ carIdx, lap }: AddRecentLapInput): void => {
   const rollingWindow = recentLaps.get(carIdx) ?? [];
   rollingWindow.push(lap);
+
   if (rollingWindow.length > ROLLING_WINDOW_LAPS_SIZE) rollingWindow.shift();
   recentLaps.set(carIdx, rollingWindow);
 };
 
 export const getRefLap = (carIdx: number): ReferenceLap | null => {
   const rollingWindow = recentLaps.get(carIdx);
+
   if (!rollingWindow || rollingWindow.length === 0) return null;
+
   const bestLapRef = rollingWindow.reduce((lapA, lapB) =>
-    lapA.finishTime - lapA.startTime < lapB.finishTime - lapB.startTime
-      ? lapA
-      : lapB,
+    lapA.finishTime - lapA.startTime < lapB.finishTime - lapB.startTime ? lapA : lapB,
   );
 
   return bestLapRef;

@@ -1,12 +1,12 @@
+// Verifies weather dashboard payloads during regression tests.
 import { describe, expect, it } from 'vitest';
+
 import { computeWeather } from '#dashboard/weather.dashboard.ts';
 import { loadTelemetryFixture } from '#repository/irsdk.repository.ts';
 
 describe('computeWeather', () => {
-  it('When iRacing reports weather telemetry then the dashboard returns converted weather data', async () => {
-    loadTelemetryFixture(
-      'fixture/telemetry-mock/weather/dry-track-with-wind.json',
-    );
+  it('given iRacing reports weather telemetry when the dashboard is computed then the dashboard returns converted weather data', async () => {
+    loadTelemetryFixture('fixture/telemetry-mock/weather/dry-track-with-wind.json');
 
     const weather = await computeWeather();
 
@@ -27,7 +27,7 @@ describe('computeWeather', () => {
     });
   });
 
-  it('When iRacing reports an unknown track wetness value then the dashboard returns Unknown', async () => {
+  it('given iRacing reports an unknown track wetness value when the dashboard is computed then the dashboard returns Unknown', async () => {
     loadTelemetryFixture('fixture/telemetry-mock/weather/unknown-wetness.json');
 
     const weather = await computeWeather();

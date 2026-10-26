@@ -4,6 +4,8 @@
 // wrapped, so take the short way round.
 export const wrapLapDelta = (delta: number): number => {
   if (delta > 0.5) return delta - 1;
+
   if (delta < -0.5) return delta + 1;
+
   return delta;
 };

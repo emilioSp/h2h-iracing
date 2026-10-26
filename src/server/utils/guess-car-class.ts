@@ -25,10 +25,10 @@ export const guessCarClass = (car: string): string => {
   if (cache.has(car)) return cache.get(car)!;
 
   const carClass =
-    CAR_CLASS_PATTERNS.find((carClassPattern: CarClassPattern) =>
-      carClassPattern.pattern.test(car),
-    )?.className ?? DEFAULT_CAR_CLASS;
+    CAR_CLASS_PATTERNS.find((carClassPattern: CarClassPattern) => carClassPattern.pattern.test(car))
+      ?.className ?? DEFAULT_CAR_CLASS;
 
   cache.set(car, carClass);
+
   return carClass;
 };
