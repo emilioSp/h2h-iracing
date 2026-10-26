@@ -30,26 +30,22 @@ export const resetIRSDK = (): void => {
   ir = null;
 };
 
-const connectToIRacing = async (): Promise<void> => {
+const connectToIRacing = async (): Promise<boolean> => {
   if (process.env.NODE_ENV === 'test') {
     if (!(ir instanceof IRSDKMock)) {
       throw new Error('Load a telemetry fixture before reading telemetry');
     }
-
-    return;
+  } else if (!ir?.isConnected()) {
+    try {
+      ir =
+        config.DATA_MODE === 'mock' ? IRSDK.fromDump(config.DUMP_FILE_PATH) : await IRSDK.connect();
+    } catch (e) {
+      debug('iRacing not available at the moment', e);
+      ir = null;
+    }
   }
 
-  if (ir?.isConnected()) {
-    return;
-  }
-
-  try {
-    ir =
-      config.DATA_MODE === 'mock' ? IRSDK.fromDump(config.DUMP_FILE_PATH) : await IRSDK.connect();
-  } catch (e) {
-    debug('iRacing not available at the moment', e);
-    ir = null;
-  }
+  return (ir?.isConnected() ?? false) && (ir?.get(VARS.PLAYER_CAR_IDX)[0] ?? -1) >= 0;
 };
 
 const withConnect = <TArgs extends unknown[], TReturn>(
@@ -64,7 +60,7 @@ const withConnect = <TArgs extends unknown[], TReturn>(
 
 export const refreshTelemetry = withConnect(() => ir?.refreshSharedMemory());
 
-export const isIRacingConnected = withConnect((): boolean => ir?.isConnected() ?? false);
+export const isIRacingConnected = async (): Promise<boolean> => connectToIRacing();
 
 export const shutdown = withConnect((): void => ir?.shutdown());
 

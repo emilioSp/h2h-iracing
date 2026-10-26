@@ -1,3 +1,4 @@
+// Computes the spotter payload for callers that have checked the repository connection.
 import { getCarsIdx } from '#repository/driver.repository.ts';
 import {
   CAR_LEFT_RIGHT,
@@ -16,8 +17,6 @@ const THREE_WIDE: Spotter = { left: null, right: null, isThreeWide: true };
 
 export const computeSpotter = async (): Promise<Spotter> => {
   const playerCarIdx = await getPlayerCarIdx();
-
-  if (playerCarIdx < 0) return CLEAR;
 
   const side = await getCarLeftRight();
 

@@ -1,3 +1,4 @@
+// Computes the fuel payload for callers that have checked the repository connection.
 import { getCarsIdx } from '#repository/driver.repository.ts';
 import {
   getLastLapFuelDelta,
@@ -55,10 +56,8 @@ export const computeLapsRemaining = ({
   // return Math.round(rawRemaining * 1e8) / 1e8;
 };
 
-export const computeFuel = async (): Promise<FuelRefill | null> => {
+export const computeFuel = async (): Promise<FuelRefill> => {
   const playerCarIdx = await getPlayerCarIdx();
-
-  if (playerCarIdx < 0) return null;
 
   const [carsIdx, lapsCompleted, fuelLevel, lastLapTimes, lapDistPct, timeRemaining, flags] =
     await Promise.all([
