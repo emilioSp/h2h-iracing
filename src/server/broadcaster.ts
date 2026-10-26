@@ -82,15 +82,8 @@ const broadcastDashboard = async (event: DashboardType): Promise<void> => {
 };
 
 const broadcast = async (): Promise<void> => {
-  if (!(await isIRacingConnected())) {
-    stopBroadcasting();
-
-    return;
-  }
-
   await tick();
 
-  // Refreshing telemetry can reveal a disconnection before dashboard computation.
   if (!(await isIRacingConnected())) {
     stopBroadcasting();
 

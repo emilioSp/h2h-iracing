@@ -1,3 +1,4 @@
+// Displays fuel calculations and samples when running the fuel monitoring CLI.
 import { setTimeout } from 'node:timers/promises';
 
 import config from '#config';
@@ -76,11 +77,12 @@ export const printFuel = (fuel: FuelRefill | null, samples: readonly FuelSample[
 };
 
 while (true) {
+  await tick();
+
   if (!(await isIRacingConnected())) {
     continue;
   }
 
-  await tick();
   const fuel = await computeFuel();
   const samples = getFuelSamples();
 
