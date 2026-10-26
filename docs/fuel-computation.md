@@ -79,4 +79,3 @@ Source: `src/server/service/fuel.service.ts → computeFuelRefill()`
 | Fewer than 2 fuel samples     | `medianFuelPerLap` is `null`; refill values are `null`                              |
 | Checkered flag                | `estimatedTimeRemaining = 0`; refill = whatever is needed to finish the current lap |
 | Practice / qualifying         | Refill values are `null` (no race context)                                          |
-| Player not found              | Entire computation returns `null`                                                   |

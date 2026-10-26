@@ -13,5 +13,12 @@
   "tabWidth": 2,
   "singleQuote": true,
   "sortImports": true,
-  "ignorePatterns": ["node_modules/**", "dist/**", "tests/fixtures/**", ".pi/**", "vendor/**"]
+  "ignorePatterns": [
+    "node_modules/**",
+    "dist/**",
+    "tests/fixtures/**",
+    ".pi/**",
+    "vendor/**",
+    "**/.specs/**"
+  ]
 }
