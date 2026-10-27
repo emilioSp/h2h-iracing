@@ -1,3 +1,4 @@
+// Renders connection guidance when a full-size overlay has no session.
 type Props = {
   subtitle: string;
 };

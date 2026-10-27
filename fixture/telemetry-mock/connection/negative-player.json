@@ -1,9 +1,0 @@
-{
-  "connected": true,
-  "variables": {
-    "PlayerCarIdx": [-1],
-    "AirTemp": [22.5],
-    "TrackTempCrew": [35],
-    "CarLeftRight": [1]
-  }
-}
