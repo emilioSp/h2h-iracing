@@ -1,0 +1,6 @@
+{
+  "variables": {
+    "PlayerCarIdx": [0],
+    "CarIdxOnPitRoad": [true, false, false]
+  }
+}

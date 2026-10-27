@@ -1,0 +1,47 @@
+{
+  "variables": {
+    "PlayerCarIdx": [0],
+    "CarIdxLapDistPct": [0.2, 0.199, 0.198],
+    "CarIdxLapCompleted": [0, 0, 0],
+    "CarIdxOnPitRoad": [false, false, false]
+  },
+  "sessionData": {
+    "DriverInfo": {
+      "Drivers": [
+        {
+          "CarIdx": 0,
+          "CarClassID": 100,
+          "CarIsPaceCar": 0,
+          "UserName": "Emilio Spatola",
+          "CarNumber": "64",
+          "CarScreenNameShort": "Ferrari 296 GT3",
+          "IRating": 3000,
+          "LicString": "A 3.51",
+          "CarClassEstLapTime": 103.1952
+        },
+        {
+          "CarIdx": 1,
+          "CarClassID": 200,
+          "CarIsPaceCar": 0,
+          "UserName": "Aussie Greg Hill",
+          "CarNumber": "6",
+          "CarScreenNameShort": "Dallara P217 LMP2",
+          "IRating": 4200,
+          "LicString": "B 2.10",
+          "CarClassEstLapTime": 94.5768
+        },
+        {
+          "CarIdx": 2,
+          "CarClassID": 100,
+          "CarIsPaceCar": 0,
+          "UserName": "John Hughes",
+          "CarNumber": "2",
+          "CarScreenNameShort": "Acura NSX GT3 EVO 22",
+          "IRating": 1500,
+          "LicString": "C 1.99",
+          "CarClassEstLapTime": 103.2057
+        }
+      ]
+    }
+  }
+}

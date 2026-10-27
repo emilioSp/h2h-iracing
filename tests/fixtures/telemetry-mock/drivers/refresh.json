@@ -1,0 +1,31 @@
+{
+  "variables": { "PlayerCarIdx": [10] },
+  "sessionData": {
+    "DriverInfo": {
+      "Drivers": [
+        {
+          "CarIdx": 10,
+          "CarClassID": 100,
+          "CarIsPaceCar": 0,
+          "UserName": "Player",
+          "CarNumber": "10",
+          "CarScreenNameShort": "GT3 Car",
+          "IRating": 2000,
+          "LicString": "A 4.00",
+          "CarClassEstLapTime": 90
+        },
+        {
+          "CarIdx": 5,
+          "CarClassID": 100,
+          "CarIsPaceCar": 0,
+          "UserName": "Alice",
+          "CarNumber": "42",
+          "CarScreenNameShort": "GT3 Car",
+          "IRating": 3500,
+          "LicString": "A 4.50",
+          "CarClassEstLapTime": 88.5
+        }
+      ]
+    }
+  }
+}

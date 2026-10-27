@@ -1,0 +1,15 @@
+{
+  "variables": {
+    "CarIdxLapDistPct": [0.3, 0.5],
+    "CarIdxLapCompleted": [3, 3],
+    "CarIdxOnPitRoad": [false, true]
+  },
+  "sessionData": {
+    "DriverInfo": {
+      "Drivers": [
+        { "CarIdx": 0, "CarIsPaceCar": 0, "CarClassEstLapTime": 90 },
+        { "CarIdx": 1, "CarIsPaceCar": 0, "CarClassEstLapTime": 90 }
+      ]
+    }
+  }
+}
