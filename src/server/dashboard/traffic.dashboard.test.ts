@@ -1,19 +1,21 @@
 // Verifies traffic dashboard payloads during regression tests.
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { refreshDriverInfo } from '#repository/driver.repository.ts';
-import { loadTelemetryFixture } from '#repository/irsdk.repository.ts';
-import { resetReferenceLaps } from '#repository/reference-lap.repository.ts';
+import driverRepository from '#repository/driver.repository.ts';
+import irsdkRepository from '#repository/irsdk.repository.ts';
+import referenceLapRepository from '#repository/reference-lap.repository.ts';
 import { computeTraffic } from '#server/dashboard/traffic.dashboard.ts';
 
 beforeEach(() => {
-  resetReferenceLaps();
+  referenceLapRepository.resetReferenceLaps();
 });
 
 describe('computeTraffic', () => {
   it('given iRacing reports a faster-class car behind when the dashboard is computed then the dashboard returns that car', async () => {
-    loadTelemetryFixture('fixture/telemetry-mock/traffic/faster-and-same-class-behind.json');
-    await refreshDriverInfo();
+    irsdkRepository.loadTelemetryFixture(
+      'tests/fixtures/telemetry-mock/traffic/faster-and-same-class-behind.json',
+    );
+    await driverRepository.refreshDriverInfo();
 
     const traffic = await computeTraffic();
 
@@ -30,8 +32,10 @@ describe('computeTraffic', () => {
   });
 
   it('given iRacing reports a same-class car behind when the dashboard is computed then the dashboard excludes that car', async () => {
-    loadTelemetryFixture('fixture/telemetry-mock/traffic/faster-and-same-class-behind.json');
-    await refreshDriverInfo();
+    irsdkRepository.loadTelemetryFixture(
+      'tests/fixtures/telemetry-mock/traffic/faster-and-same-class-behind.json',
+    );
+    await driverRepository.refreshDriverInfo();
 
     const traffic = await computeTraffic();
 
@@ -39,7 +43,9 @@ describe('computeTraffic', () => {
   });
 
   it('given iRacing reports the player in pit road when the dashboard is computed then the dashboard returns no traffic', async () => {
-    loadTelemetryFixture('fixture/telemetry-mock/traffic/player-in-pit.json');
+    irsdkRepository.loadTelemetryFixture(
+      'tests/fixtures/telemetry-mock/traffic/player-in-pit.json',
+    );
 
     expect(await computeTraffic()).toEqual({ cars: [] });
   });

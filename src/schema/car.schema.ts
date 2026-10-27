@@ -1,3 +1,4 @@
+// Defines the car payload contract when validating or typing dashboard data.
 import { z } from 'zod/v4';
 
 import { driverSchema } from '#schema/driver.schema.ts';

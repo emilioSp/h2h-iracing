@@ -1,98 +1,46 @@
 // Verifies race gap calculations during regression tests.
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { refreshDriverInfo } from '#repository/driver.repository.ts';
-import { loadTelemetryFixture } from '#repository/irsdk.repository.ts';
-import {
-  addRecentLap,
-  type ReferenceLap,
-  resetReferenceLaps,
-} from '#repository/reference-lap.repository.ts';
-import type { Car } from '#schema/car.schema.ts';
-import * as gapDelta from '#server/utils/gap-delta.ts';
+import { gapUnit } from '#common/constants/gap-unit.ts';
+import { gapCars } from '#fixtures/gap-cars.ts';
+import { gapReferenceLap } from '#fixtures/gap-reference-lap.ts';
+import driverRepository from '#repository/driver.repository.ts';
+import irsdkRepository from '#repository/irsdk.repository.ts';
+import referenceLapRepository from '#repository/reference-lap.repository.ts';
+import * as gapDelta from '#server/utils/estimated-delta.ts';
+import * as referenceGapDelta from '#server/utils/reference-delta.ts';
 import { getGap } from '#service/gap.service.ts';
-import {
-  getReferenceInterval,
-  initReferenceInterval,
-  normalizeTrackPct,
-} from '#service/reference-lap.service.ts';
-
-const makeCar = (carIdx: number): Car => ({
-  driver: {
-    carIdx,
-    name: '',
-    carNumber: '',
-    car: '',
-    iRating: 0,
-    license: '',
-    classEstLapTime: 0,
-  },
-  position: 0,
-  lastLapTime: 0,
-  bestLapTime: 0,
-  lap: 0,
-});
-
-const makeReferenceLap = (): ReferenceLap => {
-  const lapTime = 90;
-  const interval = getReferenceInterval();
-
-  const percentages = [
-    0.02,
-    0.02 + interval,
-    0.1,
-    0.1 + interval,
-    0.3,
-    0.3 + interval,
-    0.5,
-    0.5 + interval,
-    0.98,
-    0.98 + interval,
-  ];
-
-  return {
-    startTime: 0,
-    finishTime: lapTime,
-    refPoints: new Map(
-      percentages.map((trackPct) => [
-        normalizeTrackPct(trackPct),
-        { trackPct, timeElapsedSinceStart: trackPct * lapTime },
-      ]),
-    ),
-    lastTrackedPct: 0.99,
-    isOnPitRoad: false,
-  };
-};
+import referenceLapService from '#service/reference-lap.service.ts';
 
 beforeEach(() => {
   vi.restoreAllMocks();
-  initReferenceInterval(5_000);
-  resetReferenceLaps();
+  referenceLapService.initReferenceInterval(5_000);
+  referenceLapRepository.resetReferenceLaps();
 });
 
 describe('getGap', () => {
   it('given the same car is passed as player and ahead when gaps are computed then the ahead gap is zero and the behind gap is empty', async () => {
     const result = await getGap({
-      ahead: makeCar(0),
-      player: makeCar(0),
+      ahead: gapCars[0],
+      player: gapCars[0],
       behind: null,
     });
 
     expect(result).toEqual({
-      gapAhead: { value: 0, unit: 'seconds' },
+      gapAhead: { value: 0, unit: gapUnit.SECONDS },
       gapBehind: null,
     });
   });
 
   it('given iRacing reports a car on pit road when gaps are computed then only the estimated delta is used', async () => {
-    loadTelemetryFixture('fixture/telemetry-mock/gap/pit-road.json');
-    await refreshDriverInfo();
+    irsdkRepository.loadTelemetryFixture('tests/fixtures/telemetry-mock/gap/pit-road.json');
+    await driverRepository.refreshDriverInfo();
     const estimatedDelta = vi.spyOn(gapDelta, 'estimatedDelta');
-    const referenceDelta = vi.spyOn(gapDelta, 'referenceDelta');
+    const referenceDelta = vi.spyOn(referenceGapDelta, 'referenceDelta');
 
     await getGap({
-      ahead: makeCar(1),
-      player: makeCar(0),
+      ahead: gapCars[1],
+      player: gapCars[0],
       behind: null,
     });
 
@@ -101,20 +49,20 @@ describe('getGap', () => {
   });
 
   it('given iRacing reports all cars on track with reference laps when gaps are computed then only reference deltas are used', async () => {
-    loadTelemetryFixture('fixture/telemetry-mock/gap/reference.json');
-    await refreshDriverInfo();
+    irsdkRepository.loadTelemetryFixture('tests/fixtures/telemetry-mock/gap/reference.json');
+    await driverRepository.refreshDriverInfo();
 
     for (const carIdx of [0, 1, 2]) {
-      addRecentLap({ carIdx, lap: makeReferenceLap() });
+      referenceLapRepository.addRecentLap({ carIdx, lap: structuredClone(gapReferenceLap) });
     }
 
-    const referenceDelta = vi.spyOn(gapDelta, 'referenceDelta');
+    const referenceDelta = vi.spyOn(referenceGapDelta, 'referenceDelta');
     const estimatedDelta = vi.spyOn(gapDelta, 'estimatedDelta');
 
     await getGap({
-      ahead: makeCar(1),
-      player: makeCar(0),
-      behind: makeCar(2),
+      ahead: gapCars[1],
+      player: gapCars[0],
+      behind: gapCars[2],
     });
 
     expect(referenceDelta).toHaveBeenCalled();
@@ -122,32 +70,32 @@ describe('getGap', () => {
   });
 
   it('given iRacing reports the ahead car across the finish line when gaps are computed then the gap is corrected', async () => {
-    loadTelemetryFixture('fixture/telemetry-mock/gap/crossed-finish.json');
-    await refreshDriverInfo();
-    addRecentLap({ carIdx: 0, lap: makeReferenceLap() });
+    irsdkRepository.loadTelemetryFixture('tests/fixtures/telemetry-mock/gap/crossed-finish.json');
+    await driverRepository.refreshDriverInfo();
+    referenceLapRepository.addRecentLap({ carIdx: 0, lap: structuredClone(gapReferenceLap) });
 
     const result = await getGap({
-      ahead: makeCar(1),
-      player: makeCar(0),
+      ahead: gapCars[1],
+      player: gapCars[0],
       behind: null,
     });
 
     expect(result.gapAhead).toEqual({
       value: expect.closeTo(54),
-      unit: 'seconds',
+      unit: gapUnit.SECONDS,
     });
   });
 
   it('given iRacing reports fewer than two completed laps when gaps are computed then only the estimated delta is used', async () => {
-    loadTelemetryFixture('fixture/telemetry-mock/gap/few-laps.json');
-    await refreshDriverInfo();
-    addRecentLap({ carIdx: 0, lap: makeReferenceLap() });
+    irsdkRepository.loadTelemetryFixture('tests/fixtures/telemetry-mock/gap/few-laps.json');
+    await driverRepository.refreshDriverInfo();
+    referenceLapRepository.addRecentLap({ carIdx: 0, lap: structuredClone(gapReferenceLap) });
     const estimatedDelta = vi.spyOn(gapDelta, 'estimatedDelta');
-    const referenceDelta = vi.spyOn(gapDelta, 'referenceDelta');
+    const referenceDelta = vi.spyOn(referenceGapDelta, 'referenceDelta');
 
     await getGap({
-      ahead: makeCar(1),
-      player: makeCar(0),
+      ahead: gapCars[1],
+      player: gapCars[0],
       behind: null,
     });
 
@@ -156,52 +104,52 @@ describe('getGap', () => {
   });
 
   it('given iRacing reports an estimated gap across the finish line when gaps are computed then the gap wraps', async () => {
-    loadTelemetryFixture('fixture/telemetry-mock/gap/estimated-wrap.json');
-    await refreshDriverInfo();
+    irsdkRepository.loadTelemetryFixture('tests/fixtures/telemetry-mock/gap/estimated-wrap.json');
+    await driverRepository.refreshDriverInfo();
 
     const result = await getGap({
-      ahead: makeCar(0),
-      player: makeCar(1),
+      ahead: gapCars[0],
+      player: gapCars[1],
       behind: null,
     });
 
     expect(result.gapAhead).toEqual({
       value: expect.closeTo(3.6),
-      unit: 'seconds',
+      unit: gapUnit.SECONDS,
     });
   });
 
   it('given iRacing reports a reference gap across the finish line when gaps are computed then the gap wraps', async () => {
-    loadTelemetryFixture('fixture/telemetry-mock/gap/reference-wrap.json');
-    await refreshDriverInfo();
-    addRecentLap({ carIdx: 0, lap: makeReferenceLap() });
-    addRecentLap({ carIdx: 1, lap: makeReferenceLap() });
+    irsdkRepository.loadTelemetryFixture('tests/fixtures/telemetry-mock/gap/reference-wrap.json');
+    await driverRepository.refreshDriverInfo();
+    referenceLapRepository.addRecentLap({ carIdx: 0, lap: structuredClone(gapReferenceLap) });
+    referenceLapRepository.addRecentLap({ carIdx: 1, lap: structuredClone(gapReferenceLap) });
 
     const result = await getGap({
       ahead: null,
-      player: makeCar(0),
-      behind: makeCar(1),
+      player: gapCars[0],
+      behind: gapCars[1],
     });
 
     expect(result.gapBehind).toEqual({
       value: expect.closeTo(3.6),
-      unit: 'seconds',
+      unit: gapUnit.SECONDS,
     });
   });
 
   it('given iRacing reports cars multiple laps apart when gaps are computed then both gaps use laps', async () => {
-    loadTelemetryFixture('fixture/telemetry-mock/gap/multiple-laps.json');
-    await refreshDriverInfo();
+    irsdkRepository.loadTelemetryFixture('tests/fixtures/telemetry-mock/gap/multiple-laps.json');
+    await driverRepository.refreshDriverInfo();
 
     const result = await getGap({
-      ahead: makeCar(1),
-      player: makeCar(0),
-      behind: makeCar(2),
+      ahead: gapCars[1],
+      player: gapCars[0],
+      behind: gapCars[2],
     });
 
     expect(result).toEqual({
-      gapAhead: { value: 2, unit: 'laps' },
-      gapBehind: { value: 2, unit: 'laps' },
+      gapAhead: { value: 2, unit: gapUnit.LAPS },
+      gapBehind: { value: 2, unit: gapUnit.LAPS },
     });
   });
 });

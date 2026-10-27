@@ -1,24 +1,19 @@
+import { CAR_LEFT_RIGHT } from '#common/constants/car-left-right.ts';
 // Computes the spotter payload for callers that have checked the repository connection.
-import { getCarsIdx } from '#repository/driver.repository.ts';
-import {
-  CAR_LEFT_RIGHT,
-  getCarLeftRight,
-  getLapDistPct,
-  getOnPitRoad,
-  getPlayerCarIdx,
-  getTrackLengthMeters,
-} from '#repository/irsdk.repository.ts';
+import driverRepository from '#repository/driver.repository.ts';
+import irsdkRepository from '#repository/irsdk.repository.ts';
 import type { Spotter } from '#schema/spotter.schema.ts';
-import { computeOverlap, findNearestDeltaMeters } from '#service/spotter.service.ts';
+import { computeOverlap } from '#server/utils/compute-overlap.ts';
+import { findNearestDeltaMeters } from '#service/spotter.service.ts';
 
 const CLEAR: Spotter = { left: null, right: null, isThreeWide: false };
 
 const THREE_WIDE: Spotter = { left: null, right: null, isThreeWide: true };
 
 export const computeSpotter = async (): Promise<Spotter> => {
-  const playerCarIdx = await getPlayerCarIdx();
+  const playerCarIdx = await irsdkRepository.getPlayerCarIdx();
 
-  const side = await getCarLeftRight();
+  const side = await irsdkRepository.getCarLeftRight();
 
   if (side === CAR_LEFT_RIGHT.OFF || side === CAR_LEFT_RIGHT.CLEAR) return CLEAR;
 
@@ -34,10 +29,10 @@ export const computeSpotter = async (): Promise<Spotter> => {
 
   const deltaMeters = findNearestDeltaMeters({
     playerCarIdx,
-    carsIdx: await getCarsIdx(),
-    lapDistPct: await getLapDistPct(),
-    onPitRoad: await getOnPitRoad(),
-    trackLengthMeters: await getTrackLengthMeters(),
+    carsIdx: await driverRepository.getCarsIdx(),
+    lapDistPct: await irsdkRepository.getLapDistPct(),
+    onPitRoad: await irsdkRepository.getOnPitRoad(),
+    trackLengthMeters: await irsdkRepository.getTrackLengthMeters(),
   });
 
   if (deltaMeters === null) return CLEAR;

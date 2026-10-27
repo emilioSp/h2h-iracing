@@ -67,13 +67,17 @@ const fixtureSchema = z
     }
   });
 
-const toState = (input: {
+type ToStateInput = {
   variables?: Record<string, unknown[]>;
   sessionData?: Record<string, unknown>;
-}): FixtureState => ({
-  variables: input.variables ?? {},
-  sessionData: input.sessionData ?? {},
+};
+
+const toState = ({ variables, sessionData }: ToStateInput): FixtureState => ({
+  variables: variables ?? {},
+  sessionData: sessionData ?? {},
 });
+
+type IRSDKMockInput = { connected: boolean; base: FixtureState; frames: FixtureState[] };
 
 export class IRSDKMock {
   private connected: boolean;
@@ -81,10 +85,10 @@ export class IRSDKMock {
   private readonly frames: FixtureState[];
   private frameIndex = -1;
 
-  private constructor(input: { connected: boolean; base: FixtureState; frames: FixtureState[] }) {
-    this.connected = input.connected;
-    this.base = input.base;
-    this.frames = input.frames;
+  private constructor({ connected, base, frames }: IRSDKMockInput) {
+    this.connected = connected;
+    this.base = base;
+    this.frames = frames;
   }
 
   static fromFixture(filePath: string): IRSDKMock {

@@ -1,3 +1,4 @@
+// Stores fuel repository state when telemetry is refreshed or queried.
 export const FUEL_SAMPLE_WINDOW = 5;
 
 export type FuelSample = {
@@ -5,67 +6,68 @@ export type FuelSample = {
   fuelAtLapStart: number;
 };
 
-let fuelSamples: FuelSample[] = [];
-
-let prevPlayerLapCompleted = -1;
-
 export type UpdateFuelTrackingInput = {
   fuelLevel: number;
   playerLapCompleted: number;
 };
 
-export const updateFuelTracking = ({
-  fuelLevel,
-  playerLapCompleted,
-}: UpdateFuelTrackingInput): void => {
-  if (playerLapCompleted === prevPlayerLapCompleted) return;
+export class FuelRepository {
+  private fuelSamples: FuelSample[] = [];
 
-  prevPlayerLapCompleted = playerLapCompleted;
+  private prevPlayerLapCompleted = -1;
 
-  fuelSamples.push({
-    lapNumber: playerLapCompleted,
-    fuelAtLapStart: fuelLevel,
-  });
+  updateFuelTracking = ({ fuelLevel, playerLapCompleted }: UpdateFuelTrackingInput): void => {
+    if (playerLapCompleted === this.prevPlayerLapCompleted) return;
 
-  if (fuelSamples.length > FUEL_SAMPLE_WINDOW) {
-    fuelSamples.shift();
-  }
-};
+    this.prevPlayerLapCompleted = playerLapCompleted;
 
-export const getFuelSamples = (): readonly FuelSample[] => fuelSamples;
+    this.fuelSamples.push({
+      lapNumber: playerLapCompleted,
+      fuelAtLapStart: fuelLevel,
+    });
 
-export const resetFuelTracking = () => {
-  fuelSamples = [];
-  prevPlayerLapCompleted = -1;
-};
+    if (this.fuelSamples.length > FUEL_SAMPLE_WINDOW) {
+      this.fuelSamples.shift();
+    }
+  };
 
-export const getMedianFuelPerLap = (): number | null => {
-  if (fuelSamples.length < 2) return null;
+  getFuelSamples = (): readonly FuelSample[] => this.fuelSamples;
 
-  const fuelDeltas: number[] = [];
+  resetFuelTracking = () => {
+    this.fuelSamples = [];
+    this.prevPlayerLapCompleted = -1;
+  };
 
-  for (let i = 0; i < fuelSamples.length - 1; i++) {
-    const delta = fuelSamples[i].fuelAtLapStart - fuelSamples[i + 1].fuelAtLapStart;
+  getMedianFuelPerLap = (): number | null => {
+    if (this.fuelSamples.length < 2) return null;
 
-    if (delta > 0) fuelDeltas.push(delta);
-  }
+    const fuelDeltas: number[] = [];
 
-  if (fuelDeltas.length === 0) return null;
+    for (let i = 0; i < this.fuelSamples.length - 1; i++) {
+      const delta = this.fuelSamples[i].fuelAtLapStart - this.fuelSamples[i + 1].fuelAtLapStart;
 
-  const sorted = [...fuelDeltas].sort((a, b) => a - b);
-  const mid = Math.floor(sorted.length / 2);
+      if (delta > 0) fuelDeltas.push(delta);
+    }
 
-  return sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid];
-};
+    if (fuelDeltas.length === 0) return null;
 
-export const getLastLapFuelDelta = (): number | null => {
-  if (fuelSamples.length < 2) {
-    return null;
-  }
+    const sorted = [...fuelDeltas].sort((a, b) => a - b);
+    const mid = Math.floor(sorted.length / 2);
 
-  const prev = fuelSamples[fuelSamples.length - 2];
-  const last = fuelSamples[fuelSamples.length - 1];
-  const fuelLastLap = prev.fuelAtLapStart - last.fuelAtLapStart;
+    return sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid];
+  };
 
-  return fuelLastLap <= 0 ? null : fuelLastLap;
-};
+  getLastLapFuelDelta = (): number | null => {
+    if (this.fuelSamples.length < 2) {
+      return null;
+    }
+
+    const prev = this.fuelSamples[this.fuelSamples.length - 2];
+    const last = this.fuelSamples[this.fuelSamples.length - 1];
+    const fuelLastLap = prev.fuelAtLapStart - last.fuelAtLapStart;
+
+    return fuelLastLap <= 0 ? null : fuelLastLap;
+  };
+}
+
+export default new FuelRepository();

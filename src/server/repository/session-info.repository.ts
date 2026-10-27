@@ -1,54 +1,55 @@
+// Stores session info repository state when telemetry is refreshed or queried.
 import type { Session } from '@emiliosp/node-iracing-sdk';
 
-import { getCurrentSessionInfo } from '#repository/irsdk.repository.ts';
+import irsdkRepository from '#repository/irsdk.repository.ts';
 
 type SessionInfo = {
   sessionType: string;
   resultsPosition: Map<number, Exclude<Session['ResultsPositions'], null>[number]>;
 };
 
-const sessionInfo: SessionInfo = {
-  sessionType: '',
-  resultsPosition: new Map(),
-};
+export class SessionInfoRepository {
+  private sessionInfo: SessionInfo = {
+    sessionType: '',
+    resultsPosition: new Map(),
+  };
 
-export const refreshCurrentSessionInfo = async (): Promise<SessionInfo> => {
-  const currentSessionInfo = await getCurrentSessionInfo();
+  refreshCurrentSessionInfo = async (): Promise<SessionInfo> => {
+    const currentSessionInfo = await irsdkRepository.getCurrentSessionInfo();
 
-  if (!currentSessionInfo) {
-    return sessionInfo;
-  }
+    if (!currentSessionInfo) {
+      return this.sessionInfo;
+    }
 
-  if (!Array.isArray(currentSessionInfo.ResultsPositions)) {
-    return sessionInfo;
-  }
+    if (!Array.isArray(currentSessionInfo.ResultsPositions)) {
+      return this.sessionInfo;
+    }
 
-  sessionInfo.sessionType = currentSessionInfo?.SessionType ?? '';
+    this.sessionInfo.sessionType = currentSessionInfo?.SessionType ?? '';
 
-  for (const resultPosition of currentSessionInfo.ResultsPositions) {
-    sessionInfo.resultsPosition.set(resultPosition.CarIdx, resultPosition);
-  }
+    for (const resultPosition of currentSessionInfo.ResultsPositions) {
+      this.sessionInfo.resultsPosition.set(resultPosition.CarIdx, resultPosition);
+    }
 
-  return sessionInfo;
-};
+    return this.sessionInfo;
+  };
 
-export const getSessionLapsCompleted = (carIdx: number) =>
-  sessionInfo.resultsPosition.get(carIdx)?.LapsComplete ?? -1;
+  getSessionLapsCompleted = (carIdx: number) =>
+    this.sessionInfo.resultsPosition.get(carIdx)?.LapsComplete ?? -1;
 
-export const getSessionLastLapTime = (carIdx: number) =>
-  sessionInfo.resultsPosition.get(carIdx)?.LastTime ?? -1;
+  getSessionLastLapTime = (carIdx: number) =>
+    this.sessionInfo.resultsPosition.get(carIdx)?.LastTime ?? -1;
 
-export const getSessionBestTime = (carIdx: number) =>
-  sessionInfo.resultsPosition.get(carIdx)?.FastestTime ?? -1;
+  getSessionBestTime = (carIdx: number) =>
+    this.sessionInfo.resultsPosition.get(carIdx)?.FastestTime ?? -1;
 
-export const getSessionType = () => sessionInfo.sessionType;
+  getSessionType = () => this.sessionInfo.sessionType;
 
-export const isRaceSession = (): boolean => {
-  const sessionType = getSessionType();
+  isRaceSession = (): boolean => {
+    const sessionType = this.getSessionType();
 
-  return sessionType.toLowerCase() === 'race';
-};
+    return sessionType.toLowerCase() === 'race';
+  };
+}
 
-const SESSION_FLAG_CHECKERED = 0x00000001;
-
-export const isCheckeredFlag = (flags: number): boolean => (flags & SESSION_FLAG_CHECKERED) !== 0;
+export default new SessionInfoRepository();

@@ -1,7 +1,9 @@
+// Opens the traffic SSE stream when an overlay subscribes.
 import type { Context } from 'hono';
 import { streamSSE } from 'hono/streaming';
 
-import { addClient, dashboardType, removeClient } from '#server/broadcaster.ts';
+import { dashboardType } from '#common/constants/dashboard-type.ts';
+import broadcaster from '#server/broadcaster.ts';
 
 export const trafficRouter = (c: Context) =>
   streamSSE(c, async (stream) => {
@@ -10,7 +12,7 @@ export const trafficRouter = (c: Context) =>
       close: () => stream.close(),
     };
 
-    addClient({ event: dashboardType.TRAFFIC, client });
+    broadcaster.addClient({ event: dashboardType.TRAFFIC, client });
     await new Promise<void>((resolve) => stream.onAbort(resolve));
-    removeClient({ event: dashboardType.TRAFFIC, client });
+    broadcaster.removeClient({ event: dashboardType.TRAFFIC, client });
   });

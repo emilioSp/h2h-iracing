@@ -1,48 +1,48 @@
 // Refreshes telemetry and updates derived session state and tracking during each polling cycle.
-import { refreshDriverInfo } from '#repository/driver.repository.ts';
-import { resetFuelTracking } from '#repository/fuel.repository.ts';
-import {
-  getSessionNum,
-  getTrackLengthMeters,
-  refreshTelemetry,
-} from '#repository/irsdk.repository.ts';
-import { resetLapTimeTracking } from '#repository/lap.repository.ts';
-import { resetReferenceLaps } from '#repository/reference-lap.repository.ts';
-import { isRaceSession, refreshCurrentSessionInfo } from '#repository/session-info.repository.ts';
-import { initReferenceInterval, updateReferenceLaps } from '#service/reference-lap.service.ts';
+import driverRepository from '#repository/driver.repository.ts';
+import fuelRepository from '#repository/fuel.repository.ts';
+import irsdkRepository from '#repository/irsdk.repository.ts';
+import lapRepository from '#repository/lap.repository.ts';
+import referenceLapRepository from '#repository/reference-lap.repository.ts';
+import sessionInfoRepository from '#repository/session-info.repository.ts';
+import referenceLapService from '#service/reference-lap.service.ts';
 
-let previousSessionNum = -1;
+export class TelemetryTick {
+  private previousSessionNum = -1;
 
-const initTrackLengthMeters = async (): Promise<void> => {
-  const trackLength = await getTrackLengthMeters();
-  initReferenceInterval(trackLength);
-};
+  private initTrackLengthMeters = async (): Promise<void> => {
+    const trackLength = await irsdkRepository.getTrackLengthMeters();
+    referenceLapService.initReferenceInterval(trackLength);
+  };
 
-export const resetInMemoryStorage = () => {
-  resetReferenceLaps();
-  resetFuelTracking();
-  resetLapTimeTracking();
-};
+  resetInMemoryStorage = () => {
+    referenceLapRepository.resetReferenceLaps();
+    fuelRepository.resetFuelTracking();
+    lapRepository.resetLapTimeTracking();
+  };
 
-export const onSessionChange = async () => {
-  const currentSessionNum = await getSessionNum();
+  onSessionChange = async () => {
+    const currentSessionNum = await irsdkRepository.getSessionNum();
 
-  if (currentSessionNum === previousSessionNum) {
-    return;
-  }
+    if (currentSessionNum === this.previousSessionNum) {
+      return;
+    }
 
-  await initTrackLengthMeters();
-  resetInMemoryStorage();
+    await this.initTrackLengthMeters();
+    this.resetInMemoryStorage();
 
-  previousSessionNum = currentSessionNum;
-};
+    this.previousSessionNum = currentSessionNum;
+  };
 
-export const tick = async (): Promise<void> => {
-  await refreshTelemetry();
-  await refreshDriverInfo();
-  await refreshCurrentSessionInfo();
+  tick = async (): Promise<void> => {
+    await irsdkRepository.refreshTelemetry();
+    await driverRepository.refreshDriverInfo();
+    await sessionInfoRepository.refreshCurrentSessionInfo();
 
-  await onSessionChange();
+    await this.onSessionChange();
 
-  if (isRaceSession()) await updateReferenceLaps();
-};
+    if (sessionInfoRepository.isRaceSession()) await referenceLapService.updateReferenceLaps();
+  };
+}
+
+export default new TelemetryTick();

@@ -1,30 +1,5 @@
-import type { SpotterSide } from '#schema/spotter.schema.ts';
-import { wrapLapDelta } from '#server/utils/track-position.ts';
-
-export const CAR_LENGTH_METERS = 4.8;
-
-type GetDeltaMetersInput = {
-  playerPct: number;
-  otherDriverPct: number;
-  trackLengthMeters: number;
-};
-
-export const getDeltaMeters = ({
-  playerPct,
-  otherDriverPct,
-  trackLengthMeters,
-}: GetDeltaMetersInput): number => wrapLapDelta(otherDriverPct - playerPct) * trackLengthMeters;
-
-const clampPct = (value: number): number => Math.min(100, Math.max(0, value));
-
-export const computeOverlap = (deltaMeters: number): SpotterSide => {
-  const deltaPct = (deltaMeters / CAR_LENGTH_METERS) * 100;
-
-  return {
-    overlapStartPct: clampPct(deltaPct),
-    overlapEndPct: clampPct(100 + deltaPct),
-  };
-};
+// Finds the nearest on-track neighbour when the spotter estimates overlap.
+import { getDeltaMeters } from '#server/utils/delta-meters.ts';
 
 type FindNearestDeltaMetersInput = {
   playerCarIdx: number;

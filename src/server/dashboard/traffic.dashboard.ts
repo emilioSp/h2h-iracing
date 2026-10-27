@@ -1,29 +1,26 @@
 // Computes the traffic payload for callers that have checked the repository connection.
-import { getCarsIdx, getDriverInfo } from '#repository/driver.repository.ts';
-import {
-  getLapDistPct,
-  getLapsCompleted,
-  getOnPitRoad,
-  getPlayerCarIdx,
-} from '#repository/irsdk.repository.ts';
+import driverRepository from '#repository/driver.repository.ts';
+import irsdkRepository from '#repository/irsdk.repository.ts';
+import referenceLapRepository from '#repository/reference-lap.repository.ts';
 import type { Driver } from '#schema/driver.schema.ts';
 import type { Traffic } from '#schema/traffic.schema.ts';
+import referenceLapService from '#service/reference-lap.service.ts';
 import { findTrafficBehind } from '#service/traffic.service.ts';
 
 const NO_TRAFFIC: Traffic = { cars: [] };
 
 export const computeTraffic = async (): Promise<Traffic> => {
-  const playerCarIdx = await getPlayerCarIdx();
+  const playerCarIdx = await irsdkRepository.getPlayerCarIdx();
 
-  const onPitRoad = await getOnPitRoad();
+  const onPitRoad = await irsdkRepository.getOnPitRoad();
 
   if (onPitRoad[playerCarIdx]) return NO_TRAFFIC;
 
   // Usable player connections are assumed to have driver metadata.
-  const player = getDriverInfo(playerCarIdx)!;
+  const player = driverRepository.getDriverInfo(playerCarIdx)!;
 
-  const drivers = (await getCarsIdx())
-    .map(getDriverInfo)
+  const drivers = (await driverRepository.getCarsIdx())
+    .map(driverRepository.getDriverInfo)
     .filter((driver): driver is Driver => driver !== null);
 
   return {
@@ -31,9 +28,17 @@ export const computeTraffic = async (): Promise<Traffic> => {
       playerCarIdx,
       playerClassEstLapTime: player.classEstLapTime,
       drivers,
-      lapDistPct: await getLapDistPct(),
-      lapsCompleted: await getLapsCompleted(),
+      lapDistPct: await irsdkRepository.getLapDistPct(),
+      lapsCompleted: await irsdkRepository.getLapsCompleted(),
       onPitRoad,
+      referenceLaps: new Map(
+        drivers.flatMap(({ carIdx }) => {
+          const lap = referenceLapRepository.getRefLap(carIdx);
+
+          return lap ? [[carIdx, lap] as const] : [];
+        }),
+      ),
+      referenceInterval: referenceLapService.getReferenceInterval(),
     }),
   };
 };

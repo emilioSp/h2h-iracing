@@ -14,7 +14,14 @@
     "#schema/*": "./src/schema/*",
     "#common/*": "./src/common/*",
     "#config": "./src/server/config.ts",
-    "#router/*": "./src/server/router/*"
+    "#router/*": "./src/server/router/*",
+    "#h2h-dashboard/*": "./src/h2h-dashboard/src/*",
+    "#weather-dashboard/*": "./src/weather-dashboard/src/*",
+    "#car-dashboard/*": "./src/car-dashboard/src/*",
+    "#fuel-dashboard/*": "./src/fuel-dashboard/src/*",
+    "#spotter-dashboard/*": "./src/spotter-dashboard/src/*",
+    "#traffic-dashboard/*": "./src/traffic-dashboard/src/*",
+    "#fixtures/*": "./tests/fixtures/*"
   },
   "scripts": {
     "server:start:dev": "npm run h2h:build & npm run weather:build & npm run car:build & npm run fuel:build & npm run spotter:build & npm run traffic:build & DATA_MODE=mock node --env-file=.env --watch src/server/server.ts",

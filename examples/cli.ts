@@ -1,8 +1,9 @@
 // Displays dashboard telemetry in the terminal when running the general monitoring CLI.
 import { setTimeout } from 'node:timers/promises';
 
-import { dataMode } from '#common/data-mode.ts';
-import { gapUnit } from '#common/gap-unit.ts';
+import { COMPASS_LABELS } from '#common/constants/compass.ts';
+import { dataMode } from '#common/constants/data-mode.ts';
+import { gapUnit } from '#common/constants/gap-unit.ts';
 import { config } from '#config';
 import { computeHead2Head } from '#dashboard/head2head.dashboard.ts';
 import { computeWeather } from '#dashboard/weather.dashboard.ts';
@@ -153,8 +154,6 @@ const formatTimeOfDay = (seconds: number): string => {
 
   return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
 };
-
-const COMPASS_LABELS = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'] as const;
 
 const compassIndex = (deg: number): number => Math.round((((deg % 360) + 360) % 360) / 45) % 8;
 

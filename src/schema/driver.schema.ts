@@ -1,3 +1,4 @@
+// Defines the driver payload contract when validating or typing dashboard data.
 import { z } from 'zod/v4';
 
 export const driverSchema = z.object({

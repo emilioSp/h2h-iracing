@@ -1,16 +1,14 @@
 // Computes the head2head payload for callers that have checked the repository connection.
-import { getPlayerCarIdx, getSessionTime } from '#repository/irsdk.repository.ts';
-import { isRaceSession } from '#repository/session-info.repository.ts';
+import irsdkRepository from '#repository/irsdk.repository.ts';
+import sessionInfoRepository from '#repository/session-info.repository.ts';
 import type { Car } from '#schema/car.schema.ts';
 import type { Head2Head } from '#schema/head2head.schema.ts';
+import { getDeltaBestLap } from '#service/best-lap-delta.service.ts';
 import { computeCar } from '#service/car.service.ts';
-import * as DeltaService from '#service/delta.service.ts';
+import { getDeltaLastLap, type Delta } from '#service/delta.service.ts';
 import * as GapService from '#service/gap.service.ts';
-import {
-  getRaceStandings,
-  getSessionStandings,
-  type Standing,
-} from '#service/standings.service.ts';
+import { getSessionStandings } from '#service/session-standings.service.ts';
+import { getRaceStandings, type Standing } from '#service/standings.service.ts';
 
 type GetGapAndDeltaInput = {
   player: Car;
@@ -21,7 +19,7 @@ type GetGapAndDeltaInput = {
 
 type GetGapAndDeltaOutput = {
   gap: GapService.GetGapOutput;
-  delta: DeltaService.Delta;
+  delta: Delta;
 };
 
 const getGapAndDelta = async ({
@@ -35,8 +33,8 @@ const getGapAndDelta = async ({
     : { gapAhead: null, gapBehind: null };
 
   const delta = isRace
-    ? DeltaService.getDeltaLastLap({ player, ahead, behind })
-    : DeltaService.getDeltaBestLap({ player, ahead, behind });
+    ? getDeltaLastLap({ player, ahead, behind })
+    : getDeltaBestLap({ player, ahead, behind });
 
   return { gap, delta };
 };
@@ -68,12 +66,12 @@ const computeAheadAndBehindCar = async ({
 };
 
 export const computeHead2Head = async (): Promise<Head2Head> => {
-  const isRace = isRaceSession();
+  const isRace = sessionInfoRepository.isRaceSession();
 
-  const playerIdx = await getPlayerCarIdx();
+  const playerIdx = await irsdkRepository.getPlayerCarIdx();
 
   const standings = isRace ? await getRaceStandings() : await getSessionStandings();
-  const sessionTime = await getSessionTime();
+  const sessionTime = await irsdkRepository.getSessionTime();
 
   const playerCar = await computeCar({ carIdx: playerIdx, standings });
 

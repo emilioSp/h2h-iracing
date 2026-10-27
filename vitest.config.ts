@@ -7,8 +7,9 @@ export default defineConfig({
     env: loadEnv('', process.cwd(), ''),
     setupFiles: ['./vitest-setup.ts'],
     coverage: {
-      include: ['src/server/**/*.ts', 'src/h2h-dashboard/src/**/*.ts'],
-      exclude: ['src/server/**/*.test.ts', 'src/h2h-dashboard/src/**/*.test.ts'],
+      provider: 'v8',
+      reporter: ['text-summary'],
+      include: ['src/**/*.ts'],
       thresholds: {
         statements: 80,
         lines: 80,

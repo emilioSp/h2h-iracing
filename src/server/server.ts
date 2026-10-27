@@ -1,16 +1,18 @@
+// Starts the local HTTP server and dashboard routes when launching the application.
 import { serve } from '@hono/node-server';
 import { serveStatic } from '@hono/node-server/serve-static';
 import { Hono } from 'hono';
 
-import config from '#config';
-import { shutdown } from '#repository/irsdk.repository.ts';
+import { dataMode } from '#common/constants/data-mode.ts';
+import { config } from '#config';
+import irsdkRepository from '#repository/irsdk.repository.ts';
 import { carTelemetryRouter } from '#router/car-telemetry.router.ts';
 import { fuelRouter } from '#router/fuel.router.ts';
 import { h2hRouter } from '#router/h2h.router.ts';
 import { spotterRouter } from '#router/spotter.router.ts';
 import { trafficRouter } from '#router/traffic.router.ts';
 import { weatherRouter } from '#router/weather.router.ts';
-import { stopBroadcasting } from '#server/broadcaster.ts';
+import broadcaster from '#server/broadcaster.ts';
 
 const app = new Hono();
 
@@ -55,14 +57,14 @@ const server = serve({ fetch: app.fetch, port: config.PORT, hostname: '127.0.0.1
 
   console.log(`Mode: ${config.DATA_MODE} | Poll: ${config.POLL_INTERVAL_MS}ms`);
 
-  if (config.DATA_MODE === 'live') {
+  if (config.DATA_MODE === dataMode.LIVE) {
     console.log('Do NOT close this window...');
   }
 });
 
 const cleanShutdown = async () => {
-  stopBroadcasting();
-  await shutdown();
+  broadcaster.stopBroadcasting();
+  await irsdkRepository.shutdown();
   server.close();
   console.log('\nShutdown complete');
   process.exit(0);

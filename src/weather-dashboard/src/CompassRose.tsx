@@ -1,3 +1,4 @@
+// Renders a smoothly rotating wind compass when the weather overlay has telemetry.
 import { useEffect, useRef, useState } from 'react';
 
 type Props = {
@@ -5,12 +6,12 @@ type Props = {
   size?: number;
 };
 
-const shortestDelta = (from: number, to: number): number => {
-  let delta = (((to - from) % 360) + 360) % 360;
+type ShortestDeltaInput = { from: number; to: number };
 
-  if (delta > 180) delta -= 360;
+const shortestDelta = ({ from, to }: ShortestDeltaInput): number => {
+  const delta = (((to - from) % 360) + 360) % 360;
 
-  return delta;
+  return delta > 180 ? delta - 360 : delta;
 };
 
 const TICK_COUNT = 8;
@@ -30,7 +31,7 @@ export const CompassRose = ({ windRelativeDeg, size = 280 }: Props) => {
   const [displayDeg, setDisplayDeg] = useState(windRelativeDeg);
 
   useEffect(() => {
-    const delta = shortestDelta(accumulatedRef.current, windRelativeDeg);
+    const delta = shortestDelta({ from: accumulatedRef.current, to: windRelativeDeg });
     accumulatedRef.current = accumulatedRef.current + delta;
     setDisplayDeg(accumulatedRef.current);
   }, [windRelativeDeg]);

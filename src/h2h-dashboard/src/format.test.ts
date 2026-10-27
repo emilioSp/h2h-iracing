@@ -1,7 +1,9 @@
 // Verifies dashboard formatting during regression tests.
 import { describe, expect, it } from 'vitest';
 
-import { formatGap, formatTime } from './format.ts';
+import { gapUnit } from '#common/constants/gap-unit.ts';
+import { formatGap } from '#h2h-dashboard/utils/format-gap.ts';
+import { formatTime } from '#h2h-dashboard/utils/format-time.ts';
 
 describe('formatTime', () => {
   it('given a lap time of 65.432 seconds when formatted then it is 01:05.432', () => {
@@ -35,18 +37,18 @@ describe('formatGap', () => {
   });
 
   it('given a two-lap gap when formatted then it is 2L', () => {
-    expect(formatGap({ value: 2, unit: 'laps' })).toBe('2L');
+    expect(formatGap({ value: 2, unit: gapUnit.LAPS })).toBe('2L');
   });
 
   it('given a gap under 60 seconds when formatted then it is rounded to tenths of a second', () => {
-    expect(formatGap({ value: 3.456, unit: 'seconds' })).toBe('3.5s');
+    expect(formatGap({ value: 3.456, unit: gapUnit.SECONDS })).toBe('3.5s');
   });
 
   it('given a gap over 60 seconds when formatted then it is a time string', () => {
-    expect(formatGap({ value: 75.5, unit: 'seconds' })).toBe('01:15.500');
+    expect(formatGap({ value: 75.5, unit: gapUnit.SECONDS })).toBe('01:15.500');
   });
 
   it('given an infinite gap when formatted then N/A is returned', () => {
-    expect(formatGap({ value: Infinity, unit: 'seconds' })).toBe('N/A');
+    expect(formatGap({ value: Infinity, unit: gapUnit.SECONDS })).toBe('N/A');
   });
 });
