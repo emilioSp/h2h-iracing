@@ -1,11 +1,10 @@
 // Renders the spotter overlay when its dashboard page is open.
 import { useEffect, useState } from 'react';
 
+import { WelcomePage800x200 } from '#common/WelcomePage800x200.tsx';
 import type { Spotter, SpotterSide } from '#schema/spotter.schema.ts';
 
-import { WelcomePage800x200 } from '../../common/WelcomePage800x200.js';
-
-import './styles.css';
+import '#spotter-dashboard/styles.css';
 
 type BarProps = {
   side: SpotterSide | null;

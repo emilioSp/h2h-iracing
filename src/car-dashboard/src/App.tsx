@@ -2,11 +2,10 @@
 import { Banana, Gauge, ShieldCog, Snail } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
+import { WelcomePage800x480 } from '#common/WelcomePage800x480.tsx';
 import type { CarTelemetry } from '#schema/car-telemetry.schema.ts';
 
-import { WelcomePage800x480 } from '../../common/WelcomePage800x480.js';
-
-import './styles.css';
+import '#car-dashboard/styles.css';
 
 type CellColor = 'red' | 'blue' | 'yellow';
 

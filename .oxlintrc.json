@@ -17,6 +17,10 @@
     "node_module/**",
     "tests/fixtures/**",
     ".pi/**",
+    ".cache/**",
+    ".idea/**",
+    ".specs/**",
+    "_site/**",
     "vendor/**"
   ],
   "rules": {

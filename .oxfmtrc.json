@@ -14,11 +14,16 @@
   "singleQuote": true,
   "sortImports": true,
   "ignorePatterns": [
-    "node_modules/**",
     "dist/**",
+    "build/**",
+    "coverage/**",
+    "node_module/**",
     "tests/fixtures/**",
     ".pi/**",
-    "vendor/**",
-    "**/.specs/**"
+    ".cache/**",
+    ".idea/**",
+    ".specs/**",
+    "_site/**",
+    "vendor/**"
   ]
 }
