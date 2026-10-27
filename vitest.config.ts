@@ -1,3 +1,4 @@
+// Configures fixture-backed regression tests and coverage when Vitest runs.
 import { loadEnv } from 'vite';
 import { defineConfig } from 'vitest/config';
 
