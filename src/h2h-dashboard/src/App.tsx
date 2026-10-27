@@ -2,7 +2,8 @@
 import { useEffect, useState } from 'react';
 
 import { WelcomePage800x480 } from '#common/WelcomePage800x480.tsx';
-import { CarCard, carVariant } from '#h2h-dashboard/CarCard.tsx';
+import { CarCard } from '#h2h-dashboard/CarCard.tsx';
+import { carVariant } from '#h2h-dashboard/constants/car-variant.ts';
 import type { Head2Head } from '#schema/head2head.schema.ts';
 
 import '#h2h-dashboard/styles.css';

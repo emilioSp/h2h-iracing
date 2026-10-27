@@ -1,3 +1,4 @@
+// Configures website assets and templates when Eleventy builds the project site.
 export default function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy({
     'docs/*.{jpg,jpeg,png,webp,gif,svg}': 'images',

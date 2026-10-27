@@ -1,9 +1,11 @@
+// Mounts the car dashboard when its browser page opens.
 import { createRoot } from 'react-dom/client';
 
-import { App } from './App.js';
+import { App } from '#car-dashboard/App.tsx';
+import { assertRootElement } from '#common/utils/assert-root-element.ts';
 
 const root = document.getElementById('root');
 
-if (!root) throw new Error('No #root element');
+assertRootElement(root);
 
 createRoot(root).render(<App />);

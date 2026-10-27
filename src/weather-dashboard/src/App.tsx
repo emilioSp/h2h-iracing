@@ -2,13 +2,12 @@
 import { Clock, CloudRain, Droplets, Flag, Road, Sun, Waves, Wind } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
+import { COMPASS_LABELS } from '#common/constants/compass.ts';
 import { WelcomePage800x480 } from '#common/WelcomePage800x480.tsx';
 import type { Weather } from '#schema/weather.schema.ts';
 import { CompassRose } from '#weather-dashboard/CompassRose.tsx';
 
 import '#weather-dashboard/styles.css';
-
-const COMPASS_LABELS = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'] as const;
 
 const compassIndex = (deg: number) => Math.round((((deg % 360) + 360) % 360) / 45) % 8;
 
