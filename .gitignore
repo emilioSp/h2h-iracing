@@ -23,6 +23,7 @@ lerna-debug.log*
 data/
 
 coverage/
+/test-results/
 
 TODO.md
 
