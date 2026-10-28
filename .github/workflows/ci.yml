@@ -16,5 +16,7 @@ jobs:
           node-version: 24.14.1
       - name: Install deps
         run: npm ci
+      - name: Install playwright
+        run: npx playwright install
       - name: Build, lint and test
         run: npm run check
