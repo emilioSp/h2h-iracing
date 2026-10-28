@@ -1,19 +1,20 @@
 // Verifies fuel dashboard payloads during regression tests.
 import { describe, expect, it } from 'vitest';
 
-import { computeFuel, computeLapsRemaining } from '#dashboard/fuel.dashboard.ts';
-import { refreshDriverInfo } from '#repository/driver.repository.ts';
+import { computeFuel } from '#dashboard/fuel.dashboard.ts';
+import driverRepository from '#repository/driver.repository.ts';
 import { FUEL_SAMPLE_WINDOW } from '#repository/fuel.repository.ts';
-import { loadTelemetryFixture, refreshTelemetry } from '#repository/irsdk.repository.ts';
-import { refreshCurrentSessionInfo } from '#repository/session-info.repository.ts';
-import { resetInMemoryStorage } from '#server/tick.ts';
+import irsdkRepository from '#repository/irsdk.repository.ts';
+import sessionInfoRepository from '#repository/session-info.repository.ts';
+import telemetryTick from '#server/tick.ts';
+import { computeLapsRemaining } from '#server/utils/compute-laps-remaining.ts';
 
 describe('computeFuel', () => {
   it('given iRacing reports too few completed laps when fuel is computed then the dashboard returns no fuel estimate', async () => {
-    loadTelemetryFixture('fixture/telemetry-mock/fuel/one-lap-sample.json');
-    resetInMemoryStorage();
-    await refreshDriverInfo();
-    await refreshCurrentSessionInfo();
+    irsdkRepository.loadTelemetryFixture('tests/fixtures/telemetry-mock/fuel/one-lap-sample.json');
+    telemetryTick.resetInMemoryStorage();
+    await driverRepository.refreshDriverInfo();
+    await sessionInfoRepository.refreshCurrentSessionInfo();
 
     const result = await computeFuel();
 
@@ -32,15 +33,17 @@ describe('computeFuel', () => {
   });
 
   it('given iRacing reports enough completed laps when fuel is computed then the dashboard returns refill values for each margin', async () => {
-    loadTelemetryFixture('fixture/telemetry-mock/fuel/accumulating-lap-samples.json');
-    resetInMemoryStorage();
-    await refreshDriverInfo();
-    await refreshCurrentSessionInfo();
-    await refreshTelemetry();
+    irsdkRepository.loadTelemetryFixture(
+      'tests/fixtures/telemetry-mock/fuel/accumulating-lap-samples.json',
+    );
+    telemetryTick.resetInMemoryStorage();
+    await driverRepository.refreshDriverInfo();
+    await sessionInfoRepository.refreshCurrentSessionInfo();
+    await irsdkRepository.refreshTelemetry();
     let result = await computeFuel();
 
     for (let sample = 1; sample < FUEL_SAMPLE_WINDOW; sample++) {
-      await refreshTelemetry();
+      await irsdkRepository.refreshTelemetry();
       result = await computeFuel();
     }
 
@@ -52,10 +55,10 @@ describe('computeFuel', () => {
   });
 
   it('given iRacing reports the checkered flag when fuel is computed then the dashboard returns no remaining time', async () => {
-    loadTelemetryFixture('fixture/telemetry-mock/fuel/checkered.json');
-    resetInMemoryStorage();
-    await refreshDriverInfo();
-    await refreshCurrentSessionInfo();
+    irsdkRepository.loadTelemetryFixture('tests/fixtures/telemetry-mock/fuel/checkered.json');
+    telemetryTick.resetInMemoryStorage();
+    await driverRepository.refreshDriverInfo();
+    await sessionInfoRepository.refreshCurrentSessionInfo();
 
     const result = await computeFuel();
 

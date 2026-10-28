@@ -1,12 +1,12 @@
 // Renders the h2h overlay when its dashboard page is open.
 import { useEffect, useState } from 'react';
 
+import { WelcomePage800x480 } from '#common/WelcomePage800x480.tsx';
+import { CarCard } from '#h2h-dashboard/CarCard.tsx';
+import { carVariant } from '#h2h-dashboard/constants/car-variant.ts';
 import type { Head2Head } from '#schema/head2head.schema.ts';
 
-import { WelcomePage800x480 } from '../../common/WelcomePage800x480.js';
-import { CarCard } from './CarCard.js';
-
-import './styles.css';
+import '#h2h-dashboard/styles.css';
 
 export const App = () => {
   const [h2h, setH2h] = useState<Head2Head | null>(null);
@@ -50,7 +50,7 @@ export const App = () => {
       {/* Ahead */}
       <div className="bg-card">
         {h2h.ahead ? (
-          <CarCard car={h2h.ahead} variant="ahead" />
+          <CarCard car={h2h.ahead} variant={carVariant.AHEAD} />
         ) : (
           <div className="grid place-items-center h-full font-mono text-3xl text-dim uppercase tracking-[4px]">
             Race leader
@@ -62,7 +62,7 @@ export const App = () => {
       <div className="border-y border-border-player bg-player-bg">
         <CarCard
           car={h2h.player}
-          variant="player"
+          variant={carVariant.PLAYER}
           gapAhead={h2h.gapAhead}
           deltaAhead={h2h.deltaAhead}
           gapBehind={h2h.gapBehind}
@@ -73,7 +73,7 @@ export const App = () => {
       {/* Behind */}
       <div className="bg-card">
         {h2h.behind ? (
-          <CarCard car={h2h.behind} variant="behind" />
+          <CarCard car={h2h.behind} variant={carVariant.BEHIND} />
         ) : (
           <div className="grid place-items-center h-full font-mono text-3xl text-dim uppercase tracking-[4px]">
             Last place

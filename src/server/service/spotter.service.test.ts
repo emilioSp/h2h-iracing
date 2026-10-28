@@ -1,12 +1,10 @@
 // Verifies car overlap calculations during regression tests.
 import { describe, expect, it } from 'vitest';
 
-import {
-  CAR_LENGTH_METERS,
-  computeOverlap,
-  findNearestDeltaMeters,
-  getDeltaMeters,
-} from '#service/spotter.service.ts';
+import { CAR_LENGTH_METERS } from '#server/utils/compute-overlap.ts';
+import { computeOverlap } from '#server/utils/compute-overlap.ts';
+import { getDeltaMeters } from '#server/utils/delta-meters.ts';
+import { findNearestDeltaMeters } from '#service/spotter.service.ts';
 
 const TRACK_LENGTH_METERS = 5000;
 

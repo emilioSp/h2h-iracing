@@ -1,190 +1,271 @@
 // Reads iRacing telemetry when the backend refreshes or queries simulator state.
 import { IRSDK, SESSION_DATA_KEYS, type Session, VARS } from '@emiliosp/node-iracing-sdk';
 
-import config from '#config';
+import { dataMode } from '#common/constants/data-mode.ts';
+import { trackWetness } from '#common/constants/track-wetness.ts';
+import { config } from '#config';
 import { IRSDKMock } from '#repository/irsdk-mock.ts';
+import { assertTelemetryFixture } from '#server/utils/assert-telemetry-fixture.ts';
+import { assertTestEnvironment } from '#server/utils/assert-test-environment.ts';
+import { debug } from '#server/utils/debug.ts';
 
-import { debug } from '../debug.ts';
+const TRACK_WETNESS_LABELS = Object.values(trackWetness);
 
-export const CAR_LEFT_RIGHT = {
-  OFF: 0,
-  CLEAR: 1,
-  CAR_LEFT: 2,
-  CAR_RIGHT: 3,
-  CAR_LEFT_AND_RIGHT: 4,
-  TWO_CARS_LEFT: 5,
-  TWO_CARS_RIGHT: 6,
-} as const;
-
-let ir: IRSDK | IRSDKMock | null = null;
-
-export const loadTelemetryFixture = (path: string): void => {
-  if (process.env.NODE_ENV !== 'test') {
-    throw new Error('Telemetry fixtures are available only in tests');
-  }
-
-  ir = IRSDKMock.fromFixture(path);
-};
-
-export const resetIRSDK = (): void => {
-  ir = null;
-};
-
-const connectToIRacing = async (): Promise<boolean> => {
-  if (process.env.NODE_ENV === 'test') {
-    if (!(ir instanceof IRSDKMock)) {
-      throw new Error('Load a telemetry fixture before reading telemetry');
-    }
-  } else if (!ir?.isConnected()) {
-    try {
-      ir =
-        config.DATA_MODE === 'mock' ? IRSDK.fromDump(config.DUMP_FILE_PATH) : await IRSDK.connect();
-    } catch (e) {
-      debug('iRacing not available at the moment', e);
-      ir = null;
-    }
-  }
-
-  return (ir?.isConnected() ?? false) && (ir?.get(VARS.PLAYER_CAR_IDX)[0] ?? -1) >= 0;
-};
-
-const withConnect = <TArgs extends unknown[], TReturn>(
-  fn: (...args: TArgs) => TReturn,
-): ((...args: TArgs) => Promise<TReturn>) => {
-  return async (...args: TArgs) => {
-    await connectToIRacing();
-
-    return fn(...args);
-  };
-};
-
-export const refreshTelemetry = withConnect(() => ir?.refreshSharedMemory());
-
-export const isIRacingConnected = async (): Promise<boolean> => connectToIRacing();
-
-export const shutdown = withConnect((): void => ir?.shutdown());
-
-export const getPlayerCarIdx = withConnect((): number => ir?.get(VARS.PLAYER_CAR_IDX)[0] ?? -1);
-
-// JUSTIFICATION: The implementation returns all lap times without an index, and one number with an index.
-export const getLastLapTime = withConnect((carIdx?: number): number | number[] => {
-  const lapTimes = ir?.get(VARS.CAR_IDX_LAST_LAP_TIME) ?? [];
-
-  return carIdx === undefined ? lapTimes : (lapTimes[carIdx] ?? -1);
-}) as {
+type LastLapTimeReader = {
   (): Promise<number[]>;
   (carIdx: number): Promise<number>;
 };
 
-export const getBestLapTime = withConnect(
-  (carIdx: number): number => ir?.get(VARS.CAR_IDX_BEST_LAP_TIME)[carIdx] ?? -1,
-);
+export class IRSDKRepository {
+  private ir: IRSDK | IRSDKMock | null = null;
 
-export const getLapsCompleted = withConnect(
-  (): number[] => ir?.get(VARS.CAR_IDX_LAP_COMPLETED) ?? [],
-);
+  loadTelemetryFixture = (path: string): void => {
+    assertTestEnvironment();
+    this.ir = IRSDKMock.fromFixture(path);
+  };
 
-export const getSessionTime = withConnect((): number => ir?.get(VARS.SESSION_TIME)[0] ?? 0);
+  resetIRSDK = (): void => {
+    this.ir = null;
+  };
 
-export const getLapDistPct = withConnect((): number[] => ir?.get(VARS.CAR_IDX_LAP_DIST_PCT) ?? []);
+  private connectToIRacing = async (): Promise<boolean> => {
+    if (process.env.NODE_ENV === 'test') {
+      assertTelemetryFixture(this.ir);
+    } else if (!this.ir?.isConnected()) {
+      try {
+        this.ir =
+          config.DATA_MODE === dataMode.MOCK
+            ? IRSDK.fromDump(config.DUMP_FILE_PATH)
+            : await IRSDK.connect();
+      } catch (e) {
+        debug('iRacing not available at the moment', e);
+        this.ir = null;
+      }
+    }
 
-export const getOnPitRoad = withConnect((): boolean[] => ir?.get(VARS.CAR_IDX_ON_PIT_ROAD) ?? []);
+    return (this.ir?.isConnected() ?? false) && (this.ir?.get(VARS.PLAYER_CAR_IDX)[0] ?? -1) >= 0;
+  };
 
-export const getSessionNum = withConnect((): number => ir?.get(VARS.SESSION_NUM)[0] ?? -1);
+  isIRacingConnected = async (): Promise<boolean> => this.connectToIRacing();
 
-export const getRawDrivers = withConnect(
-  () => ir?.getSessionInfo(SESSION_DATA_KEYS.DRIVER_INFO)?.Drivers ?? [],
-);
+  refreshTelemetry = async () => {
+    await this.connectToIRacing();
 
-export const getClassPositions = withConnect(
-  (): number[] => ir?.get(VARS.CAR_IDX_CLASS_POSITION) ?? [],
-);
+    return this.ir?.refreshSharedMemory();
+  };
 
-export const getOverallPositions = withConnect(
-  (): number[] => ir?.get(VARS.CAR_IDX_POSITION) ?? [],
-);
+  shutdown = async (): Promise<void> => {
+    await this.connectToIRacing();
 
-export const getCurrentSessionInfo = withConnect((): Session | null => {
-  const sessionInfo = ir?.getSessionInfo(SESSION_DATA_KEYS.SESSION_INFO);
+    return this.ir?.shutdown();
+  };
 
-  const currentSession = sessionInfo?.Sessions?.find(
-    (s) => s.SessionNum === sessionInfo.CurrentSessionNum,
-  );
+  getPlayerCarIdx = async (): Promise<number> => {
+    await this.connectToIRacing();
 
-  if (!currentSession) {
-    return null;
-  }
+    return this.ir?.get(VARS.PLAYER_CAR_IDX)[0] ?? -1;
+  };
 
-  return currentSession;
-});
+  // JUSTIFICATION: The optional index selects either all lap times or one car's time, matching these overloads.
+  getLastLapTime = (async (carIdx?: number): Promise<number | number[]> => {
+    await this.connectToIRacing();
 
-export const getTrackLengthMeters = withConnect((): number => {
-  const weekendInfo = ir?.getSessionInfo(SESSION_DATA_KEYS.WEEKEND_INFO);
+    const lapTimes = this.ir?.get(VARS.CAR_IDX_LAST_LAP_TIME) ?? [];
 
-  if (!weekendInfo) {
-    return 0;
-  }
+    return carIdx === undefined ? lapTimes : (lapTimes[carIdx] ?? -1);
+  }) as LastLapTimeReader;
 
-  return Number.parseFloat(weekendInfo.TrackLength) * 1000;
-});
+  getBestLapTime = async (carIdx: number): Promise<number> => {
+    await this.connectToIRacing();
 
-const TRACK_WETNESS_LABELS = [
-  'Unknown',
-  'Dry',
-  'Mostly Dry',
-  'Very Lightly Wet',
-  'Lightly Wet',
-  'Moderately Wet',
-  'Very Wet',
-  'Extremely Wet',
-] as const;
+    return this.ir?.get(VARS.CAR_IDX_BEST_LAP_TIME)[carIdx] ?? -1;
+  };
 
-export const getAirTemperature = withConnect((): number => ir?.get(VARS.AIR_TEMP)[0] ?? 0);
+  getLapsCompleted = async (): Promise<number[]> => {
+    await this.connectToIRacing();
 
-export const getRelativeHumidity = withConnect(
-  (): number => ir?.get(VARS.RELATIVE_HUMIDITY)[0] ?? 0,
-);
+    return this.ir?.get(VARS.CAR_IDX_LAP_COMPLETED) ?? [];
+  };
 
-export const getTrackTemperature = withConnect((): number => ir?.get(VARS.TRACK_TEMP_CREW)[0] ?? 0);
+  getSessionTime = async (): Promise<number> => {
+    await this.connectToIRacing();
 
-export const getTrackWetness = withConnect((): string => {
-  const raw = ir?.get(VARS.TRACK_WETNESS)[0] ?? 0;
+    return this.ir?.get(VARS.SESSION_TIME)[0] ?? 0;
+  };
 
-  return TRACK_WETNESS_LABELS[raw] ?? 'Unknown';
-});
+  getLapDistPct = async (): Promise<number[]> => {
+    await this.connectToIRacing();
 
-export const getPrecipitation = withConnect((): number => ir?.get(VARS.PRECIPITATION)[0] ?? 0);
+    return this.ir?.get(VARS.CAR_IDX_LAP_DIST_PCT) ?? [];
+  };
 
-export const getWindDirection = withConnect((): number => ir?.get(VARS.WIND_DIR)[0] ?? 0);
+  getOnPitRoad = async (): Promise<boolean[]> => {
+    await this.connectToIRacing();
 
-export const getYawNorthDirection = withConnect(() => ir?.get(VARS.YAW_NORTH)[0] ?? 0);
+    return this.ir?.get(VARS.CAR_IDX_ON_PIT_ROAD) ?? [];
+  };
 
-export const getWindVelocity = withConnect((): number => ir?.get(VARS.WIND_VEL)[0] ?? 0);
+  getSessionNum = async (): Promise<number> => {
+    await this.connectToIRacing();
 
-export const getSessionSecondsAfterMidnight = withConnect(
-  (): number => ir?.get(VARS.SESSION_TIME_OF_DAY)[0] ?? 0,
-);
+    return this.ir?.get(VARS.SESSION_NUM)[0] ?? -1;
+  };
 
-export const getAbsAdjust = withConnect((): number => ir?.get(VARS.DC_ABS)[0] ?? 0);
+  getRawDrivers = async () => {
+    await this.connectToIRacing();
 
-export const getTcAdjust = withConnect((): number => ir?.get(VARS.DC_TRACTION_CONTROL)[0] ?? 0);
+    return this.ir?.getSessionInfo(SESSION_DATA_KEYS.DRIVER_INFO)?.Drivers ?? [];
+  };
 
-export const getIsAbsActive = withConnect(
-  (): boolean => ir?.get(VARS.BRAKE_ABS_ACTIVE)[0] ?? false,
-);
+  getClassPositions = async (): Promise<number[]> => {
+    await this.connectToIRacing();
 
-export const getBrakeBias = withConnect((): number => ir?.get(VARS.DC_BRAKE_BIAS)[0] ?? 0);
+    return this.ir?.get(VARS.CAR_IDX_CLASS_POSITION) ?? [];
+  };
 
-export const getIsPitSpeedLimiterActive = withConnect(
-  (): boolean => ir?.get(VARS.DC_PIT_SPEED_LIMITER_TOGGLE)[0] ?? false,
-);
+  getOverallPositions = async (): Promise<number[]> => {
+    await this.connectToIRacing();
 
-export const getFuelLevel = withConnect((): number => ir?.get(VARS.FUEL_LEVEL)[0] ?? 0);
+    return this.ir?.get(VARS.CAR_IDX_POSITION) ?? [];
+  };
 
-export const getSessionTimeRemain = withConnect(
-  (): number => ir?.get(VARS.SESSION_TIME_REMAIN)[0] ?? 0,
-);
+  getCurrentSessionInfo = async (): Promise<Session | null> => {
+    await this.connectToIRacing();
 
-export const getSessionFlags = withConnect((): number => ir?.get(VARS.SESSION_FLAGS)[0] ?? 0);
+    const sessionInfo = this.ir?.getSessionInfo(SESSION_DATA_KEYS.SESSION_INFO);
 
-export const getCarLeftRight = withConnect((): number => ir?.get(VARS.CAR_LEFT_RIGHT)[0] ?? 0);
+    const currentSession = sessionInfo?.Sessions?.find(
+      (s) => s.SessionNum === sessionInfo.CurrentSessionNum,
+    );
+
+    if (!currentSession) {
+      return null;
+    }
+
+    return currentSession;
+  };
+
+  getTrackLengthMeters = async (): Promise<number> => {
+    await this.connectToIRacing();
+
+    const weekendInfo = this.ir?.getSessionInfo(SESSION_DATA_KEYS.WEEKEND_INFO);
+
+    if (!weekendInfo) {
+      return 0;
+    }
+
+    return Number.parseFloat(weekendInfo.TrackLength) * 1000;
+  };
+
+  getAirTemperature = async (): Promise<number> => {
+    await this.connectToIRacing();
+
+    return this.ir?.get(VARS.AIR_TEMP)[0] ?? 0;
+  };
+
+  getRelativeHumidity = async (): Promise<number> => {
+    await this.connectToIRacing();
+
+    return this.ir?.get(VARS.RELATIVE_HUMIDITY)[0] ?? 0;
+  };
+
+  getTrackTemperature = async (): Promise<number> => {
+    await this.connectToIRacing();
+
+    return this.ir?.get(VARS.TRACK_TEMP_CREW)[0] ?? 0;
+  };
+
+  getTrackWetness = async (): Promise<string> => {
+    await this.connectToIRacing();
+
+    const raw = this.ir?.get(VARS.TRACK_WETNESS)[0] ?? 0;
+
+    return TRACK_WETNESS_LABELS[raw] ?? trackWetness.UNKNOWN;
+  };
+
+  getPrecipitation = async (): Promise<number> => {
+    await this.connectToIRacing();
+
+    return this.ir?.get(VARS.PRECIPITATION)[0] ?? 0;
+  };
+
+  getWindDirection = async (): Promise<number> => {
+    await this.connectToIRacing();
+
+    return this.ir?.get(VARS.WIND_DIR)[0] ?? 0;
+  };
+
+  getYawNorthDirection = async () => {
+    await this.connectToIRacing();
+
+    return this.ir?.get(VARS.YAW_NORTH)[0] ?? 0;
+  };
+
+  getWindVelocity = async (): Promise<number> => {
+    await this.connectToIRacing();
+
+    return this.ir?.get(VARS.WIND_VEL)[0] ?? 0;
+  };
+
+  getSessionSecondsAfterMidnight = async (): Promise<number> => {
+    await this.connectToIRacing();
+
+    return this.ir?.get(VARS.SESSION_TIME_OF_DAY)[0] ?? 0;
+  };
+
+  getAbsAdjust = async (): Promise<number> => {
+    await this.connectToIRacing();
+
+    return this.ir?.get(VARS.DC_ABS)[0] ?? 0;
+  };
+
+  getTcAdjust = async (): Promise<number> => {
+    await this.connectToIRacing();
+
+    return this.ir?.get(VARS.DC_TRACTION_CONTROL)[0] ?? 0;
+  };
+
+  getIsAbsActive = async (): Promise<boolean> => {
+    await this.connectToIRacing();
+
+    return this.ir?.get(VARS.BRAKE_ABS_ACTIVE)[0] ?? false;
+  };
+
+  getBrakeBias = async (): Promise<number> => {
+    await this.connectToIRacing();
+
+    return this.ir?.get(VARS.DC_BRAKE_BIAS)[0] ?? 0;
+  };
+
+  getIsPitSpeedLimiterActive = async (): Promise<boolean> => {
+    await this.connectToIRacing();
+
+    return this.ir?.get(VARS.DC_PIT_SPEED_LIMITER_TOGGLE)[0] ?? false;
+  };
+
+  getFuelLevel = async (): Promise<number> => {
+    await this.connectToIRacing();
+
+    return this.ir?.get(VARS.FUEL_LEVEL)[0] ?? 0;
+  };
+
+  getSessionTimeRemain = async (): Promise<number> => {
+    await this.connectToIRacing();
+
+    return this.ir?.get(VARS.SESSION_TIME_REMAIN)[0] ?? 0;
+  };
+
+  getSessionFlags = async (): Promise<number> => {
+    await this.connectToIRacing();
+
+    return this.ir?.get(VARS.SESSION_FLAGS)[0] ?? 0;
+  };
+
+  getCarLeftRight = async (): Promise<number> => {
+    await this.connectToIRacing();
+
+    return this.ir?.get(VARS.CAR_LEFT_RIGHT)[0] ?? 0;
+  };
+}
+
+export default new IRSDKRepository();

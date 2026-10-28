@@ -1,3 +1,4 @@
+// Stores lap repository state when telemetry is refreshed or queried.
 export const LAP_TIME_SAMPLE_WINDOW = 5;
 
 type LapTimeSample = {
@@ -5,58 +6,62 @@ type LapTimeSample = {
   lapTime: number;
 };
 
-let lapTimeSamples = new Map<number, LapTimeSample[]>();
-
-let prevLapCompleted: number[] = [];
-
 export type UpdateLapTimeTrackingInput = {
   carsIdx: number[];
   lapsCompleted: number[];
   lastLapTimes: number[];
 };
 
-export const updateLapTimeTracking = ({
-  carsIdx,
-  lapsCompleted,
-  lastLapTimes,
-}: UpdateLapTimeTrackingInput) => {
-  for (const carIdx of carsIdx) {
-    const lapCompleted = lapsCompleted[carIdx];
-    const lapTime = lastLapTimes[carIdx];
+export class LapRepository {
+  private lapTimeSamples = new Map<number, LapTimeSample[]>();
 
-    if (prevLapCompleted[carIdx] === lapCompleted) continue;
+  private prevLapCompleted: number[] = [];
 
-    if (!Number.isFinite(lapTime) || lapTime <= 0) continue;
+  updateLapTimeTracking = ({
+    carsIdx,
+    lapsCompleted,
+    lastLapTimes,
+  }: UpdateLapTimeTrackingInput) => {
+    for (const carIdx of carsIdx) {
+      const lapCompleted = lapsCompleted[carIdx];
+      const lapTime = lastLapTimes[carIdx];
 
-    const samples = lapTimeSamples.get(carIdx) ?? [];
-    samples.push({ lapNumber: lapCompleted, lapTime });
+      if (this.prevLapCompleted[carIdx] === lapCompleted) continue;
 
-    if (samples.length > LAP_TIME_SAMPLE_WINDOW) {
-      samples.shift();
+      if (!Number.isFinite(lapTime) || lapTime <= 0) continue;
+
+      const samples = this.lapTimeSamples.get(carIdx) ?? [];
+      samples.push({ lapNumber: lapCompleted, lapTime });
+
+      if (samples.length > LAP_TIME_SAMPLE_WINDOW) {
+        samples.shift();
+      }
+
+      this.lapTimeSamples.set(carIdx, samples);
+
+      this.prevLapCompleted[carIdx] = lapCompleted;
+    }
+  };
+
+  getMedianLapTime = (carIdx: number): number | null => {
+    const samples = this.lapTimeSamples.get(carIdx);
+
+    if (!samples || samples.length < 2) {
+      return null;
     }
 
-    lapTimeSamples.set(carIdx, samples);
+    const sorted = [...samples].sort((a, b) => a.lapTime - b.lapTime);
+    const mid = Math.floor(sorted.length / 2);
 
-    prevLapCompleted[carIdx] = lapCompleted;
-  }
-};
+    return sorted.length % 2 === 0
+      ? (sorted[mid - 1].lapTime + sorted[mid].lapTime) / 2
+      : sorted[mid].lapTime;
+  };
 
-export const getMedianLapTime = (carIdx: number): number | null => {
-  const samples = lapTimeSamples.get(carIdx);
+  resetLapTimeTracking = () => {
+    this.lapTimeSamples = new Map();
+    this.prevLapCompleted = [];
+  };
+}
 
-  if (!samples || samples.length < 2) {
-    return null;
-  }
-
-  const sorted = [...samples].sort((a, b) => a.lapTime - b.lapTime);
-  const mid = Math.floor(sorted.length / 2);
-
-  return sorted.length % 2 === 0
-    ? (sorted[mid - 1].lapTime + sorted[mid].lapTime) / 2
-    : sorted[mid].lapTime;
-};
-
-export const resetLapTimeTracking = () => {
-  lapTimeSamples = new Map();
-  prevLapCompleted = [];
-};
+export default new LapRepository();

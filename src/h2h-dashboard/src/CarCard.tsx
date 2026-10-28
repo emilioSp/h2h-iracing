@@ -1,33 +1,42 @@
 // Renders driver and lap information when a head-to-head car card is displayed.
 import { useEffect, useRef, useState } from 'react';
 
+import { carVariant, type CarVariant } from '#h2h-dashboard/constants/car-variant.ts';
+import { deltaState } from '#h2h-dashboard/constants/delta-state.ts';
+import { deltaClass } from '#h2h-dashboard/utils/delta-class.ts';
+import { formatDelta } from '#h2h-dashboard/utils/format-delta.ts';
+import { formatGap } from '#h2h-dashboard/utils/format-gap.ts';
+import { formatName } from '#h2h-dashboard/utils/format-name.ts';
+import { formatTime } from '#h2h-dashboard/utils/format-time.ts';
 import type { Car } from '#schema/car.schema.ts';
 import type { Gap } from '#schema/head2head.schema.ts';
 
-import { deltaClass, formatDelta, formatGap, formatName, formatTime } from './format.js';
-
 type Props =
-  | { car: Car; variant: 'ahead' | 'behind' }
+  | { car: Car; variant: Exclude<CarVariant, typeof carVariant.PLAYER> }
   | {
       car: Car;
-      variant: 'player';
+      variant: typeof carVariant.PLAYER;
       gapAhead: Gap | null;
       deltaAhead: number | null;
       gapBehind: Gap | null;
       deltaBehind: number | null;
     };
 
-const Label = ({ children }: { children: string }) => (
+type LabelProps = { children: string };
+
+const Label = ({ children }: LabelProps) => (
   <span className="text-[13px] text-dim uppercase tracking-widest leading-none">{children}</span>
 );
 
 const deltaColors = {
-  gaining: 'text-green',
-  losing: 'text-red',
-  neutral: 'text-dim',
+  [deltaState.GAINING]: 'text-green',
+  [deltaState.LOSING]: 'text-red',
+  [deltaState.NEUTRAL]: 'text-dim',
 } as const;
 
-const DriverInfoGrid = ({ car }: { car: Car }) => {
+type DriverInfoGridProps = { car: Car };
+
+const DriverInfoGrid = ({ car }: DriverInfoGridProps) => {
   const [bestHighlighted, setBestHighlighted] = useState(false);
   const [lastHighlighted, setLastHighlighted] = useState(false);
   const prevBestRef = useRef(0);
@@ -89,7 +98,9 @@ const DriverInfoGrid = ({ car }: { car: Car }) => {
   );
 };
 
-const GapDeltaRow = ({ gap, delta }: { gap: Gap | null; delta: number | null }) => {
+type GapDeltaRowProps = { gap: Gap | null; delta: number | null };
+
+const GapDeltaRow = ({ gap, delta }: GapDeltaRowProps) => {
   const [deltaHighlighted, setDeltaHighlighted] = useState(false);
   const prevDeltaRef = useRef(0);
 
@@ -130,7 +141,7 @@ const GapDeltaRow = ({ gap, delta }: { gap: Gap | null; delta: number | null }) 
 export const CarCard = (props: Props) => {
   const { car } = props;
 
-  if (props.variant === 'player') {
+  if (props.variant === carVariant.PLAYER) {
     const { gapAhead, deltaAhead, gapBehind, deltaBehind } = props;
 
     return (

@@ -1,9 +1,11 @@
+// Mounts the weather dashboard when its browser page opens.
 import { createRoot } from 'react-dom/client';
 
-import { App } from './App.js';
+import { assertRootElement } from '#common/utils/assert-root-element.ts';
+import { App } from '#weather-dashboard/App.tsx';
 
 const root = document.getElementById('root');
 
-if (!root) throw new Error('No #root element');
+assertRootElement(root);
 
 createRoot(root).render(<App />);

@@ -1,3 +1,4 @@
+// Stores reference lap repository state when telemetry is refreshed or queried.
 export type ReferencePoint = {
   trackPct: number;
   timeElapsedSinceStart: number;
@@ -13,20 +14,9 @@ export type ReferenceLap = {
 
 export const ROLLING_WINDOW_LAPS_SIZE = 5;
 
-const activeLaps = new Map<number, ReferenceLap>();
-
-const recentLaps = new Map<number, ReferenceLap[]>();
-
-export const getActiveRefLap = (carIdx: number): ReferenceLap | null =>
-  activeLaps.get(carIdx) ?? null;
-
 export type SetActiveRefLapInput = {
   carIdx: number;
   lap: ReferenceLap;
-};
-
-export const setActiveRefLap = ({ carIdx, lap }: SetActiveRefLapInput): void => {
-  activeLaps.set(carIdx, lap);
 };
 
 export type AddRecentLapInput = {
@@ -34,27 +24,41 @@ export type AddRecentLapInput = {
   lap: ReferenceLap;
 };
 
-export const addRecentLap = ({ carIdx, lap }: AddRecentLapInput): void => {
-  const rollingWindow = recentLaps.get(carIdx) ?? [];
-  rollingWindow.push(lap);
+export class ReferenceLapRepository {
+  private activeLaps = new Map<number, ReferenceLap>();
 
-  if (rollingWindow.length > ROLLING_WINDOW_LAPS_SIZE) rollingWindow.shift();
-  recentLaps.set(carIdx, rollingWindow);
-};
+  private recentLaps = new Map<number, ReferenceLap[]>();
 
-export const getRefLap = (carIdx: number): ReferenceLap | null => {
-  const rollingWindow = recentLaps.get(carIdx);
+  getActiveRefLap = (carIdx: number): ReferenceLap | null => this.activeLaps.get(carIdx) ?? null;
 
-  if (!rollingWindow || rollingWindow.length === 0) return null;
+  setActiveRefLap = ({ carIdx, lap }: SetActiveRefLapInput): void => {
+    this.activeLaps.set(carIdx, lap);
+  };
 
-  const bestLapRef = rollingWindow.reduce((lapA, lapB) =>
-    lapA.finishTime - lapA.startTime < lapB.finishTime - lapB.startTime ? lapA : lapB,
-  );
+  addRecentLap = ({ carIdx, lap }: AddRecentLapInput): void => {
+    const rollingWindow = this.recentLaps.get(carIdx) ?? [];
+    rollingWindow.push(lap);
 
-  return bestLapRef;
-};
+    if (rollingWindow.length > ROLLING_WINDOW_LAPS_SIZE) rollingWindow.shift();
+    this.recentLaps.set(carIdx, rollingWindow);
+  };
 
-export const resetReferenceLaps = (): void => {
-  activeLaps.clear();
-  recentLaps.clear();
-};
+  getRefLap = (carIdx: number): ReferenceLap | null => {
+    const rollingWindow = this.recentLaps.get(carIdx);
+
+    if (!rollingWindow || rollingWindow.length === 0) return null;
+
+    const bestLapRef = rollingWindow.reduce((lapA, lapB) =>
+      lapA.finishTime - lapA.startTime < lapB.finishTime - lapB.startTime ? lapA : lapB,
+    );
+
+    return bestLapRef;
+  };
+
+  resetReferenceLaps = (): void => {
+    this.activeLaps.clear();
+    this.recentLaps.clear();
+  };
+}
+
+export default new ReferenceLapRepository();

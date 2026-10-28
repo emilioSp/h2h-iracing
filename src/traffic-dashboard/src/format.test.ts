@@ -1,7 +1,7 @@
 // Verifies dashboard formatting during regression tests.
 import { describe, expect, it } from 'vitest';
 
-import { DEFAULT_LICENSE_COLOR, licenseColor } from './format.ts';
+import { DEFAULT_LICENSE_COLOR, licenseColor } from '#traffic-dashboard/utils/license-color.ts';
 
 describe('licenseColor', () => {
   it.each([

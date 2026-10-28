@@ -257,9 +257,22 @@ leaves `CarClassShortName` empty in many sessions. `gapSeconds` is the time for 
 
 ## Testing
 
+Run the fixture-backed Vitest suite:
+
 ```bash
 npm test
 ```
+
+### Browser end-to-end tests
+
+Install Playwright's Chromium browser once, then run the dashboard tests:
+
+```bash
+npx playwright install chromium
+npm run test:e2e
+```
+
+The command builds all six dashboards and starts one backend in development mock mode with the existing dump file.
 
 ## Documentation
 

@@ -1,30 +1,15 @@
-import { TRAFFIC_WINDOW_SECONDS } from '#common/constant.ts';
-import { getRefLap, type ReferenceLap } from '#repository/reference-lap.repository.ts';
+// Selects and orders faster cars behind the player when computing traffic warnings.
+import { TRAFFIC_WINDOW_SECONDS } from '#common/constants/traffic.ts';
+import type { ReferenceLap } from '#repository/reference-lap.repository.ts';
 import type { Driver } from '#schema/driver.schema.ts';
 import type { TrafficCar } from '#schema/traffic.schema.ts';
-import { estimatedDelta, referenceDelta } from '#server/utils/gap-delta.ts';
+import { estimatedDelta } from '#server/utils/estimated-delta.ts';
 import { guessCarClass } from '#server/utils/guess-car-class.ts';
+import { isFasterCar } from '#server/utils/is-faster-car.ts';
+import { referenceDelta } from '#server/utils/reference-delta.ts';
 import { wrapLapDelta } from '#server/utils/track-position.ts';
 
-// iRacing reports every car of a mixed AI field as one class, so CarClassID and
-// CarClassRelSpeed cannot order them. Only the estimated lap time separates a
-// real class from the spread inside one: at Mugello the faster classes are
-// 8.6-11.3 s quicker, while the GT3 cars differ by 0.6 s at most.
-export const FASTER_CLASS_MARGIN_SECONDS = 5;
-
 const MIN_LAPS_FOR_REFERENCE = 2;
-
-type IsFasterCarInput = {
-  carClassEstLapTime: number;
-  playerClassEstLapTime: number;
-};
-
-export const isFasterCar = ({
-  carClassEstLapTime,
-  playerClassEstLapTime,
-}: IsFasterCarInput): boolean =>
-  carClassEstLapTime > 0 &&
-  carClassEstLapTime <= playerClassEstLapTime - FASTER_CLASS_MARGIN_SECONDS;
 
 type GetGapSecondsInput = {
   refLap: ReferenceLap | null;
@@ -33,6 +18,7 @@ type GetGapSecondsInput = {
   carPct: number;
   lapsCompleted: number;
   isAnyOnPitRoad: boolean;
+  referenceInterval: number;
 };
 
 const getGapSeconds = ({
@@ -42,6 +28,7 @@ const getGapSeconds = ({
   carPct,
   lapsCompleted,
   isAnyOnPitRoad,
+  referenceInterval,
 }: GetGapSecondsInput): number => {
   const hasReference =
     refLap !== null &&
@@ -50,7 +37,7 @@ const getGapSeconds = ({
     !isAnyOnPitRoad;
 
   return hasReference
-    ? referenceDelta({ refLap, aheadPct: playerPct, behindPct: carPct })
+    ? referenceDelta({ refLap, aheadPct: playerPct, behindPct: carPct, referenceInterval })
     : estimatedDelta({ classLapTime, aheadPct: playerPct, behindPct: carPct });
 };
 
@@ -61,6 +48,8 @@ type FindTrafficBehindInput = {
   lapDistPct: number[];
   lapsCompleted: number[];
   onPitRoad: boolean[];
+  referenceLaps: ReadonlyMap<number, ReferenceLap>;
+  referenceInterval: number;
 };
 
 export const findTrafficBehind = ({
@@ -70,6 +59,8 @@ export const findTrafficBehind = ({
   lapDistPct,
   lapsCompleted,
   onPitRoad,
+  referenceLaps,
+  referenceInterval,
 }: FindTrafficBehindInput): TrafficCar[] => {
   const playerPct = lapDistPct[playerCarIdx];
 
@@ -99,7 +90,8 @@ export const findTrafficBehind = ({
     if (wrapLapDelta(playerPct - carPct) < 0) continue;
 
     const gapSeconds = getGapSeconds({
-      refLap: getRefLap(carIdx),
+      refLap: referenceLaps.get(carIdx) ?? null,
+      referenceInterval,
       classLapTime: driver.classEstLapTime,
       playerPct,
       carPct,

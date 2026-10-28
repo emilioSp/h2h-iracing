@@ -1,4 +1,4 @@
- # Changelog
+# Changelog
 
 Meaningful changes from v1.34.0 onward, initialized from local Git history. Tagged entries use consecutive tag comparisons, starting with `v1.33.0..v1.34.0` and ending
 with `v1.35.3..v1.35.4`. Older history is intentionally omitted.

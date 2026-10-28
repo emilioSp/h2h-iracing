@@ -1,3 +1,4 @@
+// Renders connection guidance when the compact traffic overlay has no session.
 type Props = {
   subtitle: string;
 };

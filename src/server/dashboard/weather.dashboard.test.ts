@@ -1,12 +1,15 @@
 // Verifies weather dashboard payloads during regression tests.
 import { describe, expect, it } from 'vitest';
 
+import { trackWetness } from '#common/constants/track-wetness.ts';
 import { computeWeather } from '#dashboard/weather.dashboard.ts';
-import { loadTelemetryFixture } from '#repository/irsdk.repository.ts';
+import irsdkRepository from '#repository/irsdk.repository.ts';
 
 describe('computeWeather', () => {
   it('given iRacing reports weather telemetry when the dashboard is computed then the dashboard returns converted weather data', async () => {
-    loadTelemetryFixture('fixture/telemetry-mock/weather/dry-track-with-wind.json');
+    irsdkRepository.loadTelemetryFixture(
+      'tests/fixtures/telemetry-mock/weather/dry-track-with-wind.json',
+    );
 
     const weather = await computeWeather();
 
@@ -15,7 +18,7 @@ describe('computeWeather', () => {
       trackTemperatureC: 35.0,
       relativeHumidityPct: 60.6,
       precipitationPct: 54.5,
-      trackWetness: 'Dry',
+      trackWetness: trackWetness.DRY,
       windDirectionRad: 0,
       windDirectionDeg: 0,
       windRelativeDirectionRad: Math.PI,
@@ -28,10 +31,12 @@ describe('computeWeather', () => {
   });
 
   it('given iRacing reports an unknown track wetness value when the dashboard is computed then the dashboard returns Unknown', async () => {
-    loadTelemetryFixture('fixture/telemetry-mock/weather/unknown-wetness.json');
+    irsdkRepository.loadTelemetryFixture(
+      'tests/fixtures/telemetry-mock/weather/unknown-wetness.json',
+    );
 
     const weather = await computeWeather();
 
-    expect(weather.trackWetness).toBe('Unknown');
+    expect(weather.trackWetness).toBe(trackWetness.UNKNOWN);
   });
 });

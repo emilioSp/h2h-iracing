@@ -1,3 +1,4 @@
+// Defines the traffic payload contract when validating or typing dashboard data.
 import { z } from 'zod/v4';
 
 export const trafficCarSchema = z.object({

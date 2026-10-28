@@ -1,3 +1,4 @@
+// Builds the Windows distribution when the release packaging command is run.
 import { execSync } from 'node:child_process';
 import {
   cpSync,
@@ -13,7 +14,7 @@ import { join, resolve } from 'node:path';
 
 import { Data, NtExecutable, NtExecutableResource, Resource } from 'resedit';
 
-const NODE_VERSION = '24.14.1';
+const NODE_VERSION = '26.12.1';
 
 const PROJECT_ROOT = resolve(import.meta.dirname, '..');
 
@@ -170,8 +171,6 @@ cpSync(join(PROJECT_ROOT, 'src/server'), join(DIST_DIR, 'src/server'), {
   filter: (src) => !src.endsWith('.test.ts'),
 });
 
-// The server imports #common/constant.ts at runtime, so it has to ship. Only
-// the .ts files: the React components in there belong to the dashboards.
 cpSync(join(PROJECT_ROOT, 'src/common'), join(DIST_DIR, 'src/common'), {
   recursive: true,
   filter: (src) => statSync(src).isDirectory() || src.endsWith('.ts'),

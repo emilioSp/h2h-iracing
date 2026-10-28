@@ -3,11 +3,10 @@ import { Activity, Clock, Fuel, Gauge, RotateCw } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 
+import { WelcomePage800x480 } from '#common/WelcomePage800x480.tsx';
 import type { FuelRefill } from '#schema/fuel.schema.ts';
 
-import { WelcomePage800x480 } from '../../common/WelcomePage800x480.js';
-
-import './styles.css';
+import '#fuel-dashboard/styles.css';
 
 const fmt1 = (v: number | null) => (v == null ? '--.-' : v.toFixed(1));
 
@@ -24,7 +23,9 @@ const fmtTime = (secs: number | null): string => {
 
 type FuelConsumptionColor = 'red' | 'green' | 'white';
 
-const lastLapColor = (last: number | null, median: number | null): FuelConsumptionColor => {
+type LastLapColorInput = { last: number | null; median: number | null };
+
+const lastLapColor = ({ last, median }: LastLapColorInput): FuelConsumptionColor => {
   if (last == null || median == null) return 'white';
 
   if (last > median * 1.05) return 'red';
@@ -206,7 +207,7 @@ export const App = () => {
           value={fmt2(fuel.fuelLastLap)}
           unit="L"
           icon={<Gauge size={22} />}
-          color={lastLapColor(fuel.fuelLastLap, fuel.medianFuelPerLap)}
+          color={lastLapColor({ last: fuel.fuelLastLap, median: fuel.medianFuelPerLap })}
         />
         <FuelConsumptionCell
           label="Median / Lap"

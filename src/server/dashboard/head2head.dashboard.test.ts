@@ -1,18 +1,19 @@
 // Verifies head-to-head dashboard payloads during regression tests.
 import { describe, expect, it } from 'vitest';
 
+import { gapUnit } from '#common/constants/gap-unit.ts';
 import { computeHead2Head } from '#dashboard/head2head.dashboard.ts';
-import { refreshDriverInfo } from '#repository/driver.repository.ts';
-import { loadTelemetryFixture } from '#repository/irsdk.repository.ts';
-import { refreshCurrentSessionInfo } from '#repository/session-info.repository.ts';
-import { resetInMemoryStorage } from '#server/tick.ts';
+import driverRepository from '#repository/driver.repository.ts';
+import irsdkRepository from '#repository/irsdk.repository.ts';
+import sessionInfoRepository from '#repository/session-info.repository.ts';
+import telemetryTick from '#server/tick.ts';
 
 describe('computeHead2Head', () => {
   it('given iRacing reports a race when the dashboard is computed then the dashboard returns positions, race gaps, and lap deltas', async () => {
-    loadTelemetryFixture('fixture/telemetry-mock/head2head/race.json');
-    resetInMemoryStorage();
-    await refreshDriverInfo();
-    await refreshCurrentSessionInfo();
+    irsdkRepository.loadTelemetryFixture('tests/fixtures/telemetry-mock/head2head/race.json');
+    telemetryTick.resetInMemoryStorage();
+    await driverRepository.refreshDriverInfo();
+    await sessionInfoRepository.refreshCurrentSessionInfo();
 
     const head2Head = await computeHead2Head();
 
@@ -24,18 +25,18 @@ describe('computeHead2Head', () => {
         driver: { name: 'Player', iRating: 3000 },
       },
       behind: { position: 3, driver: { name: 'Behind' } },
-      gapAhead: { value: expect.closeTo(18), unit: 'seconds' },
-      gapBehind: { value: 18, unit: 'seconds' },
+      gapAhead: { value: expect.closeTo(18), unit: gapUnit.SECONDS },
+      gapBehind: { value: 18, unit: gapUnit.SECONDS },
       deltaAhead: 0.5,
       deltaBehind: -1,
     });
   });
 
   it('given iRacing reports a practice session when the dashboard is computed then the dashboard returns lap deltas without race gaps', async () => {
-    loadTelemetryFixture('fixture/telemetry-mock/head2head/practice.json');
-    resetInMemoryStorage();
-    await refreshDriverInfo();
-    await refreshCurrentSessionInfo();
+    irsdkRepository.loadTelemetryFixture('tests/fixtures/telemetry-mock/head2head/practice.json');
+    telemetryTick.resetInMemoryStorage();
+    await driverRepository.refreshDriverInfo();
+    await sessionInfoRepository.refreshCurrentSessionInfo();
 
     const head2Head = await computeHead2Head();
 
@@ -48,10 +49,12 @@ describe('computeHead2Head', () => {
   });
 
   it('given iRacing reports no practice best times when the dashboard is computed then the dashboard returns no lap deltas', async () => {
-    loadTelemetryFixture('fixture/telemetry-mock/head2head/practice-missing-best.json');
-    resetInMemoryStorage();
-    await refreshDriverInfo();
-    await refreshCurrentSessionInfo();
+    irsdkRepository.loadTelemetryFixture(
+      'tests/fixtures/telemetry-mock/head2head/practice-missing-best.json',
+    );
+    telemetryTick.resetInMemoryStorage();
+    await driverRepository.refreshDriverInfo();
+    await sessionInfoRepository.refreshCurrentSessionInfo();
 
     const head2Head = await computeHead2Head();
 

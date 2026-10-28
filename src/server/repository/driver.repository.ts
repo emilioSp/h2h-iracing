@@ -1,52 +1,56 @@
-import { getPlayerCarIdx, getRawDrivers } from '#repository/irsdk.repository.ts';
+// Stores driver repository state when telemetry is refreshed or queried.
+import irsdkRepository from '#repository/irsdk.repository.ts';
 import type { Driver } from '#schema/driver.schema.ts';
 
-let driverMap = new Map<number, Driver>();
+export class DriverRepository {
+  private driverMap = new Map<number, Driver>();
 
-export const getFilteredRawDrivers = async () => {
-  const playerCarIdx = await getPlayerCarIdx();
+  getFilteredRawDrivers = async () => {
+    const playerCarIdx = await irsdkRepository.getPlayerCarIdx();
 
-  const rawDrivers = await getRawDrivers();
-  const player = rawDrivers.find((d) => d.CarIdx === playerCarIdx);
+    const rawDrivers = await irsdkRepository.getRawDrivers();
+    const player = rawDrivers.find((d) => d.CarIdx === playerCarIdx);
 
-  if (!player) return [];
+    if (!player) return [];
 
-  return rawDrivers.filter(
-    (d) => d.CarIdx > -1 && d.CarClassID === player.CarClassID && !d.CarIsPaceCar,
-  );
-};
+    return rawDrivers.filter(
+      (d) => d.CarIdx > -1 && d.CarClassID === player.CarClassID && !d.CarIsPaceCar,
+    );
+  };
 
-const getRacingRawDrivers = async () => {
-  const rawDrivers = await getRawDrivers();
+  private getRacingRawDrivers = async () => {
+    const rawDrivers = await irsdkRepository.getRawDrivers();
 
-  return rawDrivers.filter((d) => d.CarIdx > -1 && !d.CarIsPaceCar);
-};
+    return rawDrivers.filter((d) => d.CarIdx > -1 && !d.CarIsPaceCar);
+  };
 
-export const refreshDriverInfo = async () => {
-  driverMap = new Map<number, Driver>();
+  refreshDriverInfo = async () => {
+    this.driverMap = new Map<number, Driver>();
 
-  for (const driver of await getRacingRawDrivers()) {
-    driverMap.set(driver.CarIdx, {
-      carIdx: driver.CarIdx,
-      name: driver.UserName,
-      carNumber: driver.CarNumber,
-      car: driver.CarScreenNameShort,
-      iRating: Number(driver.IRating ?? 0),
-      license: String(driver.LicString ?? ''),
-      classEstLapTime: driver.CarClassEstLapTime,
-    });
-  }
+    for (const driver of await this.getRacingRawDrivers()) {
+      this.driverMap.set(driver.CarIdx, {
+        carIdx: driver.CarIdx,
+        name: driver.UserName,
+        carNumber: driver.CarNumber,
+        car: driver.CarScreenNameShort,
+        iRating: Number(driver.IRating ?? 0),
+        license: String(driver.LicString ?? ''),
+        classEstLapTime: driver.CarClassEstLapTime,
+      });
+    }
 
-  return driverMap;
-};
+    return this.driverMap;
+  };
 
-export const getDriverInfo = (carIdx: number): Driver | null => driverMap.get(carIdx) ?? null;
+  getDriverInfo = (carIdx: number): Driver | null => this.driverMap.get(carIdx) ?? null;
 
-export const getClassEstLapTime = (carIdx: number): number =>
-  driverMap.get(carIdx)?.classEstLapTime ?? 0;
+  getClassEstLapTime = (carIdx: number): number => this.driverMap.get(carIdx)?.classEstLapTime ?? 0;
 
-export const getPlayerClassCarIdx = async (): Promise<number[]> =>
-  (await getFilteredRawDrivers()).map((d) => d.CarIdx);
+  getPlayerClassCarIdx = async (): Promise<number[]> =>
+    (await this.getFilteredRawDrivers()).map((d) => d.CarIdx);
 
-export const getCarsIdx = async (): Promise<number[]> =>
-  (await getRacingRawDrivers()).map((d) => d.CarIdx);
+  getCarsIdx = async (): Promise<number[]> =>
+    (await this.getRacingRawDrivers()).map((d) => d.CarIdx);
+}
+
+export default new DriverRepository();

@@ -1,84 +1,46 @@
 // Computes the fuel payload for callers that have checked the repository connection.
-import { getCarsIdx } from '#repository/driver.repository.ts';
-import {
-  getLastLapFuelDelta,
-  getMedianFuelPerLap,
-  updateFuelTracking,
-} from '#repository/fuel.repository.ts';
-import {
-  getFuelLevel,
-  getLapDistPct,
-  getLapsCompleted,
-  getLastLapTime,
-  getOverallPositions,
-  getPlayerCarIdx,
-  getSessionFlags,
-  getSessionTimeRemain,
-} from '#repository/irsdk.repository.ts';
-import { getMedianLapTime, updateLapTimeTracking } from '#repository/lap.repository.ts';
-import { isCheckeredFlag, isRaceSession } from '#repository/session-info.repository.ts';
+import driverRepository from '#repository/driver.repository.ts';
+import fuelRepository from '#repository/fuel.repository.ts';
+import irsdkRepository from '#repository/irsdk.repository.ts';
+import lapRepository from '#repository/lap.repository.ts';
+import sessionInfoRepository from '#repository/session-info.repository.ts';
 import type { FuelRefill } from '#schema/fuel.schema.ts';
-import { computeEstimatedTimeRemaining, computeFuelRefill } from '#service/fuel.service.ts';
+import { computeLapsRemaining } from '#server/utils/compute-laps-remaining.ts';
+import { isCheckeredFlag } from '#server/utils/is-checkered-flag.ts';
+import { computeEstimatedTimeRemaining } from '#service/estimated-time-remaining.service.ts';
+import { computeFuelRefill } from '#service/fuel.service.ts';
 
 const getLeaderCarIdx = async (): Promise<number> => {
-  const overallPositions = await getOverallPositions();
+  const overallPositions = await irsdkRepository.getOverallPositions();
 
   return overallPositions.indexOf(1);
 };
 
-export type ComputeLapsRemainingInput = {
-  estimatedTimeRemaining: number | null;
-  playerMedianLapTime: number | null;
-  playerLapDistPct: number;
-};
-
-export const computeLapsRemaining = ({
-  estimatedTimeRemaining,
-  playerMedianLapTime,
-  playerLapDistPct,
-}: ComputeLapsRemainingInput): number | null => {
-  // Let lapDistance = estimatedTimeRemaining / playerMedianLapTime
-  // Correct lapsRemaining = ceil(playerLapDistPct + lapDistance) - playerLapDistPct
-  // LapsRemaining is intentionally fractional: it's the lap-distance the player still has to cover, used directly by the fuel calculation.
-  if (estimatedTimeRemaining === null || playerMedianLapTime === null) {
-    return null;
-  }
-
-  const projectedTotalLaps = playerLapDistPct + estimatedTimeRemaining / playerMedianLapTime;
-
-  // Round to the 8th decimal digit to remove precision error
-  const finalLap = Math.ceil(projectedTotalLaps - 1e-8);
-  const rawRemaining = finalLap - playerLapDistPct;
-
-  return rawRemaining;
-
-  // if needed for aesthetics
-  // return Math.round(rawRemaining * 1e8) / 1e8;
-};
-
 export const computeFuel = async (): Promise<FuelRefill> => {
-  const playerCarIdx = await getPlayerCarIdx();
+  const playerCarIdx = await irsdkRepository.getPlayerCarIdx();
 
   const [carsIdx, lapsCompleted, fuelLevel, lastLapTimes, lapDistPct, timeRemaining, flags] =
     await Promise.all([
-      getCarsIdx(),
-      getLapsCompleted(),
-      getFuelLevel(),
-      getLastLapTime(),
-      getLapDistPct(),
-      getSessionTimeRemain(),
-      getSessionFlags(),
+      driverRepository.getCarsIdx(),
+      irsdkRepository.getLapsCompleted(),
+      irsdkRepository.getFuelLevel(),
+      irsdkRepository.getLastLapTime(),
+      irsdkRepository.getLapDistPct(),
+      irsdkRepository.getSessionTimeRemain(),
+      irsdkRepository.getSessionFlags(),
     ]);
 
   const playerLastLapNumber = lapsCompleted[playerCarIdx];
-  updateFuelTracking({ fuelLevel, playerLapCompleted: playerLastLapNumber });
-  updateLapTimeTracking({ carsIdx, lapsCompleted, lastLapTimes });
+  fuelRepository.updateFuelTracking({ fuelLevel, playerLapCompleted: playerLastLapNumber });
+  lapRepository.updateLapTimeTracking({ carsIdx, lapsCompleted, lastLapTimes });
 
-  const leaderCarIdx = isRaceSession() ? await getLeaderCarIdx() : playerCarIdx;
+  const leaderCarIdx = sessionInfoRepository.isRaceSession()
+    ? await getLeaderCarIdx()
+    : playerCarIdx;
 
-  const leaderMedianLapTime = getMedianLapTime(leaderCarIdx);
-  const playerMedianLapTime = getMedianLapTime(playerCarIdx);
-  const medianFuelPerLap = getMedianFuelPerLap();
+  const leaderMedianLapTime = lapRepository.getMedianLapTime(leaderCarIdx);
+  const playerMedianLapTime = lapRepository.getMedianLapTime(playerCarIdx);
+  const medianFuelPerLap = fuelRepository.getMedianFuelPerLap();
 
   const estimatedTimeRemaining = computeEstimatedTimeRemaining({
     timeRemaining,
@@ -94,7 +56,7 @@ export const computeFuel = async (): Promise<FuelRefill> => {
     playerLapDistPct: lapDistPct[playerCarIdx],
   });
 
-  const fuelLastLap = getLastLapFuelDelta();
+  const fuelLastLap = fuelRepository.getLastLapFuelDelta();
 
   return {
     ...computeFuelRefill({ fuelLevel, medianFuelPerLap, lapsRemaining }),

@@ -1,13 +1,12 @@
 // Renders the traffic overlay when its dashboard page is open.
 import { useEffect, useState } from 'react';
 
-import { TRAFFIC_WINDOW_SECONDS } from '#common/constant.ts';
+import { TRAFFIC_WINDOW_SECONDS } from '#common/constants/traffic.ts';
+import { WelcomePage500x200 } from '#common/WelcomePage500x200.tsx';
 import type { Traffic, TrafficCar } from '#schema/traffic.schema.ts';
+import { licenseColor } from '#traffic-dashboard/utils/license-color.ts';
 
-import { WelcomePage500x200 } from '../../common/WelcomePage500x200.js';
-import { licenseColor } from './format.ts';
-
-import './styles.css';
+import '#traffic-dashboard/styles.css';
 
 const OVERLAY_HEIGHT = 200;
 
@@ -16,7 +15,9 @@ const ROW_HEIGHT = 28;
 const topOf = (gapSeconds: number): number =>
   (gapSeconds / TRAFFIC_WINDOW_SECONDS) * (OVERLAY_HEIGHT - ROW_HEIGHT);
 
-const LicenseBadge = ({ car }: { car: TrafficCar }) => {
+type LicenseBadgeProps = { car: TrafficCar };
+
+const LicenseBadge = ({ car }: LicenseBadgeProps) => {
   const color = licenseColor(car.license);
 
   return (

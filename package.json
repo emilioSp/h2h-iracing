@@ -14,7 +14,14 @@
     "#schema/*": "./src/schema/*",
     "#common/*": "./src/common/*",
     "#config": "./src/server/config.ts",
-    "#router/*": "./src/server/router/*"
+    "#router/*": "./src/server/router/*",
+    "#h2h-dashboard/*": "./src/h2h-dashboard/src/*",
+    "#weather-dashboard/*": "./src/weather-dashboard/src/*",
+    "#car-dashboard/*": "./src/car-dashboard/src/*",
+    "#fuel-dashboard/*": "./src/fuel-dashboard/src/*",
+    "#spotter-dashboard/*": "./src/spotter-dashboard/src/*",
+    "#traffic-dashboard/*": "./src/traffic-dashboard/src/*",
+    "#fixtures/*": "./tests/fixtures/*"
   },
   "scripts": {
     "server:start:dev": "npm run h2h:build & npm run weather:build & npm run car:build & npm run fuel:build & npm run spotter:build & npm run traffic:build & DATA_MODE=mock node --env-file=.env --watch src/server/server.ts",
@@ -37,8 +44,9 @@
     "traffic:start:dev": "vite --config vite.traffic.config.ts",
     "traffic:build": "vite build --config vite.traffic.config.ts",
     "test": "vitest run --coverage --config vitest.config.ts",
+    "test:e2e": "playwright test",
     "build": "tsc",
-    "check": "npm run build && npm run fmt && npm run lint && npm run test",
+    "check": "npm run build && npm run fmt && npm run lint && npm run test && npm run test:e2e",
     "fmt": "oxfmt",
     "lint": "oxlint --fix",
     "package": "node scripts/package.ts",
@@ -60,6 +68,7 @@
   "devDependencies": {
     "@11ty/eleventy": "3.1.7",
     "@biomejs/biome": "2.5.15",
+    "@playwright/test": "1.64.1",
     "@tailwindcss/cli": "4.3.3",
     "@tailwindcss/vite": "4.3.3",
     "@types/node": "26.6.5",

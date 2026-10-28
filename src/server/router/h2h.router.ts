@@ -1,7 +1,9 @@
+// Opens the h2h SSE stream when an overlay subscribes.
 import type { Context } from 'hono';
 import { streamSSE } from 'hono/streaming';
 
-import { addClient, dashboardType, removeClient } from '#server/broadcaster.ts';
+import { dashboardType } from '#common/constants/dashboard-type.ts';
+import broadcaster from '#server/broadcaster.ts';
 
 export const h2hRouter = (c: Context) =>
   streamSSE(c, async (stream) => {
@@ -10,7 +12,7 @@ export const h2hRouter = (c: Context) =>
       close: () => stream.close(),
     };
 
-    addClient({ event: dashboardType.H2H, client });
+    broadcaster.addClient({ event: dashboardType.H2H, client });
     await new Promise<void>((resolve) => stream.onAbort(resolve));
-    removeClient({ event: dashboardType.H2H, client });
+    broadcaster.removeClient({ event: dashboardType.H2H, client });
   });

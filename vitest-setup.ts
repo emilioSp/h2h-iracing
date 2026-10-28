@@ -1,7 +1,8 @@
+// Resets the test SDK after each test so scenarios never reuse a previous connection.
 import { afterEach } from 'vitest';
 
-import { resetIRSDK } from '#repository/irsdk.repository.ts';
+import irsdkRepository from '#repository/irsdk.repository.ts';
 
 afterEach(() => {
-  resetIRSDK();
+  irsdkRepository.resetIRSDK();
 });

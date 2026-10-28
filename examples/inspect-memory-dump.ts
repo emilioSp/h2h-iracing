@@ -43,7 +43,9 @@ const renderTable = ({ columns, rows, highlightRow }: RenderTableInput): string 
   return `<div class="scroll"><table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>`;
 };
 
-const section = ({ title, body }: { title: string; body: string }): string =>
+type SectionInput = { title: string; body: string };
+
+const section = ({ title, body }: SectionInput): string =>
   `<section><h2>${escapeHtml(title)}</h2>${body}</section>`;
 
 const printValues = (values: unknown[]): string => {
@@ -180,7 +182,9 @@ const carTable = renderTable({
 
 // ---------------------------------------------------------- telemetry vars
 
-const varConstantByKey = new Map(Object.entries(VARS).map(([constant, key]) => [key, constant]));
+const varConstantByKey = new Map<string, string>(
+  Object.entries(VARS).map(([constant, key]) => [key, constant]),
+);
 
 const varNames = ir.getVarHeadersNamesList().sort();
 

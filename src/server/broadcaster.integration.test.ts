@@ -2,28 +2,24 @@
 import { VARS } from '@emiliosp/node-iracing-sdk';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { dashboardType } from '#common/constants/dashboard-type.ts';
 import { computeCarTelemetry } from '#dashboard/car-telemetry.dashboard.ts';
 import { computeFuel } from '#dashboard/fuel.dashboard.ts';
 import { computeHead2Head } from '#dashboard/head2head.dashboard.ts';
 import { computeSpotter } from '#dashboard/spotter.dashboard.ts';
 import { computeTraffic } from '#dashboard/traffic.dashboard.ts';
 import { computeWeather } from '#dashboard/weather.dashboard.ts';
-import { getFuelSamples, updateFuelTracking } from '#repository/fuel.repository.ts';
+import fuelRepository from '#repository/fuel.repository.ts';
 import { IRSDKMock } from '#repository/irsdk-mock.ts';
-import { loadTelemetryFixture } from '#repository/irsdk.repository.ts';
-import { getMedianLapTime, updateLapTimeTracking } from '#repository/lap.repository.ts';
-import {
-  addRecentLap,
-  getActiveRefLap,
-  getRefLap,
-  setActiveRefLap,
-} from '#repository/reference-lap.repository.ts';
-import { addClient, dashboardType, type SSEClient, stopBroadcasting } from '#server/broadcaster.ts';
+import irsdkRepository from '#repository/irsdk.repository.ts';
+import lapRepository from '#repository/lap.repository.ts';
+import referenceLapRepository from '#repository/reference-lap.repository.ts';
+import broadcaster, { type SSEClient } from '#server/broadcaster.ts';
 
-vi.mock('#config', () => ({ default: { POLL_INTERVAL_MS: 100 } }));
+vi.mock('#config', () => ({ config: { POLL_INTERVAL_MS: 100 } }));
 
 afterEach(() => {
-  stopBroadcasting();
+  broadcaster.stopBroadcasting();
   vi.restoreAllMocks();
   vi.useRealTimers();
 });
@@ -31,14 +27,14 @@ afterEach(() => {
 describe('repository availability through broadcasting', () => {
   it('given a usable player with one fuel sample and no neighbouring cars when all dashboards are subscribed then every stream sends its normal computed payload', async () => {
     vi.useFakeTimers();
-    loadTelemetryFixture('fixture/telemetry-mock/fuel/one-lap-sample.json');
+    irsdkRepository.loadTelemetryFixture('tests/fixtures/telemetry-mock/fuel/one-lap-sample.json');
 
     const clients = Object.values(dashboardType).map((event) => ({
       event,
       client: { write: vi.fn<SSEClient['write']>(), close: vi.fn<SSEClient['close']>() },
     }));
 
-    for (const subscription of clients) addClient(subscription);
+    for (const subscription of clients) broadcaster.addClient(subscription);
 
     await vi.advanceTimersByTimeAsync(100);
 
@@ -73,14 +69,16 @@ describe('repository availability through broadcasting', () => {
 
   it('given a connected SDK without a player and with stale weather when all dashboards are subscribed then every stream closes without publishing any payload', async () => {
     vi.useFakeTimers();
-    loadTelemetryFixture('fixture/telemetry-mock/connection/negative-player.json');
+    irsdkRepository.loadTelemetryFixture(
+      'tests/fixtures/telemetry-mock/connection/negative-player.json',
+    );
 
     const clients = Object.values(dashboardType).map((event) => ({
       event,
       client: { write: vi.fn<SSEClient['write']>(), close: vi.fn<SSEClient['close']>() },
     }));
 
-    for (const subscription of clients) addClient(subscription);
+    for (const subscription of clients) broadcaster.addClient(subscription);
 
     await vi.advanceTimersByTimeAsync(300);
 
@@ -94,21 +92,21 @@ describe('repository availability through broadcasting', () => {
 
   it('given all streams have sent data and fuel, lap-time, and reference histories exist when the connected SDK loses its player then all original streams close without more data and histories are cleared', async () => {
     vi.useFakeTimers();
-    loadTelemetryFixture('fixture/telemetry-mock/fuel/one-lap-sample.json');
+    irsdkRepository.loadTelemetryFixture('tests/fixtures/telemetry-mock/fuel/one-lap-sample.json');
 
     const clients = Object.values(dashboardType).map((event) => ({
       event,
       client: { write: vi.fn<SSEClient['write']>(), close: vi.fn<SSEClient['close']>() },
     }));
 
-    for (const subscription of clients) addClient(subscription);
+    for (const subscription of clients) broadcaster.addClient(subscription);
     await vi.advanceTimersByTimeAsync(100);
 
     for (const { client } of clients) expect(client.write).toHaveBeenCalledOnce();
 
     // The first broadcast recorded lap 0 at 50 L and its 90-second lap time.
-    updateFuelTracking({ fuelLevel: 48, playerLapCompleted: 1 });
-    updateLapTimeTracking({ carsIdx: [0], lapsCompleted: [1], lastLapTimes: [92] });
+    fuelRepository.updateFuelTracking({ fuelLevel: 48, playerLapCompleted: 1 });
+    lapRepository.updateLapTimeTracking({ carsIdx: [0], lapsCompleted: [1], lastLapTimes: [92] });
 
     const referenceLap = {
       startTime: 0,
@@ -118,15 +116,15 @@ describe('repository availability through broadcasting', () => {
       refPoints: new Map([[0, { trackPct: 0, timeElapsedSinceStart: 0 }]]),
     };
 
-    setActiveRefLap({ carIdx: 0, lap: referenceLap });
-    addRecentLap({ carIdx: 0, lap: referenceLap });
-    expect(getFuelSamples()).toEqual([
+    referenceLapRepository.setActiveRefLap({ carIdx: 0, lap: referenceLap });
+    referenceLapRepository.addRecentLap({ carIdx: 0, lap: referenceLap });
+    expect(fuelRepository.getFuelSamples()).toEqual([
       { lapNumber: 0, fuelAtLapStart: 50 },
       { lapNumber: 1, fuelAtLapStart: 48 },
     ]);
-    expect(getMedianLapTime(0)).toBe(91);
-    expect(getActiveRefLap(0)).not.toBeNull();
-    expect(getRefLap(0)).not.toBeNull();
+    expect(lapRepository.getMedianLapTime(0)).toBe(91);
+    expect(referenceLapRepository.getActiveRefLap(0)).not.toBeNull();
+    expect(referenceLapRepository.getRefLap(0)).not.toBeNull();
 
     const get = IRSDKMock.prototype.get;
     vi.spyOn(IRSDKMock.prototype, 'get').mockImplementation(function (this: IRSDKMock, key) {
@@ -139,23 +137,23 @@ describe('repository availability through broadcasting', () => {
       expect(client.write).toHaveBeenCalledOnce();
     }
 
-    expect(getFuelSamples()).toEqual([]);
-    expect(getMedianLapTime(0)).toBeNull();
-    expect(getActiveRefLap(0)).toBeNull();
-    expect(getRefLap(0)).toBeNull();
+    expect(fuelRepository.getFuelSamples()).toEqual([]);
+    expect(lapRepository.getMedianLapTime(0)).toBeNull();
+    expect(referenceLapRepository.getActiveRefLap(0)).toBeNull();
+    expect(referenceLapRepository.getRefLap(0)).toBeNull();
     expect(vi.getTimerCount()).toBe(0);
   });
 
   it('given a usable connected SDK when refreshing telemetry reveals player loss then every stream closes before any dashboard payload is published', async () => {
     vi.useFakeTimers();
-    loadTelemetryFixture('fixture/telemetry-mock/fuel/one-lap-sample.json');
+    irsdkRepository.loadTelemetryFixture('tests/fixtures/telemetry-mock/fuel/one-lap-sample.json');
 
     const clients = Object.values(dashboardType).map((event) => ({
       event,
       client: { write: vi.fn<SSEClient['write']>(), close: vi.fn<SSEClient['close']>() },
     }));
 
-    for (const subscription of clients) addClient(subscription);
+    for (const subscription of clients) broadcaster.addClient(subscription);
     vi.spyOn(IRSDKMock.prototype, 'refreshSharedMemory').mockImplementation(() => {
       const get = IRSDKMock.prototype.get;
       vi.spyOn(IRSDKMock.prototype, 'get').mockImplementation(function (this: IRSDKMock, key) {

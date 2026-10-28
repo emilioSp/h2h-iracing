@@ -1,7 +1,8 @@
 // Verifies fuel calculations during regression tests.
 import { describe, expect, it } from 'vitest';
 
-import { computeEstimatedTimeRemaining, computeFuelRefill } from '#service/fuel.service.ts';
+import { computeEstimatedTimeRemaining } from '#service/estimated-time-remaining.service.ts';
+import { computeFuelRefill } from '#service/fuel.service.ts';
 
 describe('computeEstimatedTimeRemaining', () => {
   const noFlag = 0;

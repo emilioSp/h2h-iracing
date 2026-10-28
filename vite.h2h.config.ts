@@ -1,3 +1,4 @@
+// Configures the h2h overlay when Vite serves or builds browser assets.
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';

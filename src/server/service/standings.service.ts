@@ -1,27 +1,24 @@
-import { getPlayerClassCarIdx } from '#repository/driver.repository.ts';
-import {
-  getClassPositions,
-  getLapDistPct,
-  getLapsCompleted,
-} from '#repository/irsdk.repository.ts';
-import { getSessionLapsCompleted } from '#repository/session-info.repository.ts';
+// Orders cars by race distance when the head-to-head overlay requests standings.
+import driverRepository from '#repository/driver.repository.ts';
+import irsdkRepository from '#repository/irsdk.repository.ts';
+import sessionInfoRepository from '#repository/session-info.repository.ts';
 
 export type Standing = { pos: number; carIdx: number };
 
 export const getRaceStandings = async (): Promise<Standing[]> => {
-  const carIdxs = await getPlayerClassCarIdx();
-  const lapDistPct = await getLapDistPct();
-  const lapsCompleted = await getLapsCompleted();
+  const carIdxs = await driverRepository.getPlayerClassCarIdx();
+  const lapDistPct = await irsdkRepository.getLapDistPct();
+  const lapsCompleted = await irsdkRepository.getLapsCompleted();
 
   const standings: Standing[] = carIdxs.map((carIdx) => ({ pos: 0, carIdx }));
 
   standings.sort((a, b) => {
     const distA =
-      (lapsCompleted[a.carIdx] ?? getSessionLapsCompleted(a.carIdx) ?? 0) +
+      (lapsCompleted[a.carIdx] ?? sessionInfoRepository.getSessionLapsCompleted(a.carIdx) ?? 0) +
       (lapDistPct[a.carIdx] ?? 0);
 
     const distB =
-      (lapsCompleted[b.carIdx] ?? getSessionLapsCompleted(b.carIdx) ?? 0) +
+      (lapsCompleted[b.carIdx] ?? sessionInfoRepository.getSessionLapsCompleted(b.carIdx) ?? 0) +
       (lapDistPct[b.carIdx] ?? 0);
 
     return distB - distA;
@@ -32,14 +29,4 @@ export const getRaceStandings = async (): Promise<Standing[]> => {
   });
 
   return standings;
-};
-
-export const getSessionStandings = async (): Promise<Standing[]> => {
-  const carIdxs = await getPlayerClassCarIdx();
-  const classPositions = await getClassPositions();
-
-  return carIdxs
-    .filter((carIdx) => classPositions[carIdx] > 0)
-    .map((carIdx) => ({ pos: classPositions[carIdx], carIdx }))
-    .sort((a, b) => a.pos - b.pos);
 };

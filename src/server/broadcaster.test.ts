@@ -6,8 +6,10 @@ vi.mock('#dashboard/head2head.dashboard.ts', () => ({
 }));
 
 vi.mock('#server/tick.ts', () => ({
-  tick: vi.fn<typeof tickService.tick>(),
-  resetInMemoryStorage: vi.fn<typeof tickService.resetInMemoryStorage>(),
+  default: {
+    tick: vi.fn<typeof tickService.tick>(),
+    resetInMemoryStorage: vi.fn<typeof tickService.resetInMemoryStorage>(),
+  },
 }));
 
 vi.mock('#dashboard/weather.dashboard.ts', () => ({
@@ -19,21 +21,17 @@ vi.mock('#dashboard/car-telemetry.dashboard.ts', () => ({
 }));
 
 vi.mock('#config', () => ({
-  default: { POLL_INTERVAL_MS: 100 },
+  config: { POLL_INTERVAL_MS: 100 },
 }));
 
+import { dashboardType } from '#common/constants/dashboard-type.ts';
 import * as carService from '#dashboard/car-telemetry.dashboard.ts';
 import * as h2hService from '#dashboard/head2head.dashboard.ts';
 import * as weatherService from '#dashboard/weather.dashboard.ts';
-import { loadTelemetryFixture } from '#repository/irsdk.repository.ts';
-import {
-  addClient,
-  dashboardType,
-  removeClient,
-  type SSEClient,
-  stopBroadcasting,
-} from '#server/broadcaster.ts';
-import * as tickService from '#server/tick.ts';
+import { broadcastWeather } from '#fixtures/broadcast-weather.ts';
+import irsdkRepository from '#repository/irsdk.repository.ts';
+import broadcaster, { type SSEClient } from '#server/broadcaster.ts';
+import tickService from '#server/tick.ts';
 
 const createClient = () => ({
   write: vi.fn<SSEClient['write']>().mockResolvedValue(undefined),
@@ -42,43 +40,33 @@ const createClient = () => ({
 
 beforeEach(() => {
   vi.useFakeTimers();
-  // JUSTIFICATION: The broadcaster only serializes this partial weather double; it never reads its fields.
-  vi.mocked(weatherService.computeWeather).mockResolvedValue({
-    airTemp: 20,
-  } as never);
-  // JUSTIFICATION: The broadcaster only serializes this partial telemetry double; it never reads its fields.
-  vi.mocked(carService.computeCarTelemetry).mockResolvedValue({
-    abs: 0,
-  } as never);
-  // JUSTIFICATION: The broadcaster only serializes this partial head-to-head double; it never reads its fields.
-  vi.mocked(h2hService.computeHead2Head).mockResolvedValue({
-    player: {},
-  } as never);
 });
 
 afterEach(() => {
-  stopBroadcasting();
+  broadcaster.stopBroadcasting();
   vi.useRealTimers();
   vi.clearAllMocks();
 });
 
 describe('addClient', () => {
   it('given connected iRacing when a weather client connects then weather data is sent after the poll interval', async () => {
-    loadTelemetryFixture('fixture/telemetry-mock/connection/connected.json');
+    irsdkRepository.loadTelemetryFixture('tests/fixtures/telemetry-mock/connection/connected.json');
+    vi.mocked(weatherService.computeWeather).mockResolvedValue(broadcastWeather);
     const client = createClient();
-    addClient({ event: dashboardType.WEATHER, client });
+    broadcaster.addClient({ event: dashboardType.WEATHER, client });
 
     await vi.advanceTimersByTimeAsync(100);
 
-    expect(client.write).toHaveBeenCalledWith(JSON.stringify({ data: { airTemp: 20 } }));
+    expect(client.write).toHaveBeenCalledWith(JSON.stringify({ data: broadcastWeather }));
   });
 
   it('given connected iRacing when two weather clients connect then weather data is sent to both clients', async () => {
-    loadTelemetryFixture('fixture/telemetry-mock/connection/connected.json');
+    irsdkRepository.loadTelemetryFixture('tests/fixtures/telemetry-mock/connection/connected.json');
+    vi.mocked(weatherService.computeWeather).mockResolvedValue(broadcastWeather);
     const firstClient = createClient();
     const secondClient = createClient();
-    addClient({ event: dashboardType.WEATHER, client: firstClient });
-    addClient({ event: dashboardType.WEATHER, client: secondClient });
+    broadcaster.addClient({ event: dashboardType.WEATHER, client: firstClient });
+    broadcaster.addClient({ event: dashboardType.WEATHER, client: secondClient });
 
     await vi.advanceTimersByTimeAsync(100);
 
@@ -87,9 +75,10 @@ describe('addClient', () => {
   });
 
   it('given connected iRacing when only a weather client connects then other dashboards are not computed', async () => {
-    loadTelemetryFixture('fixture/telemetry-mock/connection/connected.json');
+    irsdkRepository.loadTelemetryFixture('tests/fixtures/telemetry-mock/connection/connected.json');
+    vi.mocked(weatherService.computeWeather).mockResolvedValue(broadcastWeather);
     const client = createClient();
-    addClient({ event: dashboardType.WEATHER, client });
+    broadcaster.addClient({ event: dashboardType.WEATHER, client });
 
     await vi.advanceTimersByTimeAsync(100);
 
@@ -99,13 +88,14 @@ describe('addClient', () => {
   });
 
   it('given polling has stopped when a client connects then polling restarts', async () => {
-    loadTelemetryFixture('fixture/telemetry-mock/connection/connected.json');
+    irsdkRepository.loadTelemetryFixture('tests/fixtures/telemetry-mock/connection/connected.json');
+    vi.mocked(weatherService.computeWeather).mockResolvedValue(broadcastWeather);
     const firstClient = createClient();
-    addClient({ event: dashboardType.WEATHER, client: firstClient });
-    removeClient({ event: dashboardType.WEATHER, client: firstClient });
+    broadcaster.addClient({ event: dashboardType.WEATHER, client: firstClient });
+    broadcaster.removeClient({ event: dashboardType.WEATHER, client: firstClient });
 
     const secondClient = createClient();
-    addClient({ event: dashboardType.WEATHER, client: secondClient });
+    broadcaster.addClient({ event: dashboardType.WEATHER, client: secondClient });
 
     await vi.advanceTimersByTimeAsync(100);
 
@@ -115,10 +105,11 @@ describe('addClient', () => {
 
 describe('removeClient', () => {
   it('given one connected client when that client disconnects then polling stops', async () => {
-    loadTelemetryFixture('fixture/telemetry-mock/connection/connected.json');
+    irsdkRepository.loadTelemetryFixture('tests/fixtures/telemetry-mock/connection/connected.json');
+    vi.mocked(weatherService.computeWeather).mockResolvedValue(broadcastWeather);
     const client = createClient();
-    addClient({ event: dashboardType.WEATHER, client });
-    removeClient({ event: dashboardType.WEATHER, client });
+    broadcaster.addClient({ event: dashboardType.WEATHER, client });
+    broadcaster.removeClient({ event: dashboardType.WEATHER, client });
 
     await vi.advanceTimersByTimeAsync(100);
 
@@ -126,13 +117,14 @@ describe('removeClient', () => {
   });
 
   it('given two connected clients when one disconnects then polling continues only for the remaining client', async () => {
-    loadTelemetryFixture('fixture/telemetry-mock/connection/connected.json');
+    irsdkRepository.loadTelemetryFixture('tests/fixtures/telemetry-mock/connection/connected.json');
+    vi.mocked(weatherService.computeWeather).mockResolvedValue(broadcastWeather);
     const removedClient = createClient();
     const remainingClient = createClient();
-    addClient({ event: dashboardType.WEATHER, client: removedClient });
-    addClient({ event: dashboardType.WEATHER, client: remainingClient });
+    broadcaster.addClient({ event: dashboardType.WEATHER, client: removedClient });
+    broadcaster.addClient({ event: dashboardType.WEATHER, client: remainingClient });
 
-    removeClient({ event: dashboardType.WEATHER, client: removedClient });
+    broadcaster.removeClient({ event: dashboardType.WEATHER, client: removedClient });
     await vi.advanceTimersByTimeAsync(100);
 
     expect(remainingClient.write).toHaveBeenCalledOnce();
@@ -142,9 +134,12 @@ describe('removeClient', () => {
 
 describe('broadcast tick', () => {
   it('given a connected client when iRacing disconnects then polling stops and in-memory state resets', async () => {
-    loadTelemetryFixture('fixture/telemetry-mock/connection/disconnected.json');
+    irsdkRepository.loadTelemetryFixture(
+      'tests/fixtures/telemetry-mock/connection/disconnected.json',
+    );
+    vi.mocked(weatherService.computeWeather).mockResolvedValue(broadcastWeather);
     const client = createClient();
-    addClient({ event: dashboardType.WEATHER, client });
+    broadcaster.addClient({ event: dashboardType.WEATHER, client });
 
     await vi.advanceTimersByTimeAsync(200);
 
@@ -153,7 +148,8 @@ describe('broadcast tick', () => {
   });
 
   it('given two connected clients when one client write fails then that client is removed and healthy clients continue', async () => {
-    loadTelemetryFixture('fixture/telemetry-mock/connection/connected.json');
+    irsdkRepository.loadTelemetryFixture('tests/fixtures/telemetry-mock/connection/connected.json');
+    vi.mocked(weatherService.computeWeather).mockResolvedValue(broadcastWeather);
 
     const failingClient = {
       write: vi.fn<SSEClient['write']>().mockRejectedValue(new Error('stream closed')),
@@ -161,8 +157,8 @@ describe('broadcast tick', () => {
     };
 
     const healthyClient = createClient();
-    addClient({ event: dashboardType.WEATHER, client: failingClient });
-    addClient({ event: dashboardType.WEATHER, client: healthyClient });
+    broadcaster.addClient({ event: dashboardType.WEATHER, client: failingClient });
+    broadcaster.addClient({ event: dashboardType.WEATHER, client: healthyClient });
 
     await vi.advanceTimersByTimeAsync(200);
 
@@ -171,11 +167,14 @@ describe('broadcast tick', () => {
   });
 
   it('given clients on multiple dashboards when iRacing disconnects then all dashboard clients close', async () => {
-    loadTelemetryFixture('fixture/telemetry-mock/connection/disconnected.json');
+    irsdkRepository.loadTelemetryFixture(
+      'tests/fixtures/telemetry-mock/connection/disconnected.json',
+    );
+    vi.mocked(weatherService.computeWeather).mockResolvedValue(broadcastWeather);
     const weatherClient = createClient();
     const carClient = createClient();
-    addClient({ event: dashboardType.WEATHER, client: weatherClient });
-    addClient({ event: dashboardType.CAR, client: carClient });
+    broadcaster.addClient({ event: dashboardType.WEATHER, client: weatherClient });
+    broadcaster.addClient({ event: dashboardType.CAR, client: carClient });
 
     await vi.advanceTimersByTimeAsync(100);
 
@@ -188,10 +187,10 @@ describe('stopBroadcasting', () => {
   it('given registered clients when broadcasting stops then every client closes and in-memory state resets', () => {
     const weatherClient = createClient();
     const h2hClient = createClient();
-    addClient({ event: dashboardType.WEATHER, client: weatherClient });
-    addClient({ event: dashboardType.H2H, client: h2hClient });
+    broadcaster.addClient({ event: dashboardType.WEATHER, client: weatherClient });
+    broadcaster.addClient({ event: dashboardType.H2H, client: h2hClient });
 
-    stopBroadcasting();
+    broadcaster.stopBroadcasting();
 
     expect(weatherClient.close).toHaveBeenCalledOnce();
     expect(h2hClient.close).toHaveBeenCalledOnce();

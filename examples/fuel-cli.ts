@@ -1,12 +1,13 @@
 // Displays fuel calculations and samples when running the fuel monitoring CLI.
 import { setTimeout } from 'node:timers/promises';
 
-import config from '#config';
+import { dataMode } from '#common/constants/data-mode.ts';
+import { config } from '#config';
 import { computeFuel } from '#dashboard/fuel.dashboard.ts';
-import { type FuelSample, getFuelSamples } from '#repository/fuel.repository.ts';
-import { isIRacingConnected } from '#repository/irsdk.repository.ts';
+import fuelRepository, { type FuelSample } from '#repository/fuel.repository.ts';
+import irsdkRepository from '#repository/irsdk.repository.ts';
 import type { FuelRefill } from '#schema/fuel.schema.ts';
-import { tick } from '#server/tick.ts';
+import telemetryTick from '#server/tick.ts';
 
 const formatTime = (s: number): string => {
   if (s <= 0 || !Number.isFinite(s)) return '--:--.---';
@@ -21,14 +22,22 @@ const W = 64;
 
 const LINE = '═'.repeat(W);
 
-const pad = (s: string, len = W) => s.padEnd(len);
+type RowInput = {
+  label: string;
+  value: string;
+};
 
-const row = (label: string, value: string) =>
-  console.log(`║    ${pad(`${label}${value}`, W - 2)}║`);
+const row = ({ label, value }: RowInput) =>
+  console.log(`║    ${`${label}${value}`.padEnd(W - 2)}║`);
 
-export const formatFuel = (n: number | null): string => (n === null ? '--' : `${n.toFixed(2)} L`);
+const formatFuel = (n: number | null): string => (n === null ? '--' : `${n.toFixed(2)} L`);
 
-export const printFuel = (fuel: FuelRefill | null, samples: readonly FuelSample[]): void => {
+type PrintFuelInput = {
+  fuel: FuelRefill | null;
+  samples: readonly FuelSample[];
+};
+
+const printFuel = ({ fuel, samples }: PrintFuelInput): void => {
   console.clear();
 
   if (!fuel) {
@@ -38,29 +47,59 @@ export const printFuel = (fuel: FuelRefill | null, samples: readonly FuelSample[
   }
 
   console.log(`╔${LINE}╗`);
-  console.log(`║  ${pad('FUEL CALCULATOR', W)}║`);
+  console.log(`║  ${'FUEL CALCULATOR'.padEnd(W)}║`);
   console.log(`╠${LINE}╣`);
-  row('Fuel Level    : ', formatFuel(fuel.fuelLevel));
-  row('Last Lap      : ', formatFuel(fuel.fuelLastLap));
-  row('Median/Lap    : ', formatFuel(fuel.medianFuelPerLap));
-  row('Laps Remaining: ', fuel.lapsRemaining === null ? '--' : String(fuel.lapsRemaining));
-  row('Refill (±0)   : ', formatFuel(fuel.fuelRefillNoMarginLap));
-  row('Refill (+0.5) : ', formatFuel(fuel.fuelRefillForHalfMarginLap));
-  row('Refill (+1)   : ', formatFuel(fuel.fuelRefillFor1MarginLap));
-  row('Time Remaining: ', fuel.timeRemaining === null ? '--' : formatTime(fuel.timeRemaining));
-  row(
-    'Race End ETA  : ',
-    fuel.estimatedTimeRemaining === null ? '--' : formatTime(fuel.estimatedTimeRemaining),
-  );
-  row('Last Lap #    : ', String(fuel.lastLapNumber));
+  row({
+    label: 'Fuel Level    : ',
+    value: formatFuel(fuel.fuelLevel),
+  });
+  row({
+    label: 'Last Lap      : ',
+    value: formatFuel(fuel.fuelLastLap),
+  });
+  row({
+    label: 'Median/Lap    : ',
+    value: formatFuel(fuel.medianFuelPerLap),
+  });
+  row({
+    label: 'Laps Remaining: ',
+    value: fuel.lapsRemaining === null ? '--' : String(fuel.lapsRemaining),
+  });
+  row({
+    label: 'Refill (±0)   : ',
+    value: formatFuel(fuel.fuelRefillNoMarginLap),
+  });
+  row({
+    label: 'Refill (+0.5) : ',
+    value: formatFuel(fuel.fuelRefillForHalfMarginLap),
+  });
+  row({
+    label: 'Refill (+1)   : ',
+    value: formatFuel(fuel.fuelRefillFor1MarginLap),
+  });
+  row({
+    label: 'Time Remaining: ',
+    value: fuel.timeRemaining === null ? '--' : formatTime(fuel.timeRemaining),
+  });
+  row({
+    label: 'Race End ETA  : ',
+    value: fuel.estimatedTimeRemaining === null ? '--' : formatTime(fuel.estimatedTimeRemaining),
+  });
+  row({
+    label: 'Last Lap #    : ',
+    value: String(fuel.lastLapNumber),
+  });
   console.log(`╠${LINE}╣`);
-  console.log(`║  ${pad(`INTERNAL STATE — fuel samples (window=${samples.length})`, W)}║`);
+  console.log(`║  ${`INTERNAL STATE — fuel samples (window=${samples.length})`.padEnd(W)}║`);
   console.log(`╠${LINE}╣`);
 
   if (samples.length === 0) {
-    console.log(`║    ${pad('no samples yet', W - 2)}║`);
+    console.log(`║    ${'no samples yet'.padEnd(W - 2)}║`);
   } else {
-    row('Lap  Fuel at Lap Start  Delta', '');
+    row({
+      label: 'Lap  Fuel at Lap Start  Delta',
+      value: '',
+    });
 
     for (let i = 0; i < samples.length; i++) {
       const s = samples[i];
@@ -69,7 +108,10 @@ export const printFuel = (fuel: FuelRefill | null, samples: readonly FuelSample[
       const delta =
         prev !== undefined ? ` (${(prev.fuelAtLapStart - s.fuelAtLapStart).toFixed(2)})` : '';
 
-      row(`  ${String(s.lapNumber).padStart(3)}  `, `${s.fuelAtLapStart.toFixed(2)} L${delta}`);
+      row({
+        label: `  ${String(s.lapNumber).padStart(3)}  `,
+        value: `${s.fuelAtLapStart.toFixed(2)} L${delta}`,
+      });
     }
   }
 
@@ -77,17 +119,19 @@ export const printFuel = (fuel: FuelRefill | null, samples: readonly FuelSample[
 };
 
 while (true) {
-  await tick();
+  await telemetryTick.tick();
 
-  if (!(await isIRacingConnected())) {
+  if (!(await irsdkRepository.isIRacingConnected())) {
     continue;
   }
 
   const fuel = await computeFuel();
-  const samples = getFuelSamples();
+  const samples = fuelRepository.getFuelSamples();
+  printFuel({
+    fuel: fuel,
+    samples: samples,
+  });
 
-  printFuel(fuel, samples);
-
-  if (config.DATA_MODE === 'mock') break;
+  if (config.DATA_MODE === dataMode.MOCK) break;
   await setTimeout(config.POLL_INTERVAL_MS);
 }
