@@ -6,7 +6,8 @@ on:
 
 jobs:
   CI:
-    runs-on: ubuntu-22.04
+    # Use macOS to share screenshot baselines with local development and keep setup simple.
+    runs-on: macos-26
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
