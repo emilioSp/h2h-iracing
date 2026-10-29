@@ -246,11 +246,11 @@ dump contains a usable scenario at all — the report's Cars table lists every c
 ## Verify
 
 ```bash
-npm run lint && npm run build && npm run test
+npm run lint && npm run typecheck && npm run test
 ```
 
-`tsc` writes type errors to **stdout**, and the Stop hook only inspects stderr — a hook that reports "no output" can be hiding a broken build. Read the `npm run build`
-output yourself.
+`tsc` writes type errors to **stdout**, and the Stop hook only inspects stderr — a hook that reports "no output" can be hiding a broken build. Read the
+`npm run typecheck` output yourself.
 
 Then run it for real and look at it:
 
