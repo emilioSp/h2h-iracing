@@ -1,6 +1,7 @@
 // Stores session info repository state when telemetry is refreshed or queried.
 import type { Session } from '@emiliosp/node-iracing-sdk';
 
+import { sessionType } from '#common/constants/session-type.ts';
 import irsdkRepository from '#repository/irsdk.repository.ts';
 
 type SessionInfo = {
@@ -45,11 +46,8 @@ export class SessionInfoRepository {
 
   getSessionType = () => this.sessionInfo.sessionType;
 
-  isRaceSession = (): boolean => {
-    const sessionType = this.getSessionType();
-
-    return sessionType.toLowerCase() === 'race';
-  };
+  isRaceSession = (): boolean =>
+    this.getSessionType().toLowerCase() === sessionType.RACE.toLowerCase();
 }
 
 export default new SessionInfoRepository();

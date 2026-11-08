@@ -2,18 +2,18 @@
   "version": "1.0.0",
   "specDirectory": ".specs",
   "builder": {
+    "required": true,
     "model": "openai-codex/gpt-6.1-sol",
-    "thinking": "high",
-    "timeoutMinutes": 120
+    "thinking": "high"
   },
   "verifier": {
+    "required": false,
     "model": "openai-codex/gpt-6-astra",
-    "thinking": "medium",
-    "timeoutMinutes": 120
+    "thinking": "medium"
   },
   "simplifier": {
+    "required": false,
     "model": "openai-codex/gpt-6.1-sol",
-    "thinking": "high",
-    "timeoutMinutes": 120
+    "thinking": "high"
   }
 }

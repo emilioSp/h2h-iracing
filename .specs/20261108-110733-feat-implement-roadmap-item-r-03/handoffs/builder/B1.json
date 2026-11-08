@@ -1,0 +1,39 @@
+{
+  "status": "done",
+  "summary": "Traffic now returns empty cars only during the current Lone Qualify session, including without results. Open Qualify and same-stream recovery remain unchanged. Added four broadcast integration regressions and updated docs/traffic-detection.md.",
+  "acceptanceCriteria": [
+    {
+      "id": "AC1",
+      "probe": "Passed ./node_modules/.bin/vitest run tests/traffic-qualifying-acceptance.test.ts --config vitest.config.ts using a temporary Chromium probe with the real Hono traffic router, broadcaster, built overlay, and existing faster-and-same-class-behind telemetry fixture. With SessionType Lone Qualify, asserted repeated {data:{cars:[]}} writes, an empty #root (no row or welcome screen), and an open connection. Permanent coverage: first test in src/server/traffic-qualifying.integration.test.ts, also passed in npm run check.",
+      "probeStatus": "passed"
+    },
+    {
+      "id": "AC2",
+      "probe": "In the same executed Chromium acceptance probe, after displaying Open Qualify traffic, changed the current session to Lone Qualify with ResultsPositions:null. Asserted the next rendered state was blank and the latest SSE write was exactly {data:{cars:[]}}. Permanent null-results transition regression in src/server/traffic-qualifying.integration.test.ts passed in npm run check.",
+      "probeStatus": "passed"
+    },
+    {
+      "id": "AC3",
+      "probe": "In the executed Chromium acceptance probe, displayed car 1 in Open Qualify, then changed only SessionType to Lone Qualify. Asserted #root became empty, the latest SSE write contained empty cars, only one subscription existed, and its close method was never called. Permanent Open Qualify to Lone Qualify transition regression passed in npm run check.",
+      "probeStatus": "passed"
+    },
+    {
+      "id": "AC4",
+      "probe": "In the executed Chromium acceptance probe, selected Open Qualify with the existing fixture's GT3 player and faster LMP2 behind. Asserted payload contained carIdx 1 with a gap rounding to 0.1 seconds and visible Aussie Greg Hill and LMP2 text. The Open Qualify broadcast assertions and existing traffic browser screenshot regression also passed in npm run check.",
+      "probeStatus": "passed"
+    },
+    {
+      "id": "AC5",
+      "probe": "In the executed Chromium acceptance probe, changed from blank Lone Qualify to Open Qualify and asserted the LMP2 row became visible. The entire sequence retained exactly one native EventSource/SSE subscription with no close calls. Permanent Lone Qualify to Open Qualify recovery regression passed in npm run check.",
+      "probeStatus": "passed"
+    }
+  ],
+  "notes": [
+    "npm run check passed: typecheck, formatting, lint, 194 Vitest tests across 26 files, coverage thresholds, and all six Playwright browser/screenshot tests. git diff --check passed.",
+    "Traffic reads the current SDK session directly. The existing session-info repository retains its previous session type when ResultsPositions is null; using that cached value would miss AC2. Shared repository behavior was left unchanged to keep this fix within scope.",
+    "The temporary Chromium acceptance probe was removed after execution. Unrelated TECH_STACK.md formatting from npm run check was restored. Existing .pi/maestro.json changes and frozen spec/workflow files were preserved."
+  ],
+  "escalations": [],
+  "version": "1.0.0",
+  "specId": "20261108-110733-feat-implement-roadmap-item-r-03"
+}

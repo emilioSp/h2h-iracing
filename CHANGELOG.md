@@ -6,6 +6,11 @@ with `v1.35.4..v1.36.0`. Older history is intentionally omitted.
 The initial unreleased code review covered `v1.35.4..b45c684`; those changes were released as v1.36.0, whose GitHub release was published on 2026-10-28. Tags identify
 version boundaries here, not verified package publication or release dates.
 
+## 1.36.1
+
+The traffic overlay now stays hidden during Lone Qualify, even when faster cars are nearby or session results are not yet available. Traffic warnings resume when leaving
+Lone Qualify if eligible cars are behind. Open Qualify, practice, and race retain their existing behavior.
+
 ## v1.36.0
 
 1. Replaced the active Biome formatting/lint commands with Oxfmt and Oxlint, including `oxlint-anti-slop` rules and Given/When/Then test-title checks. Added
