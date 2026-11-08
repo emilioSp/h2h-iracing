@@ -1,21 +1,23 @@
 # Changelog
 
 Meaningful changes from v1.34.0 onward, initialized from local Git history. Tagged entries use consecutive tag comparisons, starting with `v1.33.0..v1.34.0` and ending
-with `v1.35.3..v1.35.4`. Older history is intentionally omitted.
+with `v1.35.4..v1.36.0`. Older history is intentionally omitted.
 
-The initial unreleased code review covered `v1.35.4..b45c684`; constitution documentation and later changes are recorded below. Tags identify version boundaries here, not
-verified package publication or release dates. Remote releases were not checked.
+The initial unreleased code review covered `v1.35.4..b45c684`; those changes were released as v1.36.0, whose GitHub release was published on 2026-10-28. Tags identify
+version boundaries here, not verified package publication or release dates.
 
-## Unreleased
+## v1.36.0
 
 1. Replaced the active Biome formatting/lint commands with Oxfmt and Oxlint, including `oxlint-anti-slop` rules and Given/When/Then test-title checks. Added
    `npm run check` and switched CI to that combined command. Biome remains a declared dependency.
 2. Updated application and development dependencies, including `@hono/node-server` from 1.19.13 to 2.1.5, TypeScript from 6.0.2 to 7.0.2, and Vitest/V8 coverage from
-   4.1.2 to 5.0.5. The selected development and packaged Node.js runtime remains 24.14.1. See `git diff v1.35.4..b45c684 -- package.json` for the full version changes.
+   4.1.2 to 5.0.5. See `git diff v1.35.4..v1.36.0 -- package.json` for the full version changes.
 3. Consolidated per-dashboard SSE broadcasting into shared dispatch.
 4. Added standalone mission, tech stack, roadmap, changelog, and accepted architecture decision records.
 5. Standardized missing-player behavior across all six overlays. A disconnected simulator or a missing or negative player index now closes all SSE streams and clears
    tracking history. Evidence: [PR #79](https://github.com/emilioSp/h2h-iracing/pull/79), merged as `80592d0`.
+6. Standardized code conventions with dashboard and fixture import aliases, and added Playwright browser regression tests with screenshot baselines for all six overlays.
+   `npm run check` now also runs those browser tests, and the selected Node.js runtime moved from 24.14.1 to 26.12.1. Evidence: `f0b0757` in `v1.35.4..v1.36.0`.
 
 ## v1.35.4
 

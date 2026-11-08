@@ -57,9 +57,10 @@ clients are connected and stop it when no subscribers remain or iRacing is disco
 One loop refreshes telemetry for the connected overlays, and only subscribed dashboards are computed for broadcast. The update interval is configured through
 `POLL_INTERVAL_MS`; work is scheduled with `setTimeout` after a broadcast completes, so it is not a fixed delivery-rate guarantee.
 
-SSE provides a server-to-browser data stream. Disconnects close existing streams, and the browser dashboards contain reconnection handling. Missing-player behavior is
-still inconsistent across dashboards; [R-02](ROADMAP.md#r-02-standardize-sse-behavior-when-no-player-car-is-available) records the planned policy work without selecting a
-new policy.
+SSE provides a server-to-browser data stream. Disconnects close existing streams, and the browser dashboards contain reconnection handling. Missing-player behavior is now
+consistent across all six dashboards: [R-02](ROADMAP.md#r-02-standardize-sse-behavior-when-no-player-car-is-available), completed in
+[PR #79](https://github.com/emilioSp/h2h-iracing/pull/79), closes every stream and clears tracking history when the simulator disconnects or the player index is missing
+or negative.
 
 ### Evidence
 
