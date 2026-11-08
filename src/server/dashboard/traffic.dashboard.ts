@@ -1,4 +1,5 @@
 // Computes the traffic payload for callers that have checked the repository connection.
+import { sessionType } from '#common/constants/session-type.ts';
 import driverRepository from '#repository/driver.repository.ts';
 import irsdkRepository from '#repository/irsdk.repository.ts';
 import referenceLapRepository from '#repository/reference-lap.repository.ts';
@@ -10,6 +11,10 @@ import { findTrafficBehind } from '#service/traffic.service.ts';
 const NO_TRAFFIC: Traffic = { cars: [] };
 
 export const computeTraffic = async (): Promise<Traffic> => {
+  const session = await irsdkRepository.getCurrentSessionInfo();
+
+  if (session?.SessionType === sessionType.LONE_QUALIFY) return NO_TRAFFIC;
+
   const playerCarIdx = await irsdkRepository.getPlayerCarIdx();
 
   const onPitRoad = await irsdkRepository.getOnPitRoad();

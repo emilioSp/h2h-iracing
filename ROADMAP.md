@@ -7,7 +7,7 @@ requirements before implementation. Later ideas have no promised order or date.
 | ---- | -------------------------------------------------------------------------------------------------------------------------- | --------- | ---------------------------------------------------------------------------------------------------------------- |
 | R-01 | [Existing overlay baseline](#r-01-existing-overlay-baseline)                                                               | Completed | Six overlays provide head-to-head, weather, car telemetry, fuel, spotter, and multiclass traffic information.    |
 | R-02 | [Standardize SSE behavior when no player car is available](#r-02-standardize-sse-behavior-when-no-player-car-is-available) | Completed | All six overlays share one connection policy, with integration coverage for shutdown and tracking cleanup.       |
-| R-03 | [Hide traffic during qualifying](#r-03-hide-traffic-during-qualifying)                                                     | Next      | Keep the traffic dashboard hidden during qualifying sessions.                                                    |
+| R-03 | [Hide traffic during Lone Qualify](#r-03-hide-traffic-during-lone-qualify)                                                 | Completed | Keep traffic hidden during Lone Qualify.      |
 | R-04 | [Show player counts by category](#r-04-show-player-counts-by-category)                                                     | Later     | Compute and display the total number of session players, broken down by category.                                |
 | R-05 | [Create a dedicated H2H UI without SimHub](#r-05-create-a-dedicated-h2h-ui-without-simhub)                                 | Now       | Discover the standalone UI design and produce an ADR plus a technical design document with implementation tasks. |
 | R-06 | [Show average iRating by category](#r-06-show-average-irating-by-category)                                                 | Later     | Compute and display average session player iRating for each category.                                            |
@@ -36,6 +36,16 @@ missing-player gaps and recovery on the same stream are not supported scenarios.
 Implemented in [PR #79](https://github.com/emilioSp/h2h-iracing/pull/79), merged as `80592d0`. Integration tests cover player loss, loss revealed during telemetry
 refresh, shutdown of all six streams without invalid payloads, tracking cleanup, and normal data delivery. Final verification passed `npm run check` with 189 tests.
 
+### R-03: Hide traffic during Lone Qualify
+
+The traffic overlay stays hidden during Lone Qualify, even when faster cars are nearby or session results are not yet available. Traffic warnings resume when leaving Lone
+Qualify if eligible cars are behind. Open Qualify, practice, and race retain their existing behavior.
+
+#### Evidence
+
+Implemented in the [traffic dashboard](src/server/dashboard/traffic.dashboard.ts). [Dashboard tests](src/server/dashboard/traffic.dashboard.test.ts) cover suppression,
+missing results, and transitions into and out of Lone Qualify.
+
 ## Now
 
 ### R-05: Create a dedicated H2H UI without SimHub
@@ -57,19 +67,6 @@ and approved by the owner.
 #### Completed when
 
 The owner has reviewed and approved the ADR entry and technical design document, including its task list. UI implementation is separate work after discovery.
-
-## Next
-
-### R-03: Hide traffic during qualifying
-
-#### Objective
-
-Fix the traffic dashboard so it stays hidden during a qualifying session. The [current traffic dashboard](src/server/dashboard/traffic.dashboard.ts) has no
-qualifying-session check. Existing traffic detection is described in [docs/traffic-detection.md](docs/traffic-detection.md); that document does not yet specify this fix.
-
-#### Completed when
-
-The traffic dashboard is hidden during qualifying, including when nearby faster cars would otherwise produce traffic rows.
 
 ## Later
 
