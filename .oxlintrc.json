@@ -24,16 +24,6 @@
     "vendor/**"
   ],
   "rules": {
-    "vitest/valid-title": [
-      "error",
-      {
-        "ignoreTypeOfDescribeName": true,
-        "mustMatch": {
-          "it": "^given .+ when .+ then .+$",
-          "test": "^given .+ when .+ then .+$"
-        }
-      }
-    ],
     "prefer-const": "error",
     "no-else-return": ["error", { "allowElseIf": false }],
     "typescript/consistent-type-definitions": ["error", "type"],
@@ -54,6 +44,7 @@
     "anti-slop/no-unsafe-dictionary-values": "error",
     "anti-slop/no-narrowing-after-widening": "error",
     "anti-slop/require-logical-blank-lines": "error",
-    "anti-slop/require-type-assertion-justification": "error"
+    "anti-slop/require-type-assertion-justification": "error",
+    "anti-slop/tests-require-given-when-then": "error"
   }
 }

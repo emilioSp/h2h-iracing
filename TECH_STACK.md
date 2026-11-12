@@ -5,17 +5,17 @@ work in the [roadmap](ROADMAP.md) is not yet implemented.
 
 ## Application
 
-| Technology                   | Role                                                                                                                         | Evidence                                                                                       |
-| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| Node.js                      | Runs the local backend and TypeScript source with native type stripping. | [.nvmrc](.nvmrc), [package scripts](package.json), [packager](scripts/package.ts)              |
-| TypeScript                   | Application language with strict checking, ESM, and erasable TypeScript syntax.                                              | [compiler configuration](tsconfig.json), [package manifest](package.json)                      |
-| `@emiliosp/node-iracing-sdk` | Reads live iRacing telemetry on Windows; loads binary dumps for development without the simulator.                           | [SDK repository](src/server/repository/irsdk.repository.ts)                                    |
-| Hono and `@hono/node-server` | Serve local HTTP routes, built dashboard pages, and SSE connections.                                                         | [server](src/server/server.ts), [H2H router](src/server/router/h2h.router.ts)                  |
-| Server-Sent Events (SSE)     | Push dashboard payloads from the backend to subscribed browser overlays.                                                     | [broadcaster](src/server/broadcaster.ts)                                                       |
-| React and React DOM          | Render the browser dashboards and update them from SSE messages.                                                             | [H2H application](src/h2h-dashboard/src/App.tsx), [entrypoint](src/h2h-dashboard/src/main.tsx) |
-| Tailwind CSS                 | Styles dashboards and the project website.                                                                                   | [Vite configuration](vite.h2h.config.ts), [site stylesheet](site/_css/site.css)                |
-| Lucide React                 | Supplies dashboard icons.                                                                                                    | [car dashboard](src/car-dashboard/src/App.tsx)                                                 |
-| Zod                          | Defines dashboard schemas and validates telemetry test fixtures.                                                             | [schemas](src/schema), [fixture mock](src/server/repository/irsdk-mock.ts)                     |
+| Technology                   | Role                                                                                               | Evidence                                                                                       |
+| ---------------------------- | -------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| Node.js                      | Runs the local backend and TypeScript source with native type stripping.                           | [.nvmrc](.nvmrc), [package scripts](package.json), [packager](scripts/package.ts)              |
+| TypeScript                   | Application language with strict checking, ESM, and erasable TypeScript syntax.                    | [compiler configuration](tsconfig.json), [package manifest](package.json)                      |
+| `@emiliosp/node-iracing-sdk` | Reads live iRacing telemetry on Windows; loads binary dumps for development without the simulator. | [SDK repository](src/server/repository/irsdk.repository.ts)                                    |
+| Hono and `@hono/node-server` | Serve local HTTP routes, built dashboard pages, and SSE connections.                               | [server](src/server/server.ts), [H2H router](src/server/router/h2h.router.ts)                  |
+| Server-Sent Events (SSE)     | Push dashboard payloads from the backend to subscribed browser overlays.                           | [broadcaster](src/server/broadcaster.ts)                                                       |
+| React and React DOM          | Render the browser dashboards and update them from SSE messages.                                   | [H2H application](src/h2h-dashboard/src/App.tsx), [entrypoint](src/h2h-dashboard/src/main.tsx) |
+| Tailwind CSS                 | Styles dashboards and the project website.                                                         | [Vite configuration](vite.h2h.config.ts), [site stylesheet](site/_css/site.css)                |
+| Lucide React                 | Supplies dashboard icons.                                                                          | [car dashboard](src/car-dashboard/src/App.tsx)                                                 |
+| Zod                          | Defines dashboard schemas and validates telemetry test fixtures.                                   | [schemas](src/schema), [fixture mock](src/server/repository/irsdk-mock.ts)                     |
 
 The server currently binds to `127.0.0.1`. SimHub and OBS are existing hosts for the browser overlays, not backend dependencies. See [architecture](docs/architecture.md)
 and [usage](README.md).
