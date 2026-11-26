@@ -5,19 +5,16 @@ on:
     branches: [main]
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
-permissions:
-  contents: write
-  pages: write
-  id-token: write
-
 jobs:
-  deploy:
+  build:
+    permissions:
+      contents: read
+      pages: read
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: '24'
           cache: 'npm'
@@ -36,6 +33,14 @@ jobs:
         with:
           path: './_site'
 
+  deploy-gh-pages:
+    # Separating the jobs avoids the Pages artifact lookup race after upload.
+    needs: build
+    permissions:
+      pages: write
+      id-token: write
+    runs-on: ubuntu-24.04
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
