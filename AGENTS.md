@@ -9,6 +9,16 @@ telemetry via `@emiliosp/node-iracing-sdk`.
 
 see docs/architecture.md
 
+## Project constitution
+
+- At session start, read `CHANGELOG.md`, `docs/roadmap/README.md`, and `docs/adr/README.md`. Read individual records when relevant.
+- When work covers an existing roadmap item, update the item and its index. Keep IDs stable, link the relevant spec when available, and record completion only after owner
+  acceptance. Roadmap items are not permission to implement.
+- Record significant architectural decisions in `docs/adr/` and keep the index in sync. Keep one decision per file and link superseded records to their replacements.
+- Roadmap items use only `Objective` and `Completed When`. ADRs use only `Context`, `Decision`, optional `Alternatives considered`, and `Consequences`. Keep status in
+  front matter.
+- Use bullet points in ADRs where they improve readability.
+
 ## Feature Workflow
 
 At the end of every feature — before committing — run this checklist to identify which docs need creating or updating.

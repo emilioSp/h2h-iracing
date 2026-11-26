@@ -11,5 +11,5 @@ estimated or unavailable.
 
 ## Basis
 
-The owner confirmed this purpose, scope, and driver responsibility during constitution initialization. See [README.md](README.md) for the implemented dashboards and
+The owner confirmed this purpose, scope, and driver responsibility during constitution initialization. See [README.md](../README.md) for the implemented dashboards and
 usage.

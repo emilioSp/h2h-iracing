@@ -281,3 +281,11 @@ The command builds all six dashboards and starts one backend in development mock
 - [How fuel is computed](docs/fuel-computation.md)
 - [How the spotter overlap is computed](docs/spotter-overlap.md)
 - [How traffic is detected](docs/traffic-detection.md)
+
+## Project constitution
+
+- [Mission](docs/MISSION.md): project purpose and scope.
+- [Tech stack](docs/TECH_STACK.md): application technologies and development tools.
+- [Roadmap](docs/roadmap/README.md): planned and completed outcomes.
+- [Changelog](CHANGELOG.md): meaningful changes by version.
+- [Architecture decision records](docs/adr/README.md): significant architectural choices and their consequences.
