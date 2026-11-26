@@ -1,51 +1,38 @@
-{# ─── HERO ──────────────────────────────────────────────── #}
-<section class="pw-hero">
-  <div class="pw-wrap">
-
-    <div class="pw-session-strip">
-      <div class="pw-session-tag">Real-time race overlays</div>
-      <div class="pw-session-mid">
-        For iRacing<em>·</em>Six overlays<em>·</em>Drop into <b>SimHub</b> or <b>OBS</b><em>·</em>Open source
+<section class="bg-[radial-gradient(ellipse_at_50%_25%,#263c31_0%,transparent_64%)] pt-8 pb-10 sm:pt-10 sm:pb-13">
+  <div class="page-width grid justify-items-center gap-7 text-center">
+    <div>
+      <p class="mb-3.5 text-sm font-bold text-accent">Your iRacing companion</p>
+      <h1 class="text-[clamp(2.25rem,4.6vw,4rem)]">
+        Know the <em class="text-accent not-italic">gap.</em>
+        <span class="block">Catch the car ahead.</span>
+      </h1>
+      <p class="mx-auto mt-4.5 max-w-[56ch] text-muted">
+        Six real-time overlays for iRacing. Head-to-head gaps and deltas.
+        Fuel maths in the cockpit. Weather, car telemetry and a spotter,
+        always at a glance.
+      </p>
+      <div class="mt-6 grid justify-items-center gap-3 sm:grid-flow-col sm:items-center sm:justify-center sm:gap-4.5">
+        <a href="{{ site.releaseUrl }}" target="_blank" rel="noopener noreferrer" class="primary-button">
+          Download <span aria-hidden="true">↗</span>
+        </a>
+        <p class="text-sm font-medium text-muted">iRacing · SimHub &amp; OBS · Open source</p>
       </div>
     </div>
 
-    <div class="pw-hero-grid">
-      <div>
-        <div class="pw-hero-kicker">Your iRacing companion</div>
-        <h1 class="pw-h1">
-          Know the <em>gap.</em>
-          <span>Catch the car ahead.</span>
-        </h1>
-        <p class="text-sm tracking-[0.12em] uppercase text-dim max-w-xl leading-loose mt-8">
-          Six real-time overlays for iRacing. Head-to-head gaps and deltas.
-          Fuel maths in the cockpit. Weather, car telemetry and a spotter,
-          always at a glance.
-        </p>
-        <div class="pw-hero-cta-row">
-          <a
-            href="{{ site.releaseUrl }}"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="pw-cta-btn"
-          >
-            Download
-          </a>
-          <div class="pw-hero-cta-meta">
-            iRacing<br />
-            <b>SimHub &amp; OBS</b>
-          </div>
-        </div>
+    <figure class="w-full max-w-[750px] overflow-hidden rounded-2xl border border-rule bg-panel">
+      <div class="grid grid-cols-2 border-b border-rule px-3 py-2 font-mono text-[0.8125rem] text-muted">
+        <span class="text-left">H2H / iRacing</span>
+        <span class="text-right">Six overlays</span>
       </div>
-
-      <figure class="pw-hero-shot">
-        <img
-          src="{{ '/images/H2H_welcome_page.jpg' | url }}"
-          alt="H2H welcome page — iRacing overlays"
-        />
-      </figure>
-    </div>
-
+      <img
+        class="aspect-video w-full object-cover sm:aspect-[2.4]"
+        src="{{ '/images/H2H_welcome_page.jpg' | url }}"
+        alt="H2H welcome page — iRacing overlays"
+      />
+      <figcaption class="grid grid-cols-2 border-t border-rule px-3 py-2 font-mono text-[0.8125rem] text-muted">
+        <span class="text-left">Welcome page</span>
+        <span class="text-right">SimHub / OBS</span>
+      </figcaption>
+    </figure>
   </div>
 </section>
-
-<div class="pw-stripe" aria-hidden="true"></div>

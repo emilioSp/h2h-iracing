@@ -1,25 +1,24 @@
 {# ─── VIDEO ──────────────────────────────────────────────── #}
-<section class="pw-section" id="video">
-  <div class="pw-wrap">
+<section class="page-section" id="video">
+  <div class="page-width">
+    <header class="mb-6">
+      <p class="mb-2 text-sm font-semibold text-accent">In action</p>
+      <h2 class="section-title">See the gap, close the gap.</h2>
+    </header>
 
-    <div class="pw-section-head" data-reveal>
-      <div class="pw-secnum">/ 03<b>In action</b></div>
-      <h2 class="pw-sectitle">See the gap, <b>close the gap.</b></h2>
-    </div>
-
-    <div class="pw-video-wrap" data-reveal>
-      <div></div>
+    <div class="mx-auto max-w-3xl">
       <div
         id="yt-container"
-        class="pw-video"
+        class="relative aspect-video rounded-2xl border border-rule bg-panel"
         data-video-id="{{ site.youtubeId }}"
       >
         <img
-          id="yt-poster"
+          class="size-full rounded-2xl object-cover"
+          loading="lazy"
           src="https://img.youtube.com/vi/{{ site.youtubeId }}/maxresdefault.jpg"
           alt="H2H iRacing demo"
         />
-        <button class="pw-video-play" aria-label="Play demo">
+        <button type="button" class="absolute top-1/2 left-1/2 grid size-14 -translate-1/2 cursor-pointer place-items-center rounded-full bg-accent text-accent-ink hover:brightness-110" aria-label="Play demo">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
             <path d="M8 5v14l11-7z" />
           </svg>

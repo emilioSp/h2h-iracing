@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-pt-28 motion-safe:scroll-smooth sm:scroll-pt-24">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,20 +11,23 @@
     <meta property="og:description" content="{{ site.description }}" />
     <meta property="og:image" content="{{ '/images/H2H_dashboard.jpg' | url }}" />
 
+    <link rel="icon" href="{{ '/assets/favicon.ico' | url }}" type="image/x-icon" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;700&family=Geist+Mono:wght@400;500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400..800&display=swap"
       rel="stylesheet"
     />
 
     <link rel="stylesheet" href="{{ '/assets/css/style.css' | url }}" />
   </head>
-  <body class="bg-bg text-fg font-sans antialiased">
-    <header class="pw-nav" id="top">
-      <div class="pw-wrap pw-nav-inner">
-        <a href="#top" class="pw-mark">H2H · iRacing</a>
-        <nav class="pw-nav-links">
+  <body id="top" class="bg-bg font-sans text-[1.0625rem]/[1.65] text-fg has-[dialog[open]]:overflow-hidden">
+    <header class="sticky top-0 z-10 border-b border-rule bg-bg">
+      <div class="page-width grid items-center gap-2 py-2 sm:grid-cols-[1fr_auto] sm:gap-6">
+        <a href="#top" class="w-fit" aria-label="H2H iRacing home">
+          <img class="size-14 sm:size-16" src="{{ '/assets/h2h-logo-square.svg' | url }}" width="64" height="64" alt="" />
+        </a>
+        <nav aria-label="Site" class="grid w-fit grid-flow-col gap-4 text-[0.9375rem] font-medium text-muted sm:gap-6 sm:text-base [&_a:hover]:text-fg">
           <a href="#overlays">Overlays</a>
           <a href="#video">Demo</a>
           <a href="#install">Install</a>

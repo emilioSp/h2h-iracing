@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="site/assets/h2h-logo-square.svg" alt="H2H logo" width="120" />
+</p>
+
 # h2h-iracing
 
 A collection of dashboards / overlays for iRacing, built with Node.js and TypeScript. Ready to be used within SimHub or OBS for live streaming.

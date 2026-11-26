@@ -1,123 +1,114 @@
-{# ─── OVERLAYS ──────────────────────────────────────────── #}
-<section class="pw-section" id="overlays">
-  <div class="pw-wrap">
+{% set overlays = [
+  {
+    name: 'Head-to-Head',
+    image: 'H2H_dashboard.jpg',
+    description: 'See the cars ahead and behind in real time — live gap, delta per lap, and lap times for every battle.'
+  },
+  {
+    name: 'Fuel',
+    image: 'H2H_fuel_dashboard.png',
+    description: 'Know exactly how much fuel to add at your next pit stop, with zero, half and full-lap safety margins.'
+  },
+  {
+    name: 'Weather',
+    image: 'H2H_weather_dashboard.jpg',
+    description: 'Air and track temperature, track wetness, plus a wind rose that orients itself to the car.'
+  },
+  {
+    name: 'Car Telemetry',
+    image: 'H2H_car_telemetry_dashboard.jpg',
+    description: 'ABS, traction control, brake bias and pit limiter.'
+  },
+  {
+    name: 'Spotter',
+    image: 'H2H_spotter_dashboard.png',
+    description: "Appears only when someone is alongside — which side they're on, and how much of your car they overlap."
+  },
+  {
+    name: 'Traffic',
+    image: 'H2H_multiclass_traffic_dashboard.png',
+    description: 'Appears only when faster-class cars are closing from behind — who they are, and how many seconds you have left.'
+  }
+] %}
 
-    <div class="pw-section-head" data-reveal>
-      <div class="pw-secnum">/ 02<b>The overlays</b></div>
-      <h2 class="pw-sectitle">Many overlays. <b>One download.</b></h2>
+<section class="page-section" id="overlays">
+  <div class="page-width">
+    <header class="mb-6">
+      <p class="mb-2 text-sm font-semibold text-accent">The overlays</p>
+      <h2 class="section-title">Many overlays. One download.</h2>
+    </header>
+
+    <div class="grid gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
+      {% for overlay in overlays %}
+        {% set imageUrl = ('/images/' ~ overlay.image) | url %}
+        <article class="relative rounded-2xl border border-rule bg-panel p-3 hover:border-accent/60 sm:p-4.5">
+          <img
+            class="mb-3 aspect-2/1 w-full rounded-md bg-bg object-contain"
+            src="{{ imageUrl }}"
+            alt="{{ overlay.name }} overlay"
+            loading="lazy"
+          />
+          <p class="font-mono text-xs text-accent" aria-hidden="true">0{{ loop.index }}</p>
+          <h3 class="mt-1.5">{{ overlay.name }}</h3>
+          <p class="mt-2 text-base/relaxed text-muted">{{ overlay.description }}</p>
+          <button
+            type="button"
+            class="absolute inset-0 grid cursor-zoom-in items-start justify-items-end rounded-2xl p-5 sm:p-6"
+            aria-label="Enlarge {{ overlay.name }} screenshot"
+            aria-haspopup="dialog"
+            data-overlay-image="{{ imageUrl }}"
+            data-overlay-name="{{ overlay.name }}"
+          >
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="size-8 rounded-full bg-bg/90 p-1.5 text-accent">
+              <circle cx="10" cy="10" r="6" />
+              <path d="m15 15 5 5M7 10h6m-3-3v6" />
+            </svg>
+          </button>
+        </article>
+      {% endfor %}
     </div>
 
-    <div class="pw-overlays-grid" data-reveal>
-      <div></div>
-      <div class="pw-overlays-list">
-
-        <div class="pw-overlay-row">
-          <div class="pw-overlay-num">01</div>
-          <div class="pw-overlay-name">Head-to-Head</div>
-          <div class="pw-overlay-desc">
-            See the cars ahead and behind in real time — live gap, delta per
-            lap, and lap times for every battle.
-          </div>
-        </div>
-
-        <div class="pw-overlay-row">
-          <div class="pw-overlay-num">02</div>
-          <div class="pw-overlay-name">Fuel</div>
-          <div class="pw-overlay-desc">
-            Know exactly how much fuel to add at your next pit stop, with zero,
-            half and full-lap safety margins.
-          </div>
-        </div>
-
-        <div class="pw-overlay-row">
-          <div class="pw-overlay-num">03</div>
-          <div class="pw-overlay-name">Weather</div>
-          <div class="pw-overlay-desc">
-            Air and track temperature, track wetness, plus a wind rose that
-            orients itself to the car.
-          </div>
-        </div>
-
-        <div class="pw-overlay-row">
-          <div class="pw-overlay-num">04</div>
-          <div class="pw-overlay-name">Car Telemetry</div>
-          <div class="pw-overlay-desc">
-            ABS, traction control, brake bias and pit limiter.
-          </div>
-        </div>
-
-        <div class="pw-overlay-row">
-          <div class="pw-overlay-num">05</div>
-          <div class="pw-overlay-name">Spotter</div>
-          <div class="pw-overlay-desc">
-            Appears only when someone is alongside — which side they're on, and
-            how much of your car they overlap.
-          </div>
-        </div>
-
-        <div class="pw-overlay-row">
-          <div class="pw-overlay-num">06</div>
-          <div class="pw-overlay-name">Traffic</div>
-          <div class="pw-overlay-desc">
-            Appears only when faster-class cars are closing from behind — who
-            they are, and how many seconds you have left.
-          </div>
-        </div>
-
+    {% set combinedImage = '/images/H2H_multiclass_traffic_spotter_combined_dashboard.png' | url %}
+    <article class="relative mt-3.5 grid items-center gap-3 rounded-2xl border border-rule bg-panel p-3.5 hover:border-accent sm:grid-cols-[1.12fr_1fr] sm:gap-6">
+      <img
+        class="aspect-[2.3] w-full rounded-lg object-cover"
+        src="{{ combinedImage }}"
+        alt="Traffic and spotter overlays running together"
+        loading="lazy"
+      />
+      <div class="px-1 pb-2 sm:py-3 sm:pr-4 sm:pl-0">
+        <p class="text-[0.8125rem] font-semibold text-accent">Combined view</p>
+        <h3 class="mt-1.5 text-2xl">Traffic + Spotter</h3>
+        <p class="mt-2 text-base/relaxed text-muted">See faster-class cars closing from behind while the spotter shows who’s alongside.</p>
+        <p class="mt-3 inline-grid grid-flow-col items-center gap-2 text-sm font-semibold text-accent" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="size-5">
+            <circle cx="10" cy="10" r="6" />
+            <path d="m15 15 5 5M7 10h6m-3-3v6" />
+          </svg>
+          View screenshot
+        </p>
       </div>
-    </div>
-
-    <div class="pw-gallery" data-reveal>
-      <figure>
-        <img
-          src="{{ '/images/H2H_dashboard.jpg' | url }}"
-          alt="Head-to-Head overlay"
-        />
-        <figcaption><b>H2H Battle</b></figcaption>
-      </figure>
-      <figure>
-        <img
-          src="{{ '/images/H2H_fuel_dashboard.png' | url }}"
-          alt="Fuel overlay"
-        />
-        <figcaption><b>Fuel</b></figcaption>
-      </figure>
-      <figure>
-        <img
-          src="{{ '/images/H2H_weather_dashboard.jpg' | url }}"
-          alt="Weather overlay"
-        />
-        <figcaption><b>Weather</b></figcaption>
-      </figure>
-      <figure>
-        <img
-          src="{{ '/images/H2H_car_telemetry_dashboard.jpg' | url }}"
-          alt="Car Telemetry overlay"
-        />
-        <figcaption><b>Car</b></figcaption>
-      </figure>
-      <figure>
-        <img
-          src="{{ '/images/H2H_spotter_dashboard.png' | url }}"
-          alt="Spotter overlay"
-        />
-        <figcaption><b>Spotter</b></figcaption>
-      </figure>
-      <figure>
-        <img
-          src="{{ '/images/H2H_multiclass_traffic_dashboard.png' | url }}"
-          alt="Multiclass traffic overlay"
-        />
-        <figcaption><b>Traffic</b></figcaption>
-      </figure>
-      <figure>
-        <img
-          src="{{ '/images/H2H_multiclass_traffic_spotter_combined_dashboard.png' | url }}"
-          alt="Traffic and spotter overlays running together"
-        />
-        <figcaption><b>Traffic + Spotter</b></figcaption>
-      </figure>
-    </div>
-
+      <button
+        type="button"
+        class="absolute inset-0 cursor-zoom-in rounded-2xl"
+        aria-label="Enlarge Traffic + Spotter screenshot"
+        aria-haspopup="dialog"
+        data-overlay-image="{{ combinedImage }}"
+        data-overlay-name="Traffic + Spotter"
+      ></button>
+    </article>
   </div>
+
+  <dialog id="overlay-preview" aria-labelledby="overlay-preview-title" class="m-auto w-[min(92vw,76rem)] max-w-none rounded-2xl border border-rule bg-panel text-fg backdrop:bg-black/80 data-closing:backdrop:opacity-0 motion-safe:animate-overlay-preview motion-safe:backdrop:transition-opacity motion-safe:backdrop:duration-200">
+    <div class="grid gap-3 p-3 sm:p-5">
+      <div class="grid grid-cols-[1fr_auto] items-center gap-3">
+        <h2 id="overlay-preview-title" class="text-lg"></h2>
+        <form method="dialog">
+          <button autofocus class="cursor-pointer rounded-md border border-rule px-3 py-1.5 text-sm hover:border-accent">Close</button>
+        </form>
+      </div>
+      <img class="max-h-[72dvh] w-full rounded-lg bg-bg object-contain" alt="" />
+    </div>
+  </dialog>
+  <script src="{{ '/assets/js/overlay-preview.js' | url }}" defer></script>
 </section>

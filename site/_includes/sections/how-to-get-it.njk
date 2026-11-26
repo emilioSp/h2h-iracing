@@ -1,64 +1,47 @@
-{# ─── INSTALL ────────────────────────────────────────────── #}
-<section class="pw-section" id="install">
-  <div class="pw-wrap">
+<section class="page-section" id="install">
+  <div class="page-width">
+    <header class="mb-6">
+      <p class="mb-2 text-sm font-semibold text-accent">Setup</p>
+      <h2 class="section-title">Up and running in under a minute.</h2>
+    </header>
 
-    <div class="pw-section-head" data-reveal>
-      <div class="pw-secnum">/ 04<b>Setup</b></div>
-      <h2 class="pw-sectitle">Up and running in <b>under a minute.</b></h2>
-    </div>
+    <ol class="grid gap-5 sm:grid-cols-3 sm:gap-8 [&_li>p]:mt-2.5 [&_li>p]:text-muted">
+      <li>
+        <span class="mb-2 block font-mono text-xs text-accent" aria-hidden="true">01</span>
+        <h3>Download the zip</h3>
+        <p>
+          Grab the latest release from
+          <a
+            href="{{ site.releaseUrl }}"
+            class="text-fg underline underline-offset-4 hover:text-accent"
+            target="_blank"
+            rel="noopener noreferrer"
+          >GitHub</a>.
+          Unzip it anywhere on your Windows machine — no installer required.
+        </p>
+      </li>
 
-    <div class="pw-install" data-reveal>
-      <div></div>
-      <div class="pw-steps">
+      <li>
+        <span class="mb-2 block font-mono text-xs text-accent" aria-hidden="true">02</span>
+        <h3>Run <code>h2h-iracing.exe</code></h3>
+        <p>
+          A welcome page opens in your browser with one-click links to every
+          overlay, ready to use.
+        </p>
+      </li>
 
-        <div class="pw-step">
-          <div class="pw-stepn">01</div>
-          <h3 class="pw-step-title">Download the zip</h3>
-          <p class="pw-step-desc">
-            Grab the latest release from
-            <a
-              href="{{ site.releaseUrl }}"
-              class="text-fg underline underline-offset-4 hover:text-accent transition-colors"
-              target="_blank"
-              rel="noopener noreferrer"
-            >GitHub</a>.
-            Unzip it anywhere on your Windows machine — no installer required.
-          </p>
-        </div>
+      <li>
+        <span class="mb-2 block font-mono text-xs text-accent" aria-hidden="true">03</span>
+        <h3>Add to SimHub or OBS</h3>
+        <p>
+          Import the bundled SimHub dashboards, or paste the overlay URLs as
+          Browser Sources in OBS. Start iRacing and race.
+        </p>
+      </li>
+    </ol>
 
-        <div class="pw-step">
-          <div class="pw-stepn">02</div>
-          <h3 class="pw-step-title">Run <code>h2h-iracing.exe</code></h3>
-          <p class="pw-step-desc">
-            A welcome page opens in your browser with one-click links to every
-            overlay, ready to use.
-          </p>
-        </div>
-
-        <div class="pw-step">
-          <div class="pw-stepn">03</div>
-          <h3 class="pw-step-title">Add to SimHub or OBS</h3>
-          <p class="pw-step-desc">
-            Import the bundled SimHub dashboards, or paste the overlay URLs as
-            Browser Sources in OBS. Start iRacing and race.
-          </p>
-        </div>
-
-      </div>
-    </div>
-
-    <a
-      href="{{ site.releaseUrl }}"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="pw-install-cta"
-      data-reveal
-    >
-      <span>Get the latest release</span>
-      <small>↗</small>
+    <a href="{{ site.releaseUrl }}" target="_blank" rel="noopener noreferrer" class="primary-button mt-6">
+      Get the latest release <span aria-hidden="true">↗</span>
     </a>
-
   </div>
 </section>
-
-<div class="pw-stripe" aria-hidden="true"></div>

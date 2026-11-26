@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="H2H">
+  <rect width="48" height="48" rx="9" fill="#111411"/>
+  <g transform="translate(2.25 15.6) scale(.15)">
+  <defs>
+    <path id="h" d="M14 15h21v82H14zM71 15h21v82H71zM28 47h50v18H28zM15 4h25a9 9 0 0 1 0 18H15a9 9 0 0 1 0-18zm50 0h25a9 9 0 0 1 0 18H65a9 9 0 0 1 0-18zM12 90h31a9 9 0 0 1 0 18H12a9 9 0 0 1 0-18zm51 0h28a9 9 0 0 1 0 18H63a9 9 0 0 1 0-18z"/>
+  </defs>
+  <g fill="#fff">
+    <use href="#h"/>
+    <use href="#h" x="187"/>
+  </g>
+  <path fill="#89dc86" d="M119 45c3-10 13-17 25-17 15 0 26 10 26 24 0 10-6 17-15 25l-17 14h25a7 7 0 0 1 7 7v6h-53V93l29-26c8-7 11-11 11-16 0-6-5-11-13-11-6 0-10 3-13 9a6.5 6.5 0 0 1-12-4z"/>
+</g>
+</svg>
